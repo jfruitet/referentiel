@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<referentiel>
+ <name>COMPETENCE : CONNAISSANCES DE BASE A MOODLE</name>
+ <code_referentiel>Formation modulaire</code_referentiel>
+ <description_referentiel>
+<text>Formation modulaire basée sur le référentiel de compétences Moodle mis au point par l'Université du Maine et qui permet l'acquisition solitaire et successive de modules capitalisables. L'apprenant doit réaliser les différentes activités (essentiellement lecture de pages web suivies de mise en pratique) et les proposer comme activités à valider pour obtenir le certificat final attestant du suivi et des modules acquis.</text>
+</description_referentiel>
+ <url_referentiel>http://www.e-learningfacile.com</url_referentiel>
+ <seuil_certificat>0</seuil_certificat>
+ <timemodified>1277463186</timemodified>
+ <nb_domaines>5</nb_domaines>
+ <liste_codes_competence>A11/A12/A21/A22/A31/A32/A33/A34/B11/B12/B13/B14/B15/B21/B22/B23/B24/B25/B26/B31/B32/B33/B34/B35/B36/C11/C12/C13/C14/C15/C16/C21/C22/C23/C24/C25/C26/C27/C28/C31/C32/C33/C34/C35/C36/C37/C38/C39/D11/D12/D21/D22/D23/D24/E11/E12/E21/E31/E32/</liste_codes_competence>
+ <liste_empreintes_competence>1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/</liste_empreintes_competence>
+ <domaine>
+  <code_domaine>A</code_domaine>
+  <description_domaine>
+<text>S'IDENTIFIER ET NAVIGUER DANS DES ESPACES DE COURS</text>
+</description_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>1</nb_competences>
+
+  <competence>
+   <code_competence>A1</code_competence>
+   <description_competence>
+<text>ACCÉDER A UNE PLATEFORME ET A UN COURS</text>
+</description_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>2</nb_item_competences>
+
+   <item>
+    <code>A11</code>
+    <description_item>
+<text>Authentification et profil personnel.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>A12</code>
+    <description_item>
+<text>Accès à un cours (clé d'accès)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>A2</code_competence>
+   <description_competence>
+<text>NAVIGUER DANS UN COURS</text>
+</description_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>2</nb_item_competences>
+
+   <item>
+    <code>A21</code>
+    <description_item>
+<text>Identifier la structure d'un cours.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>A22</code>
+    <description_item>
+<text>Localiser tous les éléments (Séquences, activités, ressources, blocs...)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>A3</code_competence>
+   <description_competence>
+<text>GÉRER SON ESPACE PERSONNEL</text>
+</description_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>4</nb_item_competences>
+
+   <item>
+    <code>A31</code>
+    <description_item>
+<text>Modifier son profil, son avatar, ses paramètres...</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>A32</code>
+    <description_item>
+<text>Changer son mot de passe.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>A33</code>
+    <description_item>
+<text>Consulter les paramètres étudiants (profils, tags, ...)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>A34</code>
+    <description_item>
+<text>Se désinscrire d'un cours.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>B</code_domaine>
+  <description_domaine>
+<text>ADMINISTRER UN ENVIRONNEMENT DE TRAVAIL</text>
+</description_domaine>
+  <num_domaine>2</num_domaine>
+  <nb_competences>2</nb_competences>
+
+  <competence>
+   <code_competence>B1</code_competence>
+   <description_competence>
+<text>METTRE EN PLACE UN COURS</text>
+</description_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>5</nb_item_competences>
+
+   <item>
+    <code>B11</code>
+    <description_item>
+<text>Créer son cours</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>B12</code>
+    <description_item>
+<text>Sauvegarder globalement un cours. (Procédure de base)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>B13</code>
+    <description_item>
+<text>Effacer un cours (Procédure de base)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>B14</code>
+    <description_item>
+<text>Restaurer un cours. (Procédure de base)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+   <item>
+    <code>B15</code>
+    <description_item>
+<text>Intégrer un cours dans un autre cours. (En totalité ou partiellement)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>5</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>B2</code_competence>
+   <description_competence>
+<text>GÉRER LES UTILISATEURS D'UN COURS</text>
+</description_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>6</nb_item_competences>
+
+   <item>
+    <code>B21</code>
+    <description_item>
+<text>Inscrire des participants dans un cours.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>B22</code>
+    <description_item>
+<text>Attribuer des rôles dans le cours. Créer un nouveau rôle(par exemple : Parent)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>B23</code>
+    <description_item>
+<text>Créer des groupes, affecter des tuteurs, et placer le bloc &quot;mon tuteur&quot;.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>B24</code>
+    <description_item>
+<text>Inscrire et désinscrire, envoyer des messages groupés, consulter les rapports d'activité.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+   <item>
+    <code>B25</code>
+    <description_item>
+<text>Consulter un profil étudiant, se connecter sous son nom, lui envoyer un message...</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>5</num_item>
+   </item>
+
+   <item>
+    <code>B26</code>
+    <description_item>
+<text>Utiliser la messagerie, gérer une liste de contacts, paramètres de la messagerie.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>6</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>B3</code_competence>
+   <description_competence>
+<text>STRUCTURER UN COURS</text>
+</description_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>6</nb_item_competences>
+
+   <item>
+    <code>B31</code>
+    <description_item>
+<text>Choisir un thème graphique de cours,un titre et un texte d'accueil(zone description du cours)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>B32</code>
+    <description_item>
+<text>Gérer l'affichage des séquences,les déplacer,les masquer...</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>B33</code>
+    <description_item>
+<text>Gérer la mise en place des activités.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>B34</code>
+    <description_item>
+<text>Gérer la mise en place des ressources (fenêtres séparées, formats...)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+   <item>
+    <code>B35</code>
+    <description_item>
+<text>Gérer la mise en place des blocs standards.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>5</num_item>
+   </item>
+
+   <item>
+    <code>B36</code>
+    <description_item>
+<text>Déplacer des éléments dans le cours. (ressources, activités, étiquettes, blocs...)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>6</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>C</code_domaine>
+  <description_domaine>
+<text>INSÉRER DES RESSOURCES, DES ACTIVITÉS, DES BLOCS LATÉRAUX.</text>
+</description_domaine>
+  <num_domaine>3</num_domaine>
+  <nb_competences>3</nb_competences>
+
+  <competence>
+   <code_competence>C1</code_competence>
+   <description_competence>
+<text>DÉCOUVERTE DES DIFFÉRENTS TYPES DE DOCUMENTS</text>
+</description_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>6</nb_item_competences>
+
+   <item>
+    <code>C11</code>
+    <description_item>
+<text>Le format HTML, l'éditeur Wysiwig.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>C12</code>
+    <description_item>
+<text>Le format pdf</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>C13</code>
+    <description_item>
+<text>Les formats images (jpg, gif, png...)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>C14</code>
+    <description_item>
+<text>Les formats flash (swf, flv)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+   <item>
+    <code>C15</code>
+    <description_item>
+<text>Les autres formats propriétaires et leur conversion.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>5</num_item>
+   </item>
+
+   <item>
+    <code>C16</code>
+    <description_item>
+<text>Les captures (outils et modes de visualisation)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>6</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>C2</code_competence>
+   <description_competence>
+<text>LES ACTIVITÉS D'APPRENTISSAGE</text>
+</description_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>8</nb_item_competences>
+
+   <item>
+    <code>C21</code>
+    <description_item>
+<text>Forums et usages.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>C22</code>
+    <description_item>
+<text>Glossaires et usages.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>C23</code>
+    <description_item>
+<text>Le Wiki</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>C24</code>
+    <description_item>
+<text>L'activité Base de données.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+   <item>
+    <code>C25</code>
+    <description_item>
+<text>La leçon.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>5</num_item>
+   </item>
+
+   <item>
+    <code>C26</code>
+    <description_item>
+<text>Les différents types de devoirs</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>6</num_item>
+   </item>
+
+   <item>
+    <code>C27</code>
+    <description_item>
+<text>Le Chat</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>7</num_item>
+   </item>
+
+   <item>
+    <code>C28</code>
+    <description_item>
+<text>L'Atelier</text>
+</description_item>
+    <type_item>Optionnel</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>8</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>C3</code_competence>
+   <description_competence>
+<text>LES BLOCS LATÉRAUX.</text>
+</description_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>9</nb_item_competences>
+
+   <item>
+    <code>C31</code>
+    <description_item>
+<text>Le calendrier (évènements ...)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>C32</code>
+    <description_item>
+<text>Le bloc Personnes (Participants)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>C33</code>
+    <description_item>
+<text>Utilisateurs en ligne.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>C34</code>
+    <description_item>
+<text>Sommaire du cours</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+   <item>
+    <code>C35</code>
+    <description_item>
+<text>Dernières nouvelles</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>5</num_item>
+   </item>
+
+   <item>
+    <code>C36</code>
+    <description_item>
+<text>Prochains évènements</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>6</num_item>
+   </item>
+
+   <item>
+    <code>C37</code>
+    <description_item>
+<text>Messages</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>7</num_item>
+   </item>
+
+   <item>
+    <code>C38</code>
+    <description_item>
+<text>Un autre bloc (Appel SKYPE)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>8</num_item>
+   </item>
+
+   <item>
+    <code>C39</code>
+    <description_item>
+<text>Le bloc administration du cours.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>9</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>D</code_domaine>
+  <description_domaine>
+<text>ÉVALUER LES APPRENANTS</text>
+</description_domaine>
+  <num_domaine>4</num_domaine>
+  <nb_competences>4</nb_competences>
+
+  <competence>
+   <code_competence>D1</code_competence>
+   <description_competence>
+<text>BARÈMES ET CARNET DE NOTES</text>
+</description_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>2</nb_item_competences>
+
+   <item>
+    <code>D11</code>
+    <description_item>
+<text>Créer des barèmes, les associer à des activités</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>D12</code>
+    <description_item>
+<text>Comprendre le carnet de notes (Utilisation standard)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>D2</code_competence>
+   <description_competence>
+<text>TESTS, SONDAGES, QUESTIONNAIRES</text>
+</description_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>4</nb_item_competences>
+
+   <item>
+    <code>D21</code>
+    <description_item>
+<text>Placer un sondage.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>D22</code>
+    <description_item>
+<text>Placer un questionnaire</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>D23</code>
+    <description_item>
+<text>Placer un test Moodle</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>D24</code>
+    <description_item>
+<text>Intégrer un test Hot Potatoes</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>E</code_domaine>
+  <description_domaine>
+<text>ACQUÉRIR L'AUTONOMIE DE CRÉATION</text>
+</description_domaine>
+  <num_domaine>5</num_domaine>
+  <nb_competences>4</nb_competences>
+
+  <competence>
+   <code_competence>E1</code_competence>
+   <description_competence>
+<text>SAUVEGARDER</text>
+</description_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>2</nb_item_competences>
+
+   <item>
+    <code>E11</code>
+    <description_item>
+<text>Sauvegarder le cours avec ses paramètres.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>E12</code>
+    <description_item>
+<text>Sauvegarder certaines activités (Glossaires, Bases de données, questionnaires...)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>E2</code_competence>
+   <description_competence>
+<text>TRANSFÉRER</text>
+</description_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>E21</code>
+    <description_item>
+<text>Déposer et restaurer son cours sur une autre plateforme (Bases de connaissances minimum )</text>
+</description_item>
+    <type_item>Optionnel</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>E3</code_competence>
+   <description_competence>
+<text>GÉRER DES FORMATIONS</text>
+</description_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>2</nb_item_competences>
+
+   <item>
+    <code>E31</code>
+    <description_item>
+<text>Créer et gérer un cours d'accueil de formations.</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>E32</code>
+    <description_item>
+<text>Créer des méta-cours (cours enfants) avec héritage d'inscription d'un cours (parent)</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+
+</referentiel>
+

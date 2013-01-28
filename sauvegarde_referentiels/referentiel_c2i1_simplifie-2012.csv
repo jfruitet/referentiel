@@ -1,0 +1,41 @@
+#Moodle Referentiel CSV Export;latin1;Admin Utilisateur
+#code_referentiel;nom_referentiel;description_referentiel;url_referentiel;date_creation;nb_domaines;seuil_certificat;liste_codes_competences;liste_empreintes;logo_referentiel
+C2i1;C2i1;"Référentiel national du certificat informatique et internet de l?enseignement supérieur de niveau 1. Le référentiel national du C2i® niveau 1 comprend 20 compétences réparties dans 5 domaines.";;Y:2011m:11d:28;1;0;D1-1/D1-2/D1-3/D1-4/D2-1/D2-2/D2-3/D2-4/D3-1/D3-2/D3-3/D3-4/D3-5/D4-1/D4-2/D4-3/D4-4/D5-1/D5-2/D5-3/;1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/
+#code_domaine;description_domaine;ref_referentiel;num_domaine;nb_competences
+C2i1;"Référentiel C2i1 - 2012";1;5
+#code_competence;description_competence;num_competence;nb_item_competences
+D1;"Travailler dans un environnement numérique évolutif";1;4
+#code_item;description_item;type_item;poids_item;num_item;empreinte_item
+D1-1;"Organiser un espace de travail complexe.";;1;1;1
+D1-2;"Sécuriser son espace de travail local et distant";;1;2;1
+D1-3;"Tenir compte des enjeux de l?interopérabilité";;1;3;1
+D1-4;"Pérenniser ses données";;1;4;1
+#code_competence;description_competence;num_competence;nb_item_competences
+D2;"Être responsable à l?ère du numérique";2;4
+#code_item;description_item;type_item;poids_item;num_item;empreinte_item
+D2-1;"Maîtriser son identité numérique privée, institutionnelle et professionnelle";;1;1;1
+D2-2;"Veiller à la protection de la vie privée et des données à caractère personnel";;1;2;1
+D2-3;"Être responsable face aux réglementations concernant l?utilisation de ressources numériques";;1;3;1
+D2-4;"Adopter les règles en vigueur et se conformer au bon usage du numérique";;1;4;1
+#code_competence;description_competence;num_competence;nb_item_competences
+D3;"Produire, traiter, exploiter et diffuser des documents numériques";3;5
+#code_item;description_item;type_item;poids_item;num_item;empreinte_item
+D3-1;"Structurer et mettre en forme un document";;1;1;1
+D3-2;"Insérer des informations générées automatiquement";;1;2;1
+D3-3;"Réaliser un document composite";;1;3;1
+D3-4;"Exploiter des données dans des feuilles de calcul";;1;4;1
+D3-5;"Préparer ou adapter un document pour le diffuser";;1;5;1
+#code_competence;description_competence;num_competence;nb_item_competences
+D4;"Organiser la recherche d?informations à l?ère du numérique";4;4
+#code_item;description_item;type_item;poids_item;num_item;empreinte_item
+D4-1;"Rechercher de l?information avec une démarche adaptée";;1;1;1
+D4-2;"Evaluer les résultats d?une recherche";;1;2;1
+D4-3;"Récupérer et référencer une ressource numérique en ligne";;1;3;1
+D4-4;"Organiser une veille informationnelle";;1;4;1
+#code_competence;description_competence;num_competence;nb_item_competences
+D5;"Travailler en réseau, communiquer et collaborer";5;3
+#code_item;description_item;type_item;poids_item;num_item;empreinte_item
+D5-1;"Communiquer avec un ou plusieurs interlocuteurs";;1;1;1
+D5-2;"Participer à l?activité en ligne d?un groupe";;1;2;1
+D5-3;"Élaborer une production dans un contexte collaboratif";;1;3;1
+

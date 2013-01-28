@@ -1,0 +1,142 @@
+﻿Recommandations pour la traduction des fichiers de langue
+du module référentiel de Moodle
+
+Jean.fruitet@univ-nantes.fr
+
+
+Présentation
+
+Il y a deux versions du module, l'une pour Moodle 1.9 l'autre pour Moodle 2
+
+Les fichiers de langue de chacune des versions sont à 90% identiques.
+Les seules différences portent :
+- le nom des dossiers de langue
+./mod/referentiel/lang/code_langue/ pour la version Moodle 2 
+./mod/referentiel/lang/code_langue_utf8/ pour la version Moodle 1.9
+avec code_langue = fr (français), en (anglais), es (castillan) , it (italiano), de (deutch), ca (catalan), 
+uk (ukrainien), ru (russe), etc. 
+
+- sur les fichiers d'aide, qui sont intégrés dans 
+./mod/referentiel/lang/code_langue/referentiel.php pour la version Moodle 2 
+et placés dans ./mod/referentiel/lang/code_langue_utf8/help/ pour la version Moodle 1.9
+
+- le passage de variables se font désormais avec {a} avec un chaîne entre apostrophes sous Moodle 2 ET sous Moodle 1.9
+$string['moodleversion'] = 'Votre version de Moodle : {$a}';
+
+
+Il est donc tout à fait recommandé de ne traduire que le fichier de langues de Moodle 2,
+puis de le recopier dans le dossier ad hoc de la version Moodle 1.9
+
+
+Traduction pour Moodle 1.9
+--------------------------
+Pour Moodle 1.9 le dossier de langue contient
+./mod/referentiel/lang/en_utf8/referentiel.php
+./mod/referentiel/lang/fr_utf8/referentiel.php
+
+Il faut installer sur le serveur Moodle le paquetage de langue cible :
+ukrainien (uk), russe(ru), allemand(de), italien(it), espagnol(es), catalan(ca), etc. 
+selon votre choix de traduction...
+puis créer les dossiers correspondants.
+
+Par exemple pour l'ukrainien (uk)
+./mod/referentiel/lang/uk_utf8/
+en recopiant par exemple le contenu du dossier
+./mod/referentiel/lang/fr_utf8/ dans ./mod/referentiel/lang/uk_utf8/
+
+Traduction pour Moodle 2
+--------------------------
+Pour Moodle 2 de dossier de langue contient
+./mod/referentiel/lang/en/referentiel.php
+./mod/referentiel/lang/fr/referentiel.php
+
+Il faut créer par exemple
+./mod/referentiel/lang/uk/
+par recopie du dossier
+./mod/referentiel/lang/fr/
+
+
+Outil de traduction dans Moodle
+---------------------------------------
+Avec le rôle administrateur il est possible d'utiliser l'outil intégré 
+"Administration du site" / "Langue" / "Modification du paquetage de langue"
+pour générer une version locale du paquetage choisi.
+
+Cette version locale est située dans le dossier
+./moodledata/lang/xx_utf8_local/ du serveur Apache
+Cette version locale pourra ensuite être recopiée dans le dossier ad hoc de la version distribuée par mes soins.
+
+
+Outil de traduction en dehors de Moodle
+---------------------------------------
+Les traduction doivent utiliser le codage de caractères UTF-8
+
+Il faut donc disposer d'un éditeur de code source avec le codage UTF-8 intégré et sélectionner celui-ci
+Par exemple PSPad http://www.pspad.com/fr/
+On peut aussi utiliser OpenOffice Writer en positionnant la table de caractères UTF-8
+et exporter au format texte (txt).
+
+Précautions lors de la traduction
+--------------------------
+Ne pas modifier ni traduire la partie des expressions située avant le signe '='
+$string['ici_un_mot_cle'] = 'Ici une définition';
+devient après traduction
+$string['ici_un_mot_cle'] = 'Here a definition';
+
+
+
+Par exemple
+
+<?php
+// ----------------
+// UTF-8 French
+// moodle/admin/report/referentiel stuff
+$string['formatarchive'] = 'Sélectionnez un format d\'archive';
+$string['moodleversion'] = 'Votre version de Moodle : {$a}';
+
+devient
+
+<?php
+// ----------------
+// UTF-8 Ukrainian
+// moodle/admin/report/referentiel stuff
+$string['formatarchive'] = 'Оберіть формат архіву';
+$string['moodleversion'] = 'Ваша версія Moodle : {$a}';
+
+
+Gestion des variables
+--------------------------
+Ne pas modifier les expressions du type (M2) {$a} qui indiquent qu'on passe une variable à la chaîne.
+
+Gestion des apostrophes
+--------------------------
+L'apostrophe ' étant un séparateur de chaîne elle doit être déspécialisée dans les textes
+placés entre apostrophes en utilisant l'antislash \ en combinaison \'
+Par exemple :
+$string['instancenondefinie'] = 'Aucune instance n\'est définie pour ce référentiel';
+ou
+$string['archivereferentiel'] = 'Архівувати довідник, сертифікати і пов\'язані діяльності';
+
+
+Erreurs à éviter
+--------------------------
+Il ne faut surtout pas toucher aux fichiers de
+moodledata/lang/ ni y placer les fichiers du module référentiel SAUF si vous utilisez des versions locale
+moodledata/lang/uk_utf8_local/ par exemple pour Moodle 1.9
+moodledata/lang/uk_local/ par exemple pour Moodle 1.9
+
+Toutes les traductions seront distribuées dans
+./mod/referentiel/lang/
+
+Pour tester
+--------------------------
+Passer le serveur local en mode debug (Serveur / Debug pour developpeur)
+et recopier les traductions dans les dossiers ad hoc (voir plus haut)
+S'il y a des erreurs Moodle les affichera en indiquant la ligne fautive.
+
+
+Merci de votre implication et bon courage pour ce pensum.
+
+N'hésitez pas à m'envoyer des versions même incomplètes que je fasse des tests
+
+Jean F.

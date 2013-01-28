@@ -1,0 +1,126 @@
+﻿Portage
+de Moodle 1.9 vers Moodle 2
+
+Formslib
+http://docs.moodle.org/en/Development:lib/formslib.php_Form_Definition#Use_Fieldsets_to_group_Form_Elements
+
+
+
+BD
+Le nom des tables < 25 caracteres
+Supprimer toutes les definition par defaut avec "" ou ''
+Chaque fichier doit inclure (require_once) le fichier principal config.php .
+Tous les autres include/require doivent utiliser un début de chemin absolu
+commençant pas $CFG->dirroot ou $CFG->libdir, pas d'inclusions relatives, qui se comportent parfois de manière étrange sous PHP.
+
+N'utilisez pas les fonctions p() et s() pour afficher des chaînes.
+Ces fonctions ne sont pas destinées à afficher du html avec des balises.
+Utilisez echo() à la place.
+
+TRES IMPORTANT : A l'intérieur de Moodle,
+Tous les textes doivent être affichés en utilisant la fonction format_text(),
+particulièrement ceux qui viennent des utilisateurs.
+Ceci assure un texte correctement filtré et nettoyé.
+Plus d'informations peuvent être trouvées sur la page à propos des fonctions
+de sortie.
+http://docs.moodle.org/en/Development:Output_functions
+Créez toujours des liens HTML relatifs à la racine du site, i.e. des liens
+du type $CFG->wwwroot/mod/blonk/view.php?id=99
+plutôt que seulement view.php?id=99. Cela permettra à votre code de fonctionner s'il est appelé par un script dans un autre dossier, entre autres.
+Les modules doivent stocker les variables de configuration en utilisant
+set_config('varname', $value, 'mod/modulename') où le dernier paramètre est le chemin vers le répertoire du module.
+
+ZZ
+Respectez les séparateurs décimaux spécifiés dans le pack de langage -
+n'utilisez pas number_format() directement, à la place utilisez format_float()
+et unformat_float() quand vous affichez ou traitez des nombres flottants
+(obligatoire en 2.0)
+
+Quand vous faites une COPIE d'un objet, utilisez toujours la fonction php5 clone().
+     MAUVAIS:   $b = $a;
+     BON:  $b = clone($a);
+Si ce que vous voulez copier n'est pas un objet, mais peut contenir des objets
+(ex un tableau d'objets), alors utilisez fullclone() à la place.
+
+# Les tables associées avec un bloc doivent suivre cette convention pour leurs noms :
+$CFG->prefix + "block_" + nom_du_bloc + ce_que_vous_voulez.
+Par exemple, en supposant que $CFG->prefix est 'mdl_', toutes les tables pour le bloc "rss_client"
+doivent commencer par 'mdl_block_rss_client' (il est possible d'ajouter d'autres mots à la fin,
+i.e. 'mdl_block-rss-client_uneautretable'...). Cette règle sera appliquée à 100% avec Moodle 2.0,
+en donnant du temps aux développeurs jusque là.
+Voir Task 6786 pour plus d'informations à ce propos.
+
+
+isguest() est obsolète à remplacer par isguestuser()
+
+Index des fonctions Moodle 2 : 
+http://xref.icheb.info/xrefmoodle2_0_2/nav.html?_functions/index.html
+
+Documentation migration
+
+
+1) réécrire ./mod/referentiel/db/install.xml
+a) Plus aucun ENUM
+b) Les parametres des instruction changent un peu
+c) STATEMENTS section is not supported any more, please use db/install.php or db/log.php
+
+Il faut supprimer de install.xml la partie
+  <STATEMENTS>
+    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
+      <SENTENCES>
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('referentiel', 'add', 'referentiel', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('referentiel', 'update', 'referentiel', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('referentiel', 'view', 'referentiel', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('referentiel', 'view all', 'referentiel', 'name')" />
+      </SENTENCES>
+    </STATEMENT>
+  </STATEMENTS>
+et créer un fichier db/log.php contenant
+$logs = array(
+    array('module'=>'referentiel', 'action'=>'add', 'mtable'=>'referentiel', 'field'=>'name'),
+    array('module'=>'referentiel', 'action'=>'update', 'mtable'=>'referentiel', 'field'=>'name'),
+    array('module'=>'referentiel', 'action'=>'view', 'mtable'=>'referentiel', 'field'=>'name'),
+    array('module'=>'referentiel', 'action'=>'view all', 'mtable'=>'referentiel', 'field'=>'name'),
+);
+
+2) réécrire ./mod/referentiel/db/upgrade.php
+Nouvelle syntaxe
+3) réécrire ./mod/referentiel/db/access.xml
+legacy remplace par archetypes
+admin remplace par manager
+
+componentname_capabilities array is deprecated, please use capabilities array only in access.php files
+$mod_referentiel_capabilities devient  $capabilities
+
+4) Gros travail de remplacement de tous les appels à la base de donnée par la nouvelle syntaxe
+
+Un programme est disponible pour détecter les erreurs d'apel aux fonction $DB
+http://cvs.moodle.org/contrib/tools/check_db_syntax/
+
+
+5) PARAL_CLEAN deprecated remplace par PARAM_ALPHANUMEXT faute de mieux ?
+
+
+6) remplacer tous les $CFG->pixpath par $CFG->wwwroot.'/pix'
+
+7) la table moodle_role_assignment a changé
+cela entraîne la réécriture des requêtes sur les rôles...
+
+8) fichers d'aide à convertir dans le nouveau format
+
+http://docs.moodle.org/en/Development:Help_strings
+
+helpbutton() devient 
+echo $OUTPUT->help_icon('strappel','module');
+dans le fichier de langue doivent exister 
+strappel : titre de l'aide
+strappel_help : texte de l'aide
+strappel_link : lien vers moode doc  [optionnel]
+
+9) notice_yesno() has been deprecated. Please change your code to use 
+$OUTPUT->confirm($message, $buttoncontinue, $buttoncancel).
+line 3192 of \lib\deprecatedlib.php: call to debugging()
+line 532 of \mod\referentiel\activite_edit.html: call to notice_yesno()
+line 925 of \mod\referentiel\activite.php: call to include_once()
+
+10) Remplacer les '&amp;' par '&' dans les redirections

@@ -1,0 +1,32 @@
+Moodule Referentiel de Moodle
+---------------------------------------------------
+Le format XML des référentiels proposés dans ce dossier est spécifique du module référentiel.
+Il contient les données propres au référentiel et des informations de protocole de certification.
+
+Pour créer un nouveau référentiel vous pouvez :
+- soit éditer l'un des fichiers XML et l'adapter
+
+- soit utiliser un éditeur wisiwig intégré au module
+
+Cet éditeur utilise un format différent, spécifique, extrèmement simplifié.
+On reconnaît les fichiers à la présence dans le nom de fichier du suffixe _sxml.xml
+Vous pouvez trouver des modèles pour ce format dans le dossier
+"./mod/referentiel/editor/data" de votre serveur.
+
+Les fichiers .txt, .dat de ce dossier sont des modèles pour le module référentiel.
+
+Les fichier _sxml.xml sont au format XML simplifié.
+Ils peuvent être importés dans le module lors de la création d'une nouvelle instance de référentiel
+en cliquant sur le bouton "Import XML simplifié".
+
+N'essayez pas d'importer un référentile XML simplifié (dont le nom est de la forme xxx_sxml.xml)
+depuis la rubrique "Référentiel/Importer"
+
+
+Format CSV
+-----------------------------------------------------
+ce format de type tableur est relativement facile à modifier "à la main" avec un tableur (MSExcel ou LibreOffice)
+Veillez à conserver les labels des lignes commençant par #
+ - les balise #code_item sont optimisées. Une seule balise avant la liste des item d'une compétence.
+ - le format de date d'export du fichier est :  Y:2008m:10d:06 pour 06/10/2008
+ - sii son empreinte vaut 0 l'item n'est pas retenu pour l'évaluation de la compétence.

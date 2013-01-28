@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<referentiel>
+ <name>C2i1</name>
+ <code_referentiel>C2i1</code_referentiel>
+ <description_referentiel>
+<text>Référentiel national du certificat informatique et internet de l’enseignement supérieur de niveau 1. Le référentiel national du C2i® niveau 1 comprend 20 compétences réparties dans 5 domaines.</text>
+</description_referentiel>
+ <url_referentiel></url_referentiel>
+ <seuil_certificat>0</seuil_certificat>
+ <timemodified>1322500065</timemodified>
+ <nb_domaines>1</nb_domaines>
+ <liste_codes_competence>D1-1/D1-2/D1-3/D1-4/D2-1/D2-2/D2-3/D2-4/D3-1/D3-2/D3-3/D3-4/D3-5/D4-1/D4-2/D4-3/D4-4/D5-1/D5-2/D5-3/</liste_codes_competence>
+ <liste_empreintes_competence>1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/</liste_empreintes_competence>
+ <domaine>
+  <code_domaine>C2i1</code_domaine>
+  <description_domaine>
+<text>Référentiel C2i1 - 2012</text>
+</description_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>5</nb_competences>
+
+  <competence>
+   <code_competence>D1</code_competence>
+   <description_competence>
+<text>Travailler dans un environnement numérique évolutif</text>
+</description_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>4</nb_item_competences>
+
+   <item>
+    <code>D1-1</code>
+    <description_item>
+<text>Organiser un espace de travail complexe.</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>D1-2</code>
+    <description_item>
+<text>Sécuriser son espace de travail local et distant</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>D1-3</code>
+    <description_item>
+<text>Tenir compte des enjeux de l’interopérabilité</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>D1-4</code>
+    <description_item>
+<text>Pérenniser ses données</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>D2</code_competence>
+   <description_competence>
+<text>Être responsable à l’ère du numérique</text>
+</description_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>4</nb_item_competences>
+
+   <item>
+    <code>D2-1</code>
+    <description_item>
+<text>Maîtriser son identité numérique privée, institutionnelle et professionnelle</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>D2-2</code>
+    <description_item>
+<text>Veiller à la protection de la vie privée et des données à caractère personnel</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>D2-3</code>
+    <description_item>
+<text>Être responsable face aux réglementations concernant l’utilisation de ressources numériques</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>D2-4</code>
+    <description_item>
+<text>Adopter les règles en vigueur et se conformer au bon usage du numérique</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>D3</code_competence>
+   <description_competence>
+<text>Produire, traiter, exploiter et diffuser des documents numériques</text>
+</description_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>5</nb_item_competences>
+
+   <item>
+    <code>D3-1</code>
+    <description_item>
+<text>Structurer et mettre en forme un document</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>D3-2</code>
+    <description_item>
+<text>Insérer des informations générées automatiquement</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>D3-3</code>
+    <description_item>
+<text>Réaliser un document composite</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>D3-4</code>
+    <description_item>
+<text>Exploiter des données dans des feuilles de calcul</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+   <item>
+    <code>D3-5</code>
+    <description_item>
+<text>Préparer ou adapter un document pour le diffuser</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>5</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>D4</code_competence>
+   <description_competence>
+<text>Organiser la recherche d’informations à l’ère du numérique</text>
+</description_competence>
+   <num_competence>4</num_competence>
+   <nb_item_competences>4</nb_item_competences>
+
+   <item>
+    <code>D4-1</code>
+    <description_item>
+<text>Rechercher de l’information avec une démarche adaptée</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>D4-2</code>
+    <description_item>
+<text>Evaluer les résultats d’une recherche</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>D4-3</code>
+    <description_item>
+<text>Récupérer et référencer une ressource numérique en ligne</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>D4-4</code>
+    <description_item>
+<text>Organiser une veille informationnelle</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>D5</code_competence>
+   <description_competence>
+<text>Travailler en réseau, communiquer et collaborer</text>
+</description_competence>
+   <num_competence>5</num_competence>
+   <nb_item_competences>3</nb_item_competences>
+
+   <item>
+    <code>D5-1</code>
+    <description_item>
+<text>Communiquer avec un ou plusieurs interlocuteurs</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>D5-2</code>
+    <description_item>
+<text>Participer à l’activité en ligne d’un groupe</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>D5-3</code>
+    <description_item>
+<text>Élaborer une production dans un contexte collaboratif</text>
+</description_item>
+    <type_item></type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+
+</referentiel>
+

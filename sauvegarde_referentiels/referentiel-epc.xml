@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<referentiel>
+ <name>EPC 2nde Français</name>
+ <code_referentiel>EPC2FRA</code_referentiel>
+ <description_referentiel>
+<text>Référentiel d`évaluation par compétences en 2nde</text>
+</description_referentiel>
+ <url_referentiel>http://www.lcdf.ac-orleans-tours.fr</url_referentiel>
+ <seuil_certificat>16</seuil_certificat>
+ <timemodified>1241173216</timemodified>
+ <nb_domaines>1</nb_domaines>
+ <liste_codes_competence>S1/S2/SFA1/SFA2/SFA3/SFB1/SFB2/SFB3/SFB4/SFC1/SFC2/SFC3/SFC4/SFC5/SFC6/SFD1/SFD2/SFD3/SFD4/SE1/SE2/</liste_codes_competence>
+ <liste_empreintes_competence>1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/</liste_empreintes_competence>
+ <domaine>
+  <code_domaine>EPC2F</code_domaine>
+  <description_domaine>
+<text>Référentiel 2nde</text>
+</description_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>1</nb_competences>
+
+  <competence>
+   <code_competence>S</code_competence>
+   <description_competence>
+<text>Savoirs</text>
+</description_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>2</nb_item_competences>
+
+   <item>
+    <code>S1</code>
+    <description_item>
+<text>Savoir son cours pour les évaluations planifiées</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>S2</code>
+    <description_item>
+<text>Savoir résumer la séance précédente</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>SFA</code_competence>
+   <description_competence>
+<text>Lire et comprendre</text>
+</description_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>3</nb_item_competences>
+
+   <item>
+    <code>SFA1</code>
+    <description_item>
+<text>Lire un énoncé</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>SFA2</code>
+    <description_item>
+<text>Observer un dessin</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>SFA3</code>
+    <description_item>
+<text>Donner un sens aux mots</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>SFB</code_competence>
+   <description_competence>
+<text>Rechercher : Conjecturer, élaborer et organiser une démarche</text>
+</description_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>4</nb_item_competences>
+
+   <item>
+    <code>SFB1</code>
+    <description_item>
+<text>Prévoir une réponse</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>SFB2</code>
+    <description_item>
+<text>Traduire</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>SFB3</code>
+    <description_item>
+<text>Trier des informations</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>SFB4</code>
+    <description_item>
+<text>Reconnaître une situation de référence</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>SFC</code_competence>
+   <description_competence>
+<text>Réaliser : Exécuter, critiquer</text>
+</description_competence>
+   <num_competence>4</num_competence>
+   <nb_item_competences>5</nb_item_competences>
+
+   <item>
+    <code>SFC1</code>
+    <description_item>
+<text>Mettre en oeuvre une stratégie</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>SFC2</code>
+    <description_item>
+<text>Exécuter une t</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>SFC3</code>
+    <description_item>
+<text>Appliquer directement une connaissance ou une technique de base</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>SFC4</code>
+    <description_item>
+<text>Contrôler la vraisemblance d'une proposition</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+   <item>
+    <code>SFC5</code>
+    <description_item>
+<text>Valider la cohérence d'une démarche</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>5</num_item>
+   </item>
+
+   <item>
+    <code>SFC6</code>
+    <description_item>
+<text>Répondre à la question posée</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>6</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>SFD</code_competence>
+   <description_competence>
+<text>Réaliser : Exécuter</text>
+</description_competence>
+   <num_competence>5</num_competence>
+   <nb_item_competences>4</nb_item_competences>
+
+   <item>
+    <code>SFD1</code>
+    <description_item>
+<text>Respecter les consignes</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>SFD2</code>
+    <description_item>
+<text>Utiliser un vocabulaire,  des notations ou un codage approprié</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+   <item>
+    <code>SFD3</code>
+    <description_item>
+<text>Présenter avec soin un texte,  un graphique</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>3</num_item>
+   </item>
+
+   <item>
+    <code>SFD4</code>
+    <description_item>
+<text>Rédiger une argumentation</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>4</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>SE</code_competence>
+   <description_competence>
+<text>Savoir être</text>
+</description_competence>
+   <num_competence>6</num_competence>
+   <nb_item_competences>2</nb_item_competences>
+
+   <item>
+    <code>SE1</code>
+    <description_item>
+<text>Savoir être 1</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+   <item>
+    <code>SE2</code>
+    <description_item>
+<text>Savoir être 2</text>
+</description_item>
+    <type_item>Obligatoire</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>2</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+
+</referentiel>
+
