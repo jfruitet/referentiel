@@ -276,7 +276,8 @@
 			else
 				$sql_filtre_where.=' AND verrou=\'0\' ';
 		}
-		
+/*
+// MODIF JF 2013/01/30
 		if (isset($filtre_referent) && ($filtre_referent=='1')){
 			if ($sql_filtre_where!='')
 				$sql_filtre_where.=' AND teacherid<>0  ';
@@ -289,7 +290,7 @@
 			else
 				$sql_filtre_where.=' AND teacherid=0  ';
 		}
-
+*/
 		if (isset($filtre_date_decision) && ($filtre_date_decision=='1')){
 			if ($sql_filtre_order!='')
 				$sql_filtre_order.=', date_decision ASC ';

@@ -1,10 +1,10 @@
 ﻿Moodle module referentiel 
 Module Moodle - Référentiel / Skills repository - Documentation
 jean.fruitet@univ-nantes.fr
-2007/2012
+2007/2013
 
 Type: Activity Module
-Requires: Moodle 2.3
+Requires: Moodle 2.4
 Status: Contributed
 Maintainer(s): jean.fruitet@univ-nantes.fr
 
@@ -164,6 +164,13 @@ CVS / Subversion
 Le serveur public des sources CVS / Subversion est  :
 Subversion server at: 
 https://subversion.cru.fr/referentiel/
+https://sourcesup.renater.fr/scm/viewvc.php/?root=referentiel
+
+---------------------------------------------------
+GitHub
+---------------------------------------------------
+Le serveur public des sources sur GitHub
+https://github.com/jfruitet/referentiel (ne concerne que la version la plus récente du module pour la version la plus récente de Moodle)
 
 
 ----------------------------------------------------
@@ -175,11 +182,6 @@ http://moodle.org/mod/forum/discuss.php?d=127647
 Un fil de discussion sur Moodle en Français est consacré au module : 
 http://moodle.org/mod/forum/discuss.php?d=127647
 
-A test server here : http://ateliers.moodlelab
-
-Un espace de test est disponible sur le serveur Moodle des Ateliers du  MoodleLab 
-http://ateliers.moodlelab
-dans la catégorie Référentiels
 
 ---------------------------------------------------------
 Liste des documents disponibles sur ces différents sites
@@ -220,7 +222,7 @@ Les versions des C2i2e 2005 et 2011/2012 ne devraient pas être installées sur 
 pour éviter des confusions lors de la certification.
 
 C2i2 Metiers du droit, de l'ingénieur, de la Santé, du développement durable
-
+http://moodlemoot2009.insa-lyon.fr/mod/resource/view.php?id=849&subdir=/Referentiels_C2i2_Metiers
 
 Moodle Referentiel v5.3.5 de juin 2010 et suivantes
 ---------------------------------------------------
@@ -293,5 +295,5 @@ Commentaire à cette adresse :
 Commentary about this bug :
 http://moodle.org/mod/forum/discuss.php?d=145112
 
-Lisez Version_history.txt pour les mises à jour
-Read  Version_history.txt for updates
+Lisez version_history.txt pour les mises à jour
+Read  version_history.txt for updates

@@ -391,12 +391,6 @@ onchange="self.location=document.getElementById(\'selectetab'.$userid.'\').jump.
 			}
 		}
 		$s.='</select></div>'."\n";
-		$s.='
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("noscriptnavmenupopup").style.display = "none";
-//]]>
-</script>'."\n";
 		$s.='</form>'."\n";
 	}
 	return $s;

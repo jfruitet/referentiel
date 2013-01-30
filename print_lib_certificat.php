@@ -83,12 +83,7 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_auteur\').fi
 		$s.='	<option value="'.$appli.'&amp;filtre_auteur=-1&amp;filtre_referent=0&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
-	$s.='
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("noscriptnavmenupopup").style.display = "none";
-//]]>
-</script>'."\n".'</form>'."\n";
+	$s.='</form>'."\n";
 	$s.='</th>';
 // VERROU
 	$s.='<th width="'.$width.'">'.get_string('filtre_verrou','referentiel');
@@ -119,12 +114,7 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_verrou\').fi
 	}
 
 	$s.='</select>'."\n";
-	$s.='
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("noscriptnavmenupopup").style.display = "none";
-//]]>
-</script>'."\n".'</form>'."\n";
+	$s.='</form>'."\n";
 	$s.='</th>';
 	
 // VALIDE
@@ -156,49 +146,44 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_valide\').fi
 	}
 
 	$s.='</select>'."\n";
-	$s.='
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("noscriptnavmenupopup").style.display = "none";
-//]]>
-</script>'."\n".'</form>'."\n";
+	$s.='</form>'."\n";
 	$s.='</th>';
 
 // teacher
+// MODIF JF 2013/01/30
+$s.='<th width="'.$width.'">&nbsp;</th>'."\n";
+
+/*
 	$s.='<th width="'.$width.'">'.get_string('suivi','referentiel');
 	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_referent" class="popupform">'."\n";
 	$s.=' <select id="selectetab_filtre_referent" name="filtre_referent" size="1"
 onchange="self.location=document.getElementById(\'selectetab_filtre_referent\').filtre_referent.options[document.getElementById(\'selectetab_filtre_referent\').filtre_referent.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
 		if ($data->filtre_referent=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('examine','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('non_examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&filtre_referent=0&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&filtre_referent=1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&filtre_referent=-1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('non_examine','referentiel').'</option>'."\n";
 		}
 		else if ($data->filtre_referent=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('examine','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('non_examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&filtre_referent=0&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&filtre_referent=1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&filtre_referent=-1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('non_examine','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('examine','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('non_examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&filtre_referent=0&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&filtre_referent=1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&filtre_referent=-1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('non_examine','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_referent=1&amp;filtre_auteur=0&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0">'.get_string('examine','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_referent=-1&amp;filtre_auteur=0&amp;filtre_auteur=0&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_date_decisiont=0&amp;filtre_date_decision=0">'.get_string('non_examine','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&filtre_referent=0&filtre_auteur=0&filtre_verrou=0&filtre_date_decision=0&filtre_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&filtre_referent=1&filtre_auteur=0&filtre_verrou=0&filtre_date_decision=0&filtre_date_decision=0">'.get_string('examine','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&filtre_referent=-1&filtre_auteur=0&filtre_auteur=0&filtre_verrou=0&filtre_date_decisiont=0&filtre_date_decision=0">'.get_string('non_examine','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
-	$s.='
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("noscriptnavmenupopup").style.display = "none";
-//]]>
-</script>'."\n".'</form>'."\n";
+	$s.='</form>'."\n";
 	$s.='</th>';
+*/
 
 
 	$s.='<th width="'.$width.'">'.get_string('filtre_date_decision','referentiel');
@@ -228,12 +213,7 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_date_decisio
 		$s.='	<option value="'.$appli.'1&amp;filtre_auteur=0&amp;filtre_date_decision=-1&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_verrou=0&amp;filtre_valide=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
-	$s.='
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("noscriptnavmenupopup").style.display = "none";
-//]]>
-</script>'."\n".'</form>'."\n";
+	$s.='</form>'."\n";
 	$s.='</th>';
 
 	if ($oklistesimple){

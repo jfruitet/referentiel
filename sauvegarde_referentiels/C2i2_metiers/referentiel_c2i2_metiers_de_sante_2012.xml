@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<referentiel>
+ <name>Référentiel C2i2 "Métiers de la santé"</name>
+ <code_referentiel>C2i2ms</code_referentiel>
+ <description_referentiel>
+<text>Certificat Informatique et Internet de niveau 2 spécialité Métiers de la Santé</text>
+</description_referentiel>
+ <url_referentiel></url_referentiel>
+ <seuil_certificat>0</seuil_certificat>
+ <minima_certificat>0</minima_certificat>
+ <timemodified>1341565118</timemodified>
+ <nb_domaines>4</nb_domaines>
+ <liste_codes_competence>MS1.1.1/MS1.2.1/MS2.1.1/MS2.2.1/MS2.3.1/MS3.1.1/MS3.2.1/MS3.3.1/MS4.1.1/MS4.2.1/MS4.3.1/MS4.4.1/MS4.5.1/</liste_codes_competence>
+ <liste_empreintes_competence>/////////////</liste_empreintes_competence>
+ <label_domaine_occurrence></label_domaine_occurrence>
+ <label_competence_occurrence></label_competence_occurrence>
+ <label_item_occurrence></label_item_occurrence>
+ <protocole>
+  <p_seuil_referentiel>0</p_seuil_referentiel>
+  <p_minima_referentiel>0</p_minima_referentiel>
+  <p_domaines_oblig>
+<text>MS1:0/MS2:0/MS3:0/MS4:0/</text>
+</p_domaines_oblig>
+  <p_seuils_domaines>
+<text>MS1:0.0/MS2:0.0/MS3:0.0/MS4:0.0/</text>
+</p_seuils_domaines>
+  <p_minimas_domaines>
+<text>MS1:0/MS2:0/MS3:0/MS4:0/</text>
+</p_minimas_domaines>
+  <p_competences_oblig>
+<text>MS1.1:0/MS1.2:0/MS1.3:0/MS2.1:0/MS2.2:0/MS2.3:0/MS3.1:0/MS3.2:0/MS3.3:0/MS4.1:0/MS4.2:0/MS4.3:0/MS4.4:0/MS4.5:0/</text>
+</p_competences_oblig>
+  <p_seuils_competences>
+<text>MS1.1:0.0/MS1.2:0.0/MS1.3:0.0/MS2.1:0.0/MS2.2:0.0/MS2.3:0.0/MS3.1:0.0/MS3.2:0.0/MS3.3:0.0/MS4.1:0.0/MS4.2:0.0/MS4.3:0.0/MS4.4:0.0/MS4.5:0.0/</text>
+</p_seuils_competences>
+  <p_minimas_competences>
+<text>MS1.1:0/MS1.2:0/MS1.3:0/MS2.1:0/MS2.2:0/MS2.3:0/MS3.1:0/MS3.2:0/MS3.3:0/MS4.1:0/MS4.2:0/MS4.3:0/MS4.4:0/MS4.5:0/</text>
+</p_minimas_competences>
+  <p_items_oblig>
+<text>MS1.1.1:0/MS1.2.1:0/MS1.3.1:0/MS2.1.1:0/MS2.2.1:0/MS2.3.1:0/MS3.1.1:0/MS3.2.1:0/MS3.3.1:0/MS4.1.1:0/MS4.2.1:0/MS4.3.1:0/MS4.4.1:0/MS4.5.1:0/</text>
+</p_items_oblig>
+  <p_timemodified>1341565569</p_timemodified>
+  <p_actif>0</p_actif>
+  <p_commentaire>
+<text></text>
+</p_commentaire>
+
+ </protocole>
+
+ <domaine>
+  <code_domaine>MS1</code_domaine>
+  <description_domaine>
+<text>Connaître et respecter les droits et obligations liés aux activités numériques en contexte professionnel</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>3</nb_competences>
+
+  <competence>
+   <code_competence>MS1.1</code_competence>
+   <description_competence>
+<text>Respecter et intégrer la législation relative à la protection des libertés individuelles</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS1.1.1</code>
+    <description_item>
+<text>Respecter et intégrer la législation relative à la protection des libertés individuelles</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS1.2</code_competence>
+   <description_competence>
+<text>Respecter et intégrer la législation sur les oeuvres numériques liées au domaine professionnel</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS1.2.1</code>
+    <description_item>
+<text>Respecter et intégrer la législation sur les oeuvres numériques liées au domaine professionnel</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS1.3</code_competence>
+   <description_competence>
+<text>Respecter et intégrer les aspects légaux liés à la protection et à l'accessibilité des données professionnelles</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>0</nb_item_competences>
+
+      <item>
+    <code>MS1.3.1</code>
+    <description_item>
+<text>Respecter et intégrer les aspects légaux liés à la protection et à l'accessibilité des données professionnelles</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>MS2</code_domaine>
+  <description_domaine>
+<text>Maîtriser les stratégies de recherche, d'exploitation et de valorisation de l'information numérique</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>2</num_domaine>
+  <nb_competences>3</nb_competences>
+
+  <competence>
+   <code_competence>MS2.1</code_competence>
+   <description_competence>
+<text>Élaborer et mettre en œuvre une stratégie de recherche d’informations en contexte professionnel</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS2.1.1</code>
+    <description_item>
+<text>Élaborer et mettre en œuvre une stratégie de recherche d’informations en contexte professionnel</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS2.2</code_competence>
+   <description_competence>
+<text>Élaborer et mettre en œuvre une stratégie de veille informationnelle en contexte professionnel</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS2.2.1</code>
+    <description_item>
+<text>Élaborer et mettre en œuvre une stratégie de veille informationnelle en contexte professionnel</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS2.3</code_competence>
+   <description_competence>
+<text>Élaborer une stratégie de développement et de valorisation des compétences professionnelles</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS2.3.1</code>
+    <description_item>
+<text>Élaborer une stratégie de développement et de valorisation des compétences professionnelles</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>MS3</code_domaine>
+  <description_domaine>
+<text>Organiser des collaborations professionnelles avec le numérique</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>3</num_domaine>
+  <nb_competences>3</nb_competences>
+
+  <competence>
+   <code_competence>MS3.1</code_competence>
+   <description_competence>
+<text>Organiser un travail collaboratif en utilisant les technologies numériques</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS3.1.1</code>
+    <description_item>
+<text>Organiser un travail collaboratif en utilisant les technologies numériques</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS3.2</code_competence>
+   <description_competence>
+<text>Coordonner et animer des activités collaboratives dans un environnement numérique</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS3.2.1</code>
+    <description_item>
+<text>Coordonner et animer des activités collaboratives dans un environnement numérique</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS3.3</code_competence>
+   <description_competence>
+<text>Adapter, modifier et transmettre des données en respectant l’interopérabilité dans un contexte de travail collaboratif professionnel</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS3.3.1</code>
+    <description_item>
+<text>Adapter, modifier et transmettre des données en respectant l’interopérabilité dans un contexte de travail collaboratif professionnel</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>MS4</code_domaine>
+  <description_domaine>
+<text>Maîtriser le système et le traitement de l'information de santé</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>4</num_domaine>
+  <nb_competences>5</nb_competences>
+
+  <competence>
+   <code_competence>MS4.1</code_competence>
+   <description_competence>
+<text>Gérer et diffuser des connaissances en santé</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS4.1.1</code>
+    <description_item>
+<text>Gérer et diffuser des connaissances en santé</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS4.2</code_competence>
+   <description_competence>
+<text>Recueillir et archiver des données dans les systèmes d'information de santé</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS4.2.1</code>
+    <description_item>
+<text>Recueillir et archiver des données dans les systèmes d'information de santé</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS4.3</code_competence>
+   <description_competence>
+<text>Maîtriser les outils décisionnels et de pilotage dans les systèmes d'information de santé</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS4.3.1</code>
+    <description_item>
+<text>Maîtriser les outils décisionnels et de pilotage dans les systèmes d'information de santé</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS4.4</code_competence>
+   <description_competence>
+<text>Maîtriser la communication des données dans les systèmes d'information de santé</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>4</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS4.4.1</code>
+    <description_item>
+<text>Maîtriser la communication des données dans les systèmes d'information de santé</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MS4.5</code_competence>
+   <description_competence>
+<text>Connaître et s'initier aux logiciels métiers en santé</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>5</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MS4.5.1</code>
+    <description_item>
+<text>Connaître et s'initier aux logiciels métiers en santé</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+
+</referentiel>
+

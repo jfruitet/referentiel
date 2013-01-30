@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<referentiel>
+ <name>Référentiel C2i2 "Métiers du Droit"</name>
+ <code_referentiel>C2i2mdd</code_referentiel>
+ <description_referentiel>
+<text>Certificat Informatique et Internet de niveau 2 spécialité Métiers du Droit</text>
+</description_referentiel>
+ <url_referentiel></url_referentiel>
+ <seuil_certificat>0</seuil_certificat>
+ <minima_certificat>0</minima_certificat>
+ <timemodified>1341566113</timemodified>
+ <nb_domaines>6</nb_domaines>
+ <liste_codes_competence>MD1.1.1/MD1.2.1/MD1.3.1/MD2.1.1/MD2.2.1/MD2.3.1/MD3.1.1/MD3.2.1/MD3.3.1/MD4.1.1/MD4.2.1/MD4.3.1/MD4.4.1/MD5.1.1/MD5.2.1/MD5.3.1/MD6.1.1/MD6.2.1/</liste_codes_competence>
+ <liste_empreintes_competence>1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/1/</liste_empreintes_competence>
+ <label_domaine_occurrence></label_domaine_occurrence>
+ <label_competence_occurrence></label_competence_occurrence>
+ <label_item_occurrence></label_item_occurrence>
+ <protocole>
+  <p_seuil_referentiel>0</p_seuil_referentiel>
+  <p_minima_referentiel>0</p_minima_referentiel>
+  <p_domaines_oblig>
+<text>MD1:0/MD2:0/MD3:0/MD4:0/MD5:0/MD6:0/</text>
+</p_domaines_oblig>
+  <p_seuils_domaines>
+<text>MD1:0.0/MD2:0.0/MD3:0.0/MD4:0.0/MD5:0.0/MD6:0.0/</text>
+</p_seuils_domaines>
+  <p_minimas_domaines>
+<text>MD1:0/MD2:0/MD3:0/MD4:0/MD5:0/MD6:0/</text>
+</p_minimas_domaines>
+  <p_competences_oblig>
+<text>MD1.1:0/MD1.2:0/MD1.3:0/MD2.1:0/MD2.2:0/MD2.3:0/MD3.1:0/MD3.2:0/MD3.3:0/MD4.1:0/MD4.2:0/MD4.3:0/MD4.4:0/MD5.1:0/MD5.2:0/MD5.3:0/MD6.1:0/MD6.2:0/</text>
+</p_competences_oblig>
+  <p_seuils_competences>
+<text>MD1.1:0.0/MD1.2:0.0/MD1.3:0.0/MD2.1:0.0/MD2.2:0.0/MD2.3:0.0/MD3.1:0.0/MD3.2:0.0/MD3.3:0.0/MD4.1:0.0/MD4.2:0.0/MD4.3:0.0/MD4.4:0.0/MD5.1:0.0/MD5.2:0.0/MD5.3:0.0/MD6.1:0.0/MD6.2:0.0/</text>
+</p_seuils_competences>
+  <p_minimas_competences>
+<text>MD1.1:0/MD1.2:0/MD1.3:0/MD2.1:0/MD2.2:0/MD2.3:0/MD3.1:0/MD3.2:0/MD3.3:0/MD4.1:0/MD4.2:0/MD4.3:0/MD4.4:0/MD5.1:0/MD5.2:0/MD5.3:0/MD6.1:0/MD6.2:0/</text>
+</p_minimas_competences>
+  <p_items_oblig>
+<text>MD1.1.1:0/MD1.2.1:0/MD1.3.1:0/MD2.1.1:0/MD2.3.1:0/MD2.2.1:0/MD3.1.1:0/MD3.2.1:0/MD3.3.1:0/MD4.1.1:0/MD4.2.1:0/MD4.3.1:0/MD4.4.1:0/MD5.1.1:0/MD5.2.1:0/MD6.2.1:0/MD5.3.1:0/MD6.1.1:0/</text>
+</p_items_oblig>
+  <p_timemodified>1341566552</p_timemodified>
+  <p_actif>0</p_actif>
+  <p_commentaire>
+<text></text>
+</p_commentaire>
+
+ </protocole>
+
+ <domaine>
+  <code_domaine>MD1</code_domaine>
+  <description_domaine>
+<text>Connaître et respecter les droits et obligations liés aux activités numériques en contexte professionnel</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>3</nb_competences>
+
+  <competence>
+   <code_competence>MD1.1</code_competence>
+   <description_competence>
+<text>Respecter et intégrer la législation relative à la protection des libertés individuelles</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD1.1.1</code>
+    <description_item>
+<text>Respecter et intégrer la législation relative à la protection des libertés individuelles</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD1.2</code_competence>
+   <description_competence>
+<text>Respecter et intégrer la législation sur les oeuvres numériques liées au domaine professionnel</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD1.2.1</code>
+    <description_item>
+<text>Respecter et intégrer la législation sur les oeuvres numériques liées au domaine professionnel</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD1.3</code_competence>
+   <description_competence>
+<text>Respecter et intégrer les aspects légaux liés à la protection et à l'accessibilité des données professionnelles</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD1.3.1</code>
+    <description_item>
+<text>Respecter et intégrer les aspects légaux liés à la protection et à l'accessibilité des données professionnelles</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>MD2</code_domaine>
+  <description_domaine>
+<text>Maîtriser les stratégies de recherche, d'exploitation et de valorisation de l'information numérique</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>3</nb_competences>
+
+  <competence>
+   <code_competence>MD2.1</code_competence>
+   <description_competence>
+<text>Élaborer et mettre en œuvre une stratégie de recherche d’informations en contexte professionnel</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD2.1.1</code>
+    <description_item>
+<text>Élaborer et mettre en œuvre une stratégie de recherche d’informations en contexte professionnel</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD2.2</code_competence>
+   <description_competence>
+<text>Élaborer et mettre en œuvre une stratégie de veille informationnelle en contexte professionnel</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD2.2.1</code>
+    <description_item>
+<text>Élaborer et mettre en œuvre une stratégie de veille informationnelle en contexte professionnel</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD2.3</code_competence>
+   <description_competence>
+<text>Élaborer une stratégie de développement et de valorisation des compétences professionnelles</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD2.3.1</code>
+    <description_item>
+<text>Élaborer une stratégie de développement et de valorisation des compétences professionnelles</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>MD3</code_domaine>
+  <description_domaine>
+<text>Organiser des collaborations professionnelles avec le numérique</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>3</nb_competences>
+
+  <competence>
+   <code_competence>MD3.1</code_competence>
+   <description_competence>
+<text>Organiser un travail collaboratif en utilisant les technologies numériques</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD3.1.1</code>
+    <description_item>
+<text>Organiser un travail collaboratif en utilisant les technologies numériques</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD3.2</code_competence>
+   <description_competence>
+<text>Coordonner et animer des activités collaboratives dans un environnement numérique</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD3.2.1</code>
+    <description_item>
+<text>Coordonner et animer des activités collaboratives dans un environnement numérique</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD3.3</code_competence>
+   <description_competence>
+<text>Adapter, modifier et transmettre des données en respectant l’interopérabilité dans un contexte de travail collaboratif professionnel</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD3.3.1</code>
+    <description_item>
+<text>Adapter, modifier et transmettre des données en respectant l’interopérabilité dans un contexte de travail collaboratif professionnel</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>MD4</code_domaine>
+  <description_domaine>
+<text>Maîtriser le cycle de vie d’un document juridique</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>4</nb_competences>
+
+  <competence>
+   <code_competence>MD4.1</code_competence>
+   <description_competence>
+<text>Elaborer des actes électroniques et utiliser des systèmes d’aide à l’élaboration d’actes</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD4.1.1</code>
+    <description_item>
+<text>Elaborer des actes électroniques et utiliser des systèmes d’aide à l’élaboration d’actes</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD4.2</code_competence>
+   <description_competence>
+<text>Maîtriser les échanges numériques entre acteurs judiciaires ou juridiques et les services offerts aux citoyens</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD4.2.1</code>
+    <description_item>
+<text>Maîtriser les échanges numériques entre acteurs judiciaires ou juridiques et les services offerts aux citoyens</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD4.3</code_competence>
+   <description_competence>
+<text>Sécuriser les échanges numériques</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD4.3.1</code>
+    <description_item>
+<text>Sécuriser les échanges numériques</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD4.4</code_competence>
+   <description_competence>
+<text>Archiver l’information</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>4</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD4.4.1</code>
+    <description_item>
+<text>Archiver l’information</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>MD5</code_domaine>
+  <description_domaine>
+<text>Maîtriser les enjeux de l’économie numérique</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>3</nb_competences>
+
+  <competence>
+   <code_competence>MD5.1</code_competence>
+   <description_competence>
+<text>Maîtriser le contexte</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD5.1.1</code>
+    <description_item>
+<text>Maîtriser le contexte</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD5.2</code_competence>
+   <description_competence>
+<text>Identifier les acteurs</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD5.2.1</code>
+    <description_item>
+<text>Identifier les acteurs</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD5.3</code_competence>
+   <description_competence>
+<text>Maîtriser les outils</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>3</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD5.3.1</code>
+    <description_item>
+<text>Maîtriser les outils</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+ <domaine>
+  <code_domaine>MD6</code_domaine>
+  <description_domaine>
+<text>Prévenir les risques liés à la cybercriminalité</text>
+</description_domaine>
+  <type_domaine>0</type_domaine>
+  <seuil_domaine>0.0</seuil_domaine>
+  <minima_domaine>0</minima_domaine>
+  <num_domaine>1</num_domaine>
+  <nb_competences>2</nb_competences>
+
+  <competence>
+   <code_competence>MD6.1</code_competence>
+   <description_competence>
+<text>Maîtriser la législation et la jurisprudence en matière de cybercriminalité</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>1</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD6.1.1</code>
+    <description_item>
+<text>Maîtriser la législation et la jurisprudence en matière de cybercriminalité</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+  <competence>
+   <code_competence>MD6.2</code_competence>
+   <description_competence>
+<text>Prévenir des actes de cybercriminalité dans un contexte professionnel</text>
+</description_competence>
+   <type_competence>0</type_competence>
+   <seuil_competence>0.0</seuil_competence>
+   <minima_competence>0</minima_competence>
+   <num_competence>2</num_competence>
+   <nb_item_competences>1</nb_item_competences>
+
+   <item>
+    <code>MD6.2.1</code>
+    <description_item>
+<text>Prévenir des actes de cybercriminalité dans un contexte professionnel</text>
+</description_item>
+    <type_item>0</type_item>
+    <poids_item>1</poids_item>
+    <empreinte_item>1</empreinte_item>
+    <num_item>1</num_item>
+   </item>
+
+  </competence>
+
+ </domaine>
+
+
+</referentiel>
+

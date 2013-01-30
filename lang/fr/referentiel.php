@@ -2,6 +2,8 @@
 // ----------------
 // UTF-8 French
 // V8.03
+// Moodle 8.1
+$string['a_evaluer'] = 'A évaluer';
 $string['missingtype'] = '"Type" manquant';
 $string['missingdescription'] = '"Description" manquante';
 

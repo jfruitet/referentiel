@@ -233,19 +233,26 @@ include('print_lib_task.php');	// AFFICHAGES TACHES
 			else
 				$sql_filtre_where.=' AND approved=\'0\' ';
 		}
+		// Modif JF 2013/01/29
 		if (isset($filtre_referent) && ($filtre_referent=='1')){
 			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND teacherid<>0  ';
+				$sql_filtre_where.=' AND ((date_modif<date_modif_student)  AND (approved=0)) ';
 			else
-				$sql_filtre_where.=' AND teacherid<>0  ';
+				$sql_filtre_where.=' AND ((date_modif<date_modif_student) AND (approved=0))  ';
 		}
 		else if (isset($filtre_referent) && ($filtre_referent=='-1')){
+/*
 			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND teacherid=0  ';
+				$sql_filtre_where.=' AND (teacherid<>0)  ';
 			else
-				$sql_filtre_where.=' AND teacherid=0  ';
+				$sql_filtre_where.=' AND (teacherid<>0)  ';
+*/
+			if ($sql_filtre_where!='')
+				$sql_filtre_where.=' AND (date_modif>=date_modif_student) ';
+			else
+				$sql_filtre_where.=' AND (date_modif>=date_modif_student)  ';
 		}
-		
+
 		if (isset($filtre_date_modif) && ($filtre_date_modif=='1')){
 			if ($sql_filtre_order!='')
 				$sql_filtre_order.=', date_modif ASC ';

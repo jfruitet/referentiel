@@ -1304,7 +1304,7 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_auteur\').fi
 	if ($oklistesimple){
 		$s.='<th width="25%">'.get_string('liste_codes_competence','referentiel').'</th>';
 	}
-	$s.='<th width="'.$width.'">'.get_string('suivi','referentiel');
+	$s.='<th width="'.$width.'">'.get_string('a_evaluer','referentiel');
 	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_referent" class="popupform">'."\n";
 	$s.=' <select id="selectetab_filtre_referent" name="filtre_referent" size="1" 
 onchange="self.location=document.getElementById(\'selectetab_filtre_referent\').filtre_referent.options[document.getElementById(\'selectetab_filtre_referent\').filtre_referent.selectedIndex].value;">'."\n";
@@ -1362,14 +1362,6 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_validation\'
 	}
 	
 	$s.='</select>'."\n";
-/*
-	$s.='
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("noscriptnavmenupopup").style.display = "none";
-//]]>
-</script>'."\n";
-*/
     $s.='</form>'."\n";
 	$s.='</th>';
 	
@@ -1400,14 +1392,6 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_date_modif_s
 		$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=-1&amp;filtre_auteur=0&amp;filtre_date_modif=0&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_validation=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
-/*
-	$s.='
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("noscriptnavmenupopup").style.display = "none";
-//]]>
-</script>'."\n";
-*/
     $s.='</form>'."\n";
 	$s.='</th>';	
 
@@ -1438,14 +1422,6 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_date_modif\'
 		$s.='	<option value="'.$appli.'&amp;filtre_date_modif=-1&amp;filtre_auteur=0&amp;filtre_date_modif_student=0&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_validation=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
-/*
-	$s.='
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("noscriptnavmenupopup").style.display = "none";
-//]]>
-</script>'."\n";
-*/
     $s.='</form>'."\n";
 	$s.='</th>';
     $s.='</tr>'."\n";

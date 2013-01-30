@@ -1,6 +1,7 @@
 <?php
 // referentiel module
 // V8.03
+$string['a_evaluer'] = 'To evaluate';
 $string['missingtype'] = 'Type is missing';
 $string['missingdescription'] = '"Description" is missing';
 
