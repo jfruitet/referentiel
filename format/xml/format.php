@@ -1145,13 +1145,14 @@ class aformat_xml extends aformat_default {
             $description_document = $this->writetext(trim($document->description_document));
 			$url_document = $this->writeraw( $document->url_document);
             $ref_activite = $this->writeraw( $document->ref_activite);
-
+            $timestamp = $this->writeraw( $document->timestamp );
             $expout .= "<document>\n";
 			$expout .= "<id>$id</id>\n";
 			$expout .= "<type_document>$type_document</type_document>\n";   
             $expout .= "<description_document>\n$description_document</description_document>\n";
             $expout .= "<url_document>$url_document</url_document>\n";
             $expout .= "<ref_activite>$ref_activite</ref_activite>\n";
+            $expout .= "<timestamp>$timestamp</timestamp>\n";
 			$expout .= "</document>\n";   
         }
         return $expout;
@@ -2642,7 +2643,8 @@ class tformat_xml extends tformat_default {
             $description_consigne = $this->writetext(trim($consigne->description_consigne));
 			$url_consigne = $this->writeraw( $consigne->url_consigne);
             $ref_task = $this->writeraw( $consigne->ref_task);
-
+            $timestamp = $this->writeraw( $consigne->timestamp );
+            $expout .= "<timestamp>$timestamp</timestamp>\n";
             $expout .= "<consigne>\n";
 			$expout .= "<id>$id</id>\n";
 			$expout .= "<type_consigne>$type_consigne</type_consigne>\n";   
@@ -2654,6 +2656,7 @@ class tformat_xml extends tformat_default {
             }
             $expout .= "<url_consigne>$url_consigne</url_consigne>\n";
             $expout .= "<ref_task>$ref_task</ref_task>\n";
+            $expout .= "<timestamp>$timestamp</timestamp>\n";
 			$expout .= "</consigne>\n";   
         }
         return $expout;
@@ -3138,7 +3141,7 @@ CREATE TABLE mdl_referentiel_referentiel (
 						    $new_consigne->type_consigne=$this->getpath( $xmlconsigne, array('#','type_consigne',0,'#'), '', true, $error_nocode);
 						    $new_consigne->description_consigne=$this->getpath( $xmlconsigne, array('#','description_consigne',0,'#','text',0,'#'), '', true, '');
 						    $new_consigne->url_consigne=$this->getpath( $xmlconsigne, array('#','url_consigne',0,'#'), '', true, $error_nocode);
-
+                            $new_consigne->timestamp = $this->getpath( $xmlconsigne, array('#','timestamp',0,'#'), '', false, '');
                             // MODIF JF 2012/10/09
                             // necessite de passer à l'API de Moodle 2
                             // A FAIRE

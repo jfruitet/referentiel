@@ -1321,7 +1321,8 @@ class aformat_csv extends aformat_default {
             $description_document = $this->purge_sep($document->description_document);
 			$url_document = $document->url_document;
             $ref_activite = $document->ref_activite;
-            $expout .= "$id_document;".stripslashes($this->output_codage_caractere($type_document)).";".stripslashes($this->output_codage_caractere($description_document)).";$url_document;$ref_activite\n";   
+            $timestamp = $document->timestamp;
+            $expout .= "$id_document;".stripslashes($this->output_codage_caractere($type_document)).";".stripslashes($this->output_codage_caractere($description_document)).";$url_document;$ref_activite;$timestamp\n";
         }
         return $expout;
     }
@@ -1369,7 +1370,7 @@ class aformat_csv extends aformat_default {
 			$records_documents = referentiel_get_documents($activite->id);
 			
 			if ($records_documents){
-				$expout .= "#id_document;type_document;description_document;url_document;ref_activite\n";
+				$expout .= "#id_document;type_document;description_document;url_document;ref_activite;timestamp\n";
 				foreach ($records_documents as $record_d){
 					$expout .= $this->write_document( $record_d );
 				}
@@ -3270,7 +3271,8 @@ class tformat_csv extends tformat_default {
             $description_consigne = $this->purge_sep($consigne->description_consigne);
 			$url_consigne = $consigne->url_consigne;
             $ref_task = $consigne->ref_task;
-            $expout .= "$id_consigne;".stripslashes($this->output_codage_caractere($type_consigne)).";".stripslashes($this->output_codage_caractere($description_consigne)).";$url_consigne;$ref_task\n";   
+            $tiemstamp= $consigne->timestamp;
+            $expout .= "$id_consigne;".stripslashes($this->output_codage_caractere($type_consigne)).";".stripslashes($this->output_codage_caractere($description_consigne)).";$url_consigne;$ref_task;$timestamp\n";
         }
         return $expout;
     }
@@ -3312,7 +3314,7 @@ class tformat_csv extends tformat_default {
 			$records_consignes = referentiel_get_consignes($task->id);
 			
 			if ($records_consignes){
-				$expout .= "#id_consigne;type_consigne;description_consigne;url_consigne;ref_task\n";
+				$expout .= "#id_consigne;type_consigne;description_consigne;url_consigne;ref_task;timestamp\n";
 				foreach ($records_consignes as $record_d){
 					$expout .= $this->write_consigne( $record_d );
 				}

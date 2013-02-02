@@ -362,7 +362,7 @@ class zformat_xml extends zformat_default {
             $description_document = $this->writetext(trim($document->description_document));
 			$url_document = $this->writeraw( $document->url_document);
             $ref_activite = $this->writeraw( $document->ref_activite);
-
+            $timestamp = $this->writeraw( $document->timestamp );
             if (!empty($url_document) && !preg_match("/http/",$url_document)){
                 if ($this->export_documents){
                 // le fichier est copié dans le dossier temporaire moodledata/archive/referentiel_id/document_files
@@ -385,6 +385,7 @@ class zformat_xml extends zformat_default {
             $expout .= "<description_document>\n$description_document</description_document>\n";
             $expout .= "<url_document>$url_document</url_document>\n";
             $expout .= "<ref_activite>$ref_activite</ref_activite>\n";
+            $expout .= "<timestamp>$timestamp</timestamp>\n";
 			$expout .= "</document>\n";
 			
         }
