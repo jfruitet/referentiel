@@ -531,12 +531,17 @@ function referentiel_print_task_detail($record_t){
                 else{
 					$etiquette_consigne='';
                 }
-					
+				// Modif JF 2013/02/02
+				$date_creation=userdate($record_d->timestamp);
                 $s.='<!-- consigne -->
 <tr valign="top">
 <td class="jaune">
 <b>'.get_string('consigne','referentiel').'</b><br />
 <i>'.$consigne_id.'</i>
+</td>
+<td class="jaune">
+<b>'.get_string('date_creation','referentiel').'</b><br />
+<i>'.$date_creation.'</i>
 </td>
 <td class="jaune">
 <b>'.get_string('type','referentiel').'</b><br />	
@@ -546,7 +551,7 @@ function referentiel_print_task_detail($record_t){
 <b>'.get_string('description','referentiel').'</b>	
 <br />'.nl2br($description_consigne).' 
 </td>
-<td align="center" colspan="2" class="jaune">
+<td align="center" class="jaune">
 <b>'.get_string('url','referentiel').'</b><br />
 ';
         

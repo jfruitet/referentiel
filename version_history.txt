@@ -1,4 +1,4 @@
-﻿Moodle module referentiel 
+Moodle module referentiel 
 Module Moodle - Référentiel / Skills repository - Documentation
 jean.fruitet@univ-nantes.fr
 2007/2012
@@ -14,6 +14,17 @@ Historique des versions
 
 Référentiel pour Moodle 2.4
 ----------------------------------
+
+Version 8.03 (2012101000) Release for Moodle 2.4 - 2013-02-02
+1) Les portfolio Mahara sont supportés (il l'étaient mal avec la version pour 2.3)
+2) J'ai un peu modifié les filtres d'affichage des activités pour faciliter le suivi des déclarations à évaluer (suite à une modification par l'étudiant)
+3) La mise à jour ou le dépôt d'un nouveau document attaché soit propagé dans la date associée à l'activité.
+Cela induit l'affichage de ces activités sur fond rose magenta pour les profs.
+4) La nouvelle fonctionnalité "Fermeture du dossier numérique" permet de verrouiller toutes les parties du dossier. Plus personne ne peut y modifier quoi que ce soit (bon c'est bien sûr réversible) et il n'est plus possible pour l'étudiant de déclarer de nouvelles compétences.
+5) Import des décisions du jury à partir d'un fichier CSV ou XML. L'import permet de créer des pseudos activités dans le dossier numérique pour les compétences décernées à titre gracieux par le Jury.
+ Cet import FERME (clôture et verrouillage) le dossier numérique.
+6) Affichage dans la description d'une activité d'un lien vers l'instance à laquelle appartient l'activité. Cela permet de détecter des erreurs de conception comme celle qui consiste à conserver dans le même cours deux instances d'une même occurrence...
+
 Version 8.02 (2012101000) Release for Moodle 2.4 - 
 
 Mise à jour du 2013/01/26

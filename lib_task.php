@@ -431,7 +431,8 @@ $ok=true;
 		else{
 			$consigne->etiquette_consigne='';
 		}
-		
+		// Modif JF 2013/02/02
+		$consigne->timestamp=time();
    		// DEBUG
 		// print_object($consigne);
     	// echo "<br />";
@@ -456,11 +457,18 @@ $ok=true;
 		else{
 			$consigne->etiquette_consigne='';
 		}
-		
+		// Modif JF 2013/02/02
+		$consigne->timestamp=time();
    		// DEBUG
 		// print_object($consigne);
     	// echo "<br />";
 		$ok = $DB->insert_record("referentiel_consigne", $consigne);
+        if ($ok){
+            $task = $DB->get_record('referentiel_task', array('id' => $consigne->ref_task));
+            if ($task){
+                $ok=$DB->set_field('referentiel_task','date_modif',time(), array('id'=>$task->id));
+            }
+        }
     	// echo "consigne ID / $ok<br />";
 		// exit;
 	}
@@ -495,11 +503,18 @@ global $DB;
 		else{
 			$consigne->etiquette_consigne='';
 		}
-		
+		// Modif JF 2013/02/02
+		$consigne->timestamp=time();
    		// DEBUG
 		// print_object($consigne);
     	// echo "<br />";
-		return $DB->update_record("referentiel_consigne", $consigne);
+		if ($DB->update_record("referentiel_consigne", $consigne)){
+            $task = $DB->get_record('referentiel_task', array('id' => $consigne->ref_task));
+            if ($task){
+                $ok=$DB->set_field('referentiel_task','date_modif',time(), array('id'=>$task->id));
+            }
+            return true;
+        }
 	}
 	return false;
 }
@@ -527,13 +542,20 @@ global $DB;
 		else{
 			$consigne->etiquette_consigne='';
 		}
-		
+		// Modif JF 2013/02/02
+		$consigne->timestamp=time();
    		// DEBUG
 		// print_object($consigne);
     	// echo "<br />";
 		$id_consigne = $DB->insert_record("referentiel_consigne", $consigne);
     	// echo "consigne ID / $ok<br />";
 		// exit;
+        if ($id_consigne){
+            $task = $DB->get_record('referentiel_task', array('id' => $consigne->ref_task));
+            if ($task){
+                $ok=$DB->set_field('referentiel_task','date_modif',time(), array('id'=>$task->id));
+            }
+        }
 	}
     return $id_consigne;
 }

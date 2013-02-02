@@ -615,7 +615,8 @@ $ok=true;
 		else{
 			$document->etiquette_document='';
 		}
-
+		// Modif JF 2013/02/02
+		$document->timestamp=time();
    		// DEBUG
 		// print_object($document);
     	// echo "<br />";
@@ -652,7 +653,8 @@ $ok=true;
 		else{
 			$document->etiquette_document='';
 		}
-
+		// Modif JF 2013/02/02
+		$document->timestamp=time();
    		// DEBUG
 		// print_object($document);
     	// echo "<br />";
@@ -746,6 +748,9 @@ global $USER;
 		else{
 			$document->etiquette_document='';
 		}
+		// Modif JF 2013/02/02
+		$document->timestamp=time();
+
 		// DEBUG
 		// print_object($document);
     	// echo "<br />";
@@ -3569,6 +3574,12 @@ $ok_consigne=false;
             }
 
 			$ok_consigne= $DB->delete_records("referentiel_consigne", array("id" => "$id"));
+			if ($ok_consigne){
+                $task = $DB->get_record('referentiel_task', array('id' => $consigne->ref_task));
+                if ($task){
+                    $ok=$DB->set_field('referentiel_task','date_modif',time(), array('id'=>$task->id));
+                }
+            }
 		}
 	}
 	return $ok_consigne;

@@ -179,7 +179,8 @@
         <FIELD NAME="url_document" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="description_document" NEXT="ref_activite"/>
         <FIELD NAME="ref_activite" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="url_document" NEXT="cible_document"/>
         <FIELD NAME="cible_document" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="ref_activite" NEXT="etiquette_document" />
-        <FIELD NAME="etiquette_document" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="cible_document" />
+        <FIELD NAME="etiquette_document" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="cible_document"  NEXT="timestamp" />
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="etiquette_document" />
 	  </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for document"/>
@@ -224,7 +225,8 @@
         <FIELD NAME="url_consigne" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="description_consigne" NEXT="ref_task"/>
         <FIELD NAME="ref_task" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="url_consigne" NEXT="cible_consigne"/>
         <FIELD NAME="cible_consigne" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="ref_task" NEXT="etiquette_consigne" />
-        <FIELD NAME="etiquette_consigne" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="cible_consigne" />
+        <FIELD NAME="etiquette_consigne" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="cible_consigne"  NEXT="timestamp" />
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="etiquette_consigne" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for consigne"/>

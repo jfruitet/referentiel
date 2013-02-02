@@ -1145,6 +1145,7 @@ global $CFG, $USER, $DB, $OUTPUT;
             $document->ref_activite='';
             $document->cible_document=1;
             $document->etiquette_document='';
+            $document->timestamp=time();
 
             $docid = $DB->insert_record("referentiel_document", $document);
             $retour_url=new moodle_url('/mod/referentiel/activite.php', array('d'=>$referentiel_id, 'userid'=>$formdata->userid, 'activite_id'=>$formdata->activiteid, 'mailnow' => $formdata->mailnow, 'mode' => 'listactivityall', 'select_acc' => 0));
@@ -1158,7 +1159,8 @@ global $CFG, $USER, $DB, $OUTPUT;
             $document->ref_task='';
             $document->cible_consigne=1;
             $document->etiquette_consigne='';
-
+            $document->timestamp=time();
+            
             $docid = $DB->insert_record("referentiel_consigne", $document);
             $retour_url= new moodle_url('/mod/referentiel/task.php', array('d'=>$referentiel_id, 'mode' => 'listtasksingle', 'select_acc' => 0));
         }
@@ -1208,7 +1210,7 @@ global $CFG, $USER, $DB, $OUTPUT;
                 }
                 $document->ref_activite=$formdata->activiteid;
                 $document->cible_document=$formdata->cible;
-
+                $document->timestamp=time();
             /*
             echo "<br />DOCID : $docid\n";
             echo "<br />URL : $formdata->url\n";
@@ -1233,7 +1235,18 @@ global $CFG, $USER, $DB, $OUTPUT;
 
                 // print_object($document);
                 // exit;
-                $DB->update_record("referentiel_document", $document);
+                // Modif JF 2013/02/02
+                if ($DB->update_record("referentiel_document", $document)){
+                    $activite = $DB->get_record('referentiel_activite', array('id' => $document->ref_activite));
+                    if ($activite){
+                        if ($USER->id==$activite->userid){
+                            $ok=$DB->set_field('referentiel_activite','date_modif_student',time(),array('id'=>$activite->id));
+                        }
+                        else{
+                            $ok=$DB->set_field('referentiel_activite','date_modif',time(), array('id'=>$activite->id));
+                        }
+                    }
+                }
             }
             else if (!empty($docid) && ($formdata->filearea=='consigne')  && !empty($formdata->activiteid)){
                 $document = new object();
@@ -1248,7 +1261,7 @@ global $CFG, $USER, $DB, $OUTPUT;
                 }
                 $document->ref_task=$formdata->activiteid;
                 $document->cible_consigne=$formdata->cible;
-                
+                $document->timestamp=time();
                 if (!empty($formdata->etiquette)){
                     $document->etiquette_consigne=$formdata->etiquette;
                 }
@@ -1261,7 +1274,12 @@ global $CFG, $USER, $DB, $OUTPUT;
                     }
                 }
                 
-                $DB->update_record("referentiel_consigne", $document);
+                if ($DB->update_record("referentiel_consigne", $document)){
+                    $task = $DB->get_record('referentiel_task', array('id' => $document->ref_task));
+                    if ($task){
+                        $ok=$DB->set_field('referentiel_task','date_modif',time(), array('id'=>$task->id));
+                    }
+                }
             }
             else{
                 //

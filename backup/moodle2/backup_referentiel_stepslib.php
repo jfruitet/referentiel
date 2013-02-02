@@ -151,7 +151,7 @@ class backup_referentiel_activity_structure_step extends backup_activity_structu
         $document = new backup_nested_element('document', array('id'), array(
             'type_document', 'description_document',
             'url_document', 'ref_activite', 'cible_document',
-            'etiquette_document'));
+            'etiquette_document', 'timestamp'));
 
         $activites_modules = new backup_nested_element('activites_modules');
         $activite_module = new backup_nested_element('activite_module', array('id'), array(
@@ -170,7 +170,7 @@ class backup_referentiel_activity_structure_step extends backup_activity_structu
         $consignes = new backup_nested_element('consignes');
         $consigne = new backup_nested_element('consigne', array('id'), array(
             'type_consigne', 'description_consigne',
-            'url_consigne', 'ref_task', 'cible_consigne', 'etiquette_consigne'));
+            'url_consigne', 'ref_task', 'cible_consigne', 'etiquette_consigne', 'timestamp'));
 
         $a_user_tasks = new backup_nested_element('a_user_tasks');
         $a_user_task = new backup_nested_element('a_user_task', array('id'), array(

@@ -1822,6 +1822,27 @@ function xmldb_referentiel_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2012101000, 'referentiel');
     }
+    if ($oldversion < 2013020200){
+        /// Modify referentiel_document
+        /// <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="etiquette_consigne" />
+        $table = new xmldb_table('referentiel_document');
+        $field = new xmldb_field('timestamp');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'etiquette_document');
+        /// Launch add field referentiel_document
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        $table = new xmldb_table('referentiel_consigne');
+        $field = new xmldb_field('timestamp');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'etiquette_consigne');
+        /// Launch add field referentiel_document
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint(true, 2013020200, 'referentiel');
+    }
+    
+
 	return true;
 }
 

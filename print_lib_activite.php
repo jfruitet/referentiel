@@ -2025,8 +2025,9 @@ function referentiel_print_activite_detail($record_a){
 	    	if ($records_document){
     			// afficher
 				// DEBUG
-				// echo "<br/>DEBUG <br />\n";
+				// echo "<br/>DEBUG :: print_lib_activite.php :: Ligne 2028<br />\n";
 				// print_r($records_document);
+				// echo "<br/>\n";
                 $nbressource=count($records_document);
                 $s2.='<!-- DOCUMENTS -->
 <tr valign="top"><td class="jaune" colspan="7">';
@@ -2057,8 +2058,11 @@ function referentiel_print_activite_detail($record_a){
 					else{
 						$etiquette_document='';
 					}
-					
+					// Modif JF 2013/02/02
+					$date_creation=userdate($record_d->timestamp);
                     $s.='<br /><b>'.get_string('num','referentiel').'<i>'.$document_id.'</i></b>
+&nbsp; &nbsp; &nbsp;
+<b>'.get_string('date_creation','referentiel').'</b> : '.$date_creation.'
 &nbsp; &nbsp; &nbsp;
 <b>'.get_string('type','referentiel').'</b> : '.$type_document.'
 &nbsp; &nbsp; &nbsp;
@@ -3254,7 +3258,9 @@ global $COURSE;
 					else{
 						$etiquette_document='';
 					}
-					$s_document.=get_string('document', 'referentiel').' &nbsp; &nbsp; <i>'.$document_id.'</i> &nbsp; &nbsp; '.$type_document.' &nbsp; &nbsp; ';
+					// Modif JF 2013/02/02
+					$date_creation=userdate($record_d->timestamp);
+					$s_document.=get_string('document', 'referentiel').' <i>'.$document_id.' :: '.$date_creation.'</i> :: '.$type_document.' :: ';
 					$s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
 					$s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."<br /> \n";
 				}
