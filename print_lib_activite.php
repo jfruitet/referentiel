@@ -1811,8 +1811,8 @@ global $COURSE;
         // MODIF JF 2012/05/06
         echo referentiel_liste_groupes_user($ref_course, $userid);
 		echo '</td><td align="center">';
-		echo $url_course.'<br />'.$url_instance;
-		echo '</td><td align="center">';
+		echo $url_course.'<br /><i>'.$url_instance;
+		echo '</i></td><td align="center">';
 		echo $type_activite;
 		// Modif JF 06/10/2010
 		if ($ref_task){
@@ -1910,6 +1910,11 @@ function referentiel_print_activite_detail($record_a){
 		}
 		$ref_task = $record_a->ref_task;
 
+		// MODIF JF 2009/10/23
+		$url_course=referentiel_get_course_link($ref_course);
+		// MODIF JF 2013/01/26
+		$url_instance=referentiel_get_instance_link($ref_instance);
+
         // preparation pour overlay
         if (empty($t_item_code) || empty($t_item_description_competence)){
             referentiel_initialise_descriptions_items_referentiel($ref_referentiel);
@@ -1934,7 +1939,10 @@ function referentiel_print_activite_detail($record_a){
         $s0.=' rowspan="';
         
         $s1.='">
-	<b>'.get_string('id_activite','referentiel', $activite_id).'  </b>
+	<b>'.get_string('id_activite','referentiel', $activite_id).'  </b>';
+	   // MODIF JF 2013/01/26
+        $s1.='<br /><br />'.$url_course.'<br /><i>'.$url_instance.'</i>';
+       $s1.='
     </td>
     <td>
 	<b>'.get_string('type_activite','referentiel').'</b><br />'.$type_activite."\n";
@@ -1950,6 +1958,7 @@ function referentiel_print_activite_detail($record_a){
             // documents associés à une tâche
             $s1.=referentiel_print_liste_documents_task($ref_task)."\n";
         }
+
 
         $s1.='</td>
     <td>
@@ -2591,8 +2600,8 @@ global $COURSE;
         // MODIF JF 2012/05/06
         echo referentiel_liste_groupes_user($ref_course, $userid);
 		echo '</td><td align="center">';
-		echo $url_course.'<br />'.$url_instance;
-		echo '</td><td align="center">';
+		echo $url_course.'<br /><i>'.$url_instance;
+		echo '</i></td><td align="center">';
 		if ($ref_course == $COURSE->id){
 			echo '<input type="text" name="type_activite" size="40" maxlength="80" value="'.$type_activite.'" />'."\n";
 		}
@@ -2746,18 +2755,17 @@ global $COURSE;
 global $t_item_code;
 global $t_item_description_competence;
 
-	$s='';
-	$s_menu='';
-	$s_document='';
-	$s_out='';
+$s='';
+$s_menu='';
+$s_document='';
+$s_out='';
 	
-	// Charger les activites
-	// filtres	
-	$isteacher = has_capability('mod/referentiel:approve', $context);
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$isteacher;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);	
-
-	if ($record){
+// Charger les activites
+// filtres
+$isteacher = has_capability('mod/referentiel:approve', $context);
+$isauthor = has_capability('mod/referentiel:write', $context) && !$isteacher;
+$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
+if ($record){
 		$activite_id=$record->id;
 		$type_activite = stripslashes($record->type_activite);
 		$description_activite = stripslashes(strip_tags($record->description_activite));
@@ -2887,6 +2895,7 @@ global $t_item_description_competence;
 					$description_document = stripslashes($record_d->description_document);
 					$url_document = $record_d->url_document;
 					$ref_activite = $record_d->ref_activite;
+
 					if (isset($record_d->cible_document) && ($record_d->cible_document==1)){
 						$cible_document='_blank'; // fenêtre cible
 					}
@@ -2899,9 +2908,11 @@ global $t_item_description_competence;
 					else{
 						$etiquette_document='';
 					}
-					$s_document.=get_string('document', 'referentiel').' &nbsp; &nbsp; <i>'.$document_id.'</i> &nbsp; &nbsp; '.$type_document.' &nbsp; &nbsp; ';
+        			// Modif JF 2013/02/02
+		          	$date_creation=userdate($record_d->timestamp);
+					$s_document.=get_string('document', 'referentiel').' <i>'.$document_id.' :: '.$date_creation.'</i> :: '.$type_document.' :: ';
 					$s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
-					$s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document).'<br />'."\n";
+					$s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."<br /> \n";
 				}
 			}
 		}
@@ -2912,7 +2923,7 @@ global $t_item_description_competence;
 			echo "\n".'<form action="activite.php?id='.$cm->id.'&amp;course='.$course->id.'&amp;mode='.$mode.'&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student.'&amp;sesskey='.sesskey().'" method="post">'."\n";
 		}
 		*/
-    echo '<tr valign="top">';
+        echo '<tr valign="top">';
         if (!empty($prioritaire)){
             echo '<td class="prioritaire" rowspan="4">';
         }
@@ -2938,141 +2949,137 @@ global $t_item_description_competence;
       echo  '<input type="checkbox" name="tactivite_id[]" id="tactivite_id_'.$activite_id.'" value="'.$activite_id.'" />';      
     }
     echo  $activite_id;
-		// menu
-		echo '<br />'."\n";
-		echo $s_menu;
+	// menu
+	echo '<br />'."\n";
+	echo $s_menu;
 
-		echo '</td>'."\n".'<td align="center">';
-		echo $user_info;
-        // MODIF JF 2012/05/06
-        echo referentiel_liste_groupes_user($ref_course, $userid);
-		echo '</td>'."\n".'<td align="center">';
-		echo $url_course.'<br />'.$url_instance;
-		echo '</td>'."\n".'<td align="center">';
-		if ($ref_course == $COURSE->id){
-			echo '<input type="text" name="type_activite_'.$activite_id.'" size="40" maxlength="80" value="'.$type_activite.'" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')"  />'."\n";
-		}
-		else{
-			echo $type_activite;
-		}
-		echo '</td>'."\n".'<td align="center">';
-		echo $teacher_info;
-		echo '</td>'."\n".'<td align="center">';
-		
-		if (($ref_course == $COURSE->id) && (has_capability('mod/referentiel:approve', $context))){
-			echo '<b>'.get_string('validation','referentiel').'</b> : ';
-			if (isset($approved) && ($approved)){
-				echo  '<input type="radio" name="approved_'.$activite_id.'"  id="approved" value="1" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="approved_'.$activite_id.'" id="approved" value="0"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
-			}
-			else{
-				echo '<input type="radio" name="approved_'.$activite_id.'"  id="approved" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="approved_'.$activite_id.'"  id="approved" value="0" checked="checked"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";				
-			}	
-		}
-		else{
-			if (isset($approved) && ($approved)){
-				echo get_string('approved','referentiel');
-			}
-			else{
-				echo get_string('not_approved','referentiel');
-			}	
-			if ($ref_course == $COURSE->id){
-				echo  '<input type="hidden" name="approved_'.$activite_id.'" value="'.$approved.'" />'."\n";			
-			}
-		}
-		
-		echo '</td>';
+	echo '</td>'."\n".'<td align="center">';
+	echo $user_info;
+    // MODIF JF 2012/05/06
+    echo referentiel_liste_groupes_user($ref_course, $userid);
+	echo '</td>'."\n".'<td align="center">';
+	echo $url_course.'<br /><i>'.$url_instance;
+	echo '</i></td>'."\n".'<td align="center">';
+	if ($ref_course == $COURSE->id){
+		echo '<input type="text" name="type_activite_'.$activite_id.'" size="40" maxlength="80" value="'.$type_activite.'" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')"  />'."\n";
+	}
+	else{
+		echo $type_activite;
+	}
+	echo '</td>'."\n".'<td align="center">';
+	echo $teacher_info;
+	echo '</td>'."\n".'<td align="center">';
 
-		if (!empty($prioritaire)){
-    		echo '<td class="prioritaire" align="center">';
-        }
-        else{
-            echo '<td align="center">';
-        }
-
-		echo '<span class="small">'.$date_modif_student_info.'</span>';
-		echo '</td>';
-		echo '<td align="center">';
-		echo '<span class="small">'.$date_modif_info.'</span>';
-		echo '</td>'."\n";
-		// menu
-		// echo '<td align="center" rowspan="3">'."\n";
-		// echo $s_menu;
-		// echo '</td>';
-		echo '</tr>'."\n";
-		echo '<tr valign="top">';
+	if (($ref_course == $COURSE->id) && (has_capability('mod/referentiel:approve', $context))){
+		echo '<b>'.get_string('validation','referentiel').'</b> : ';
 		if (isset($approved) && ($approved)){
-			echo '<td  colspan="7" class="valide">';
+			echo  '<input type="radio" name="approved_'.$activite_id.'"  id="approved" value="1" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="approved_'.$activite_id.'" id="approved" value="0"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
 		}
 		else{
-			echo '<td colspan="7" class="invalide">';
+			echo '<input type="radio" name="approved_'.$activite_id.'"  id="approved" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="approved_'.$activite_id.'"  id="approved" value="0" checked="checked"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
+		}
+	}
+	else{
+		if (isset($approved) && ($approved)){
+			echo get_string('approved','referentiel');
+		}
+		else{
+			echo get_string('not_approved','referentiel');
 		}
 		if ($ref_course == $COURSE->id){
-			if (($ref_task!=0) && ($USER->id==$userid)) { // modif competences imposees
-				referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_tache, $competences_activite, $activite_id, 'onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" ');
-				echo '<input type="hidden" name="competences_activite" value="'.$competences_activite.'" />'."\n";
-			}
-			else{ // modif toutes competences
-				referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competence, $competences_activite, $activite_id, 'onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" ' );
-			}
+			echo  '<input type="hidden" name="approved_'.$activite_id.'" value="'.$approved.'" />'."\n";
 		}
-		else{
-			// INUTILE referentiel_initialise_descriptions_items_referentiel($ref_referentiel);
-			echo referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel);
-		}
-		echo '</td></tr>'."\n";
-		echo '<tr valign="top">';
-		if (isset($approved) && ($approved)){
-			echo '<td  colspan="4" class="valide">';
-		}
-		else{
-			echo '<td colspan="4" class="invalide">';
-		}
-
-		if (($ref_course == $COURSE->id) && (has_capability('mod/referentiel:comment', $context))){
-			echo '<br /><textarea cols="80" rows="7" name="description_activite_'.$activite_id.'" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\') ">'.$description_activite.'</textarea>'."\n";
-		}
-		else {
-			echo '<br /><i>'.nl2br($description_activite).'</i>'."\n";
-		}
-
-		echo '</td>';
-
-		if (isset($approved) && ($approved)){
-			echo '<td class="valide"  colspan="3">';
-		}
-		else{
-			echo '<td class="invalide" colspan="3">';
-		}
-
-        // echo '<td class="ardoise" colspan="3">';
-		if ($ref_course == $COURSE->id){
-			echo '<b>'.get_string('commentaire','referentiel').'</b><br />'."\n";			
-			echo '<textarea cols="80" rows="7" name="commentaire_activite_'.$activite_id.'"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" >'.$commentaire_activite.'</textarea> <br />'."\n";
-		}
-		else{
-			echo '<b>'.get_string('commentaire','referentiel').'</b><br /><i>'.nl2br($commentaire_activite).'</i>'."\n";
-			if ($ref_course == $COURSE->id) {
-				echo '<input type="hidden" name="commentaire_activite_'.$activite_id.'" value="'.$commentaire_activite.'" />'."\n";
-			}
-		}
-		// MODIF 10/2/2010
+	}
 		
-		echo '<br />'.get_string('notification_activite','referentiel').'<input type="radio" name="mailnow_'.$activite_id.'" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="mailnow_'.$activite_id.'" value="0" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
+	echo '</td>';
 
-		echo '</td>';
+	if (!empty($prioritaire)){
+   		echo '<td class="prioritaire" align="center">';
+    }
+    else{
+        echo '<td align="center">';
+    }
 
-		echo '</tr>'."\n";
-		echo '<tr valign="top">'."\n";
-		echo '<td class="yellow" colspan="7" align="center">'."\n";
-		if ($s_document!=''){
-			echo $s_document;
+	echo '<span class="small">'.$date_modif_student_info.'</span>';
+	echo '</td>';
+	echo '<td align="center">';
+	echo '<span class="small">'.$date_modif_info.'</span>';
+	echo '</td>'."\n";
+	// menu
+	// echo '<td align="center" rowspan="3">'."\n";
+	// echo $s_menu;
+	// echo '</td>';
+	echo '</tr>'."\n";
+	echo '<tr valign="top">';
+	if (isset($approved) && ($approved)){
+		echo '<td  colspan="7" class="valide">';
+	}
+	else{
+		echo '<td colspan="7" class="invalide">';
+	}
+	if ($ref_course == $COURSE->id){
+		if (($ref_task!=0) && ($USER->id==$userid)) { // modif competences imposees
+			referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_tache, $competences_activite, $activite_id, 'onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" ');
+			echo '<input type="hidden" name="competences_activite" value="'.$competences_activite.'" />'."\n";
 		}
-		else{
-			echo '&nbsp;';
+		else{ // modif toutes competences
+			referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competence, $competences_activite, $activite_id, 'onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" ' );
 		}
-		echo '</td></tr>'."\n";
-		if ($ref_course == $COURSE->id){
-			echo  '
+	}
+	else{
+		// INUTILE referentiel_initialise_descriptions_items_referentiel($ref_referentiel);
+		echo referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel);
+	}
+	echo '</td></tr>'."\n";
+	echo '<tr valign="top">';
+	if (isset($approved) && ($approved)){
+		echo '<td  colspan="4" class="valide">';
+	}
+	else{
+		echo '<td colspan="4" class="invalide">';
+	}
+	if (($ref_course == $COURSE->id) && (has_capability('mod/referentiel:comment', $context))){
+    	echo '<br /><textarea cols="80" rows="7" name="description_activite_'.$activite_id.'" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\') ">'.$description_activite.'</textarea>'."\n";
+	}
+	else {
+		echo '<br />'.nl2br($description_activite).''."\n";
+	}
+
+	echo '</td>';
+
+	if (isset($approved) && ($approved)){
+		echo '<td class="valide"  colspan="3">';
+	}
+	else{
+		echo '<td class="invalide" colspan="3">';
+	}
+
+    // echo '<td class="ardoise" colspan="3">';
+	if ($ref_course == $COURSE->id){
+		echo '<b>'.get_string('commentaire','referentiel').'</b><br />'."\n";
+		echo '<textarea cols="80" rows="7" name="commentaire_activite_'.$activite_id.'"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" >'.$commentaire_activite.'</textarea> <br />'."\n";
+    	// MODIF 10/2/2010
+	    echo '<br />'.get_string('notification_activite','referentiel').'<input type="radio" name="mailnow_'.$activite_id.'" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="mailnow_'.$activite_id.'" value="0" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
+	}
+	else{
+		echo '<b>'.get_string('commentaire','referentiel').'</b><br />'.nl2br($commentaire_activite)."\n";
+		if ($ref_course == $COURSE->id) {
+			echo '<input type="hidden" name="commentaire_activite_'.$activite_id.'" value="'.$commentaire_activite.'" />'."\n";
+		}
+	}
+    echo '</td>';
+    echo '</tr>'."\n";
+	echo '<tr valign="top">'."\n";
+	echo '<td class="yellow" colspan="7" align="center">'."\n";
+	if ($s_document!=''){
+		echo $s_document;
+	}
+	else{
+		echo '&nbsp;';
+	}
+	echo '</td></tr>'."\n";
+	if ($ref_course == $COURSE->id){
+		echo  '
 <input type="hidden" name="date_creation_'.$activite_id.'" value="'.$date_creation.'" />
 <input type="hidden" name="date_modif_'.$activite_id.'" value="'.$date_modif.'" />
 <input type="hidden" name="date_modif_student_'.$activite_id.'" value="'.$date_modif_student.'" />
@@ -3083,9 +3090,8 @@ global $t_item_description_competence;
 <input type="hidden" name="ref_referentiel_'.$activite_id.'" value="'.$ref_referentiel.'" />
 <input type="hidden" name="ref_course_'.$activite_id.'" value="'.$ref_course.'" />
 <input type="hidden" name="ref_instance_'.$activite_id.'" value="'.$ref_instance.'" />'."\n\n";
-		}
-
 	}
+}
 	return $s;
 }
 
@@ -3299,8 +3305,8 @@ global $COURSE;
         // MODIF JF 2012/05/06
         echo referentiel_liste_groupes_user($ref_course, $userid);
 		echo '</td><td align="center">';
-		echo $url_course.'<br />'.$url_instance;
-		echo '</td><td align="center">';
+		echo $url_course.'<br /><i>'.$url_instance;
+		echo '</i></td><td align="center">';
 		echo $type_activite;
 		// Modif JF 06/10/2010
 		if ($ref_task){
