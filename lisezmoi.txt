@@ -295,5 +295,5 @@ Commentaire à cette adresse :
 Commentary about this bug :
 http://moodle.org/mod/forum/discuss.php?d=145112
 
-Lisez version_history.txt pour les mises à jour
-Read  version_history.txt for updates
+Lisez ./documentation/version_history.txt pour les mises à jour
+Read  ./documentation/version_history.txt for updates

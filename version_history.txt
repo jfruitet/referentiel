@@ -1,4 +1,4 @@
-Moodle module referentiel 
+﻿Moodle module referentiel 
 Module Moodle - Référentiel / Skills repository - Documentation
 jean.fruitet@univ-nantes.fr
 2007/2012
@@ -15,7 +15,9 @@ Historique des versions
 Référentiel pour Moodle 2.4
 ----------------------------------
 
-Version 8.03 (2012101000) Release for Moodle 2.4 - 2013-02-02
+Version 8.03 (2012101000) Release for Moodle 2.4 - 2013-02-04
+Correction d'un bug dans l'attribution du teacherid lors de la remontée d'une activité dans le référentiel 
+
 1) Les portfolio Mahara sont supportés (il l'étaient mal avec la version pour 2.3)
 2) J'ai un peu modifié les filtres d'affichage des activités pour faciliter le suivi des déclarations à évaluer (suite à une modification par l'étudiant)
 3) La mise à jour ou le dépôt d'un nouveau document attaché soit propagé dans la date associée à l'activité.

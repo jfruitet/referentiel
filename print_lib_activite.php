@@ -1942,8 +1942,7 @@ function referentiel_print_activite_detail($record_a){
 	<b>'.get_string('id_activite','referentiel', $activite_id).'  </b>';
 	   // MODIF JF 2013/01/26
         $s1.='<br /><br />'.$url_course.'<br /><i>'.$url_instance.'</i>';
-       $s1.='
-    </td>
+        $s1.='</td>
     <td>
 	<b>'.get_string('type_activite','referentiel').'</b><br />'.$type_activite."\n";
 
@@ -2683,6 +2682,7 @@ global $COURSE;
 		if ($ref_course == $COURSE->id){
 			echo '<b>'.get_string('commentaire','referentiel').'</b><br />'."\n";			
 			echo '<textarea cols="40" rows="7" name="commentaire_activite">'.$commentaire_activite.'</textarea>'."\n";
+            echo '<br />'.get_string('notification_activite','referentiel').'<input type="radio" name="mailnow_'.$activite_id.'" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="mailnow_'.$activite_id.'" value="0" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
 		}
 		else{
 			echo nl2br($commentaire_activite);

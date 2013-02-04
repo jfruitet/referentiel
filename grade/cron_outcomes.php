@@ -143,13 +143,17 @@ global $scales;
   if (!empty($users)){
     // DEBUG
     if (REFERENTIEL_DEBUG){
-      mtrace("\nDEBUG :: grade/cron_outcomes.php Line 136 :: USERS \n");
+      mtrace("\nDEBUG :: grade/cron_outcomes.php Line 146 :: USERS \n");
       print_r($users);
     }
     
   
     foreach($users as $user) {
-        // echo "<br />USER_ID $user->userid; \n";
+        if (REFERENTIEL_DEBUG){
+            mtrace("\nDEBUG :: grade/cron_outcomes.php Line 153 :: USER \n");
+            print_r($user);
+        }
+        
         foreach($user->courses as $course){
             // echo "<br />COURSE_ID $course->courseid; \n";
             foreach($course->referentiels  as $referentiel){
@@ -161,7 +165,7 @@ global $scales;
                     // echo "<br />DEBUG :: 180 ; MODULE : $module->modulename, INSTANCE : $module->moduleinstance, COURS : $course->courseid\n";
                     if ($module && !empty($module->modulename) && !empty($module->moduleinstance) && !empty($course->courseid)){
                         $m = referentiel_get_module_info($module->modulename, $module->moduleinstance, $course->courseid);
-/*              
+/*
               // module
   $m->id;
   $m->type=$modulename;
@@ -174,25 +178,26 @@ global $scales;
   $m->description=$mdescription;
   $m->link=$mlink;
 */
-              // DEBUG
-              // echo "<br />\n"; 
-              // print_r($m);
-              
-                    $activite= new Object();
-                    $activite->type_activite='['.get_string('outcome_type', 'referentiel').' '.get_string('modulename', $m->type).' '.$m->ref_activite.'] '.get_string('outcome_date','referentiel').' '.$m->userdate;
-                    $activite->description_activite=get_string('outcome_description','referentiel', $m);
-                    $activite->competences_activite='';
-                    $activite->commentaire_activite='';
-                    $activite->ref_instance=$referentiel->referentiel_instanceid;
-                    $activite->ref_referentiel=$referentiel->ref_referentiel;
-                    $activite->ref_course=$course->courseid;
-                    $activite->userid=$user->userid;
-                    $activite->teacherid=0;
-                    $activite->date_creation=$m->date;
-                    $activite->date_modif_student=0;
-                    $activite->date_modif=$m->date;
-                    $activite->approved=1;   // approuve par defaut
-                    $activite->ref_task=0;
+                        // DEBUG
+                        if (REFERENTIEL_DEBUG){
+                            mtrace("\nDEBUG :: grade/cron_outcomes.php Line 184 :: MODULE \n");
+                            print_r($m);
+                        }
+                        $activite= new Object();
+                        $activite->type_activite='['.get_string('outcome_type', 'referentiel').' '.get_string('modulename', $m->type).' '.$m->ref_activite.'] '.get_string('outcome_date','referentiel').' '.$m->userdate;
+                        $activite->description_activite=get_string('outcome_description','referentiel', $m);
+                        $activite->competences_activite='';
+                        $activite->commentaire_activite='';
+                        $activite->ref_instance=$referentiel->referentiel_instanceid;
+                        $activite->ref_referentiel=$referentiel->ref_referentiel;
+                        $activite->ref_course=$course->courseid;
+                        $activite->userid=$user->userid;
+                        $activite->teacherid=$module->teacherid;  // MODIF JF 2013/02/04
+                        $activite->date_creation=$m->date;
+                        $activite->date_modif_student=0;
+                        $activite->date_modif=$m->date;
+                        $activite->approved=1;   // approuve par defaut
+                        $activite->ref_task=0;
 
                     // DEBUG
                     /*
@@ -200,71 +205,71 @@ global $scales;
                         mtrace("DEBUG :: grade/cron_outcomes.php Line 181 :: TIMEMODIFIED_LIST $module->timemodified_list\n");
                     }
                     */
-                    $t_datemodif=explode(',',$module->timemodified_list);
-                    sort($t_datemodif);
-                    $imax=count($t_datemodif)-1;
-                    $timemodified=$t_datemodif[$imax];
-                    if ($timemodified>$activite->date_creation){
-                        //$activite->date_modif_student=$timemodified;
-                        $activite->date_modif=$timemodified;
-                    }
+                        $t_datemodif=explode(',',$module->timemodified_list);
+                        sort($t_datemodif);
+                        $imax=count($t_datemodif)-1;
+                        $timemodified=$t_datemodif[$imax];
+                        if ($timemodified>$activite->date_creation){
+                            //$activite->date_modif_student=$timemodified;
+                            $activite->date_modif=$timemodified;
+                        }
               
-                    // echo "<br />SCALE_LIST $module->scaleid_list\n";
-                    $t_scales=explode(',',$module->scaleid_list);
+                        // echo "<br />SCALE_LIST $module->scaleid_list\n";
+                        $t_scales=explode(',',$module->scaleid_list);
               
-                    // echo "<br />OUTCOME_LIST $module->outcome_list\n";
-                    $t_outcomes=explode(',',$module->outcome_list);
-                    $n=count($t_outcomes);
-                    if ($n>0){
-			             $i=0;
-			             while ($i<$n){
-                            if ($t_outcomes[$i]!=''){
-                                list($cle, $val)=explode(':',$t_outcomes[$i]);
-                                $cle=trim($cle);
-                                $val=trim($val);
-                                $scaleid=$t_scales[$i];
-                                // echo "<br />CODE : $cle ; VALEUR : $val ;\n";
+                        // echo "<br />OUTCOME_LIST $module->outcome_list\n";
+                        $t_outcomes=explode(',',$module->outcome_list);
+                        $n=count($t_outcomes);
+                        if ($n>0){
+                            $i=0;
+			                while ($i<$n){
+                                if ($t_outcomes[$i]!=''){
+                                    list($cle, $val)=explode(':',$t_outcomes[$i]);
+                                    $cle=trim($cle);
+                                    $val=trim($val);
+                                    $scaleid=$t_scales[$i];
+                                    // echo "<br />CODE : $cle ; VALEUR : $val ;\n";
                     
-                                $scale  = referentiel_get_scale($scaleid);
-                                // DEBUG
-                                // print_object($scale);
+                                    $scale  = referentiel_get_scale($scaleid);
+                                    // DEBUG
+                                    // print_object($scale);
                     
-                                // ------------------
-                                if ($scale){
-                                    // echo "<br /> $scale->scale\n";
-                                    // print_r($scale->scaleopt);
-                                    // echo $scale->scaleopt[(int)$val]."\n";
+                                    // ------------------
+                                    if ($scale){
+                                        // echo "<br /> $scale->scale\n";
+                                        // print_r($scale->scaleopt);
+                                        // echo $scale->scaleopt[(int)$val]."\n";
                       
-                                    if ($val>=$scale->grademax){
-                                    $activite->competences_activite.=$cle.'/';
-                                    // echo " ---&gt; VALIDE \n";
-                                }
-                                else{
-                                    // echo " ---&gt; INVALIDE \n";
+                                        if ($val>=$scale->grademax){
+                                        $activite->competences_activite.=$cle.'/';
+                                        // echo " ---&gt; VALIDE \n";
+                                    }
+                                    else{
+                                        // echo " ---&gt; INVALIDE \n";
+                                    }
                                 }
                             }
+                            $i++;
                         }
-                        $i++;
                     }
-                }
                 
-                // enregistrer l'activite
-                // DEBUG
-                if (REFERENTIEL_DEBUG){
-                    mtrace("\nDEBUG :: grade/cron_outcomes.php Line 243 ; ACTIVITE\n");
-                    print_r($activite);
-                }
-                if (referentiel_activite_outcomes($activite, $m)){
+                    // enregistrer l'activite
+                    // DEBUG
                     if (REFERENTIEL_DEBUG){
-                        mtrace("\nDEBUG :: grade/cron_outcomes.php Line 248\n-----------------\nACTIVITE ENREGISTREE\n");
+                        mtrace("\nDEBUG :: grade/cron_outcomes.php Line 243 ; ACTIVITE\n");
+                        print_r($activite);
                     }
-                    $n_activites++;
-                }                                            
+                    if (referentiel_activite_outcomes($activite, $m)){
+                        if (REFERENTIEL_DEBUG){
+                            mtrace("\nDEBUG :: grade/cron_outcomes.php Line 248\n-----------------\nACTIVITE ENREGISTREE\n");
+                        }
+                        $n_activites++;
+                    }
 
+                }
             }
         }
     }
-}
 }
 }
   // echo "<br />\n";

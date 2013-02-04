@@ -56,13 +56,14 @@ require_once ("locallib.php");
 
 // les constantes suivantes permettent de tuner le fonctionnement du module
 // a ne modifier qu'avec précaution
-
+// La bibliothèque Overlib n'est plus intégrée par défaut depuis Moodle 2.3
+// or je l'utilise pour afficher les compétences en survol...
 $OverlibJs='/mod/referentiel/overlib/overlib.js';
 
-
 // Mahara atranscript est un artefact Mahara en cours de développement
+// Il n'est pas disponible opour le moment
 // define ('MAHARA_ARTEFACT_ATRANSCRIPT', 1);  // placer à 0 pour desactiver le traitement
-define ('MAHARA_ARTEFACT_ATRANSCRIPT', 0);  // placer à 1 pour dactiver le traitement
+define ('MAHARA_ARTEFACT_ATRANSCRIPT', 0);  // placer à 1 pour activer le traitement
 
 // Suppression des fichiers d'ARCHIVES
 define('REFERENTIEL_ARCHIVE_OBSOLETE', 7); // Après 7 jours le cron supprime les fichiers d'Archive
@@ -72,9 +73,9 @@ define ('REFERENTIEL_OUTCOMES', 1);   // placer à 0 pour désactiver le traitem
 
 // DEBUG ?
 // si à 1 le cron devient très bavard :))
+// et les messages en attente portent sur une semaine au lieu de deux jours.
 define ('REFERENTIEL_DEBUG', 0);    // DEBUG INACTIF
 // define ('REFERENTIEL_DEBUG', 1);       // DEBUG ACTIF  : le cron devient très bavard :))
-// et les messages en attente portent sur une semaine au lieu de deux jours.
 define ('OUTCOMES_SUPER_DEBUG', 0);       // SUPER DEBUG OUTCOMES INACTIF
 // define ('OUTCOMES_SUPER_DEBUG', 1);       // SUPER DEBUG OUTCOMES ACTIF : affichage tres detaille
 
