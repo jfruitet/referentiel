@@ -2067,8 +2067,28 @@ function referentiel_print_activite_detail($record_a){
 						$etiquette_document='';
 					}
 					// Modif JF 2013/02/02
-					$date_creation=userdate($record_d->timestamp);
-                    $s.='<br /><b>'.get_string('num','referentiel').'<i>'.$document_id.'</i></b>
+					if ($record_d->timestamp==0){
+                        $date_creation='';
+                    }
+                    else{
+                        $date_creation=userdate($record_d->timestamp);
+                    }
+                    if ($date_modif<$record_d->timestamp){
+                        $s.='<span class="prioritaire">';
+                        $s.='<br /><b>'.get_string('num','referentiel').'<i>'.$document_id.'</i></b>
+&nbsp; &nbsp; &nbsp;
+<b>'.get_string('date_creation','referentiel').'</b> : '.$date_creation.'
+&nbsp; &nbsp; &nbsp;
+<b>'.get_string('type','referentiel').'</b> : '.$type_document.'
+&nbsp; &nbsp; &nbsp;
+<b>'.get_string('url','referentiel').'</b>  :
+';
+                    $s.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
+                    $s.='&nbsp; &nbsp; &nbsp; <b>'.get_string('description','referentiel').'</b> : '.nl2br($description_document);
+                    $s.='</span>'."\n";
+                    }
+                    else{
+                  $s.='<br /><b>'.get_string('num','referentiel').'<i>'.$document_id.'</i></b>
 &nbsp; &nbsp; &nbsp;
 <b>'.get_string('date_creation','referentiel').'</b> : '.$date_creation.'
 &nbsp; &nbsp; &nbsp;
@@ -2079,7 +2099,9 @@ function referentiel_print_activite_detail($record_a){
                     $s.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
                     $s.='&nbsp; &nbsp; &nbsp; <b>'.get_string('description','referentiel').'</b> : '.nl2br($description_document).'
 ';
-				}
+                    }
+
+  				}
 			}
 		}
         if ($nbressource){
@@ -2909,10 +2931,23 @@ if ($record){
 						$etiquette_document='';
 					}
         			// Modif JF 2013/02/02
-		          	$date_creation=userdate($record_d->timestamp);
-					$s_document.=get_string('document', 'referentiel').' <i>'.$document_id.' :: '.$date_creation.'</i> :: '.$type_document.' :: ';
-					$s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
-					$s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."<br /> \n";
+             					if ($record_d->timestamp==0){
+                        $date_creation='';
+                    }
+                    else{
+                        $date_creation=userdate($record_d->timestamp);
+                    }
+                    if ($date_modif<$record_d->timestamp){
+					   $s_document.='<span class="prioritaire">'.get_string('document', 'referentiel').' <i>'.$document_id.'</i>::<i>'.$date_creation.'</i> :: '.$type_document.' :: ';
+					   $s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
+					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."'</span><br /> \n";
+
+                    }
+                    else{
+					   $s_document.=get_string('document', 'referentiel').' <i>'.$document_id.'</i>::<i>'.$date_creation.'</i> :: '.$type_document.' :: ';
+					   $s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
+					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."<br /> \n";
+                    }
 				}
 			}
 		}
@@ -3265,10 +3300,23 @@ global $COURSE;
 						$etiquette_document='';
 					}
 					// Modif JF 2013/02/02
-					$date_creation=userdate($record_d->timestamp);
-					$s_document.=get_string('document', 'referentiel').' <i>'.$document_id.' :: '.$date_creation.'</i> :: '.$type_document.' :: ';
-					$s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
-					$s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."<br /> \n";
+     					if ($record_d->timestamp==0){
+                        $date_creation='';
+                    }
+                    else{
+                        $date_creation=userdate($record_d->timestamp);
+                    }
+                    if ($date_modif<$record_d->timestamp){
+					   $s_document.='<span class="prioritaire">'.get_string('document', 'referentiel').' <i>'.$document_id.'</i>::<i>'.$date_creation.'</i> :: '.$type_document.' :: ';
+					   $s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
+					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."'</span><br /> \n";
+
+                    }
+                    else{
+					   $s_document.=get_string('document', 'referentiel').' <i>'.$document_id.'</i>::<i>'.$date_creation.'</i> :: '.$type_document.' :: ';
+					   $s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
+					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."<br /> \n";
+                    }
 				}
 			}
 		}

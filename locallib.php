@@ -496,6 +496,8 @@ global $DB;
 		else{
 			$document->etiquette_document='';
 		}
+        // Modif JF 2013/02/02
+		$document->timestamp=time();
 
 	   	// DEBUG
 		// print_object($document);
@@ -704,6 +706,8 @@ global $USER;
 		else{
 			$document->etiquette_document='';
 		}
+        // Modif JF 2013/02/02
+		$document->timestamp=time();
 
    		// DEBUG
 		// print_object($document);

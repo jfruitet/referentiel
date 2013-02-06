@@ -327,3 +327,10 @@ span.rouge {
 	text-align: center;
 	font-size: 11px;
 }
+
+span.prioritaire {
+	BACKGROUND-COLOR: #ff77aa;
+	COLOR:  #333300;
+	text-align: center;
+	font-size: 11px;
+}

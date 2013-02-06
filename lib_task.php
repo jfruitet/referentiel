@@ -300,7 +300,8 @@ CREATE TABLE IF NOT EXISTS `mdl_referentiel_consigne` (
 		else{
 			$consigne->etiquette_consigne='';
 		}
-
+        // Modif JF 2013/02/02
+		$consigne->timestamp=time();
 	   	// DEBUG
 		// print_object($consigne);
     	// echo "<br />";
