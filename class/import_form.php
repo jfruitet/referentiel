@@ -70,7 +70,17 @@ class referentiel_import_form extends moodleform {
             $mform->addElement('hidden', 'stoponerror', $instance['stoponerror']);
             $mform->setType('stoponerror', PARAM_INT);
         }
-        
+
+        // override
+        if (isset($instance['deleteall'])){
+            $radioarray=array();
+            $radioarray[] = $mform->createElement('radio', 'deleteall', '', get_string('no'), 0, NULL);
+            $radioarray[] = $mform->createElement('radio', 'deleteall', '', get_string('yes'), 1, NULL);
+            $mform->addGroup($radioarray, 'radioar', get_string('deleteall', 'referentiel'), array(' '), false);
+            $mform->setDefault('deleteall',  $instance['deleteall']);
+            $mform->addHelpButton('radioar', 'deleteallh','referentiel');
+        }
+
         //$mform->addElement('filemanager', 'newfile', get_string('uploadafile'));
         //$mform->addElement('filemanager', 'referentiel_file', get_string('uploadafile'), null, $instance['options']);
 

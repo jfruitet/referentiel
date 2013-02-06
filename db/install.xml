@@ -380,7 +380,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="promotion"/>
         <FIELD NAME="promotion" TYPE="char" LENGTH="4" NOTNULL="false" SEQUENCE="false"  COMMENT="promotion year" PREVIOUS="id" NEXT="num_groupe"/>
         <FIELD NAME="num_groupe" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"  COMMENT="groupe number" PREVIOUS="promotion" NEXT="date_cloture"/>
-        <FIELD NAME="date_cloture" TYPE="char" LENGTH="120" NOTNULL="false" SEQUENCE="false"  COMMENT="date end certification" PREVIOUS="num_groupe" NEXT="formation"/>
+        <FIELD NAME="date_cloture" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false"  COMMENT="date end certification" PREVIOUS="num_groupe" NEXT="formation"/>
         <FIELD NAME="formation" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false"  COMMENT="student formation or class" PREVIOUS="date_cloture" NEXT="pedagogie"/>
         <FIELD NAME="pedagogie" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false"  COMMENT="student pedagogie" PREVIOUS="formation" NEXT="composante"/>
         <FIELD NAME="composante" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false"  COMMENT="site or departement or institution" PREVIOUS="pedagogie" NEXT="commentaire"/>

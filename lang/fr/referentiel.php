@@ -1,8 +1,11 @@
 <?php
 // ----------------
 // UTF-8 French
-// V8.03
-// Moodle 8.1
+//
+$string['deleteall']= 'Réinitialiser';
+$string['deleteallh']= 'Réinitialiser';
+$string['deleteallh_help']= 'La table sera vidées avant d\'être rechargée avec les nouvelles valeurs';
+
 $string['a_evaluer'] = 'A évaluer';
 $string['missingtype'] = '"Type" manquant';
 $string['missingdescription'] = '"Description" manquante';

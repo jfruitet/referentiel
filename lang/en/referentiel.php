@@ -1,6 +1,10 @@
 <?php
 // referentiel module
-// V8.03
+//
+$string['deleteall']= 'Reset';
+$string['deleteallh']= 'Reset';
+$string['deleteallh_help']= 'The table will be deleted then loaded with new values';
+
 $string['a_evaluer'] = 'To evaluate';
 $string['missingtype'] = 'Type is missing';
 $string['missingdescription'] = '"Description" is missing';

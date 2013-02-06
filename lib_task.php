@@ -61,7 +61,6 @@ CREATE TABLE IF NOT EXISTS `mdl_referentiel_consigne` (
   `description_consigne` text NOT NULL,
   `url_consigne` varchar(255) NOT NULL DEFAULT '',
   `ref_task` bigint(10) unsigned NOT NULL,
-   `timestamp` bigint(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='consigne' AUTO_INCREMENT=1 ;
 

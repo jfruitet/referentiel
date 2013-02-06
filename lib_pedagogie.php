@@ -37,6 +37,16 @@ CONSTRAINT  PRIMARY KEY (id)
  * @package referentiel
  */
  
+// ---------------------------------------------
+function referentiel_vider_pedagos_assos(){
+// vidage des tables de pedagogies
+global $DB;
+    $DB->delete_records("referentiel_course_users");
+    $DB->delete_records("referentiel_a_user_pedagogie");
+    $DB->delete_records("referentiel_pedagogie");
+}
+
+
 /**
  * referentiel_ajoute_date
  *
@@ -807,13 +817,6 @@ function referentiel_update_pedagogie_record($rec){
 // retourne true or false
 global $DB;
     if (!empty($rec->id)){
-        $rec->promotion = $rec->promotion;
-        $rec->formation= ($rec->formation);
-        $rec->pedagogie= ($rec->pedagogie);
-        $rec->composante= ($rec->composante);
-        $rec->num_groupe = ($rec->num_groupe);
-        $rec->commentaire= ($rec->commentaire);
-
         return ($DB->update_record("referentiel_pedagogie", $rec));
     }
     return 0;

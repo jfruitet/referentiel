@@ -163,7 +163,7 @@
     // formulaire de saisie d'un fichier
     $fileformatnames = referentiel_get_import_export_formats( 'import', 'pformat' );
     $options = array('subdirs'=>0, 'maxbytes'=>get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, 0), 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
-    $mform = new referentiel_import_form(null, array('d'=>$referentiel->id, 'contextid'=>$context->id, 'filearea'=>'pedagogie', 'fileformats' => $fileformatnames, 'stoponerror' => 1, 'msg' =>  get_string('importpedagogies', 'referentiel'),  'options'=>$options));
+    $mform = new referentiel_import_form(null, array('d'=>$referentiel->id, 'contextid'=>$context->id, 'filearea'=>'pedagogie', 'fileformats' => $fileformatnames, 'stoponerror' => 1, 'deleteall'=>0, 'msg' =>  get_string('importpedagogies', 'referentiel'),  'options'=>$options));
 
     // recuperer le fichier charge
     if ($mform->is_cancelled()) {
@@ -178,6 +178,13 @@
             // echo "<br />DEBUG :: import_instance.php :: 193 :: FORMDATA\n";
             // print_object($formdata);
 
+            // Vider
+            if (isset($formdata->deleteall) && ($formdata->deleteall!=0)){
+    			if (referentiel_vider_pedagos_assos()){
+	       			add_to_log($course->id, 'referentiel', 'pedagos deleted', "import_pedagogie.php?d=$referentiel->id", $cm->id);
+                    notify(get_string('recorddeleted','referentiel'), 'notifysuccess');
+                }
+            }
             //
             $fileareas = array('referentiel', 'document', 'consigne', 'activite', 'task', 'certificat', 'scolarite', 'pedagogie');
             if (!empty($formdata->filearea) && ($formdata->filearea == 'pedagogie')) {

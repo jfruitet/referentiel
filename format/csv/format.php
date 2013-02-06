@@ -3740,49 +3740,49 @@ class pformat_csv extends pformat_default {
   			        $firstname= $this->input_codage_caractere(trim($fields[1]));
 					$lastname = $this->input_codage_caractere(trim($fields[2]));
 					if (!empty($fields[3])){
-                        $date_cloture = trim($fields[3]);
+                        $date_cloture = $this->input_codage_caractere(trim($fields[3]));
                     }
                     else{
                         $date_cloture = '';
                     }
                     if (!empty($fields[4])){
-                        $promotion = trim($fields[4]);
+                        $promotion = $this->input_codage_caractere(trim($fields[4]));
                     }
                     else{
                         $promotion = '';
                     }
                     if (!empty($fields[5])){
-                        $formation = trim($fields[5]);
+                        $formation = $this->input_codage_caractere(trim($fields[5]));
                     }
                     else{
                         $formation = '';
                     }
                     if (!empty($fields[6])){
-                        $pedagogie = trim($fields[6]);
+                        $pedagogie = $this->input_codage_caractere(trim($fields[6]));
                     }
                     else{
                         $pedagogie = '';
                     }
                     if (!empty($fields[7])){
-                        $composante = trim($fields[7]);
+                        $composante = $this->input_codage_caractere(trim($fields[7]));
                     }
                     else{
                         $composante = '';
                     }
                     if (!empty($fields[8])){
-                        $num_groupe = trim($fields[8]);
+                        $num_groupe = $this->input_codage_caractere(trim($fields[8]));
                     }
                     else{
                         $num_groupe ='';
                     }
                     if (!empty($fields[9])){
-                        $commentaire = trim($fields[9]);
+                        $commentaire = $this->input_codage_caractere(trim($fields[9]));
                     }
                     else{
                         $commentaire = '';
                     }
                     if (!empty($fields[10])){
-                        $code_referentiel = trim($fields[10]);
+                        $code_referentiel = $this->input_codage_caractere(trim($fields[10]));
                     }
                     else{
                         $code_referentiel ='';
@@ -3790,12 +3790,12 @@ class pformat_csv extends pformat_default {
                     // rechercher la formation
 					if (!empty($formation) && !empty($pedagogie)  && !empty($composante)){
                         $import_pedago = new stdClass();
-						$import_pedago->date_cloture = $date_cloture;
-					    $import_pedago->promotion =addslashes($promotion);
+                        $import_pedago->promotion =addslashes($promotion);
+                        $import_pedago->num_groupe = addslashes($num_groupe);
+                        $import_pedago->date_cloture = $date_cloture;
 						$import_pedago->formation =addslashes($formation);
 						$import_pedago->pedagogie =addslashes($pedagogie);
 						$import_pedago->composante =addslashes($composante);
-                        $import_pedago->num_groupe = addslashes($num_groupe);
                         $import_pedago->commentaire =addslashes($commentaire);
 
                         $userid=0;
