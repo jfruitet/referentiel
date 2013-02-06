@@ -37,7 +37,7 @@ require_once($CFG->libdir . '/portfolio/caller.php');
 require_once($CFG->libdir . '/filelib.php');
 
 // Artefact MAHARA_REFERENTIEL installé sur Mahara ?
-// Au 1/12/2011 cet artefact n'est pas disponible et donc inutile d'essayer de l'utiliser !
+// ATTENTION : Au 1/12/2011 cet artefact n'est pas disponible et donc inutile d'essayer de l'utiliser !
 define ('MAHARA_ARTEFACT_REFERENTIEL', 0);   // placer à 1 pour activer le traitement
 // define ('MAHARA_ARTEFACT_REFERENTIEL', 1);   // placer à 0 pour désactiver le traitement
 
