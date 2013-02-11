@@ -62,7 +62,9 @@ global $DB;
             $record->num_etudiant = '';
         }
     }
-    
+    // modif pour lionel bonef
+    mb_internal_encoding("UTF-8");
+    $record->num_etudiant=mb_substr($record->num_etudiant,0,20);
 	// DEBUG
 	// echo "<br />DEBUG :: lib_etab.php :: 145\n";
 	// print_r($record);
@@ -241,7 +243,10 @@ if (isset($form->action) && ($form->action=="modifier_etudiant")){
         }
       }
     }
-		
+    // modif pour lionel bonef
+    mb_internal_encoding("UTF-8");
+    $record->num_etudiant=mb_substr($record->num_etudiant,0,20);
+
 	if(!$DB->update_record("referentiel_etudiant", $record)){
 		// echo "<br /> ERREUR UPDATE ETUDIANT\n";
 		$ok=false;
