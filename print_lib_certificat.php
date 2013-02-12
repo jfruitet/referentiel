@@ -259,6 +259,7 @@ global $COURSE;
 	$s_document='';
 	$s_out='';
 
+    $iseditor=$roles->is_editor;
     $isadmin=$roles->is_admin;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
@@ -592,39 +593,18 @@ $data_filtre, $select_acc=0) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $roles=referentiel_roles_in_instance($referentiel_instance->id);
-    /*
-    echo "<br />DEBUG :: print_lib_certificat.php 620 :: ROLES\n";
-    print_object($roles);
-    exit;
-DEBUG :: print_lib_certificat.php 620 :: ROLES
-stdClass Object
-(
-    [is_admin] => 1
-    [is_teacher] =>
-    [is_tutor] =>
-    [is_student] =>
-)
-    */
-    
+    $iseditor=$roles->is_editor;
     $isadmin=$roles->is_admin;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
 
 	$records = array();
-	/*
-	// DEBUG
-	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
-	if ($istutor) echo "Tutor ";
-	if ($isstudent) echo "Student ";
-	*/
-
 
 	if (!empty($referentiel_instance->ref_referentiel)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
 		if (!$referentiel_referentiel){
-			if ($isadmin || $isteacher){
+			if ($iseditor || $isadmin || $isteacher){
 				print_error(get_string('creer_referentiel','referentiel'), "edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
@@ -653,7 +633,7 @@ stdClass Object
 		referentiel_initialise_descriptions_items_referentiel($referentiel_referentiel->id);
 
 		// boite pour selectionner les utilisateurs ?
-		if ($isteacher || $isadmin || $istutor){
+		if ($iseditor || $isteacher || $isadmin || $istutor){
 			if (!empty($select_acc)){
                 // eleves accompagnes
                 $record_id_users  = referentiel_get_accompagnements_teacher($referentiel_instance->id, $course->id, $USER->id);
@@ -848,27 +828,13 @@ $data_filtre, $select_acc=0) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $roles=referentiel_roles_in_instance($referentiel_instance->id);
-    /*
-    echo "<br />DEBUG :: print_lib_certificat.php 620 :: ROLES\n";
-    print_object($roles);
-    exit;
-DEBUG :: print_lib_certificat.php 620 :: ROLES
-stdClass Object
-(
-    [is_admin] => 1
-    [is_teacher] =>
-    [is_tutor] =>
-    [is_student] =>
-)
-    */
-
+    $iseditor=$roles->is_editor;
     $isadmin=$roles->is_admin;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
 
 	$records = array();
-
 
 	if (isset($referentiel_instance->ref_referentiel) && ($referentiel_instance->ref_referentiel>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
@@ -886,7 +852,7 @@ stdClass Object
         $seuil_certification=$referentiel_referentiel->seuil_certificat;
         $nb_items=referentiel_get_nb_items($referentiel_referentiel->id);
 
-        if ($isadmin || $isreferentielauteur){
+        if ($iseditor || $isadmin || $isreferentielauteur){
             $protocole_link="$CFG->wwwroot/mod/referentiel/edit_protocole.php?d=$referentiel_instance->id&amp;mode=protocole&amp;sesskey=".sesskey();
         }
         else{
@@ -900,7 +866,7 @@ stdClass Object
 		referentiel_initialise_descriptions_items_referentiel($referentiel_referentiel->id);
 
 		// boite pour selectionner les utilisateurs ?
-		if ($isteacher || $isadmin || $istutor){
+		if ($iseditor || $isteacher || $isadmin || $istutor){
 			if (!empty($select_acc)){
                 // eleves accompagnes
                 $record_id_users  = referentiel_get_accompagnements_teacher($referentiel_instance->id, $course->id, $USER->id);
@@ -1124,20 +1090,7 @@ global $COURSE;
 	// Charger les activites
 	// filtres
     $roles=referentiel_roles_in_instance($referentiel_instance->id);
-    /*
-    echo "<br />DEBUG :: print_lib_certificat.php 620 :: ROLES\n";
-    print_object($roles);
-    exit;
-DEBUG :: print_lib_certificat.php 620 :: ROLES
-stdClass Object
-(
-    [is_admin] => 1
-    [is_teacher] =>
-    [is_tutor] =>
-    [is_student] =>
-)
-    */
-
+    $iseditor=$roles->is_editor;
     $isadmin=$roles->is_admin;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
@@ -1218,12 +1171,12 @@ stdClass Object
 //            $s_menu.='<br /><a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=commentcertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('feedback', 'referentiel').'" alt="'.get_string('more', 'referentiel').'" title="'.get_string('comment', 'referentiel').'" /></a>'."\n";
 	    }
         if (has_capability('mod/referentiel:managecertif', $context)) {
-            $s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deletecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('certificat_initialiser', 'referentiel').'" title="'.get_string('certificat_initialiser', 'referentiel').'" /></a>'."\n";   // reinitialisation
+            $s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deletecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/delete').'" alt="'.get_string('certificat_initialiser', 'referentiel').'" title="'.get_string('certificat_initialiser', 'referentiel').'" /></a>'."\n";   // reinitialisation
            	if ($verrou!=0){
-//                $s_menu.='<br /> <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deverrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('go','referentiel').'" alt="'.get_string('deverrouiller', 'referentiel').'" title="'.get_string('deverrouiller', 'referentiel').'" /></a>'."\n";    // deverrouiller
+//                $s_menu.='<br /> <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deverrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url(/t/go').'" alt="'.get_string('deverrouiller', 'referentiel').'" title="'.get_string('deverrouiller', 'referentiel').'" /></a>'."\n";    // deverrouiller
             }
             else{
-//                $s_menu.='<br /><a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=verrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('stop','referentiel').'" alt="'.get_string('verrouiller', 'referentiel').'" title="'.get_string('verrouiller', 'referentiel').'" /></a>'."\n";            // verrouiller
+//                $s_menu.='<br /><a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=verrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/stop').'" alt="'.get_string('verrouiller', 'referentiel').'" title="'.get_string('verrouiller', 'referentiel').'" /></a>'."\n";            // verrouiller
             }
             if (referentiel_site_can_print_referentiel($referentiel_instance_id)) {
                 $s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/print_certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=printcertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('printer','referentiel').'" alt="'.get_string('print', 'referentiel').'" title="'.get_string('print', 'referentiel').'" /></a>'."\n"; // impression
@@ -2300,7 +2253,7 @@ function referentiel_liste_tous_certificats($id_referentiel, $procole_link=''){
 }
 
 // Affiche les certificats de ce referentiel
-function referentiel_menu_certificat_detail($context, $certificat_id, $referentiel_instance_id, $verrou, $userid, $select_acc=0){
+function referentiel_menu_certificat_detail($context, $certificat_id, $referentiel_instance_id, $verrou, $userid, $select_acc=0, $dossier_ferme=false){
 	global $CFG;
 	global $OUTPUT;
 	
@@ -2312,18 +2265,52 @@ function referentiel_menu_certificat_detail($context, $certificat_id, $referenti
 	}
 	if (has_capability('mod/referentiel:managecertif', $context)) {
 //		or referentiel_certificat_isowner($certificat_id)) {
-        echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=updatecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
-        echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deletecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('certificat_initialiser', 'referentiel').'" title="'.get_string('certificat_initialiser', 'referentiel').'" /></a>'."\n";
-		if ($verrou){
-			echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deverrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('stop','referentiel').'" alt="'.get_string('deverrouiller', 'referentiel').'"  title="'.get_string('deverrouiller', 'referentiel').'" /></a>'."\n";
+        echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=updatecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/edit').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
+        echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deletecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/delete').'" alt="'.get_string('certificat_initialiser', 'referentiel').'" title="'.get_string('certificat_initialiser', 'referentiel').'" /></a>'."\n";
+        if (!$dossier_ferme){
+            if ($verrou){
+                echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deverrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/go').'" alt="'.get_string('deverrouiller', 'referentiel').'" title="'.get_string('deverrouiller', 'referentiel').'" /></a>'."\n";
+            }
+		    else{
+			    echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=verrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/stop').'" alt="'.get_string('verrouiller', 'referentiel').'" title="'.get_string('verrouiller', 'referentiel').'" /></a>'."\n";
+		    }
         }
-		else{
-			echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=verrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('go','referentiel').'" alt="'.get_string('verrouiller', 'referentiel').'" title="'.get_string('verrouiller', 'referentiel').'" /></a>'."\n";
-		}
         if (referentiel_site_can_print_referentiel($referentiel_instance_id)) {
 			echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/print_certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=printcertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('printer','referentiel').'" alt="'.get_string('print', 'referentiel').'" title="'.get_string('print', 'referentiel').'" /></a>'."\n";
 		}
 	}
+	// Portofolio
+	if (!empty($CFG->enableportfolios)){
+        require_once($CFG->libdir.'/portfoliolib.php');
+        // Mahara export stuff
+        $button = new portfolio_add_button();
+// Version anterieure à Moodle 2.4
+// $button->set_callback_options('referentiel_portfolio_caller',
+//            array('instanceid' => $referentiel_instance_id, 'certificatid' => $certificat_id, 'report' => 0, 'export_format' => ''), '/mod/referentiel/portfolio/mahara/locallib_portfolio.php');
+// Version Moodle 2.4
+        $button->set_callback_options('referentiel_portfolio_caller',
+            array('instanceid' => $referentiel_instance_id, 'certificatid' => $certificat_id, 'report' => 0, 'export_format' => ''), 'mod_referentiel');
+
+        $button->set_formats(array(PORTFOLIO_FORMAT_PLAINHTML, PORTFOLIO_FORMAT_LEAP2A));
+        echo $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+        // Mahara ATranscript stuff
+
+        // Ne pas activer pour le moment (juin 2012) car le developpement n'est pas achevé
+        if (MAHARA_ARTEFACT_ATRANSCRIPT){
+            $button = new portfolio_add_button();
+// Version antérieure à Moodle 2.4
+//            $button->set_callback_options('atranscript_portfolio_caller',
+//                array('instanceid' => $referentiel_instance_id, 'userid' => $USER->id, 'certificatid' => $certificat_id, 'export_format' => PORTFOLIO_FORMAT_LEAP2A), '/mod/referentiel/portfolio/mahara/atranscript_artefact/locallib_portfolio.php');
+// Version  Moodle 2.4
+           $button->set_callback_options('atranscript_portfolio_caller',
+                array('instanceid' => $referentiel_instance_id, 'userid' => $USER->id, 'certificatid' => $certificat_id, 'export_format' => PORTFOLIO_FORMAT_LEAP2A), 'mod_referentiel');
+
+            $button->set_formats(array(PORTFOLIO_FORMAT_LEAP2A));
+            echo $button->to_html(PORTFOLIO_ADD_ICON_LINK, get_string('atranscript', 'referentiel'));
+            // echo $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
+        }
+    }
+
 	echo '</div><br />';
 }
 
@@ -2337,19 +2324,10 @@ function referentiel_menu_certificat($context, $certificat_id, $referentiel_inst
 	
 	$s="";
 	$s.='<tr valign="top">';
-	/*
-	// fond coloré rend les icônes illisibles depuis Moodle 2.4
-    if ($rang%2==0){
-        $s.= '<td class="couleur_paire" align="center" colspan="6">'."\n";
-    } else {
-        $s.= '<td class="couleur_impaire" align="center" colspan="6">'."\n";
-    }
-    */
     $s.= '<td align="center" colspan="6">'."\n";
-
     $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=listcertifsingle&amp;sesskey='.sesskey().'#certificat_'.$certificat_id.'"><img src="'.$OUTPUT->pix_url('search','referentiel').'" alt="'.get_string('plus', 'referentiel').'" title="'.get_string('plus', 'referentiel').'" /></a>'."\n";
     if (!$dossier_ferme){
-        $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=updatecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
+        $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=updatecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/edit').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
     }
 	if (has_capability('mod/referentiel:comment', $context) &&  !$dossier_ferme) {
 //		or referentiel_certificat_isowner($certificat_id)) {
@@ -2357,14 +2335,14 @@ function referentiel_menu_certificat($context, $certificat_id, $referentiel_inst
 
 	}
 	if (has_capability('mod/referentiel:managecertif', $context)) {
-        $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deletecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('certificat_initialiser', 'referentiel').'" title="'.get_string('certificat_initialiser', 'referentiel').'" /></a>'."\n";
+        $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deletecertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/delete').'" alt="'.get_string('certificat_initialiser', 'referentiel').'" title="'.get_string('certificat_initialiser', 'referentiel').'" /></a>'."\n";
 
         if (!$dossier_ferme){
             if ($verrou){
-                $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deverrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('go','referentiel').'" alt="'.get_string('deverrouiller', 'referentiel').'" title="'.get_string('deverrouiller', 'referentiel').'" /></a>'."\n";
+                $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=deverrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/go').'" alt="'.get_string('deverrouiller', 'referentiel').'" title="'.get_string('deverrouiller', 'referentiel').'" /></a>'."\n";
             }
 		    else{
-			    $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=verrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('stop','referentiel').'" alt="'.get_string('verrouiller', 'referentiel').'" title="'.get_string('verrouiller', 'referentiel').'" /></a>'."\n";
+			    $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=verrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/stop').'" alt="'.get_string('verrouiller', 'referentiel').'" title="'.get_string('verrouiller', 'referentiel').'" /></a>'."\n";
 		    }
         }
 		if (referentiel_site_can_print_referentiel($referentiel_instance_id)) {
@@ -2405,6 +2383,12 @@ function referentiel_menu_certificat($context, $certificat_id, $referentiel_inst
     }
 
 	$s.='</td></tr>'."\n";
+    if ($rang%2==0){
+        $s.= '<td class="couleur_paire" heigth="4" colspan="6"></td>'."\n";
+    }
+    else {
+        $s.= '<td class="couleur_impaire" heigth="4" colspan="6"></td>'."\n";
+    }
 	return $s;
 }
 
@@ -2425,6 +2409,12 @@ $sql_filtre_where='', $sql_filtre_order='') {
 global $DB;
 global $CFG;
 global $USER;
+static $istutor=false;
+static $isteacher=false;
+static $isadmin=false;
+static $isstudent=false;
+static $iseditor=false;
+static $isauthor=false;
 
 $protocole_link='';      //MODIF JF 2012/02/18
 
@@ -2438,20 +2428,7 @@ $protocole_link='';      //MODIF JF 2012/02/18
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $roles=referentiel_roles_in_instance($referentiel_instance->id);
-    /*
-    echo "<br />DEBUG :: print_lib_certificat.php 620 :: ROLES\n";
-    print_object($roles);
-    exit;
-DEBUG :: print_lib_certificat.php 620 :: ROLES
-stdClass Object
-(
-    [is_admin] => 1
-    [is_teacher] =>
-    [is_tutor] =>
-    [is_student] =>
-)
-    */
-
+    $iseditor=$roles->is_editor;
     $isadmin=$roles->is_admin;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
@@ -2461,10 +2438,10 @@ stdClass Object
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
 		if (!$referentiel_referentiel){
 			if ($isadmin || $isteacher){
-				print_print_error(get_string('creer_referentiel','referentiel'), "edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
+				print_error(get_string('creer_referentiel','referentiel'), "edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
-				print_print_error(get_string('creer_referentiel','referentiel'), "../../course/view.php?id=$course->id&amp;sesskey=".sesskey());
+				print_error(get_string('creer_referentiel','referentiel'), "../../course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
 		
@@ -2487,7 +2464,7 @@ stdClass Object
 		// MODIF JF 2009/10/23
 		// referentiel_regenere_certificats($referentiel_instance); // INUTILE DESORMAIS
 		// boite pour selectionner les utilisateurs ?
-		if ($isteacher || $isadmin || $istutor){
+		if ($iseditor || $isteacher || $isadmin || $istutor){
 			if (!empty($select_acc)){
 			  // eleves accompagnes
                 $record_id_users  = referentiel_get_accompagnements_teacher($referentiel_instance->id, $course->id, $USER->id);
@@ -2609,10 +2586,10 @@ stdClass Object
 				    $record=referentiel_certificat_user($record_id->userid, $referentiel_instance->ref_referentiel);
     				if ($record){ // MODIF JF 2010/10/07
 	       				$isauthor = referentiel_certificat_isowner($record->id);
-		      			if ($isauthor  || $istutor || $isteacher || $isadmin) {
+		      			if ($isauthor  || $iseditor || $istutor || $isteacher || $isadmin) {
 			     			if (isset($mode) && ($mode=='listcertifsingle')){
 				    			referentiel_print_certificat_detail($record, $seuil_certification, $protocole_link);
-					       		referentiel_menu_certificat_detail($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $record_id->userid, $select_acc);
+					       		referentiel_menu_certificat_detail($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $record_id->userid, $select_acc, ($record->valide && $isstudent));
 						    }
 						    else{
 							    referentiel_print_certificat($record, $nb_items, $liste_empreintes, $seuil_certification, $protocole_link);
@@ -2652,30 +2629,17 @@ global $DB;
 global $CFG;
 global $USER;
 
-
 	// contexte
     $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
     $course = $DB->get_record('course', array('id' => $cm->course));
 	if (empty($cm) or empty($course)){
-        print_print_error('REFERENTIEL_ERROR 5 :: print_lib_certificat.php :: 1648 :: You cannot call this script in that way');
+        print_error('REFERENTIEL_ERROR 5 :: print_lib_certificat.php :: 1648 :: You cannot call this script in that way');
 	}
 	
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $roles=referentiel_roles_in_instance($referentiel_instance->id);
-    /*
-    echo "<br />DEBUG :: print_lib_certificat.php 620 :: ROLES\n";
-    print_object($roles);
-    exit;
-DEBUG :: print_lib_certificat.php 620 :: ROLES
-stdClass Object
-(
-    [is_admin] => 1
-    [is_teacher] =>
-    [is_tutor] =>
-    [is_student] =>
-)
-    */
 
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
     $isadmin=$roles->is_admin;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
@@ -2686,10 +2650,10 @@ stdClass Object
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
 		if (!$referentiel_referentiel){
 			if ($isadmin || $isteacher){
-				print_print_error(get_string('creer_referentiel','referentiel'), "edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
+				print_error(get_string('creer_referentiel','referentiel'), "edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
-				print_print_error(get_string('creer_referentiel','referentiel'), "../../course/view.php?id=$course->id&amp;sesskey=".sesskey());
+				print_error(get_string('creer_referentiel','referentiel'), "../../course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
 
@@ -2721,7 +2685,7 @@ stdClass Object
 		$isauthor = referentiel_certificat_isowner($record->id);		
 		if ($isauthor || $isteacher || $isadmin) {
 			referentiel_print_certificat_detail_une_page($record, $nb_items, $liste_empreintes, $liste_poids, $seuil_certification, $protocole_link);
-			referentiel_menu_certificat_detail($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $userid, $select_acc);
+			referentiel_menu_certificat_detail($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $userid, $select_acc, ($record->valide && $isstudent));
 		}
 	}
 }
@@ -2745,31 +2709,17 @@ global $USER;
     $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
     $course = $DB->get_record('course', array('id' => $cm->course));
 	if (empty($cm) or empty($course)){
-        print_print_error('REFERENTIEL_ERROR 5 :: print_lib_certificat.php :: You cannot call this script in that way');
+        print_error('REFERENTIEL_ERROR 5 :: print_lib_certificat.php :: You cannot call this script in that way');
 	}
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $roles=referentiel_roles_in_instance($referentiel_instance->id);
-    /*
-    echo "<br />DEBUG :: print_lib_certificat.php 620 :: ROLES\n";
-    print_object($roles);
-    exit;
-DEBUG :: print_lib_certificat.php 620 :: ROLES
-stdClass Object
-(
-    [is_admin] => 1
-    [is_teacher] =>
-    [is_tutor] =>
-    [is_student] =>
-)
-    */
-
+    $iseditor=$roles->is_editor;
     $isadmin=$roles->is_admin;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
 
     // codes item
 	$liste_codes=referentiel_purge_dernier_separateur($referentiel_referentiel->liste_codes_competence, '/');

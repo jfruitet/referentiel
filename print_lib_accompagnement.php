@@ -199,49 +199,6 @@ global $CFG;
   }
 }
 
-// ---------------------------------
-// Affiche les accompagnements de ce referentiel
-function referentiel_menu_accompagnement_detail($context, $accompagnementid, $referentiel_instance_id, $closed, $select_acc=0){
-	global $CFG;
-	global $USER;
-	global $OUTPUT;
-	
-	$isauthor = has_capability('mod/referentiel:addaccompagnement', $context);
-	$isstudent = has_capability('mod/referentiel:selectaccompagnement', $context) && !$isauthor;
-	
-	echo '<div align="center">';
-    echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$referentiel_instance_id.'&amp;accompagnementid='.$accompagnementid.'&amp;mode=listaccompagnement&amp;sesskey='.sesskey().'#accompagnement_'.$accompagnementid.'"><img src="'.$OUTPUT->pix_url('nosearch','referentiel').'" alt="'.get_string('moins', 'referentiel').'" title="'.get_string('moins', 'referentiel').'" /></a>';
-	if (has_capability('mod/referentiel:addaccompagnement', $context) 
-				or referentiel_accompagnement_isowner($accompagnementid)) {
-       	echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;accompagnementid='.$accompagnementid.'&amp;mode=updateaccompagnement&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/edit').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
-        echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;accompagnementid='.$accompagnementid.'&amp;mode=deleteaccompagnement&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/delete').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
-	}
-	// selectionner
-  if (has_capability('mod/referentiel:selectaccompagnement', $context)){
-		if (!$closed){
-		  if ($isstudent && $USER->id && referentiel_user_tache_souscrite($USER->id, $accompagnementid)){
-    			echo '&nbsp; <img src="'.$OUTPUT->pix_url('/i/tick_amber_big').'" alt="'.get_string('subscribed_accompagnement', 'referentiel').'" title="'.get_string('subscribed_accompagnement', 'referentiel').'" />'."\n";
-			}
-      else{
-			  echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;accompagnementid='.$accompagnementid.'&amp;mode=selectaccompagnement&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/i/tick_green_big').'" alt="'.get_string('souscrire', 'referentiel').'"  title="'.get_string('souscrire', 'referentiel').'" /></a>';
-		  }
-    }
-		else{
-    		echo '&nbsp; <img src="'.$OUTPUT->pix_url('stop','referentiel').'" alt="'.get_string('closed_accompagnement', 'referentiel').'" title="'.get_string('closed_accompagnement', 'referentiel').'" />'."\n";
-		}
-	}
-	// valider
-    if (has_capability('mod/referentiel:approve', $context)){
-		if (!$closed){
-			echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;accompagnementid='.$accompagnementid.'&amp;mode=approveaccompagnement&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/go').'" alt="'.get_string('approve', 'referentiel').'"  title="'.get_string('approve', 'referentiel').'"/></a>'."\n";
-		}
-		else{
-    		echo '&nbsp;  <a href="'.$CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;accompagnementid='.$accompagnementid.'&amp;mode=approveaccompagnement&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('closed','referentiel').'" alt="'.get_string('approve', 'referentiel').'" title="'.get_string('approve', 'referentiel').'" /></a>'."\n";
-		}
-	}
-	echo '</div><br />';
-}
-
 
 // ----------------------------------------------------
 function referentiel_print_accompagnement($referentiel_instance_id, $course_id, $context, $record_users, $record_teachers, $userid){
@@ -525,8 +482,8 @@ global $DB;
 global $USER;
 static $istutor=false;
 static $isteacher=false;
-static $isauthor=false;
-static $iseditor=false;
+static $isadmin=false;
+static $isstudent=false;
 static $referentiel_id = NULL;
 
     // A COMPLETER
@@ -548,34 +505,39 @@ static $referentiel_id = NULL;
 	
 	$records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;	
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
 	/*
 	// DEBUG
+    if ($iseditor) echo "Editor ";
+    if ($isadmin) echo "Admin ";
 	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
 	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
+	if ($isstudent) echo "Student ";
 	*/
-	
+
 	
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
 		if (!$referentiel_referentiel){
 			if ($iseditor){
-				error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
+				print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
-				error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
+				print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
 
 		// boite pour selectionner les utilisateurs ?
-		if ($isteacher || $iseditor || $istutor){
+		if ($isadmin || $isteacher || $istutor){
 			// tous les users possibles (pour la boite de selection)
-				// Get your userids the normal way
+			// Get your userids the normal way
 			// ICI on affiche tous les utilisateurs
 			$record_id_users  = referentiel_get_students_course($course->id,0,0);  //seulement les stagiaires
 			if ($gusers && $record_id_users){ // liste des utilisateurs du groupe courant
@@ -596,15 +558,6 @@ static $referentiel_id = NULL;
 				}
 			}
       		$record_teachers  = referentiel_get_teachers_course($course->id);
-/*
-      		// DEBUG
-// echo "<br />DEBUG :: print_lib_accompagnement :: 574 :: referentiel_print_liste_accompagnements() \n";
-// print_r($record_teachers );
-
-      $record_teachers  = referentiel_get_teachers_course_old($course->id,0,0,'1,2');  //seulement les enseignants sans les administrateurs
-// echo "<br />DEBUG :: print_lib_accompagnement :: 582 :: referentiel_print_liste_accompagnements() \n";
-// print_r($record_teachers );
-*/
             echo referentiel_select_accompagnement_users_teachers($referentiel_instance->id, $course->id, $mode, $record_id_users, $record_teachers, $userid_filtre, $select_acc);
 		}
 	}

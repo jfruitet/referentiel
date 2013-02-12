@@ -135,14 +135,14 @@ table.activite {
 
 table.activite td.couleur_paire {
 	BORDER-RIGHT: #6480b8 1px solid; BORDER-TOP: #6480b8 1px solid; BORDER-LEFT: #6480b8 1px solid; BORDER-BOTTOM: #6480b8 1px solid;
-	BACKGROUND-COLOR: #9999cc;
+	BACKGROUND-COLOR: #b299cc;
     COLOR: black;
 	font-size: 11px;
 }
 
 table.activite td.couleur_impaire {
 	BORDER-RIGHT: #6480b8 1px solid; BORDER-TOP: #6480b8 1px solid; BORDER-LEFT: #6480b8 1px solid; BORDER-BOTTOM: #6480b8 1px solid;
-    BACKGROUND-COLOR: #99cc99;
+    BACKGROUND-COLOR: #c0cc90;
     COLOR: black;
 	font-size: 11px;
 }

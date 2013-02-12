@@ -34,9 +34,9 @@ function  referentiel_edit_protocole($mode, $referentiel_instance, $select_acc=0
 global $DB;
 global $CFG;
 global $USER;
+static $isadmin=false;
 static $istutor=false;
 static $isteacher=false;
-static $isauthor=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
 
@@ -54,18 +54,21 @@ static $referentiel_id = NULL;
         // $context = context_module::instance($cm);
     //}
 	
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+	$referentiel_id = $referentiel_instance->ref_referentiel;
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
 	/*
 	// DEBUG
+	if ($isadmin) echo "Admin ";
 	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
 	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
+	if ($isstudent) echo "Student ";
 	*/
-
 
 	if (!empty($referentiel_instance->ref_referentiel)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
@@ -102,7 +105,7 @@ global $CFG;
 global $USER;
 static $istutor=false;
 static $isteacher=false;
-static $isauthor=false;
+static $isadmin=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
 
@@ -113,23 +116,21 @@ static $referentiel_id = NULL;
         print_error('REFERENTIEL_ERROR 5 :: print_lib_protocole.php :: 46 :: You cannot call this script in that way');
 	}
 
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
 	/*
 	// DEBUG
+	if ($isadmin) echo "Admin ";
 	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
 	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
+	if ($isstudent) echo "Student ";
 	*/
 
 

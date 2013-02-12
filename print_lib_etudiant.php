@@ -175,10 +175,10 @@ global $OUTPUT;
 			// menu
 			if (has_capability('mod/referentiel:managecertif', $context) 
 				or ($USER->id==$record->userid)) {
-	        	$s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel_id.'&amp;userid='.$record->userid.'&amp;mode=updateetudiant&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
+	        	$s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel_id.'&amp;userid='.$record->userid.'&amp;mode=updateetudiant&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/edit').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
 			}
 			if (has_capability('mod/referentiel:managecertif', $context)){
-	    		$s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel_id.'&amp;userid='.$record->userid.'&amp;mode=deleteetudiant&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
+	    		$s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel_id.'&amp;userid='.$record->userid.'&amp;mode=deleteetudiant&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/delete').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
 			}
 			$s.='</td></tr>'."\n";
 		}
@@ -226,10 +226,10 @@ function referentiel_menu_etudiant($context, $referentiel_id, $userid){
 	
 	if (has_capability('mod/referentiel:managecertif', $context) 
 		or ($USER->id==$userid)) {
-        $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel_id.'&amp;userid='.$userid.'&amp;mode=updateetudiant&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
+        $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel_id.'&amp;userid='.$userid.'&amp;mode=updateetudiant&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/edit').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
 	}
 	if (has_capability('mod/referentiel:managecertif', $context)){
-	    $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel_id.'&amp;userid='.$userid.'&amp;mode=deleteetudiant&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
+	    $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel_id.'&amp;userid='.$userid.'&amp;mode=deleteetudiant&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/delete').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
 	}
 	return $s;
 }
@@ -251,8 +251,10 @@ function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referent
     global $DB;
     static $istutor=false;
     static $isteacher=false;
-    static $isauthor=false;
+    static $isadmin=false;
+    static $isstudent=false;
     static $iseditor=false;
+    static $isauthor=false;
 
     if (!empty($referentiel_instance)){
         $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
@@ -261,21 +263,26 @@ function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referent
         if (empty($cm) or empty($course)){
             print_error('REFERENTIEL_ERROR 5 :: print_lib_etudiant.php :: You cannot call this script in that way');
         }
-		
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
+
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
-		
         $records = array();
-        $iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-        $isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-        $istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-        $isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+        
+        $referentiel_id = $referentiel_instance->ref_referentiel;
 
+        $roles=referentiel_roles_in_instance($referentiel_instance->id);
+        $iseditor=$roles->is_editor;
+        $isadmin=$roles->is_admin;
+        $isteacher=$roles->is_teacher;
+        $istutor=$roles->is_tutor;
+        $isstudent=$roles->is_student;
+
+	   /*
+	   // DEBUG
+	   if ($isadmin) echo "Admin ";
+	   if ($isteacher) echo "Teacher ";
+	   if ($istutor) echo "Tutor ";
+	   if ($isstudent) echo "Student ";
+	   */
         // Creer les enregistrements pour les etudiants
 		$record_id_users  = referentiel_get_students_course($course->id,0,0);  // seulement les stagiaires
 		// echo "<br />DEBUG :: print_lib_etudiant.php :: 219 :: RECORD_ID_USERS<br />\n";

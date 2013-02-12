@@ -37,16 +37,6 @@ CONSTRAINT  PRIMARY KEY (id)
  * @package referentiel
  */
  
-// ---------------------------------------------
-function referentiel_vider_pedagos_assos(){
-// vidage des tables de pedagogies
-global $DB;
-    $DB->delete_records("referentiel_course_users");
-    $DB->delete_records("referentiel_a_user_pedagogie");
-    $DB->delete_records("referentiel_pedagogie");
-}
-
-
 /**
  * referentiel_ajoute_date
  *
@@ -77,9 +67,6 @@ function referentiel_print_liste_pedagogies($mode, $referentiel_instance) {
 global $CFG;
 global $DB;
 global $USER;
-static $isteacher=false;
-static $isauthor=false;
-static $iseditor=false;
 static $referentiel_id = NULL;
 	// contexte
     $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
@@ -88,28 +75,16 @@ static $referentiel_id = NULL;
         print_error('REFERENTIEL_ERROR :: lib_pedagogie.php :: 78 :: You cannot call this script in that way');
 	}	
 
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-	$iseditor = has_capability('mod/referentiel:managecertif', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;	
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
 
-	
-	// DEBUG
-	/*
-	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
-	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
-	echo "<br />UseridFiltre= $userid_filtre\n";
-	*/
-	
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
 	if (isset($referentiel_instance->ref_referentiel) && ($referentiel_instance->ref_referentiel>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
 		if (!$referentiel_referentiel){
@@ -248,9 +223,6 @@ function referentiel_print_liste_associations($mode, $referentiel_instance, $use
 global $CFG;
 global $DB;
 global $USER;
-static $isteacher=false;
-static $isauthor=false;
-static $iseditor=false;
 static $referentiel_id = NULL;
 	// contexte
     $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
@@ -259,29 +231,16 @@ static $referentiel_id = NULL;
         print_error('REFERENTIEL_ERROR :: lib_pedagogie.php :: 242 :: You cannot call this script in that way');
 	}
 
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 	$referentiel_id = $referentiel_instance->ref_referentiel;
 
-	$iseditor = has_capability('mod/referentiel:managecertif', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
-
-
-	// DEBUG
-	/*
-	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
-	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
-	echo "<br />UseridFiltre= $userid_filtre\n";
-	*/
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
 
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
@@ -817,6 +776,13 @@ function referentiel_update_pedagogie_record($rec){
 // retourne true or false
 global $DB;
     if (!empty($rec->id)){
+        $rec->promotion = $rec->promotion;
+        $rec->formation= ($rec->formation);
+        $rec->pedagogie= ($rec->pedagogie);
+        $rec->composante= ($rec->composante);
+        $rec->num_groupe = ($rec->num_groupe);
+        $rec->commentaire= ($rec->commentaire);
+
         return ($DB->update_record("referentiel_pedagogie", $rec));
     }
     return 0;
@@ -939,10 +905,6 @@ function referentiel_select_associations($mode, $referentiel_instance, $userid_f
 global $DB;
 global $CFG;
 global $USER;
-static $istutor=false;
-static $isteacher=false;
-static $isauthor=false;
-static $iseditor=false;
 static $referentiel_id = NULL;
 
     // A COMPLETER
@@ -954,28 +916,17 @@ static $referentiel_id = NULL;
         print_error('REFERENTIEL_ERROR 5 :: lib_pedagogie.php :: 926 :: You cannot call this script in that way');
 	}
 
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 	$records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
-	/*
-	// DEBUG
-	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
-	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
-	*/
 
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
 
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);

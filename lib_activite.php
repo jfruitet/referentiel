@@ -1,4 +1,4 @@
-﻿<?php  // $Id:  lib_activite.php,v 1.0 2012/10/05 00:00:00 jfruitet Exp $
+<?php  // $Id:  lib_activite.php,v 1.0 2012/10/05 00:00:00 jfruitet Exp $
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -406,9 +406,9 @@ function referentiel_print_liste_activites($mode, $referentiel_instance, $userid
 global $DB;
 global $CFG;
 global $USER;
+static $isadmin=false;
 static $istutor=false;
 static $isteacher=false;
-static $isauthor=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
 global $appli;
@@ -430,27 +430,22 @@ global $appli;
 
 	$records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
-	/*
-	// DEBUG
-	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
-	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
-	*/
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
 
 
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
 		if (!$referentiel_referentiel){
 			if ($iseditor){
-				error(get_string('creer_referentiel','referentiel'), "edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
+				print_error(get_string('creer_referentiel','referentiel'), "edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
-				error(get_string('creer_referentiel','referentiel'), "../../course/view.php?id=$course->id&amp;sesskey=".sesskey());
+				print_error(get_string('creer_referentiel','referentiel'), "../../course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
 	 	// preparer les variables globales pour Overlib
@@ -599,10 +594,6 @@ function referentiel_print_liste_activites_user($referentiel_instance, $userid, 
 global $CFG;
 global $DB;
 global $USER;
-static $istutor=false;
-static $isteacher=false;
-static $isauthor=false;
-static $iseditor=false;
 static $referentiel_id = NULL;
 global $appli;
 
@@ -612,32 +603,29 @@ global $appli;
     $course = $DB->get_record("course", array("id" => "$cm->course"));
 
     if (empty($cm) or empty($course)){
-        print_error('REFERENTIEL_ERROR 5 :: print_lib_activite.php :: You cannot call this script in that way');
+        print_print_error('REFERENTIEL_print_error 5 :: print_lib_activite.php :: You cannot call this script in that way');
 	}
 	
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-	
 	$records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;	
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
 
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+        
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
 		if (!$referentiel_referentiel){
 			if ($iseditor){
-				print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
+				print_print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
-				print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
+				print_print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
 	 	// preparer les variables globales pour Overlib

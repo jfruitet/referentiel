@@ -631,7 +631,7 @@ global $CFG;
 global $USER;
 static $istutor=false;
 static $isteacher=false;
-static $isauthor=false;
+static $isadmin=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
 
@@ -648,18 +648,22 @@ static $referentiel_id = NULL;
 	
 	$records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;	
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
 	/*
 	// DEBUG
+	if ($isadmin) echo "Admin ";
 	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
 	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
+	if ($isstudent) echo "Student ";
 	*/
-	
+
 	
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
@@ -693,7 +697,7 @@ function referentiel_print_suivi_user($mode, $referentiel_instance, $userid_filt
     global $USER;
     static $istutor=false;
     static $isteacher=false;
-    static $isauthor=false;
+    static $isadmin=false;
     static $iseditor=false;
     static $referentiel_id = NULL;
 
@@ -711,10 +715,21 @@ function referentiel_print_suivi_user($mode, $referentiel_instance, $userid_filt
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         $refrefid = $referentiel_instance->ref_referentiel;
-        $iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-        $isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-        $istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-        $isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+
+        $roles=referentiel_roles_in_instance($referentiel_instance->id);
+        $iseditor=$roles->is_editor;
+        $isadmin=$roles->is_admin;
+        $isteacher=$roles->is_teacher;
+        $istutor=$roles->is_tutor;
+        $isstudent=$roles->is_student;
+
+	    /*
+        // DEBUG
+	    if ($isadmin) echo "Admin ";
+        if ($isteacher) echo "Teacher ";
+	    if ($istutor) echo "Tutor ";
+	    if ($isstudent) echo "Student ";
+	    */
 
         if (!empty($refrefid)){
             $referentiel_referentiel=referentiel_get_referentiel_referentiel($refrefid);
@@ -822,7 +837,7 @@ function referentiel_print_liste_repartitions($referentiel_instance){
 global $DB;
 static $istutor=false;
 static $isteacher=false;
-static $isauthor=false;
+static $isadmin=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
 
@@ -836,7 +851,22 @@ static $referentiel_id = NULL;
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $referentiel_id = $referentiel_instance->ref_referentiel;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
+
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
+	/*
+	// DEBUG
+	if ($isadmin) echo "Admin ";
+	if ($isteacher) echo "Teacher ";
+	if ($istutor) echo "Tutor ";
+	if ($isstudent) echo "Student ";
+	*/
+
 
 	if (!empty($referentiel_id)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);

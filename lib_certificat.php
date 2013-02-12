@@ -299,20 +299,18 @@ function referentiel_get_liste_certificats($referentiel_instance, $course, $cont
         $force_generation=0) {
 global $debug_special;
 global $USER;
-static $isteacher=false;
-static $isauthor=false;
-static $iseditor=false;
 static $referentiel_id = NULL;
 
     $records=array();
 
     if ($referentiel_instance){
-        $isadmin = has_capability('mod/referentiel:exportcertif', $context);
-        $iseditor = has_capability('mod/referentiel:managecertif', $context);
-        $isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-        $istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-        $isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
 
+        $roles=referentiel_roles_in_instance($referentiel_instance->id);
+        $iseditor=$roles->is_editor;
+        $isadmin=$roles->is_admin;
+        $isteacher=$roles->is_teacher;
+        $istutor=$roles->is_tutor;
+        $isstudent=$roles->is_student;
 
         // recuperer les certificats
         if (!empty($list_userids)){  // liste d'utilisateurs obtenus par les pedagogies
@@ -705,9 +703,6 @@ function referentiel_select_liste_certificats($referentiel_instance, $list_pedag
 global $USER;
 global $existe_pedagos;   /// renseigne au niveau de export_certificat
 
-static $isteacher=false;
-static $isauthor=false;
-static $iseditor=false;
 static $referentiel_id = NULL;
 global $DB;
     // DEBUG
@@ -732,11 +727,12 @@ global $DB;
 
     $referentiel_id = $referentiel_instance->ref_referentiel;
 
-    $isadmin = has_capability('mod/referentiel:exportcertif', $context);
-    $iseditor = has_capability('mod/referentiel:managecertif', $context);
-    $isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-    $istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-    $isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
 
     if (isset($referentiel_id) && ($referentiel_id>0)){
         $referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
@@ -889,15 +885,18 @@ function referentiel_get_liste_users($referentiel_instance, $course, $context,
 global $debug_special;
 
 global $USER;
-static $isteacher=false;
-static $isauthor=false;
-static $iseditor=false;
 static $referentiel_id = NULL;
 
     $records=array();
 
     if ($referentiel_instance){
-        $isadmin = has_capability('mod/referentiel:exportcertif', $context);
+
+        $roles=referentiel_roles_in_instance($referentiel_instance->id);
+        $iseditor=$roles->is_editor;
+        $isadmin=$roles->is_admin;
+        $isteacher=$roles->is_teacher;
+        $istutor=$roles->is_tutor;
+        $isstudent=$roles->is_student;
 
         // recuperer les certificats
         if (!empty($list_userids)){  // liste d'utilisateurs obtenus par les pedagogies

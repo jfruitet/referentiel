@@ -791,40 +791,42 @@ global $CFG;
 global $USER;
 static $istutor=false;
 static $isteacher=false;
-static $isauthor=false;
-static $iseditor=false;
+static $isadmin=false;
 static $isstudent=false;
+static $iseditor=false;
+
 static $referentiel_id = NULL;
 
 // A COMPLETER
 $data=NULL;
 
     // contexte
-        $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
-        $course = $DB->get_record('course', array('id' => $cm->course));
-        if (empty($cm) or empty($course)){
-            print_error('REFERENTIEL_ERROR 5 :: print_lib_task.php :: You cannot call this script in that way');
-        }
+    $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
+    $course = $DB->get_record('course', array('id' => $cm->course));
+    if (empty($cm) or empty($course)){
+        print_error('REFERENTIEL_ERROR 5 :: print_lib_task.php :: You cannot call this script in that way');
+    }
 
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $referentiel_id = $referentiel_instance->ref_referentiel;
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $referentiel_id = $referentiel_instance->ref_referentiel;
 
-        $records = array();
-        $iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	    $isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	    $istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-	    $isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
-        $isstudent = has_capability('mod/referentiel:selecttask', $context) && !$isauthor;
+    $records = array();
 
-        /*
-    	// DEBUG
-	    if ($isteacher) echo "Teacher ";
-    	if ($iseditor) echo "Editor ";
-	    if ($istutor) echo "Tutor ";
-        if ($isauthor) echo "Author ";
-	    if ($isstudent) echo "Student ";
-	    */
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
 
+	/*
+	// DEBUG
+    if ($iseditor) echo "Editor ";
+    if ($isadmin) echo "Admin ";
+	if ($isteacher) echo "Teacher ";
+	if ($istutor) echo "Tutor ";
+	if ($isstudent) echo "Student ";
+	*/
 
     if (!empty($referentiel_id)){
         $referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
@@ -1465,7 +1467,7 @@ global $DB;
 global $USER;
 static $istutor=false;
 static $isteacher=false;
-static $isauthor=false;
+static $isadmin=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
 
@@ -1479,20 +1481,26 @@ static $referentiel_id = NULL;
         print_error('REFERENTIEL_ERROR 5 :: print_lib_activite.php :: You cannot call this script in that way');
 	}
 	
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-	
 	$records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;	
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
+	/*
+	// DEBUG
+    if ($iseditor) echo "Editor ";
+    if ($isadmin) echo "Admin ";
+	if ($isteacher) echo "Teacher ";
+	if ($istutor) echo "Tutor ";
+	if ($isstudent) echo "Student ";
+	*/
 
     $record_id_users=array();
     
@@ -1500,10 +1508,10 @@ static $referentiel_id = NULL;
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
 		if (!$referentiel_referentiel){
 			if ($iseditor){
-			                print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
+			    print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
-			                print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
+			    print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
 	 	// preparer les variables globales pour Overlib
@@ -2145,7 +2153,7 @@ global $DB;
 global $USER;
 static $istutor=false;
 static $isteacher=false;
-static $isauthor=false;
+static $isadmin=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
 
@@ -2168,27 +2176,32 @@ static $referentiel_id = NULL;
 	
 	$records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;	
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
 	/*
 	// DEBUG
+    if ($iseditor) echo "Editor ";
+    if ($isadmin) echo "Admin ";
 	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
 	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
+	if ($isstudent) echo "Student ";
 	*/
-	
+
+
 	
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
 		if (!$referentiel_referentiel){
 			if ($iseditor){
-			                print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
+			    print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
-			                print_error(get_string('creer_referentiel','referentiel'), ".$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
+			    print_error(get_string('creer_referentiel','referentiel'), ".$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
 	 	// preparer les variables globales pour Overlib
@@ -2327,8 +2340,6 @@ static $referentiel_id = NULL;
 
 
 			// Parcours des utilisateurs
-			
-			
 			for ($j=$deb; $j<$fin; $j++){
 				$i=abs($j);
 				// recupere les enregistrements
@@ -2407,11 +2418,7 @@ static $referentiel_id = NULL;
 </td></tr>
 </form>'."\n";
 
-
-
 			// liste des utilisateur achevee
-			
-			
 			if (isset($mode) && ($mode=='updateactivity')){
 				// echo referentiel_modifie_activite_2_complete($record, $context, $actif);
 				echo referentiel_modifie_enqueue_activite();
@@ -2443,6 +2450,11 @@ global $USER;
 global $CFG;
 global $OUTPUT;
 global $COURSE;
+static $istutor=false;
+static $isteacher=false;
+static $isadmin=false;
+static $isstudent=false;
+static $iseditor=false;
 	$s='';
 	$s_menu='';
 	$s_document='';
@@ -2450,9 +2462,22 @@ global $COURSE;
 	
 	// Charger les activites
 	// filtres	
-	$isteacher = has_capability('mod/referentiel:approve', $context);
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$isteacher;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);	
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
+	/*
+	// DEBUG
+    if ($iseditor) echo "Editor ";
+    if ($isadmin) echo "Admin ";
+	if ($isteacher) echo "Teacher ";
+	if ($istutor) echo "Tutor ";
+	if ($isstudent) echo "Student ";
+	*/
+
 
 	if ($record){
 		$activite_id=$record->id;
@@ -2776,6 +2801,11 @@ global $OUTPUT;
 global $COURSE;
 global $t_item_code;
 global $t_item_description_competence;
+static $istutor=false;
+static $isteacher=false;
+static $isadmin=false;
+static $isstudent=false;
+static $iseditor=false;
 
 $s='';
 $s_menu='';
@@ -2784,9 +2814,23 @@ $s_out='';
 	
 // Charger les activites
 // filtres
-$isteacher = has_capability('mod/referentiel:approve', $context);
-$isauthor = has_capability('mod/referentiel:write', $context) && !$isteacher;
-$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
+	/*
+	// DEBUG
+    if ($iseditor) echo "Editor ";
+    if ($isadmin) echo "Admin ";
+	if ($isteacher) echo "Teacher ";
+	if ($istutor) echo "Tutor ";
+	if ($isstudent) echo "Student ";
+	*/
+
+
 if ($record){
 		$activite_id=$record->id;
 		$type_activite = stripslashes($record->type_activite);
@@ -3149,6 +3193,11 @@ global $USER;
 global $CFG;
 global $OUTPUT;
 global $COURSE;
+static $istutor=false;
+static $isteacher=false;
+static $isadmin=false;
+static $isstudent=false;
+static $iseditor=false;
 	$s='';
 	$s_menu='';
 	$s_document='';
@@ -3156,9 +3205,21 @@ global $COURSE;
 	
 	// Charger les activites
 	// filtres	
-	$isteacher = has_capability('mod/referentiel:approve', $context);
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$isteacher;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);	
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
+	/*
+	// DEBUG
+    if ($iseditor) echo "Editor ";
+    if ($isadmin) echo "Admin ";
+	if ($isteacher) echo "Teacher ";
+	if ($istutor) echo "Tutor ";
+	if ($isstudent) echo "Student ";
+	*/
 
 	if ($record){
 		$activite_id=$record->id;

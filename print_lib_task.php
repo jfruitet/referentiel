@@ -914,8 +914,10 @@ function referentiel_print_activities_task($taskid, $referentiel_instance, $mode
 global $CFG;
 global $OUTPUT;
 global $USER;
+static $istutor=false;
+static $isteacher=false;
+static $isadmin=false;
 static $isstudent=false;
-static $isauthor=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
 global $DB;
@@ -936,12 +938,12 @@ if (!empty($referentiel_instance)){
         // $context = context_module::instance($cm);
     //}
 
-	
-    $iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
-	$isstudent = has_capability('mod/referentiel:selecttask', $context) && !$isauthor;
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
 
 	if (isset($referentiel_instance->id) && ($referentiel_instance->id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
@@ -970,7 +972,7 @@ if (!empty($referentiel_instance)){
                 //echo "<br />DEBUG :: 956<br />";
                 //print_r($record_id_users);
                 //exit;
-                if ($isteacher || $iseditor || $istutor){
+                if ($isteacher || $iseditor || $istutor || $isadmin){
                     // tous les users possibles (pour la boite de selection)
                     // Get your userids the normal way
 
@@ -1229,34 +1231,38 @@ if (!empty($referentiel_instance)){
 	
     $records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
-	$isteacher = has_capability('mod/referentiel:approve', $context)&& !$iseditor;
-	$istutor = has_capability('mod/referentiel:comment', $context) && !$iseditor  && !$isteacher;	
-	$isauthor = has_capability('mod/referentiel:write', $context) && !$iseditor  && !$isteacher  && !$istutor;
+
+    $roles=referentiel_roles_in_instance($referentiel_instance->id);
+    $iseditor=$roles->is_editor;
+    $isadmin=$roles->is_admin;
+    $isteacher=$roles->is_teacher;
+    $istutor=$roles->is_tutor;
+    $isstudent=$roles->is_student;
+
 	/*
 	// DEBUG
+    if ($iseditor) echo "Editor ";
+    if ($isadmin) echo "Admin ";
 	if ($isteacher) echo "Teacher ";
-	if ($iseditor) echo "Editor ";
 	if ($istutor) echo "Tutor ";
-	if ($isauthor) echo "Author ";
+	if ($isstudent) echo "Student ";
 	*/
-	
-	
+
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
 		if (!$referentiel_referentiel){
 			if ($iseditor){
-			                print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
+			    print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
-			                print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
+			    print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
 
 		// boite pour selectionner les utilisateurs ?
 		if ($isteacher || $iseditor || $istutor){
 			// tous les users possibles (pour la boite de selection)
-				// Get your userids the normal way
+			// Get your userids the normal way
 			$record_id_users  = referentiel_get_students_course($course->id,0,0);  //seulement les stagiaires
 			if ($gusers && $record_id_users){ // liste des utilisateurs du groupe courant
 				// echo "<br />DEBUG :: print_lib_activite.php :: 740 :: GUSERS<br />\n";
