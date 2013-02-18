@@ -362,12 +362,12 @@ global $DB;
     $params=array('editingteacher', 'teacher');
     $sql= "SELECT distinct id FROM {role} WHERE (archetype = ? OR archetype= ?) ";
     // DEBUG
-    // echo "<br />DEBUG : lib.php :: 265 :: SQL &gt; $sql\n";
+    // echo "<br />DEBUG : user_lib.php :: 396 :: SQL &gt; $sql\n";
 
     $teacherroles= $DB->get_records_sql($sql, $params);
     if ($teacherroles){
         // DEBUG
-        // echo "<br />DEBUG : lib.php :: 270 :: ROLES<br />\n";
+        // echo "<br />DEBUG : user_lib.php :: 401 :: TEACHERS ROLES<br />\n";
         // print_object($teacherroles);
     }
 
@@ -390,12 +390,7 @@ global $DB;
 	if (! $course = $DB->get_record("course", array("id" => "$courseid"))) {
 		print_error("Course ID is incorrect");
 	}
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    //} else {
-    //    $context = context_course::instance($course->id);
-    //}
-
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 	if (! $context) {
 		print_error("Context ID is incorrect");
 	}
@@ -421,13 +416,43 @@ global $DB;
     }
     // DEBUG
     /*
-    echo "<br />DEBUG : lib.php :: 313 :: TEACHERS ID<br />\n";
+    echo "<br />DEBUG : user_lib.php :: 419 :: TEACHERS ID<br />\n";
     print_object($teachersids);
     echo "<br />EXIT\n";
     exit;
     */
     return $teachersids;
   }
+
+/**
+ * This function returns records list of roles where archetype is
+ * editingteachers or teachers
+ *
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_student_roles(){
+// This function returns records list of students's roles
+// Remonte aussi les rôles derivés...
+// rechercher les rôles dont l'archetype est student
+
+global $DB;
+    $teacherroles= array();
+
+    $params=array('student');
+    $sql= "SELECT distinct id FROM {role} WHERE (archetype = ?) ";
+    // DEBUG
+    // echo "<br />DEBUG : user_lib.php :: 365 :: SQL &gt; $sql\n";
+
+    $studentroles= $DB->get_records_sql($sql, $params);
+    if ($studentroles){
+        // DEBUG
+        // echo "<br />DEBUG : user_lib.php :: 370 :: STUDENTS ROLES<br />\n";
+        // print_object($studentroles);
+
+    }
+    return $studentroles;
+}
 
 /**
  * This function returns records list of teachers from course
@@ -437,18 +462,68 @@ global $DB;
  **/
 function referentiel_get_students_course($courseid, $userid=0, $roleid=0, $quiet=false){
 // This function returns records list of students from course
+// Remonte aussi les rôles derivés de student...
+global $CFG;
+global $DB;
+    $studentsids=array();
+	if (! $course = $DB->get_record("course", array("id" => "$courseid"))) {
+		if (!$quiet) print_error("Course ID is incorrect");
+		else return false;
+	}
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+	if (! $context) {
+		if (!$quiet) print_error("Context ID is incorrect");
+		else return false;
+	}
+
+    $roles = referentiel_get_student_roles();
+    if ($roles){
+        // DEBUG
+        // echo "<br />DEBUG : user_lib.php :: 483 :: ROLES ETUDIANTS<br />\n";
+        // print_object($roles);
+
+        foreach ($roles as $role){
+            if (($roleid && $role->id==$roleid) || (!$roleid)){
+                $users= get_role_users($role->id, $context);
+                if ($users){
+                    foreach($users as $user){
+                        if (($userid && $user->id==$userid) || (!$userid)){
+                            if (empty($studentsids[$user->id])){
+                                $a_obj=new stdClass();
+                                $a_obj->userid=$user->id;
+                                $studentsids[$user->id]=$a_obj;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // DEBUG
+    // echo "<br />DEBUG : user_lib.php :: 504 :: USERS ID<br />\n";
+    // print_object($studentsids);
+    // echo "<br />EXIT\n";
+    // exit;
+
+    return $studentsids;
+  }
+
+
+/**
+ * This function returns records list of teachers from course
+ *
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_students_course_v2($courseid, $userid=0, $roleid=0, $quiet=false){
+// This function returns records list of students from course
 global $DB;
 global $CFG;
 	if (! $course = $DB->get_record("course", array("id" => "$courseid"))) {
 		if (!$quiet) print_error("Course ID is incorrect");
 		else return false;
 	}
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    //} else {
-    //    $context = context_course::instance($course->id);
-    //}
-
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 	if (! $context) {
 		if (!$quiet) print_error("Context ID is incorrect");
 		else return false;

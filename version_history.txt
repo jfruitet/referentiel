@@ -1,7 +1,7 @@
 ﻿Moodle module referentiel 
 Module Moodle - Référentiel / Skills repository - Documentation
 jean.fruitet@univ-nantes.fr
-2007/2012
+2007/2013
 
 Type: Activity Module
 Requires: Moodle 2.2 or later
@@ -12,12 +12,14 @@ Maintainer(s): jean.fruitet@univ-nantes.fr
 Historique des versions 
 ---------------------------------------------------------
 
-Référentiel pour Moodle 2.4
-----------------------------------
+Référentiel pour Moodle 2.2, 2.3, 2.4
+-------------------------------------
 
-Version 8.03 (2012101000) Release for Moodle 2.4 - 2013-02-04
-Correction d'un bug dans l'attribution du teacherid lors de la remontée d'une activité dans le référentiel 
+Version 8.04 (2013021700) Release for Moodle 2.2, 2.3, 2.4 - 2013-02-17
+Nouvelle façon de récupérer les étudiants d'un cours pour éviter que les rôles dérivés de Gestionnaire de cours soient considérés comme des étudiants
+Augmentation de la taille du champ num_etudiant pour pouvoir gérer les "numéros" longs
 
+Version 8.03 (2012101000) Release for Moodle 2.3, 2.4 - 2013-02-02
 1) Les portfolio Mahara sont supportés (il l'étaient mal avec la version pour 2.3)
 2) J'ai un peu modifié les filtres d'affichage des activités pour faciliter le suivi des déclarations à évaluer (suite à une modification par l'étudiant)
 3) La mise à jour ou le dépôt d'un nouveau document attaché soit propagé dans la date associée à l'activité.
@@ -27,8 +29,7 @@ Cela induit l'affichage de ces activités sur fond rose magenta pour les profs.
  Cet import FERME (clôture et verrouillage) le dossier numérique.
 6) Affichage dans la description d'une activité d'un lien vers l'instance à laquelle appartient l'activité. Cela permet de détecter des erreurs de conception comme celle qui consiste à conserver dans le même cours deux instances d'une même occurrence...
 
-Version 8.02 (2012101000) Release for Moodle 2.4 - 
-
+Version 8.02 (2012101000) Release for Moodle 2.3, 2.4 - 
 Mise à jour du 2013/01/26
 Affichage d'un lien vers l'instance à laquelle appartient l'activité.
 

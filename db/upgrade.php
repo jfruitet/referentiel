@@ -1842,6 +1842,17 @@ function xmldb_referentiel_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013020200, 'referentiel');
     }
     
+    if ($oldversion < 2013021700){
+        /// Modify referentiel_etudiant
+        ///<FIELD NAME="num_etudiant" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="ddn_etudiant"/>
+        $table = new xmldb_table('referentiel_etudiant');
+        $field = new xmldb_field('num_etudiant');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'id');
+        /// Launch change of default for field
+        // $dbman->change_field_default($table, $field, true, true);
+        $dbman->change_field_type($table, $field);
+        upgrade_mod_savepoint(true, 2013021700, 'referentiel');
+    }
 
 	return true;
 }

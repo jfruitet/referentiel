@@ -280,7 +280,7 @@
     <TABLE NAME="referentiel_etudiant" COMMENT="Fiche Etudiant" PREVIOUS="referentiel_certificat" NEXT="referentiel_etablissement">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" COMMENT="id of the table" NEXT="num_etudiant"/>
-        <FIELD NAME="num_etudiant" TYPE="char" LENGTH="20" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="ddn_etudiant"/>
+        <FIELD NAME="num_etudiant" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="id" NEXT="ddn_etudiant"/>
         <FIELD NAME="ddn_etudiant" TYPE="char" LENGTH="14" NOTNULL="false" SEQUENCE="false" PREVIOUS="num_etudiant" NEXT="lieu_naissance"/>
         <FIELD NAME="lieu_naissance" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="ddn_etudiant" NEXT="departement_naissance"/>
         <FIELD NAME="departement_naissance" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" PREVIOUS="lieu_naissance" NEXT="adresse_etudiant"/>
