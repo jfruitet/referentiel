@@ -8,20 +8,20 @@
  * @package referentiel
  **/
  /*
- CREATE TABLE IF NOT EXISTS `mdl_referentiel_task` (
-  `id` bigint(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type_task` varchar(80) NOT NULL DEFAULT '',
-  `description_task` text NOT NULL,
-  `competences_task` text NOT NULL,
-  `criteres_evaluation` text NOT NULL,
-  `ref_instance` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `ref_referentiel` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `ref_course` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `auteurid` bigint(10) unsigned NOT NULL,
-  `date_creation` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `date_modif` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `date_debut` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `date_fin` bigint(10) unsigned NOT NULL DEFAULT '0',
+ CREATE TABLE IF NOT EXISTS mdl_referentiel_task (
+  id bigint(10) unsigned NOT NULL AUTO_INCREMENT,
+  type_task varchar(80) NOT NULL DEFAULT '',
+  description_task text NOT NULL,
+  competences_task text NOT NULL,
+  criteres_evaluation text NOT NULL,
+  ref_instance bigint(10) unsigned NOT NULL DEFAULT '0',
+  ref_referentiel bigint(10) unsigned NOT NULL DEFAULT '0',
+  ref_course bigint(10) unsigned NOT NULL DEFAULT '0',
+  auteurid bigint(10) unsigned NOT NULL,
+  date_creation bigint(10) unsigned NOT NULL DEFAULT '0',
+  date_modif bigint(10) unsigned NOT NULL DEFAULT '0',
+  date_debut bigint(10) unsigned NOT NULL DEFAULT '0',
+  date_fin bigint(10) unsigned NOT NULL DEFAULT '0',
 
 	$task->type_task=($form->type_task);
 	$task->description_task=($form->description_task);
