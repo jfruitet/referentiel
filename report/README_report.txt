@@ -1,7 +1,7 @@
 Moodle module referentiel 
 Module Moodle - Référentiel / Pository - Documentation
 jean.fruitet@univ-nantes.fr
-2007/2012
+2007/2013
 
 Type: Activity Module
 Requires: Moodle 1.8 / 1.9 or later
@@ -23,3 +23,5 @@ SERVEUR_MOODLE/report/
 
 L'administrateur a alors la possibilité de gérer les occurrences, les instances  et les archives
 du module référentiel de son serveur depuis la rubrique "Rapports" sans passer par une instance de cours.
+
+2013/04/04 : J'ai ajouté la possibilité d'afficher les déclarations non évalues depuis plus de 28 jours.

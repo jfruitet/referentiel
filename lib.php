@@ -60,6 +60,9 @@ require_once ("locallib.php");
 // or je l'utilise pour afficher les compétences en survol...
 $OverlibJs='/mod/referentiel/overlib/overlib.js';
 
+// Utilise dans le module report/referentiel
+define ("JOURS_DESHERENCE", 28);  // delai au dela duquel les activités non évaluées sont signalées au gestionnaire / administrateur
+
 // Mahara atranscript est un artefact Mahara en cours de développement
 // Il n'est pas disponible opour le moment
 // define ('MAHARA_ARTEFACT_ATRANSCRIPT', 1);  // placer à 0 pour desactiver le traitement
@@ -128,6 +131,36 @@ define('MAXLIGNEGRAPH', 15);  // Nombre de lignes par graphique
 
 
 /// FONCTIONS A ECRIRE /////////////////////////////////////////////////////////////////////////
+
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all instance of referentiel
+ * and clean up any related data.
+ *
+ * @global object
+ * @global object
+ * @param $data the data submitted from the reset course.
+ * @return array status array
+ */
+function referentiel_reset_userdata($data) {
+    global $CFG, $DB;
+    $componentstr = get_string('modulenameplural', 'referentiel');
+    $status = array();
+
+    $strstatus='';
+    if ($instances=$DB->get_records('referentiel', array('course' => $data->courseid ))){
+        foreach ($instances as $instance){
+            referentiel_delete_instance($instance->id);
+            $strstatus.=$instance->name.", ";
+        }
+        $status[] = array('component'=>$componentstr, 'item'=>$strstatus, 'error'=>false);
+
+    }
+
+    return $status;
+}
+
+
 /**
  * Must return an array of users who are participants for a given instance
  * of referentiel. Must include every user involved in the instance,
@@ -1517,6 +1550,52 @@ global $CFG;
     }
 
 }
+
+// ----------------------------------------------------
+function referentiel_activite_a_suivre($activite, $delai){
+global $USER;
+
+    if (empty($activite->approved)){
+            // echo "<br>Test: DELAI: $delai secondes\n";
+            // print_object($activite);
+            // retourne une valeur de couleur si
+            if (!empty($activite->date_modif_student)
+                    &&
+                    ($activite->date_modif < $activite->date_modif_student)
+                    &&
+                    ($activite->date_modif_student + $delai < time())
+                ){
+
+                return 1;
+            }
+    }
+    return 0;
+}
+
+/**
+ * This function returns records from table referentiel_activite
+ *
+ * @param id reference instance
+ * @param delai : time to backtrack
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_activites_instance_a_suivre($instance_id, $delai){
+global $DB;
+	if (!empty($instance_id)){
+        $date= time() - $delai;
+		$params = array("refid" => $instance_id, 'date' => $date);
+        $sql="SELECT * FROM {referentiel_activite} WHERE ref_instance=:refid
+ AND (approved=0)
+ AND (date_modif_student<>0)
+ AND (date_modif_student<:date)
+ AND (date_modif<date_modif_student)
+ ORDER BY userid ASC, date_creation DESC ";
+        return $DB->get_records_sql($sql, $params);
+    }
+	return NULL;
+}
+
 
 
 ?>

@@ -1,6 +1,19 @@
 <?php
 // referentiel module
 //
+// Moodle 8.05
+
+$string['delaidesherence']='Délai de déshérence';
+$string['config_delaidesherence']='Nombre de jours au delà duquel les déclarations d\'activité non évaluées sont signalées...';
+$string['jours']='days';
+$string['joursdedelai']='Delay';
+$string['avertissementjoursdedelai']='Le délai de déshérence pour les déclarations d\'activité en jours ';
+$string['activitesdesherance']='Liste of activities\' declarations which are not evaluated since more than {$a} days...';
+$string['pasdereferent']='Not any teacher ';
+$string['pasdesuivi']='Not followed by teacher';
+$string['activitesdesheranceh']='Non evaluated Activity...';
+$string['activitesdesheranceh_help']='This page displays the activities which are not been evaluated since more than N days...';
+
 $string['deleteall']= 'Reset';
 $string['deleteallh']= 'Reset';
 $string['deleteallh_help']= 'The table will be deleted then loaded with new values';
@@ -605,6 +618,7 @@ $string['destinataires_notification'] = 'Notification recipients ';
 
 // Mahara artefact referentiel
 // From assigment_mahara plugin
+$string['mahara'] = 'Mahara portfolio';
 $string['exportmahara'] = 'Export to Mahara portfolio artefact';
 $string['clicktopreview'] = 'click to preview in full-size popup';
 $string['clicktoselect'] = 'click to select page';

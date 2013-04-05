@@ -31,6 +31,11 @@ if ($ADMIN->fulltree) {
 
 */
 
+// desherence
+$settings->add(new admin_setting_configtext('delaidesherence', get_string('delaidesherence', 'referentiel'),
+        get_string('config_delaidesherence', 'referentiel'), 28, PARAM_INT));
+
+
 $options = array();
 
 // affichage light du referentiel

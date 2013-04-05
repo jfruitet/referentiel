@@ -16,7 +16,10 @@ Référentiel pour Moodle 2.2, 2.3, 2.4
 -------------------------------------
 
 
-Release for Moodle 2.0, 2.1, 2.2, 2.3, 2.4 - 2013-02-18
+
+Version 8.05 (2013040400) Release for Moodle 2.2, 2.3, 2.4 - 2013-04-04
+Correction d'un bug dans la gestion des pédagogies
+Release for Moodle 2.0, 2.1, 2.2, 2.3, 2.4 - 2013-02-20
 Caractère '`' retiré de toutes les requêtes SQL car il est problématique pour PostgreSQL
 
 Version 8.04 (2013021700) Release for Moodle 2.2, 2.3, 2.4 - 2013-02-17

@@ -37,6 +37,16 @@ CONSTRAINT  PRIMARY KEY (id)
  * @package referentiel
  */
  
+ // ---------------------------------------------
+function referentiel_vider_pedagos_assos(){
+// vidage des tables de pedagogies
+global $DB;
+    $DB->delete_records("referentiel_course_users");
+    $DB->delete_records("referentiel_a_user_pedagogie");
+    $DB->delete_records("referentiel_pedagogie");
+}
+
+ 
 /**
  * referentiel_ajoute_date
  *

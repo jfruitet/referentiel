@@ -2,6 +2,19 @@
 // ----------------
 // UTF-8 French
 //
+// Moodle 8.05
+
+$string['delaidesherence']='Délai de déshérence';
+$string['config_delaidesherence']='Nombre de jours au delà duquel les déclarations d\'activité non évaluées sont signalées...';
+$string['jours']='jours';
+$string['joursdedelai']='Delai';
+$string['avertissementjoursdedelai']='Le délai de déshérence pour les déclarations d\'activité en jours ';
+$string['activitesdesherance']='Liste des déclarations d\'activité non évaluées depuis plus de {$a} jours...';
+$string['pasdereferent']='Aucun référent';
+$string['pasdesuivi']='Aucun suivi';
+$string['activitesdesheranceh']='Activités non évaluées...';
+$string['activitesdesheranceh_help']='Cette page affiche les déclarations d\'activité qui n\'ont pas été évaluées par un référent depuis plus de N jours...';
+
 $string['deleteall']= 'Réinitialiser';
 $string['deleteallh']= 'Réinitialiser';
 $string['deleteallh_help']= 'La table sera vidées avant d\'être rechargée avec les nouvelles valeurs';
@@ -790,7 +803,7 @@ $string['destinataires_notification'] = 'Destinataires de la notification ';
 // From assigment_mahara plugin
 // Traduction JF - jean.fruitet@univ-nantes.fr
 $string['exportmahara'] = 'Export to Mahara portfolio artefact';
-$string['pluginname'] = 'Mahara portfolio';
+$string['mahara'] = 'Mahara portfolio';
 $string['clicktopreview'] = 'cliquez pour un aperçu pleine taille dans un fenêtre surgissante';
 $string['clicktoselect'] = 'cliquez pour sélectionner la vue';
 $string['nomaharahostsfound'] = 'Aucun hôte Mahara n\'a été trouvé.';

@@ -243,7 +243,7 @@ class referentiel {
         //    //  $this->context = context_module::instance($this->cm); 
         //}
 
-        require_capability('mod/referentiel:import', $context);
+        require_capability('mod/referentiel:import', $this->context);
 
         add_to_log($this->course->id, "referentiel", "view", "import_instance.php?id={$this->cm->id}",
                    $this->referentiel->id, $this->cm->id);
@@ -310,7 +310,7 @@ class referentiel {
             // or one from the filesarea.
 
             if (!empty($parametres->choosefile)) {
-                $importfile = "{$CFG->dataroot}/{$course->id}/{$parametres->choosefile}";
+                $importfile = "{$CFG->dataroot}/{$this->course->id}/{$parametres->choosefile}";
                 if (file_exists($importfile)) {
                     $fileisgood = true;
                 }
@@ -364,10 +364,10 @@ class referentiel {
                 $classname = "rformat_$format";
                 $rformat = new $classname();
                 // load data into class
-                $rformat->setIReferentiel( $referentiel ); // instance
-                // $rformat->setRReferentiel( $referentiel_referentiel ); // not yet
-                $rformat->setCourse( $course );
-                $rformat->setContext( $context);
+                $rformat->setIReferentiel( $this->referentiel ); // instance
+                // $rformat->setRReferentiel( $this->referentiel_referentiel ); // not yet
+                $rformat->setCourse( $this->course );
+                $rformat->setContext( $this->context);
                 $rformat->setCoursemodule( $cm);
                 $rformat->setFilename( $importfile );
                 $rformat->setStoponerror( $parametres->stoponerror );
@@ -593,7 +593,7 @@ class referentiel {
 
         echo $OUTPUT->header();
 
-        groups_print_activity_menu($this->cm, $CFG->wwwroot . '/mod/referentiel/view.php?id=' . $this->cm->id);
+        //groups_print_activity_menu($this->cm, $CFG->wwwroot . '/mod/referentiel/view.php?id=' . $this->cm->id.'&non_redirection=1');
 
         echo '<div class="reportlink">'.$this->submittedlink().'</div>';
         echo '<div class="clearer"></div>';
@@ -712,29 +712,29 @@ class referentiel {
     ///////////// TABS ////////////////
     global $USER;
     global $CFG;
-//MODIF JF 2012/09/20
-// Filtres
-$str_filtre='';
-if (isset($select_acc) && !empty($data_filtre)){
-    $str_filtre='&amp;select_acc='.$select_acc.'&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student;
-}
+    //MODIF JF 2012/09/20
+    // Filtres
+    $str_filtre='';
+    if (isset($select_acc) && !empty($data_filtre)){
+        $str_filtre='&amp;select_acc='.$select_acc.'&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student;
+    }
 
-        if (empty($currenttab)) {
+    if (empty($currenttab)) {
             $currenttab = 'referentiel';
-        }
+    }
 
-        // Administrateur ou Auteur ?
-        // $isadmin=referentiel_is_admin($USER->id, $this->course->id); // cette fonction necessite l'inscription au cours
-$roles=referentiel_roles_in_instance($this->referentiel->id);
-//print_object($roles);
-$isadmin=$roles->is_admin;
-$isstudent=$roles->is_student;
-if (!empty($referentiel_referentiel)){
-    $isreferentielauteur=referentiel_is_author($USER->id, $referentiel_referentiel, !$isstudent);
-}
-else{
-    $isreferentielauteur=false;
-}
+    // Administrateur ou Auteur ?
+    // $isadmin=referentiel_is_admin($USER->id, $this->course->id); // cette fonction necessite l'inscription au cours
+    $roles=referentiel_roles_in_instance($this->referentiel->id);
+    //print_object($roles);
+    $isadmin=$roles->is_admin;
+    $isstudent=$roles->is_student;
+    if (!empty($this->referentiel_referentiel)){
+            $isreferentielauteur=referentiel_is_author($USER->id, $this->referentiel_referentiel, !$isstudent);
+    }
+    else{
+            $isreferentielauteur=false;
+    }
 
 
 // DEBUG
@@ -759,14 +759,6 @@ else{
 }
 */
         
-        $isreferentielauteur=referentiel_is_author($USER->id, $this->referentiel_referentiel);
-        $roles=referentiel_roles_in_instance($this->referentiel->id);
-        if (!empty($referentiel_referentiel)){
-            $isreferentielauteur=referentiel_is_author($USER->id, $this->referentiel_referentiel, !$roles->is_student);
-        }
-        else{
-            $isreferentielauteur=false;
-        }
 
         $tabs = array();
         $row  = array();
@@ -929,7 +921,7 @@ $row[] = new tabobject('updateactivity', $CFG->wwwroot.'/mod/referentiel/activit
 
 		if (has_capability('mod/referentiel:view', $this->context)) { // afficher un certificat
       	    $row[] = new tabobject('listcertif', $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$this->referentiel->id.'&amp;mode=listcertif&amp;sesskey='.sesskey().$str_filtre, get_string('listcertif', 'referentiel'));
-            if (has_capability('mod/referentiel:rate', $context)) { // rediger un certificat
+            if (has_capability('mod/referentiel:rate', $this->context)) { // rediger un certificat
                 $label_thumb=get_string('editcertif', 'referentiel');
             }
             else{
@@ -1085,7 +1077,7 @@ $row[] = new tabobject('updateactivity', $CFG->wwwroot.'/mod/referentiel/activit
                 $row[] = new tabobject('import', $CFG->wwwroot.'/mod/referentiel/import.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=import',  get_string('import','referentiel'));
             }
 /*
-			if (has_capability('mod/referentiel:import', $context) && referentiel_editor_is_ok()){
+			if (has_capability('mod/referentiel:import', $this->context) && referentiel_editor_is_ok()){
                 $row[] = new tabobject('import_simple', $CFG->wwwroot.'/mod/referentiel/editor/import_referentiel_simplifie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=import',  get_string('import_referentiel_xml','referentiel'));
 			}
 */
@@ -1564,8 +1556,8 @@ $row[] = new tabobject('updateactivity', $CFG->wwwroot.'/mod/referentiel/activit
         //    //  $this->context = context_module::instance($this->cm); 
         //}
 
-        if (has_capability('mod/referentiel:grade', $context)) {
-            if ($allgroups and has_capability('moodle/site:accessallgroups', $context)) {
+        if (has_capability('mod/referentiel:grade', $this->context)) {
+            if ($allgroups and has_capability('moodle/site:accessallgroups', $this->context)) {
                 $group = 0;
             }
             else {
@@ -1664,12 +1656,7 @@ $row[] = new tabobject('updateactivity', $CFG->wwwroot.'/mod/referentiel/activit
         // now get rid of all files
         $fs = get_file_storage();
         if ($cm = get_coursemodule_from_instance('referentiel', $referentiel->id)) {
-            ////if ($CFG->version < 2011120100) {
-                $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
-            //} else {
-                //  $this->context = context_module::instance($this->cm); 
-            //}
-
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
             $fs->delete_area_files($context->id);
         }
 
@@ -1716,7 +1703,8 @@ $row[] = new tabobject('updateactivity', $CFG->wwwroot.'/mod/referentiel/activit
         if (! $DB->delete_records('referentiel', array('id'=>$referentiel->id))) {
             $result = false;
         }
-        $mod = $DB->get_field('modules','id',array('name'=>'referentiel'));
+
+        // $mod = $DB->get_field('modules','id',array('name'=>'referentiel'));
 
         // referentiel_grade_item_delete($referentiel);
 
