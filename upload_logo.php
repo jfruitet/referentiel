@@ -88,28 +88,16 @@
 		print_error(get_string('erreurscript','referentiel','Erreur01 : upload_logo.php'), 'referentiel');
 	}
 
-	$returnlink=new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id));
+    $returnlink = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
 
     require_login($course->id, false, $cm);
 
     if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+        redirect($returnlink);
     }
 
-
-    //if ($CFG->version < 2011120100) {
-        $contextcourse = get_context_instance(CONTEXT_COURSE, $course->id);
-    //} else {
-        // $contextcourse = context_course::instance($course->id);
-    //}
-
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
+    $contextcourse = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 	/// If it's hidden then it's don't show anything.  :)
 	/// Some capability checks.
@@ -144,10 +132,6 @@
 	
 
     // ensure the files area exists for this course	
-	// Moodle 1.9
-    // $path_to_data=referentiel_get_export_dir($course->id, "$referentiel->id");
-    // make_upload_directory($path_to_data);
-	
 	// RECUPERER LES FORMULAIRES
     if (isset($SESSION->modform)) {   // Variables are stored in the session
         $form = $SESSION->modform;

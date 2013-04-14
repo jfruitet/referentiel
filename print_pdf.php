@@ -1,91 +1,89 @@
-<?php // $Id: print_pdf.php,v 2.0.0.0 2009/12/14 11:32:00 jf Exp $
+<?php // $Id: print_pdf.php,v 3.0 2013/04/14 11:32:00 jf Exp $
 
 /**
- * file print_pdf.php
- * print pdf certificate
+ * Produces a sample PDF using lib/pdflib.php
+ *
+ * @package    core
+ * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-     
-// traitement des chaines de caracteres
-require_once('textlib.php');
 
-// PDF    
-define('FPDF_FONTPATH', $CFG->libdir .'/fpdf/font/');
-require_once($CFG->libdir .'/fpdf/fpdf.php');
-// echo $CFG->libdir .'/fpdf/fpdf.php';
+require_once($CFG->libdir . '/pdflib.php');
 
-// PDF    
-// define('FPDF_FONTPATH', 'fpdf/font/');
-// require_once('fpdf/fpdf.php');
-// echo $CFG->libdir .'/fpdf/fpdf.php';
+/**
+ * Extend the standard PDF class to get access to some protected values we want to display
+ * at the test page.
+ *
+ * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-
-class PDF extends FPDF
+class Referentiel_PDF extends pdf
 {
-// Une colonnes
-var $col=0;
+    // Une colonnes
+    var $col=0;
 
-function SetCol($col)
-{
+    public function returnFontsList() {
+        return $this->fontlist;
+    }
+    public function _getfontpath() {
+        return parent::_getfontpath();
+    }
+
+    public function SetCol($col)
+    {
     //Move position to a column
     $this->col=$col;
     $x=15+$col*95;
     $this->SetLeftMargin($x);
     $this->SetX($x);
-}
+    }
 
-function AcceptPageBreak()
-{
-// passage a la colonne / page suivante
-/*   
-   if($this->col<1)
+    public function AcceptPageBreak()
     {
-        //Go to next column
-   $this->SetCol($this->col+1);
-   $this->SetY(34);
-   return false;
-   }
-   else
-   {
-*/  
         //Go back to first column and issue page break
         $this->SetCol(0);
         return true;
-/*
-  }
-*/	
-}
+    }
 
 
-//En-tête
-function Header()
-{
-// RAS
+    //En-tête
+    public function Header()
+    {
+
 
     // Police Arial 9
-    $this->SetFont('Arial','',9);
+    $this->SetFont('helvetica','',9);
     // Décalage à droite
     $this->Cell(80);
     // Texte
     $this->Cell(120,0,'Certificat',0,0,'L');
 
-}
+    }
 
-//Pied de page
-function Footer()
-{
+    //Pied de page
+
+    public function Footer()
+    {
 
     // Positionnement à 1,5 cm du bas
     $this->SetY(-15);
     //Police Arial italique 8
-    $this->SetFont('Arial','I',8);
+    $this->SetFont('helvetica','I',8);
+
+    // nb de pages
+    if (empty($this->pagegroups)) {
+			$nbpages = $this->getAliasNbPages();
+	} else {
+			$nbpages = $this->getPageGroupAlias();
+	}
     // Numéro de page
-    $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+    $this->Cell(0,10,'Page '.$this->PageNo().'/'.$nbpages,0,0,'C');
+    }
 
-}
-
-// affiche element
-function affiche_element($X, $Y, $largeur, $texte, $cadre=0, $alignement="L", $remplissage=0) {
+    // affiche element
+    public function affiche_element($X, $Y, $largeur, $texte, $cadre=0, $alignement="L", $remplissage=0) {
         $this->SetXY($X,$Y);
         $this->MultiCell($largeur,6,$texte,$cadre,$alignement,$remplissage);
     } // fin affiche element
@@ -105,31 +103,31 @@ function affiche_element($X, $Y, $largeur, $texte, $cadre=0, $alignement="L", $r
 
 function pdf_write_etablissement( $record ) {
     // initial string;
-	global $pdf;
+	global $Refpdf;
 		if ($record){
 			$id = trim( $record->id );
 			$num_etablissement = trim( $record->num_etablissement);
 			$nom_etablissement = trim( $record->nom_etablissement);
 			$adresse_etablissement = trim( $record->adresse_etablissement);
 			$logo=$record->logo_etablissement;
-			$pdf->SetFont('Arial','',10); 
-			$texte=recode_utf8_vers_latin1(get_string('num_etablissement','referentiel').' : '.$num_etablissement);
-			$pdf->Write(6,$texte);
-			$pdf->Ln(6);
-			$pdf->SetFont('Arial','B',12); 
-			$texte=recode_utf8_vers_latin1(get_string('nom_etablissement','referentiel').' : '.$nom_etablissement);
-			$pdf->Write(6,$texte);
-			$pdf->Ln(6);
-			$texte=recode_utf8_vers_latin1(get_string('adresse_etablissement','referentiel').' : '.$adresse_etablissement);
-			$pdf->SetFont('Arial','',10); 
-			$pdf->Write(6,$texte);
-			$pdf->Ln(10);
+			$Refpdf->SetFont('helvetica','',10); 
+			$texte=(get_string('num_etablissement','referentiel').' : '.$num_etablissement);
+			$Refpdf->Write(6,$texte);
+			$Refpdf->Ln(6);
+			$Refpdf->SetFont('helvetica','B',12); 
+			$texte=(get_string('nom_etablissement','referentiel').' : '.$nom_etablissement);
+			$Refpdf->Write(6,$texte);
+			$Refpdf->Ln(6);
+			$texte=(get_string('adresse_etablissement','referentiel').' : '.$adresse_etablissement);
+			$Refpdf->SetFont('helvetica','',10); 
+			$Refpdf->Write(6,$texte);
+			$Refpdf->Ln(10);
     }
 
  }
 	
 function pdf_write_etudiant( $record, $param ) {
-	global $pdf;
+	global $Refpdf;
 		if ($record){
 			// DEBUG
 			// echo "";
@@ -165,33 +163,33 @@ function pdf_write_etudiant( $record, $param ) {
 				}
 			}
 			if ($param->certificat_sel_etudiant_numero){
-                $pdf->SetFont('Arial','',10);
-                $texte=recode_utf8_vers_latin1(get_string('num_etudiant','referentiel')." : ".$snum);
-				$pdf->Write(6,$texte);
-				$pdf->Ln(6);
+                $Refpdf->SetFont('helvetica','',10);
+                $texte=(get_string('num_etudiant','referentiel')." : ".$snum);
+				$Refpdf->Write(6,$texte);
+				$Refpdf->Ln(6);
 			}
 			
 			if ($param->certificat_sel_etudiant_nom_prenom){
-				$pdf->SetFont('Arial','',12); 
-				$pdf->Write(6,recode_utf8_vers_latin1(referentiel_get_user_info($record->userid)));
-				$pdf->SetFont('Arial','',10); 
-				$pdf->Ln(6);
+				$Refpdf->SetFont('helvetica','',12); 
+				$Refpdf->Write(6,(referentiel_get_user_info($record->userid)));
+				$Refpdf->SetFont('helvetica','',10); 
+				$Refpdf->Ln(6);
 			}
 			if ($param->certificat_sel_etudiant_ddn || $param->certificat_sel_etudiant_lieu_naissance){
 				$texte='';
 				if ($param->certificat_sel_etudiant_ddn){
-					$texte.=recode_utf8_vers_latin1(get_string('ddn_etudiant','referentiel')." ".$ddn_etudiant." ");
+					$texte.=(get_string('ddn_etudiant','referentiel')." ".$ddn_etudiant." ");
 				}
 				if ($param->certificat_sel_etudiant_lieu_naissance){
-					$texte.=recode_utf8_vers_latin1(get_string('lieu_naissance','referentiel')." : ".$lieu_naissance.", ".get_string('departement_naissance','referentiel')." : ".$departement_naissance);
+					$texte.=(get_string('lieu_naissance','referentiel')." : ".$lieu_naissance.", ".get_string('departement_naissance','referentiel')." : ".$departement_naissance);
 				}
-				$pdf->Write(6,$texte);
-				$pdf->Ln(6);
+				$Refpdf->Write(6,$texte);
+				$Refpdf->Ln(6);
             }
 			if ($param->certificat_sel_etudiant_adresse){
-				$texte=recode_utf8_vers_latin1(get_string('adresse_etudiant','referentiel'). " : ".$adresse_etudiant);
-				$pdf->Write(6, $texte);
-				$pdf->Ln(6);
+				$texte=(get_string('adresse_etudiant','referentiel'). " : ".$adresse_etudiant);
+				$Refpdf->Write(6, $texte);
+				$Refpdf->Ln(6);
 			}
     }
 }
@@ -201,7 +199,7 @@ function pdf_write_etudiant( $record, $param ) {
 function pdf_referentiel_affiche_certificat_consolide($ref_referentiel, $separateur1, $separateur2, $liste_code, $font1=10, $font2=9, $font3=8, $params=NULL){
 // ce certificat comporte des pourcentages par domaine et competence
 // decalque de referentiel_affiche_certificat_consolide() de lib.php
-global $pdf;
+global $Refpdf;
 
 global $OK_REFERENTIEL_DATA;
 global $t_domaine;
@@ -304,41 +302,41 @@ global $t_nb_item_competence;
 			
 			// Affichage
 			// DOMAINES
-      $pdf->SetFont('Arial','B',$font1);
-      $pdf->Write(6,recode_utf8_vers_latin1(get_string('domaine','referentiel')));
-      $pdf->Ln(6);
+      $Refpdf->SetFont('helvetica','B',$font1);
+      $Refpdf->Write(6,(get_string('domaine','referentiel')));
+      $Refpdf->Ln(6);
       $nd=count($t_domaine_coeff);
 			$espaced=80 / $nd;
       // $s.= '<table width="100%" cellspacing="0" cellpadding="2"><tr valign="top" >'."\n";
 			for ($i=0; $i<$nd; $i++){
 				if ($t_domaine_coeff[$i]){
 					// $s.='<td  align="center" colspan="'.$t_nb_item_domaine[$i].'"><b>'.$t_domaine[$i].'</b> ('.referentiel_pourcentage($t_certif_domaine_poids[$i], $t_domaine_coeff[$i]).'%)</td>';
-          $pdf->SetFont('Arial','',$font2);
+          $Refpdf->SetFont('helvetica','',$font2);
           for ($j=0; $j < $espaced; $j++){
-            $pdf->Write(6," ");
+            $Refpdf->Write(6," ");
           }
-          $pdf->SetFont('Arial','B',$font2);
-          $pdf->Write(6,$t_domaine[$i]);
-          $pdf->SetFont('Arial','',$font3);
-          $pdf->Write(6," (".referentiel_pourcentage($t_certif_domaine_poids[$i], $t_domaine_coeff[$i])."%) ");
+          $Refpdf->SetFont('helvetica','B',$font2);
+          $Refpdf->Write(6,$t_domaine[$i]);
+          $Refpdf->SetFont('helvetica','',$font3);
+          $Refpdf->Write(6," (".referentiel_pourcentage($t_certif_domaine_poids[$i], $t_domaine_coeff[$i])."%) ");
         }
 				else{
 					// $s.='<td  align="center" colspan="'.$t_nb_item_domaine[$i].'"><b>'.$t_domaine[$i].'</b> (0%)</td>';
-				  $pdf->SetFont('Arial','',$font2);
+				  $Refpdf->SetFont('helvetica','',$font2);
            for ($j=0; $j < $espaced; $j++){
-            $pdf->Write(6,"   ");
+            $Refpdf->Write(6,"   ");
           }
-          $pdf->SetFont('Arial','B',$font2);
-          $pdf->Write(6, $t_domaine[$i]);
-          $pdf->SetFont('Arial','',$font3);
-          $pdf->Write(6," (0%) ");
+          $Refpdf->SetFont('helvetica','B',$font2);
+          $Refpdf->Write(6, $t_domaine[$i]);
+          $Refpdf->SetFont('helvetica','',$font3);
+          $Refpdf->Write(6," (0%) ");
         }
 			}
 			//$s.='</tr>'."\n";
-      $pdf->Ln(6);
-      $pdf->SetFont('Arial','B',$font1);
-      $pdf->Write(6,recode_utf8_vers_latin1(get_string('competence','referentiel')));
-      $pdf->Ln(6);
+      $Refpdf->Ln(6);
+      $Refpdf->SetFont('helvetica','B',$font1);
+      $Refpdf->Write(6,(get_string('competence','referentiel')));
+      $Refpdf->Ln(6);
       
       $nc=count($t_competence);
 			$espacec= 80 / $nc;
@@ -347,80 +345,80 @@ global $t_nb_item_competence;
 			for ($i=0; $i<$nc; $i++){
 				if ($t_competence_coeff[$i]){
 					// $s.='<td align="center" colspan="'.$t_nb_item_competence[$i].'"><b>'.$t_competence[$i].'</b> ('.referentiel_pourcentage($t_certif_competence_poids[$i], $t_competence_coeff[$i]).'%)</td>'."\n";
-				  $pdf->SetFont('Arial','',$font2);
+				  $Refpdf->SetFont('helvetica','',$font2);
           for ($j=0; $j < $espacec; $j++){
-            $pdf->Write(6," ");
+            $Refpdf->Write(6," ");
           }
-          $pdf->SetFont('Arial','B',$font2);
-          $pdf->Write(6, $t_competence[$i]);
-          $pdf->SetFont('Arial','',$font3);
-          $pdf->Write(6," (".referentiel_pourcentage($t_certif_competence_poids[$i], $t_competence_coeff[$i])."%) ");									
+          $Refpdf->SetFont('helvetica','B',$font2);
+          $Refpdf->Write(6, $t_competence[$i]);
+          $Refpdf->SetFont('helvetica','',$font3);
+          $Refpdf->Write(6," (".referentiel_pourcentage($t_certif_competence_poids[$i], $t_competence_coeff[$i])."%) ");									
 				}
 				else{
 					// $s.='<td align="center" colspan="'.$t_nb_item_competence[$i].'"><b>'.$t_competence[$i].'</b> (0%)</td>'."\n";
-				  $pdf->SetFont('Arial','',$font2);
+				  $Refpdf->SetFont('helvetica','',$font2);
           for ($j=0; $j < $espacec; $j++){
-            $pdf->Write(6," ");
+            $Refpdf->Write(6," ");
           }
-          $pdf->SetFont('Arial','B',$font2);
-          $pdf->Write(6, $t_competence[$i]);
-          $pdf->SetFont('Arial','',$font3);
-          $pdf->Write(6," (0%) ");					
+          $Refpdf->SetFont('helvetica','B',$font2);
+          $Refpdf->Write(6, $t_competence[$i]);
+          $Refpdf->SetFont('helvetica','',$font3);
+          $Refpdf->Write(6," (0%) ");					
 				}
 			}
 			// $s.='</tr>'."\n";
-			$pdf->Ln(6);
+			$Refpdf->Ln(6);
 						
 			// ITEMS
-      $pdf->SetFont('Arial','B',$font1);
-      $pdf->Write(6,recode_utf8_vers_latin1(get_string('item','referentiel')));
-      $pdf->Ln(6);
+      $Refpdf->SetFont('helvetica','B',$font1);
+      $Refpdf->Write(6,(get_string('item','referentiel')));
+      $Refpdf->Ln(6);
 			
 			// $s.= '<tr valign="top" >'."\n";
 			for ($i=0; $i<count($t_item_code); $i++){
 				if ($t_item_empreinte[$i]){
 					if ($t_certif_item_valeur[$i]>=$t_item_empreinte[$i]) {
 						// $s.='<td'.$bgcolor.'><span  class="valide">'.$t_item_code[$i].'</span></td>'."\n";
-				    $pdf->SetFont('Arial','B',$font2);
-            $pdf->Write(6,$t_item_code[$i]." ");
+				    $Refpdf->SetFont('helvetica','B',$font2);
+            $Refpdf->Write(6,$t_item_code[$i]." ");
 					}	
 					else {
 						// $s.='<td'.$bgcolor.'><span class="invalide">'.$t_item_code[$i].'</span></td>'."\n";
-				    $pdf->SetFont('Arial','',$font2);
-            $pdf->Write(6,$t_item_code[$i]." ");
+				    $Refpdf->SetFont('helvetica','',$font2);
+            $Refpdf->Write(6,$t_item_code[$i]." ");
           }
 					if ($t_certif_item_valeur[$i]>=$t_item_empreinte[$i]){
 						// $s.='<td'.$bgcolor.'><span class="valide">100%</span></td>'."\n";
-				    $pdf->SetFont('Arial','B',$font3);
-            $pdf->Write(6,"(100%) ");				
+				    $Refpdf->SetFont('helvetica','B',$font3);
+            $Refpdf->Write(6,"(100%) ");				
 					}
 					else{
 						// $s.='<td'.$bgcolor.'><span class="invalide">'.referentiel_pourcentage($t_certif_item_valeur[$i], $t_item_empreinte[$i]).'%</span></td>'."\n";
-				    $pdf->SetFont('Arial','',$font3);
-            $pdf->Write(6,"(".referentiel_pourcentage($t_certif_item_valeur[$i], $t_item_empreinte[$i])."%) ");				
+				    $Refpdf->SetFont('helvetica','',$font3);
+            $Refpdf->Write(6,"(".referentiel_pourcentage($t_certif_item_valeur[$i], $t_item_empreinte[$i])."%) ");				
 					}  
 				}
 				else{
 					// $s.='<td class="nondefini"><span class="nondefini"><i>'.$t_item_code[$i].'</i></span></td>'."\n";
-				    $pdf->SetFont('Arial','I',$font2);
-            $pdf->Write(6,$t_item_code[$i]." ");		
+				    $Refpdf->SetFont('helvetica','I',$font2);
+            $Refpdf->Write(6,$t_item_code[$i]." ");		
 				}
 			}
 			// $s.='</tr><tr valign="top" >'."\n";
-			$pdf->Ln(6);
+			$Refpdf->Ln(6);
 			/*
       // <td  width="5%">'.get_string('coeff','referentiel').'</td>'."\n";
 			for ($i=0; $i<count($t_item_coeff); $i++){
 				if ($t_item_empreinte[$i]){
 					if ($t_certif_item_valeur[$i]>=$t_item_empreinte[$i]){
 						// $s.='<td'.$bgcolor.'><span class="valide">100%</span></td>'."\n";
-				    $pdf->SetFont('Arial','B',$font1);
-            $pdf->Write(6,"   100% ");				
+				    $Refpdf->SetFont('helvetica','B',$font1);
+            $Refpdf->Write(6,"   100% ");				
 					}
 					else{
 						// $s.='<td'.$bgcolor.'><span class="invalide">'.referentiel_pourcentage($t_certif_item_valeur[$i], $t_item_empreinte[$i]).'%</span></td>'."\n";
-				    $pdf->SetFont('Arial','',$font1);
-            $pdf->Write(6,"    ".referentiel_pourcentage($t_certif_item_valeur[$i], $t_item_empreinte[$i])." ");				
+				    $Refpdf->SetFont('helvetica','',$font1);
+            $Refpdf->Write(6,"    ".referentiel_pourcentage($t_certif_item_valeur[$i], $t_item_empreinte[$i])." ");				
 					}
 				}
 				else {
@@ -430,7 +428,7 @@ global $t_nb_item_competence;
 			// $s.='</tr></table>'."\n";
 		
 			*/
-				$pdf->Ln(6);
+				$Refpdf->Ln(6);
 		}
 	}
 	}
@@ -439,7 +437,7 @@ global $t_nb_item_competence;
 // ----------------------------------------------------
 function pdf_referentiel_affiche_detail_competences($separateur1, $separateur2, $liste, $liste_empreintes, $liste_poids, $font1=10, $font2=9){
 // decalque de referentiel_affiche_detail_competences() de print_lib_certificat.php
-global $pdf;
+global $Refpdf;
 
 	$t_empreinte=explode($separateur1, $liste_empreintes);
 	$t_poids=explode('|', $liste_poids);	
@@ -460,27 +458,27 @@ global $pdf;
 				if ($tc[$i]!=''){
 					$tcc=explode($separateur2, $tc[$i]);					
 					if (isset($tcc[1]) && ($tcc[1]>=$t_empreinte[$i])){
-            $pdf->SetFont('Arial','B',$font1);
+            $Refpdf->SetFont('helvetica','B',$font1);
           }
 					else{
-            $pdf->SetFont('Arial','I',$font1);
+            $Refpdf->SetFont('helvetica','I',$font1);
 					}
-          $pdf->Write(6,$tcc[0]." : ");
-          $pdf->SetFont('Arial','',$font2);
-          $pdf->Write(6," ".recode_utf8_vers_latin1(str_replace('#',"\n".get_string('p_item','referentiel').":",$t_poids[$i])." ".get_string('approved','referentiel').":".$tcc[1]." ".get_string('e_item','referentiel').":".$t_empreinte[$i]." "));						
-					$pdf->Ln(6);
+          $Refpdf->Write(6,$tcc[0]." : ");
+          $Refpdf->SetFont('helvetica','',$font2);
+          $Refpdf->Write(6," ".(str_replace('#',"\n".get_string('p_item','referentiel').":",$t_poids[$i])." ".get_string('approved','referentiel').":".$tcc[1]." ".get_string('e_item','referentiel').":".$t_empreinte[$i]." "));						
+					$Refpdf->Ln(6);
 				}
 				$i++;
 			} 
 		}
-	  $pdf->Ln(6);
+	  $Refpdf->Ln(6);
 }
 
 
 
 // ----------------------------------------------------
 function pdf_liste_competences_certificat($referentiel_id, $separateur1, $separateur2, $liste, $liste_empreintes, $all=0, $font1=10, $font2=9){
-global $pdf;
+global $Refpdf;
 global $copyright;
 global $registere;
 global $puce;
@@ -507,24 +505,24 @@ global $puce;
 				
 				// exit;
 				if ($referentiel_id){
-					$descriptif_item=recode_utf8_vers_latin1(referentiel_get_description_item($tcc[0], $referentiel_id));
+					$descriptif_item=(referentiel_get_description_item($tcc[0], $referentiel_id));
 				}
 				else{
 					$descriptif_item='';
 				}
 				if (isset($tcc[1]) && ($tcc[1]>=$t_empreinte[$i])){
-					$pdf->SetFont('Arial','B',$font1); 
-					$pdf->Write(6, "    $puce ".$tcc[0]);
-					$pdf->SetFont('Arial','',$font2);
-					$pdf->Write(6," : $descriptif_item");
-					$pdf->Ln(6);
+					$Refpdf->SetFont('helvetica','B',$font1); 
+					$Refpdf->Write(6, "    $puce ".$tcc[0]);
+					$Refpdf->SetFont('helvetica','',$font2);
+					$Refpdf->Write(6," : $descriptif_item");
+					$Refpdf->Ln(6);
 				}
 				else if ($all){
-					$pdf->SetFont('Arial','I',$font1); 
-					$pdf->Write(6, "     $puce ".$tcc[0]);
-					$pdf->SetFont('Arial','',$font2);
-					$pdf->Write(6," : $descriptif_item");
-					$pdf->Ln(6);
+					$Refpdf->SetFont('helvetica','I',$font1); 
+					$Refpdf->Write(6, "     $puce ".$tcc[0]);
+					$Refpdf->SetFont('helvetica','',$font2);
+					$Refpdf->Write(6," : $descriptif_item");
+					$Refpdf->Ln(6);
 				}
 				$i++;
 			} 
@@ -538,7 +536,7 @@ global $puce;
      */
 
 function pdf_write_item( $item ) {
-    global $pdf;
+    global $Refpdf;
     if ($item){
       $code = $item->code_item;
       $description_item = $item->description_item;
@@ -548,15 +546,15 @@ function pdf_write_item( $item ) {
 			$poids_item = $item->poids_item;
 			$empreinte_item = $item->empreinte_item;
 			$num_item = $item->num_item;
-      $pdf->SetFont('Arial','B',9); 
-   	  $pdf->Write(6, recode_utf8_vers_latin1(trim(stripslashes($code))));
- 	   	$pdf->Ln(6);
- 	   	$pdf->SetFont('Arial','I',9);
-   	  $pdf->Write(6, recode_utf8_vers_latin1(trim(stripslashes($description_item))));
-   	  $pdf->Ln(6);
-   	  $pdf->SetFont('Arial','',9);
-      $pdf->Write(6, recode_utf8_vers_latin1(trim(get_string('t_item','referentiel')." : ".$type_item.", ".get_string('p_item','referentiel')." : ".$poids_item.", ".get_string('e_item','referentiel')." : ".$empreinte_item)));
-      $pdf->Ln(6);
+      $Refpdf->SetFont('helvetica','B',9); 
+   	  $Refpdf->Write(6, (trim(stripslashes($code))));
+ 	   	$Refpdf->Ln(6);
+ 	   	$Refpdf->SetFont('helvetica','I',9);
+   	  $Refpdf->Write(6, (trim(stripslashes($description_item))));
+   	  $Refpdf->Ln(6);
+   	  $Refpdf->SetFont('helvetica','',9);
+      $Refpdf->Write(6, (trim(get_string('t_item','referentiel')." : ".$type_item.", ".get_string('p_item','referentiel')." : ".$poids_item.", ".get_string('e_item','referentiel')." : ".$empreinte_item)));
+      $Refpdf->Ln(6);
     } 
 }
     
@@ -567,31 +565,31 @@ function pdf_write_item( $item ) {
      */
 
 function pdf_write_competence( $competence ) {
-    global $pdf;
+    global $Refpdf;
  		  if ($competence){
         $code = $competence->code_competence;
         $description_competence = $competence->description_competence;
         $ref_domaine = $competence->ref_domaine;
         $num_competence = $competence->num_competence;
 			  $nb_item_competences = $competence->nb_item_competences;
-        $pdf->SetFont('Arial','B',10); 
-	   	  $pdf->Write(6,recode_utf8_vers_latin1(trim(get_string('competence','referentiel')." : ".stripslashes($code))));
-        $pdf->Ln(6);
-        $pdf->SetFont('Arial','',10); 
-        $pdf->Write(6, recode_utf8_vers_latin1(trim(stripslashes($description_competence))));
-	 	   	$pdf->Ln(6);
+        $Refpdf->SetFont('helvetica','B',10); 
+	   	  $Refpdf->Write(6,(trim(get_string('competence','referentiel')." : ".stripslashes($code))));
+        $Refpdf->Ln(6);
+        $Refpdf->SetFont('helvetica','',10); 
+        $Refpdf->Write(6, (trim(stripslashes($description_competence))));
+	 	   	$Refpdf->Ln(6);
 			
 			  // ITEM
 			  $records_items = referentiel_get_item_competences($competence->id);
         if ($records_items){				  
-    	    $pdf->SetFont('Arial','B',10); 
-	        $pdf->Write(6,recode_utf8_vers_latin1(trim(get_string('items','referentiel'))));
-          $pdf->Ln(6);
+    	    $Refpdf->SetFont('helvetica','B',10); 
+	        $Refpdf->Write(6,(trim(get_string('items','referentiel'))));
+          $Refpdf->Ln(6);
 
 				  foreach ($records_items as $record_i){
 						pdf_write_item( $record_i );
 				  }
-				  $pdf->Ln(6);
+				  $Refpdf->Ln(6);
 			   }
         }
 }
@@ -604,7 +602,7 @@ function pdf_write_competence( $competence ) {
      */
 
 function pdf_write_domaine( $domaine ) {
-    global $pdf;
+    global $Refpdf;
     
 		if ($domaine){
       $code = $domaine->code_domaine;
@@ -612,12 +610,12 @@ function pdf_write_domaine( $domaine ) {
       $ref_referentiel = $domaine->ref_referentiel;
 			$num_domaine = $domaine->num_domaine;
 			$nb_competences = $domaine->nb_competences;
- 			$pdf->SetFont('Arial','B',10); 
-   	  $pdf->Write(6,recode_utf8_vers_latin1(trim(get_string('domaine','referentiel')." : ".stripslashes($code))));
-      $pdf->Ln(6);
-      $pdf->SetFont('Arial','',10); 
-   	  $pdf->Write(6, recode_utf8_vers_latin1(trim(stripslashes($description_domaine))));
- 	   	$pdf->Ln(6);
+ 			$Refpdf->SetFont('helvetica','B',10); 
+   	  $Refpdf->Write(6,(trim(get_string('domaine','referentiel')." : ".stripslashes($code))));
+      $Refpdf->Ln(6);
+      $Refpdf->SetFont('helvetica','',10); 
+   	  $Refpdf->Write(6, (trim(stripslashes($description_domaine))));
+ 	   	$Refpdf->Ln(6);
 			
 			// LISTE DES COMPETENCES DE CE DOMAINE
 			$records_competences = referentiel_get_competences($domaine->id);
@@ -638,89 +636,87 @@ function pdf_write_domaine( $domaine ) {
 
 function pdf_write_referentiel( $referentiel_instance, $referentiel_referentiel, $param ) {
     global $CFG;
-		global $pdf;
+		global $Refpdf;
 		global $image_logo;
 		$ok_saut_page=false;
 		
 		if (($referentiel_instance) && ($referentiel_referentiel)) {
-      $name = recode_utf8_vers_latin1(trim($referentiel_referentiel->name));
-      $code = recode_utf8_vers_latin1(trim($referentiel_referentiel->code_referentiel));
-			$description = recode_utf8_vers_latin1(trim($referentiel_referentiel->description_referentiel));
+            $name = strip_tags(trim($referentiel_referentiel->name));
+            $code = strip_tags(trim($referentiel_referentiel->code_referentiel));
+			$description = strip_tags(trim($referentiel_referentiel->description_referentiel));
 			
 			$id = $referentiel_instance->id;
-      $name_instance = recode_utf8_vers_latin1(trim($referentiel_instance->name));
-      $description_instance = recode_utf8_vers_latin1(trim($referentiel_instance->description_instance));
-      $label_domaine = recode_utf8_vers_latin1(trim($referentiel_instance->label_domaine));
-      $label_competence = recode_utf8_vers_latin1(trim($referentiel_instance->label_competence));
-      $label_item = recode_utf8_vers_latin1(trim($referentiel_instance->label_item));
-      $date_instance = $referentiel_instance->date_instance;
-      $course = $referentiel_instance->course;
-      $ref_referentiel = $referentiel_instance->ref_referentiel;
+            $name_instance = strip_tags(trim($referentiel_instance->name));
+            $description_instance = strip_tags(trim($referentiel_instance->description_instance));
+            $label_domaine = strip_tags(trim($referentiel_instance->label_domaine));
+            $label_competence = strip_tags(trim($referentiel_instance->label_competence));
+            $label_item = strip_tags(trim($referentiel_instance->label_item));
+            $date_instance = $referentiel_instance->date_instance;
+            $course = $referentiel_instance->course;
+            $ref_referentiel = $referentiel_instance->ref_referentiel;
 			$visible = $referentiel_instance->visible;
 
-			$pdf->AddPage();
-			$pdf->SetAutoPageBreak(1, 27.0);     
-			$pdf->SetCol(0);
-			$pdf->SetDrawColor(128, 128, 128);    
-			$pdf->SetLineWidth(0.4);     
+			$Refpdf->AddPage();
+			$Refpdf->SetAutoPageBreak(1, 27.0);     
+			$Refpdf->SetCol(0);
+			$Refpdf->SetDrawColor(128, 128, 128);    
+			$Refpdf->SetLineWidth(0.4);     
 			// logo
-			$posy=$pdf->GetY();    
+			$posy=$Refpdf->GetY();    
 			
 			if (isset($image_logo) && ($image_logo!="")){
-				$pdf->Image($image_logo,150,$posy,40);
+				$Refpdf->Image($image_logo,150,$posy,40);
 			}
-			// $posy=$pdf->GetY()+60;    
-      $pdf->SetLeftMargin(15);
-      // $pdf->SetX(20);
-			
-			$pdf->SetFont('Arial','B',14); 
-		  $pdf->Write(6,get_string('certification','referentiel'));
-			$pdf->Ln(6);
-			$pdf->SetFont('Arial','',12); 
-		  $pdf->Write(6, $name.'('.$code.')');
-			$pdf->Ln(6);
-			$pdf->SetFont('Arial','',10);
-			$pdf->Write(6, $description);
-			$pdf->Ln(6);
-      if ($param->certificat_sel_referentiel){				
+            $Refpdf->SetLeftMargin(15);
+
+			$Refpdf->SetFont('helvetica','B',14); 
+    		$Refpdf->Write(6,get_string('certification','referentiel'));
+			$Refpdf->Ln(6);
+			$Refpdf->SetFont('helvetica','',12); 
+		    $Refpdf->Write(6, $name.'('.$code.')');
+			$Refpdf->Ln(6);
+			$Refpdf->SetFont('helvetica','',10);
+			$Refpdf->Write(6, $description);
+			$Refpdf->Ln(6);
+            if ($param->certificat_sel_referentiel){
 				// DOMAINES
 				// LISTE DES DOMAINES
 				$compteur_domaine=0;
 				$records_domaine = referentiel_get_domaines($referentiel_referentiel->id);
-		    if ($records_domaine){
+		        if ($records_domaine){
 					foreach ($records_domaine as $record_d){
 						pdf_write_domaine($record_d );
 					}
 				}
-        $ok_saut_page=true;		
+                $ok_saut_page=true;
 			} 
 
 			if ($param->certificat_sel_referentiel_instance){
-				$pdf->SetFont('Arial','B',10); 
-				// $pdf->Write(6,"id : $id ");
-				// $pdf->Ln(6);
-				$pdf->Write(6,recode_utf8_vers_latin1(get_string('instance','referentiel')." : ".$name_instance));
-				$pdf->Ln(6);
-				$pdf->SetFont('Arial','',10);
-				$pdf->Write(6,recode_utf8_vers_latin1($description_instance));   
-				$pdf->Ln(6);
-        $pdf->Write(6,recode_utf8_vers_latin1($label_domaine.", ".$label_competence.", ".$label_item));
+				$Refpdf->SetFont('helvetica','B',10); 
+				// $Refpdf->Write(6,"id : $id ");
+				// $Refpdf->Ln(6);
+				$Refpdf->Write(6,(get_string('instance','referentiel')." : ".$name_instance));
+				$Refpdf->Ln(6);
+				$Refpdf->SetFont('helvetica','',10);
+				$Refpdf->Write(6,($description_instance));   
+				$Refpdf->Ln(6);
+                $Refpdf->Write(6,($label_domaine.", ".$label_competence.", ".$label_item));
 			
     	        /*
-				$pdf->Write(6,"Cours : $course");
-				$pdf->Ln(6);
-	            $pdf->Write(6,"Référentiel :  $ref_referentiel");
-				$pdf->Ln(6);
-        	    $pdf->Write(6,"Visible : $visible");
-				$pdf->Ln(6);
+				$Refpdf->Write(6,"Cours : $course");
+				$Refpdf->Ln(6);
+	            $Refpdf->Write(6,"Référentiel :  $ref_referentiel");
+				$Refpdf->Ln(6);
+        	    $Refpdf->Write(6,"Visible : $visible");
+				$Refpdf->Ln(6);
 				*/
 				$ok_saut_page=true;
 			}
 			
-			$pdf->Ln(6);
+			$Refpdf->Ln(6);
 			if ($ok_saut_page==true){ // forcer le saut de page
-			  $pdf->Ln(290);
-      }
+                $Refpdf->Ln(290);
+            }
 		}
 }
 	
@@ -731,7 +727,7 @@ function pdf_write_referentiel( $referentiel_instance, $referentiel_referentiel,
      */
 function pdf_write_certificat( $record, $referentiel_instance, $referentiel_referentiel, $liste_empreintes, $liste_poids, $param) {
     	global $CFG;
-		global $pdf;
+		global $Refpdf;
     	// add comment and div tags
 		
 		if ($record){
@@ -739,11 +735,11 @@ function pdf_write_certificat( $record, $referentiel_instance, $referentiel_refe
 			// echo "DEBUG LIGNE 1021";
 			// print_r($referentiel_instance);
 			$id = trim( $record->id );
-            $commentaire_certificat = recode_utf8_vers_latin1(trim($record->commentaire_certificat));
-            $synthese_certificat = recode_utf8_vers_latin1(trim($record->synthese_certificat));
-			$competences_activite =  recode_utf8_vers_latin1(trim($record->competences_activite)) ;
-            $competences_certificat =  recode_utf8_vers_latin1(trim($record->competences_certificat)) ;
-            $decision_jury = recode_utf8_vers_latin1(trim($record->decision_jury));
+            $commentaire_certificat = (trim($record->commentaire_certificat));
+            $synthese_certificat = (trim($record->synthese_certificat));
+			$competences_activite =  (trim($record->competences_activite)) ;
+            $competences_certificat =  (trim($record->competences_certificat)) ;
+            $decision_jury = (trim($record->decision_jury));
 			if ($record->date_decision){
                 $date_decision = userdate(trim($record->date_decision));
 			}
@@ -753,7 +749,7 @@ function pdf_write_certificat( $record, $referentiel_instance, $referentiel_refe
             $userid = trim( $record->userid);
             $teacherid = trim( $record->teacherid);
 			if ($teacherid!=0){
-				$nom_prenom_teacher=recode_utf8_vers_latin1(referentiel_get_user_info($teacherid));
+				$nom_prenom_teacher=(referentiel_get_user_info($teacherid));
 			}
 			else{
 				$nom_prenom_teacher="";
@@ -771,88 +767,88 @@ function pdf_write_certificat( $record, $referentiel_instance, $referentiel_refe
 				$record_etudiant = referentiel_get_etudiant_user($record->userid);
 		    if ($record_etudiant){
 					
-					$pdf->SetLeftMargin(15);
+					$Refpdf->SetLeftMargin(15);
 					
 					pdf_write_referentiel($referentiel_instance, $referentiel_referentiel, $param);
 					
 					pdf_write_etudiant( $record_etudiant, $param);
 					
-					$pdf->SetFont('Arial','',12);
+					$Refpdf->SetFont('helvetica','',12);
 					if ($param->certificat_sel_decision_jury){
 						if (($date_decision!="") && ($decision_jury!="")){
-							$pdf->Write(6,$decision_jury);
+							$Refpdf->Write(6,$decision_jury);
 						}
-						$pdf->Ln(6);
+						$Refpdf->Ln(6);
 					}
 					
-					// $pdf->SetFont('Arial','B',10); 
-					// $pdf->Write(6,"ID : ");
-					// $pdf->SetFont('Arial','',10);
-					// $pdf->Write(6,"$id");
-					// $pdf->Ln(6);
+					// $Refpdf->SetFont('helvetica','B',10); 
+					// $Refpdf->Write(6,"ID : ");
+					// $Refpdf->SetFont('helvetica','',10);
+					// $Refpdf->Write(6,"$id");
+					// $Refpdf->Ln(6);
 					
-					$pdf->SetFont('Arial','B',12); 
-                    $pdf->Write(6,recode_utf8_vers_latin1(get_string('competences','referentiel')).": ");
-					$pdf->Ln(6);
+					$Refpdf->SetFont('helvetica','B',12); 
+                    $Refpdf->Write(6,(get_string('competences','referentiel')).": ");
+					$Refpdf->Ln(6);
 					if ($param->certificat_sel_activite_competences){
-						$pdf->SetFont('Arial','B',9); 
-                        $pdf->Write(6,recode_utf8_vers_latin1(get_string('competences_activite','referentiel')).": ");
-						$pdf->Ln(6); 
+						$Refpdf->SetFont('helvetica','B',9); 
+                        $Refpdf->Write(6,(get_string('competences_activite','referentiel')).": ");
+						$Refpdf->Ln(6); 
                         pdf_liste_competences_certificat($ref_referentiel, '/',':', $competences_activite, $liste_empreintes, 0, 9, 8);
-						$pdf->Ln(6);
+						$Refpdf->Ln(6);
 					}
 					if ($param->certificat_sel_certificat_competences){
-						$pdf->SetFont('Arial','B',10); 
-                        $pdf->Write(6,recode_utf8_vers_latin1(get_string('competences_certificat','referentiel')).": ");
-						$pdf->Ln(6);
+						$Refpdf->SetFont('helvetica','B',10); 
+                        $Refpdf->Write(6,(get_string('competences_certificat','referentiel')).": ");
+						$Refpdf->Ln(6);
                         pdf_liste_competences_certificat($ref_referentiel, '/',':', $competences_certificat, $liste_empreintes,0,10,9);
-						$pdf->Ln(6);
+						$Refpdf->Ln(6);
 					}
 					if (($param->certificat_sel_certificat_competences) 
                         && ($param->certificat_sel_certificat_detail)){
 						pdf_referentiel_affiche_detail_competences('/',':',$competences_certificat, $liste_empreintes, $liste_poids);
                     }
 					if ($param->certificat_sel_certificat_pourcent){
-                        // $pdf->SetFont('Arial','B',10);
-                        // $pdf->Write(6,recode_utf8_vers_latin1(get_string('pourcentage','referentiel'))." :");
-                        // $pdf->Ln(6);
+                        // $Refpdf->SetFont('helvetica','B',10);
+                        // $Refpdf->Write(6,(get_string('pourcentage','referentiel'))." :");
+                        // $Refpdf->Ln(6);
                         pdf_referentiel_affiche_certificat_consolide($ref_referentiel, '/',':', $competences_certificat, 10,9,8);
 					}
 					
 					if ($param->certificat_sel_commentaire){
-						$pdf->SetFont('Arial','B',10);
-                        $pdf->Write(6,recode_utf8_vers_latin1(get_string('commentaire','referentiel')).": ");
-						$pdf->SetFont('Arial','',10);
-                        $pdf->Write(6,"$commentaire_certificat ");
-						$pdf->Ln(6);
-						$pdf->SetFont('Arial','B',10);
-                        $pdf->Write(6,recode_utf8_vers_latin1(get_string('synthese_certificat','referentiel')).": ");
-						$pdf->SetFont('Arial','',10);
-                        $pdf->Write(6,"$synthese_certificat ");
-						$pdf->Ln(6);
+						$Refpdf->SetFont('helvetica','B',10);
+                        $Refpdf->Write(6,(get_string('commentaire','referentiel')).": ");
+						$Refpdf->SetFont('helvetica','',10);
+                        $Refpdf->Write(6,"$commentaire_certificat ");
+						$Refpdf->Ln(6);
+						$Refpdf->SetFont('helvetica','B',10);
+                        $Refpdf->Write(6,(get_string('synthese_certificat','referentiel')).": ");
+						$Refpdf->SetFont('helvetica','',10);
+                        $Refpdf->Write(6,"$synthese_certificat ");
+						$Refpdf->Ln(6);
 					}
 					if ($param->certificat_sel_decision_jury){
-						$pdf->SetFont('Arial','B',10);
-                        $pdf->Write(6, recode_utf8_vers_latin1(get_string('decision','referentiel'))." : ");
-						$pdf->SetFont('Arial','',10);
-                        $pdf->Write(6,"$decision_jury");
-						$pdf->Ln(6);
+						$Refpdf->SetFont('helvetica','B',10);
+                        $Refpdf->Write(6, (get_string('decision','referentiel'))." : ");
+						$Refpdf->SetFont('helvetica','',10);
+                        $Refpdf->Write(6,"$decision_jury");
+						$Refpdf->Ln(6);
 					}
 					if ($param->certificat_sel_certificat_referents){
-						$pdf->SetFont('Arial','B',10);
-						$pdf->Write(6,recode_utf8_vers_latin1(get_string('enseignant','referentiel'))." : ");
-						$pdf->SetFont('Arial','',10);
-						$pdf->Write(6,$nom_prenom_teacher);
-						$pdf->Ln(6);
+						$Refpdf->SetFont('helvetica','B',10);
+						$Refpdf->Write(6,(get_string('enseignant','referentiel'))." : ");
+						$Refpdf->SetFont('helvetica','',10);
+						$Refpdf->Write(6,$nom_prenom_teacher);
+						$Refpdf->Ln(6);
 					}
 					/*
-					$pdf->Write(6," Référentiel : $ref_referentiel");
-					$pdf->Ln(6);
-		            $pdf->Write(6," Verrou : $verrou, Valide : $valide, Evaluation : $evaluation");
-					$pdf->Ln(6);
+					$Refpdf->Write(6," Référentiel : $ref_referentiel");
+					$Refpdf->Ln(6);
+		            $Refpdf->Write(6," Verrou : $verrou, Valide : $valide, Evaluation : $evaluation");
+					$Refpdf->Ln(6);
 					*/
-					$pdf->Ln(20);
-					$pdf->Write(6, get_string('date_signature','referentiel', date("d/m/Y")));
+					$Refpdf->Ln(20);
+					$Refpdf->Write(6, get_string('date_signature','referentiel', date("d/m/Y")));
 				}
 			}
 		}
@@ -861,7 +857,7 @@ function pdf_write_certificat( $record, $referentiel_instance, $referentiel_refe
 
 function pdf_write_certification($referentiel_instance, $referentiel_referentiel, $userid=0, $param, $records_certificats) {
     	global $CFG;
-		global $pdf;
+		global $Refpdf;
 		
 		if ($referentiel_instance && $referentiel_referentiel) {
 			// CERTIFICATS

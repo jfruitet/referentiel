@@ -705,7 +705,7 @@ else if (isset($mode) && ($mode=="desapproveactivity")){
 else if (isset($mode) && ($mode=="commentactivity")){
 	if (isset($activite_id) && ($activite_id>0)){
     // commentaires
-    if ($record_a = get_record('referentiel_activite', 'id', $activite_id)) {
+    if ($record_a = $DB->get_record('referentiel_activite', array('id' => $activite_id))) {
 		$activite_id=$record_a->id;
 		$type_activite = stripslashes($record_a->type_activite);
 		$description_activite = stripslashes($record_a->description_activite);

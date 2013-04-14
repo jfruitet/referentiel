@@ -194,13 +194,7 @@ class referentiel {
     function view($mode, $currenttab, $select_acc, $data_filtre) {
 
         global $CFG, $USER;
-        // Valable pour Moodle 2.1 et Moodle 2.2
-        ////if ($CFG->version < 2011120100) {
-            $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-        //} else {
-        //    //  $this->context = context_module::instance($this->cm); 
-        //}
-
+        $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         require_capability('mod/referentiel:view', $this->context);
 
         add_to_log($this->course->id, "referentiel", "view", "view.php?id={$this->cm->id}",
@@ -674,6 +668,7 @@ class referentiel {
         }
         $s.=$OUTPUT->help_icon('referentielinstanceh','referentiel').'</h2>'."\n";
         echo $s;
+/*
         echo '<table>'."\n";
         if ($this->referentiel->date_instance) {
             echo '<tr><th>'.get_string('availabledate','referentiel').':</th>';
@@ -692,6 +687,18 @@ class referentiel {
         echo '<tr><th colspan="2">'.get_string('maxsize','referentiel', display_size($this->referentiel->maxbytes)).'</th></tr>'."\n";
 
         echo '</table>'."\n";
+*/
+        echo '<div class="aff0">';
+        if ($this->referentiel->date_instance) {
+            echo '<span class="bold">'.get_string('availabledate','referentiel').'</span> &nbsp; &nbsp; '.userdate($this->referentiel->date_instance).' <br />';
+        }
+        echo '<span class="bold">'.get_string('name_instance','referentiel').'</span> &nbsp; &nbsp; '.$this->referentiel->name .
+'<br /><span class="bold">'.get_string('description_instance','referentiel').'</span><div class="aff1">'.nl2br($this->referentiel->description_instance).'</div>'.
+'<span class="bold">'.get_string('label_domaine','referentiel').'</span> &nbsp; '.$this->referentiel->label_domaine.' &nbsp; &nbsp; '.
+'<span class="bold">'.get_string('label_competence','referentiel').'</span> &nbsp; '.$this->referentiel->label_competence.' &nbsp; &nbsp; '.
+'<span class="bold">'.get_string('label_item','referentiel').'</span> &nbsp; '.$this->referentiel->label_item.' &nbsp; &nbsp; '.
+'<span class="bold">'.get_string('maxdoc','referentiel').'</span> &nbsp; '.display_size($this->referentiel->maxbytes).
+'</div>'."\n";
 
     }
 
@@ -701,414 +708,20 @@ class referentiel {
      * The default implementation prints the referentiel description in a table
      */
     function view_referentiel_referentiel() {
-        referentiel_affiche_referentiel_instance($this->referentiel->id);
+        referentiel_affiche_referentiel_instance($this->cm, $this->referentiel->id);
     }
 
     /**
      * Display the referentiel thumbs
      *
      */
+
     function onglets($mode, $currenttab, $select_acc, $data_filtre) {
-    ///////////// TABS ////////////////
-    global $USER;
-    global $CFG;
-    //MODIF JF 2012/09/20
-    // Filtres
-    $str_filtre='';
-    if (isset($select_acc) && !empty($data_filtre)){
-        $str_filtre='&amp;select_acc='.$select_acc.'&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student;
+        require_once('onglets.php');
+        $tab_onglets = new Onglets($this->context, $this->referentiel, $this->referentiel_referentiel, $this->cm, $this->course, $currenttab, $select_acc, $data_filtre);
+        $tab_onglets->display();
     }
-
-    if (empty($currenttab)) {
-            $currenttab = 'referentiel';
-    }
-
-    // Administrateur ou Auteur ?
-    // $isadmin=referentiel_is_admin($USER->id, $this->course->id); // cette fonction necessite l'inscription au cours
-    $roles=referentiel_roles_in_instance($this->referentiel->id);
-    //print_object($roles);
-    $isadmin=$roles->is_admin;
-    $isstudent=$roles->is_student;
-    if (!empty($this->referentiel_referentiel)){
-            $isreferentielauteur=referentiel_is_author($USER->id, $this->referentiel_referentiel, !$isstudent);
-    }
-    else{
-            $isreferentielauteur=false;
-    }
-
-
-// DEBUG
-/*
-if ($isadmin){
-    echo "<br />DEBUG : ADMIN\n";
-}
-else{
-    echo "<br />DEBUG : NON ADMIN\n";
-}
-if ($isreferentielauteur){
-    echo "<br />DEBUG : AUTEUR\n";
-}
-else{
-    echo "<br />DEBUG : NON AUTEUR\n";
-}
-if ($isstudent){
-    echo "<br />DEBUG : ETUDIANT\n";
-}
-else{
-    echo "<br />DEBUG : NON ETUDIANT\n";
-}
-*/
-        
-
-        $tabs = array();
-        $row  = array();
-        $inactive = NULL;
-        $activetwo = NULL;
-
-
-        // premier onglet
-        if (has_capability('mod/referentiel:view', $this->context)) {
-        	$row[] = new tabobject('referentiel', $CFG->wwwroot.'/mod/referentiel/view.php?d='.$this->referentiel->id.$str_filtre.'&amp;non_redirection=1', get_string('referentiel','referentiel'));
-        }
-
-
-        if (isloggedin()) {
-            // Accompagnement
-            if (has_capability('mod/referentiel:write', $this->context)) {
-                $addstring = get_string('accompagnement', 'referentiel');
-                $row[] = new tabobject('menuacc', $CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$this->referentiel->id.'&amp;mode=accompagnement'.$str_filtre, $addstring);
-            }
-
-            // activites
-            if (referentiel_user_can_addactivity($this->referentiel)) {
-                // took out participation list here!
-                // $addstring = empty($editentry) ? get_string('edit_activity', 'referentiel') : get_string('validation', 'referentiel');
-                $addstring = get_string('edit_activity', 'referentiel');
-                $row[] = new tabobject('list', $CFG->wwwroot.'/mod/referentiel/activite.php?d='.$this->referentiel->id.'&amp;mode=list'.$str_filtre, $addstring);
-            }
-
-            // taches
-            if (has_capability('mod/referentiel:addtask', $this->context) || has_capability('mod/referentiel:viewtask', $this->context)) {
-                // took out participation list here!
-                // $addstring = empty($editentry) ? get_string('edit_activity', 'referentiel') : get_string('validation', 'referentiel');
-                $addstring = get_string('tasks', 'referentiel');
-                $row[] = new tabobject('task', $CFG->wwwroot.'/mod/referentiel/task.php?d='.$this->referentiel->id.'&amp;mode=listtasksingle'.$str_filtre, $addstring);
-            }
-
-
-            // gestion des certificats
-            if (has_capability('mod/referentiel:write', $this->context)) {
-                $row[] = new tabobject('certificat', $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$this->referentiel->id.'&amp;mode=listcertif'.$str_filtre, get_string('certificat','referentiel'));
-            }
-
-
-            // scolarite
-            $scolarite_locale_visible=referentiel_get_item_configuration('scol', $this->referentiel->id)==0;
-            if (($scolarite_locale_visible	&&  has_capability('mod/referentiel:viewscolarite', $this->context))
-               || has_capability('mod/referentiel:managescolarite', $this->context)) {
-                $row[] = new tabobject('scolarite', $CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc, get_string('scolarite','referentiel'));
-                $row[] = new tabobject('pedago', $CFG->wwwroot.'/mod/referentiel/pedagogie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc, get_string('formation','referentiel'));
-            }
-
-            $tabs[] = $row;
-
-            // ACCOMPAGNEMENT
-
-            if (isset($currenttab) && has_capability('mod/referentiel:write', $this->context)
-                && (
-                ($currenttab == 'menuacc')
-                || ($currenttab == 'accompagnement')
-                || ($currenttab == 'suivi')
-                || ($currenttab == 'notification'))
-                )
-            {
-                $row  = array();
-                $inactive[] = 'menuacc';
-                // accompagnement
-                $row[] = new tabobject('accompagnement', $CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=accompagnement', get_string('accompagnement','referentiel'));
-                $row[] = new tabobject('suivi', $CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=suivi', get_string('repartition','referentiel'));
-                if (has_capability('mod/referentiel:managecertif', $this->context)) {      // rôle enseignant
-                    $row[] = new tabobject('notification', $CFG->wwwroot.'/mod/referentiel/accompagnement.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=notification', get_string('notification','referentiel'));
-                }
-                $tabs[] = $row;
-                $activetwo = array('menuacc');
-            }
-
-            // ACTIVITE
-            if (isset($currenttab) && (($currenttab == 'list')
-                || ($currenttab == 'listactivity')
-                || ($currenttab == 'listactivitysingle')
-		        || ($currenttab == 'listactivityall')
-		        || ($currenttab == 'addactivity')
-		        || ($currenttab == 'updateactivity')
-		        || ($currenttab == 'exportactivity'))) {
-                $row  = array();
-                $inactive[] = 'list';
-$row[] = new tabobject('listactivity', $CFG->wwwroot.'/mod/referentiel/activite.php?d='.$this->referentiel->id.'&amp;mode=listactivity'.$str_filtre, get_string('listactivity','referentiel'));
-$row[] = new tabobject('listactivityall', $CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel->id.'&amp;mode=listactivityall'.$str_filtre, get_string('listactivityall','referentiel'));
-
-                if (has_capability('mod/referentiel:addactivity', $this->context)) {
-$row[] = new tabobject('addactivity', $CFG->wwwroot.'/mod/referentiel/activite.php?d='.$this->referentiel->id.'&amp;mode=addactivity'.$str_filtre, get_string('addactivity','referentiel'));
-                }
-                if (!has_capability('mod/referentiel:managecertif', $this->context)) {      // rôle etudiant : uniquement pour modifier une activite
-                    if ($mode=='updateactivity'){
-$row[] = new tabobject('updateactivity', $CFG->wwwroot.'/mod/referentiel/activite.php?d='.$this->referentiel->id.'&amp;mode=updateactivity'.$str_filtre, get_string('updateactivity','referentiel'));
-    			}
-            }
-            else {
-$row[] = new tabobject('updateactivity', $CFG->wwwroot.'/mod/referentiel/activite.php?d='.$this->referentiel->id.'&amp;mode=updateactivity'.$str_filtre, get_string('updateactivity','referentiel'));
-
-            }
-            if (has_capability('mod/referentiel:export', $this->context)) {
-$row[] = new tabobject('updateactivity', $CFG->wwwroot.'/mod/referentiel/activite.php?d='.$this->referentiel->id.'&amp;mode=updateactivity'.$str_filtre, get_string('updateactivity','referentiel'));
-
-            }
-	        $tabs[] = $row;
-            $activetwo = array('list');
-        }
-
-        // TACHES
-        if (isset($currenttab) && ( ($currenttab == 'listtask')
-		|| ($currenttab == 'listtasksingle')
-		|| ($currenttab == 'selecttask')
-		|| ($currenttab == 'imposetask')
-		|| ($currenttab == 'addtask')
-		|| ($currenttab == 'updatetask')
-		|| ($currenttab == 'exporttask')
-		|| ($currenttab == 'importtask')
-		)) {
-            $row  = array();
-            $inactive[] = 'task';
-		    if (has_capability('mod/referentiel:viewtask', $this->context)) {
-			$row[] = new tabobject('listtask', $CFG->wwwroot.'/mod/referentiel/task.php?d='.$this->referentiel->id.'&amp;mode=listtask'.$str_filtre,  get_string('listtask','referentiel'));
-			$row[] = new tabobject('listtasksingle', $CFG->wwwroot.'/mod/referentiel/task.php?d='.$this->referentiel->id.'&amp;mode=listtasksingle'.$str_filtre,  get_string('listtasksingle','referentiel'));
-		}
-
-	    if (has_capability('mod/referentiel:addtask', $this->context)) {
-			$row[] = new tabobject('addtask', $CFG->wwwroot.'/mod/referentiel/task.php?d='.$this->referentiel->id.'&amp;mode=addtask'.$str_filtre,  get_string('addtask','referentiel'));
-			$row[] = new tabobject('updatetask', $CFG->wwwroot.'/mod/referentiel/task.php?d='.$this->referentiel->id.'&amp;mode=updatetask'.$str_filtre,  get_string('updatetask','referentiel'));
-		}
-
-		// IMPORT a faire
-
-		if (has_capability('mod/referentiel:import', $this->context)) {
-			$row[] = new tabobject('importtask', $CFG->wwwroot.'/mod/referentiel/import_task.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=importtask',  get_string('import','referentiel'));
-		}
-
-		// EXPORT
-
-		if (has_capability('mod/referentiel:export', $this->context)) {
-			$row[] = new tabobject('exporttask', $CFG->wwwroot.'/mod/referentiel/export_task.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=exporttask',  get_string('export','referentiel'));
-		}
-
-		$tabs[] = $row;
-        $activetwo = array('task');
-        }
-
-    	// CERTIFICATS
-	    else if (isset($currenttab) && (($currenttab == 'certificat')
-		|| ($currenttab == 'verroucertif')
-		|| ($currenttab == 'statcertif')
-		|| ($currenttab == 'listcertif')
-		|| ($currenttab == 'listcertifsingle')
-		|| ($currenttab == 'scolarite')
-		|| ($currenttab == 'addcertif')
-		|| ($currenttab == 'editcertif')
-		|| ($currenttab == 'printcertif')
-		|| ($currenttab == 'managecertif'))) {
-		$row  = array();
-        $inactive[] = 'certificat';
-
-		if (has_capability('mod/referentiel:view', $this->context)) { // afficher un certificat
-      	    $row[] = new tabobject('listcertif', $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$this->referentiel->id.'&amp;mode=listcertif&amp;sesskey='.sesskey().$str_filtre, get_string('listcertif', 'referentiel'));
-            if (has_capability('mod/referentiel:rate', $this->context)) { // rediger un certificat
-                $label_thumb=get_string('editcertif', 'referentiel');
-            }
-            else{
-                $label_thumb=get_string('synthese_certificat', 'referentiel');
-            }
-            $row[] = new tabobject('editcertif', $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$this->referentiel->id.'&amp;mode=editcertif&amp;sesskey='.sesskey().$str_filtre, $label_thumb);
-
-            if (referentiel_site_can_print_graph($this->referentiel->id) ){
-                $row[] = new tabobject('statcertif', $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$this->referentiel->id.'&amp;mode=statcertif&amp;sesskey='.sesskey().$str_filtre, get_string('statcertif', 'referentiel'));
-            }
-		}
-		if (has_capability('mod/referentiel:managecertif', $this->context)) {
-      	    $row[] = new tabobject('managecertif', $CFG->wwwroot.'/mod/referentiel/export_certificat.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=managecertif&amp;sesskey='.sesskey(), get_string('managecertif', 'referentiel'));
-			if (referentiel_site_can_print_referentiel($this->referentiel->id)) {
-      	    	$row[] = new tabobject('printcertif', $CFG->wwwroot.'/mod/referentiel/print_certificat.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=printcertif&amp;sesskey='.sesskey(), get_string('printcertif', 'referentiel'));
-			}
-      	    $row[] = new tabobject('verroucertif', $CFG->wwwroot.'/mod/referentiel/verrou_certificat.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=verroucertif&amp;sesskey='.sesskey(), get_string('verroucertif', 'referentiel'));
-		}
-        if ($currenttab == '') {
-            $currenttab = $mode = 'listcertif';
-        }
-        $tabs[] = $row;
-        $activetwo = array('certificat');
-        }
-
-        // SCOLARITE
-        else if (isset($currenttab)
-        &&  (has_capability('mod/referentiel:viewscolarite', $this->context)
-        || has_capability('mod/referentiel:managescolarite', $this->context))
-        &&
-		(   $scolarite_locale_visible &&
-			($currenttab == 'scolarite')
-			|| ($currenttab == 'listetudiant')
-			|| ($currenttab == 'manageetab')
-			|| ($currenttab == 'addetab')
-			|| ($currenttab == 'listeetab')
-			|| ($currenttab == 'exportetudiant')
-			|| ($currenttab == 'importetudiant')
-			|| ($currenttab == 'editetudiant')
-
-		)
-		)
-        {
-            $row  = array();
-            $inactive[] = 'scolarite';
-
-            $row[] = new tabobject('listetudiant', $CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=listetudiant&amp;sesskey='.sesskey(), get_string('listetudiant', 'referentiel'));
-
-            if (has_capability('mod/referentiel:managescolarite', $this->context)) { // import export
-                if ($currenttab == 'editetudiant'){
-                    $row[] = new tabobject('editetudiant', $CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=updateetudiant&amp;sesskey='.sesskey(), get_string('editetudiant', 'referentiel'));
-                }
-                $row[] = new tabobject('exportetudiant', $CFG->wwwroot.'/mod/referentiel/export_etudiant.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=exportetudiant&amp;sesskey='.sesskey(), get_string('exportetudiant', 'referentiel'));
-                $row[] = new tabobject('importetudiant', $CFG->wwwroot.'/mod/referentiel/import_etudiant.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=importetudiant&amp;sesskey='.sesskey(), get_string('importetudiant', 'referentiel'));
-        	}
-            if (has_capability('mod/referentiel:viewscolarite', $this->context)) { // etablissement
-                $row[] = new tabobject('listeetab', $CFG->wwwroot.'/mod/referentiel/etablissement.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=listeetab&amp;sesskey='.sesskey(), get_string('etablissements', 'referentiel'));
-            }
-            if (has_capability('mod/referentiel:managescolarite', $this->context)) { // etablissement
-                $row[] = new tabobject('manageetab', $CFG->wwwroot.'/mod/referentiel/etablissement.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=addetab&amp;sesskey='.sesskey(), get_string('manageetab', 'referentiel'));
-            }
-
-            if ($currenttab == '') {
-                $currenttab = $mode = 'listetudiant';
-            }
-            $tabs[] = $row;
-            $activetwo = array('scolarite');
-        }
-
-        // PEDAGOGIE
-        else if (isset($currenttab)
-        &&  (has_capability('mod/referentiel:viewscolarite', $this->context)
-        || has_capability('mod/referentiel:managescolarite', $this->context))
-        &&
-		(   $scolarite_locale_visible &&
-		    ($currenttab == 'pedago')
-			|| ($currenttab == 'addpedago')
-			|| ($currenttab == 'editpedago')
-			|| ($currenttab == 'listpedago')
-            || ($currenttab == 'listasso')
-            || ($currenttab == 'editasso')
-			|| ($currenttab == 'importpedago')
-			|| ($currenttab == 'exportpedago')
-
-		)
-		)
-        {
-            $row  = array();
-            $inactive[] = 'pedago';
-            $row[] = new tabobject('listpedago', $CFG->wwwroot.'/mod/referentiel/pedagogie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=listpedago&amp;sesskey='.sesskey(), get_string('listpedago', 'referentiel'));
-            $row[] = new tabobject('listasso', $CFG->wwwroot.'/mod/referentiel/pedagogie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=listasso&amp;sesskey='.sesskey(), get_string('listasso', 'referentiel'));
-
-            if (has_capability('mod/referentiel:managescolarite', $this->context)) { // import export
-                $row[] = new tabobject('addpedago', $CFG->wwwroot.'/mod/referentiel/pedagogie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=addpedago&amp;sesskey='.sesskey(), get_string('addpedago', 'referentiel'));
-                if ($currenttab == 'editpedago'){
-                    $row[] = new tabobject('editpedago', $CFG->wwwroot.'/mod/referentiel/pedagogie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=updatepedago&amp;sesskey='.sesskey(), get_string('editpedago', 'referentiel'));
-                }
-
-                $row[] = new tabobject('editasso', $CFG->wwwroot.'/mod/referentiel/pedagogie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=editasso&amp;sesskey='.sesskey(), get_string('editasso', 'referentiel'));
-     	        $row[] = new tabobject('importpedago', $CFG->wwwroot.'/mod/referentiel/import_pedagogie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=importpedago&amp;sesskey='.sesskey(), get_string('importpedago', 'referentiel'));
-			    $row[] = new tabobject('exportpedago', $CFG->wwwroot.'/mod/referentiel/export_pedagogie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=exportpedago&amp;sesskey='.sesskey(), get_string('exportpedago', 'referentiel'));
-
-        	}
-
-            if ($currenttab == '') {
-                $currenttab = $mode = 'listpedago';
-            }
-            $tabs[] = $row;
-            $activetwo = array('pedago');
-        }
-        // REFERENTIELS
-	    else if (isset($currenttab) && (($currenttab == 'configref')
-        || ($currenttab == 'protocole')
-        || ($currenttab == 'referentiel') || ($currenttab == 'listreferentiel')
-        || ($currenttab == 'editreferentiel') || ($currenttab == 'deletereferentiel')
-        || ($currenttab == 'import')  || ($currenttab == 'import_simple')
-        || ($currenttab == 'export'))) {
-	   	$row  = array();
-		$inactive[] = 'referentiel';
-
-		if (has_capability('mod/referentiel:view', $this->context)) {
-			$row[] = new tabobject('listreferentiel', $CFG->wwwroot.'/mod/referentiel/view.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=listreferentiel&amp;non_redirection=1',  get_string('listreferentiel','referentiel'));
-		}
-
-		// NOUVEAU CONTROLE v3.0
-		//
-        // DEBUG
-        /*
-        if (referentiel_site_can_write_or_import_referentiel($this->referentiel->id)){
-            echo "<br />DEBUG :: tabs.php :: 1057 :: VRAI\n";
-        }
-        else{
-            echo"<br />DEBUG :: tabs.php :: 1060 :: FAUX\n";
-        }
-        */
-
-        if (
-            (isset($isadmin) && $isadmin) || (isset($isreferentielauteur) && $isreferentielauteur)
-            ||
-            (referentiel_site_can_write_or_import_referentiel($this->referentiel->id) && empty($isstudent) )
-        )
-        {
-            // 2012/02/13
-            $row[] = new tabobject('protocole', $CFG->wwwroot.'/mod/referentiel/edit_protocole.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=protocole&amp;sesskey='.sesskey(),  get_string('protocole','referentiel'));
-
-            if (has_capability('mod/referentiel:writereferentiel', $this->context)) {
-                // 2010/10/18
-                $row[] = new tabobject('configref', $CFG->wwwroot.'/mod/referentiel/config_ref.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=configref&amp;sesskey='.sesskey(),  get_string('configref','referentiel'));
-    	    	$row[] = new tabobject('editreferentiel', $CFG->wwwroot.'/mod/referentiel/edit.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=editreferentiel&amp;sesskey='.sesskey(),  get_string('editreferentiel','referentiel'));
-    	    	$row[] = new tabobject('deletereferentiel', $CFG->wwwroot.'/mod/referentiel/delete.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=deleteferentiel&amp;sesskey='.sesskey(),  get_string('deletereferentiel','referentiel'));
-			}
-			if (has_capability('mod/referentiel:import', $this->context)) {
-                $row[] = new tabobject('import', $CFG->wwwroot.'/mod/referentiel/import.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=import',  get_string('import','referentiel'));
-            }
-/*
-			if (has_capability('mod/referentiel:import', $this->context) && referentiel_editor_is_ok()){
-                $row[] = new tabobject('import_simple', $CFG->wwwroot.'/mod/referentiel/editor/import_referentiel_simplifie.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=import',  get_string('import_referentiel_xml','referentiel'));
-			}
-*/
-        }
-        else{
-            // MODIF JF 2012/02/13
-    	    $row[] = new tabobject('protocole', $CFG->wwwroot.'/mod/referentiel/protocole.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=protocole&amp;sesskey='.sesskey(),  get_string('protocole','referentiel'));
-        }
-
-        if (has_capability('mod/referentiel:export', $this->context)) {
-    		$row[] = new tabobject('export', $CFG->wwwroot.'/mod/referentiel/export.php?d='.$this->referentiel->id.'&amp;select_acc='.$select_acc.'&amp;mode=export',  get_string('export','referentiel'));
-        }
-
-		if ($currenttab == '') {
-            $currenttab = $mode = 'listreferentiel';
-        }
-
-		// print_r($row);
-		// exit;
-	    $tabs[] = $row;
-		$activetwo = array('referentiel');
-        }
-
-        /// Print out the tabs and continue!
-        // print_r($tabs);
-        // exit;
-        print_tabs($tabs, $currenttab, $inactive, $activetwo);
-    }
-
-}
-
+    
     /**
      * Display the bottom and footer of a page
      *
@@ -1705,8 +1318,7 @@ $row[] = new tabobject('updateactivity', $CFG->wwwroot.'/mod/referentiel/activit
         }
 
         // $mod = $DB->get_field('modules','id',array('name'=>'referentiel'));
-
-        // referentiel_grade_item_delete($referentiel);
+        // referentiel_grade_item_delete($referentiel);   // existe pas
 
         return $result;
     }

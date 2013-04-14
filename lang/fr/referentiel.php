@@ -3,7 +3,7 @@
 // UTF-8 French
 //
 // Moodle 8.05
-
+$string['competences_declare']= 'Compétences déclarées';
 $string['delaidesherence']='Délai de déshérence';
 $string['config_delaidesherence']='Nombre de jours au delà duquel les déclarations d\'activité non évaluées sont signalées...';
 $string['jours']='jours';

@@ -43,6 +43,7 @@ global $DB;
     $course = $DB->get_record('course', array('id' => $cm->course));
 	if (!empty($cm) && !empty($course)){
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $role->is_guest = isguestuser();
         $role->is_editor = has_capability('mod/referentiel:writereferentiel', $context);
         $role->is_admin = has_capability('mod/referentiel:managescolarite', $context);
 	    $role->is_teacher = has_capability('mod/referentiel:approve', $context)&& !$role->is_admin;
@@ -51,7 +52,6 @@ global $DB;
     }
     return $role;
 }
-
 
 // OBSOLETE depuis Moodle v2.0
 

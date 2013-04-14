@@ -91,21 +91,13 @@
 		print_error(get_string('erreurscript','referentiel','Erreur01 : edit.php'));
 	}
 
-	$returnlink="$CFG->wwwroot/course/view.php?id=$course->id";
     require_login($course->id, false, $cm);
 
-    if (!isloggedin() || isguestuser()) {   // nouveaute Moodle 2
-        redirect($returnlink);
+    if (!isloggedin() || isguestuser()) {
+        redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
 
-    // CONTEXTE
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!empty($referentiel->id)) {    // So do you have access?
         if (!has_capability('mod/referentiel:writereferentiel', $context)
@@ -126,6 +118,7 @@
     }
 	else{
 		// rediriger vers la creation du referentiel
+		
 		$returnlink_add="$CFG->wwwroot/mod/referentiel/add.php?d=$referentiel->id";
         redirect($returnlink_add);
 	}
@@ -148,16 +141,6 @@
 	$msg="";
 
 	if (!empty($course) && !empty($cm) && !empty($referentiel_referentiel)) {
-        /*
-        if  (!empty($form)){
-            // DEBUG
-            echo "<br />DEBUG : edit_protocole.php :: Ligne 186<br />\n";
-            print_r($form);
-            // exit;
-            // Traitement des POST
-        }
-        */
-        
         // le mot de passe est-il actif ?
 		if (!$pass && ($checkpass=='checkpass')){
             if (!empty($form->pass_referentiel) && $referentiel_referentiel){
@@ -169,9 +152,10 @@
                 }
                 if (!$pass){
                     // Abandonner
-                    print_error("error_pass","referentiel","$CFG->wwwroot/mod/referentiel/view.php?id=$cm->id&amp;non_redirection=1", $referentiel_referentiel->mail_auteur_referentiel );
-                    // redirect("$CFG->wwwroot/mod/referentiel/view.php?id=$cm->id");
-                    // exit;
+                    print_error("error_pass","referentiel",
+                        new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1')),
+                        $referentiel_referentiel->mail_auteur_referentiel );
+                    exit;
                 }
             }
             else{    // mot de passe vide mais c'est un admin qui est connecté
@@ -185,7 +169,7 @@
 		if (!empty($form->cancel)){
 			if ($form->cancel == get_string("quit", "referentiel")){
 				// Abandonner
-    		    redirect("$CFG->wwwroot/mod/referentiel/view.php?id=$cm->id");
+    		    redirect(new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1')));
        			exit;
 			}
 		}
@@ -203,7 +187,7 @@
         	}
 			else {
                 //$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/edit_protocole.php?id=$cm->id&amp;mode=$mode&amp;select_acc=$select_acc&amp;sesskey=".sesskey();
-                $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/view.php?id=$cm->id";
+                $SESSION->returnpage = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
 	        }
 	        redirect($SESSION->returnpage);
 		}
@@ -241,10 +225,8 @@
     // affichage de la page
     $PAGE->set_url($url);
     $PAGE->requires->css('/mod/referentiel/referentiel.css');
-    //if ($CFG->version < 2011120100) $PAGE->requires->js('/lib/overlib/overlib.js');  else
     $PAGE->requires->js($OverlibJs);
     $PAGE->requires->js('/mod/referentiel/functions.js');
-
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
 
@@ -262,7 +244,6 @@
 
     echo $OUTPUT->box_start('generalbox  boxaligncenter');
     // formulaires
-
     // verifer si le mot de passe est fourni
 	if (!$pass && (
             (
@@ -283,10 +264,7 @@
         // echo "<br />DEBUG :: 323 :: edit_protocole.php\n";
         referentiel_edit_protocole($mode, $referentiel, $select_acc);
 	}
-
     echo $OUTPUT->box_end();
-
-
     echo $OUTPUT->footer();
     die();
 ?>

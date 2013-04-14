@@ -623,17 +623,7 @@ function referentiel_set_vecteur_configuration($str_config, $referentiel_instanc
 global $DB;
 	$ok=false;
 	if (!empty($referentiel_instance_id) && !empty($str_config)){
-		// DEBUG
-		// echo "<br />DEBUG :: lib.php :: 3521 :: $str_config\n";
-		// $referentiel_instance = get_record('referentiel', 'id', $referentiel_instance_id);
-		// $referentiel_instance->config=$str_config;
-		// DEBUG
-		// print_object($referentiel_instance);
-		// echo "<br />";
-		// $ok=update_record("referentiel", $referentiel_instance);
-
         $ok=$DB->set_field('referentiel','config',$str_config, array("id" => "$referentiel_instance_id"));
-
 	}
 	return $ok;
 }
@@ -655,15 +645,6 @@ function referentiel_set_vecteur_configuration_impression($str_config, $referent
 global $DB;
 	$ok=false;
 	if (!empty($referentiel_instance_id) && !empty($str_config)){
-		// DEBUG
-		// echo "<br />DEBUG :: lib.php :: 3539 :: $str_config\n";
-		// $referentiel_instance = get_record('referentiel', 'id', $referentiel_instance_id);
-		// $referentiel_instance->config_impression=$str_config;
-
-		// DEBUG
-		// print_object($referentiel_instance);
-		// echo "<br />";
-		// $ok=update_record("referentiel", $referentiel_instance);
 		$ok=$DB->set_field('referentiel','config_impression',$str_config,array("id" => "$referentiel_instance_id"));
 	}
 	return $ok;

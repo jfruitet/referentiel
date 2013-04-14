@@ -87,21 +87,16 @@
     if ($mode !== 'all') {
         $url->param('mode', $mode);
     }
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
 
-	$returnlink="$CFG->wwwroot/course/view.php?id=$course->id";
     require_login($course->id, false, $cm);
-
-    if (!isloggedin() || isguestuser()) {   // nouveaute Moodle 2
-        redirect($returnlink);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
 
-
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     if (!empty($referentiel->id)) {    // So do you have access?
         if (!has_capability('mod/referentiel:writereferentiel', $context)
@@ -121,7 +116,6 @@
     }
 	else{
 		// rediriger vers la creation du referentiel
-		$returnlink_add="$CFG->wwwroot/mod/referentiel/add.php?d=$referentiel->id";
         redirect($returnlink_add);
 	}
 
@@ -159,7 +153,7 @@
                 }
                 if (!$pass){
                     // Abandonner
-                    redirect("$CFG->wwwroot/mod/referentiel/view.php?id=$cm->id");
+                    redirect($returnlink_ref);
                     exit;
                 }
             }
@@ -180,9 +174,8 @@
    	        		redirect($return);
        			} 
 				else {
-    		        redirect("$CFG->wwwroot/course/view.php?id=$course->id");
+                    redirect($returnlink_ref);
    	    		}
-				
        			exit;
 			}
 		}
@@ -204,56 +197,42 @@
 								// echo '<br />'. $key.' : '.$val."\n";
 								$sql = "SELECT * FROM {course_modules} WHERE module = :module AND instance=:refid ";
 								$courses_modules = $DB->get_records_sql($sql, array("module" => "$cm->module", "refid" => "$val"));
-								
 								if ($courses_modules){
   									foreach($courses_modules as $course_module){
-										if (!$course_module) {
-            								print_error("This course module doesn't exist");
-        								}
-										else{
-											if (! $course_record = $DB->get_record("course", array("id" => "$course_module->course"))) {
-            									print_error("This course doesn't exist");
-    	    								}
-											// echo '<br />MODULE<br />'."\n";
-											// print_r($coursemodule);
-											// echo '<br />COURSE :<br />'."\n";
-											// print_r($course_record);
+										if (!empty($course_module)) {
+            								if ($course_record = $DB->get_record("course", array("id" => "$course_module->course"))) {
+    											require_login($course_module->course); // needed to setup proper $COURSE
+	       		        						$context_course = get_context_instance(CONTEXT_COURSE, $course_module->course);
+               									require_capability('moodle/course:manageactivities', $context_course);
 											
-											require_login($course_module->course); // needed to setup proper $COURSE
-			        						$context_course = get_context_instance(CONTEXT_COURSE, $course_module->course);
-        									require_capability('moodle/course:manageactivities', $context_course);
+			     								$that_instance = $DB->get_record("referentiel", array("id" => "$course_module->instance"));
+				    							// echo '<br />INSTANCE :<br />'."\n";
+					       						// print_r($that_instance );
+						      					// exit;
 											
-											$that_instance = $DB->get_record("referentiel", array("id" => "$course_module->instance"));
-											// echo '<br />INSTANCE :<br />'."\n";
-											// print_r($that_instance );
-											// exit;
-											
-											if 	($that_instance){
-												if (!referentiel_delete_instance($that_instance->id)) {
-			                    					print_error("Could not delete that referentiel instance");
-            			    					}
-					    			            if (! delete_course_module($course_module->id)) {
-                    								print_error("Could not delete the referentiel (coursemodule)");
-                								}
-								                if (! delete_mod_from_section($course_module->id, "$course_module->section")) {
-            			        					print_error("Could not delete the referentiel from that section");
-                								}
-												
-												rebuild_course_cache($course_record->id);
-												$msg=get_string('instance_deleted', 'referentiel').' '.$that_instance->name;
-				    							add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
-											}
-										}
-									}
-								}
-								else{ // cette 'instance' n'existe dans aucun module, c'est juste un fant�me, on peut la d�truire
-								    if (!referentiel_delete_instance($instanceid)) {
-                                        print_error("Could not delete that referentiel instance", "$CFG->wwwroot/course/view.php?id=$course->id");
-            			    		}
+							     				if 	($that_instance){
+                                                    if (referentiel_delete_instance($that_instance->id)) {
+                                                        if (delete_course_module($course_module->id)) {
+                                                            if (delete_mod_from_section($course_module->id, "$course_module->section")) {
+                                                                rebuild_course_cache($course_record->id);
+		          				      						    $msg=get_string('instance_deleted', 'referentiel').' '.$that_instance->name;
+				              		      					    add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
+										                    }
+									                    }
+								                    }
+                                                }
+							                }
+						                }
+					                }
                                 }
-							}
-						}
-					}
+                                else{ // cette 'instance' n'existe dans aucun module, c'est juste un fant�me, on peut la d�truire
+								    if (!referentiel_delete_instance($instanceid)) {
+                                        ;//print_error("Could not delete that referentiel instance", "$CFG->wwwroot/course/view.php?id=$course->id");
+            			    	    }
+                                }
+                            }
+                        }
+                    }
 					
 					if (isset($form->referentiel_id) && ($form->referentiel_id>0)){
 						$records_instance=referentiel_referentiel_list_of_instance($form->referentiel_id);
@@ -261,37 +240,30 @@
                             $msg='';
                             foreach($records_instance as $r_instance){
                                 $record_instance = referentiel_get_referentiel($r_instance->id);
-                                $record_course = get_record('course', 'id', $record_instance->course);
+                                $record_course = $DB->get_record('course', array('id'=> $record_instance->course));
                                 $msg.= "<br />".get_string('instance','referentiel')." $record_instance->name (#$record_instance->id) ".get_string('course')." $record_course->fullname ($record_course->shortname) ".get_string('not_deleted', 'referentiel')."\n";
                             }
-							$msg.=get_string("suppression_referentiel_impossible", "referentiel")." ".$form->referentiel_id;
-							print_error("$msg", "$CFG->wwwroot/course/view.php?id=$course->id");
+							$msg.='<br />'.get_string("suppression_referentiel_impossible", "referentiel", $form->referentiel_id);
+							redirect($returnlink_course, $msg);
 						}
 						else{
 							// suppression du referentiel
 							$return=referentiel_delete_referentiel_domaines($form->referentiel_id);
-							if (!isset($return) || (!$return)) {
-    	        				print_error("Could not delete $msg", "view.php?d=$referentiel->id&amp;non_redirection=1");
-        	    			}
-	            			if (is_string($return)) {
-    	        				print_error($return, "view.php?d=$referentiel->id&amp;non_redirection=1");
-	    	    			}
-                            if ($return){
+							if (isset($return) && !empty($return) && !is_string($return)){
                                 // suppression des certificats
                                 referentiel_delete_referentiel_certificats($form->referentiel_id);
                                 $msg=get_string('deletereferentiel', 'referentiel').' '.$form->referentiel_id;
 		    				    add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
+                                redirect($returnlink_course);
                             }
                             else{
-   			                  	print_error("Could not delete #$form->referentiel_id occurrence...", "view.php?d=$referentiel->id&amp;non_redirection=1");
+   			                  	redirect($returnlink_course,"Could not delete #$form->referentiel_id occurrence...");
                             }
-
-							redirect("$CFG->wwwroot/course/view.php?id=$course->id");
 							exit;
 						}
 					}
 				}
-				// Suppression
+				// Suppression occurrence
 				elseif ($form->action=="modifierreferentiel"){
 					// enregistre les modifications
 					if (isset($form->referentiel_id) && ($form->referentiel_id>0)){
@@ -300,44 +272,28 @@
                             $msg='';
                             foreach($records_instance as $r_instance){
                                 $record_instance = referentiel_get_referentiel($r_instance->id);
-                                $record_course = get_record('course', 'id', $record_instance->course);
+                                $record_course = $DB->get_record('course', array('id'=> $record_instance->course));
                                 $msg.= "<br />".get_string('instance','referentiel')." $record_instance->name (#$record_instance->id) ".get_string('course')." $record_course->fullname ($record_course->shortname) ".get_string('not_deleted', 'referentiel')."\n";
                             }
 							$msg.=get_string("suppression_referentiel_impossible", "referentiel")." ".$form->referentiel_id;
-							print_error("$msg", "$CFG->wwwroot/course/view.php?id=$course->id");
+							redirect($returnlink_course,$msg);
 						}
 						else{
-							// suppression du referentiel
+							// suppression du referentiel_referentiel
 							$return=referentiel_delete_referentiel_domaines($form->referentiel_id);
-							if (!isset($return) || (!$return)) {
-    	        				print_error("Could not delete $msg", "view.php?d=$referentiel->id&amp;non_redirection=1");
-        	    			}
-	            			if (is_string($return)) {
-    	        				print_error($return, "view.php?d=$referentiel->id&amp;non_redirection=1");
-	    	    			}
-							
-							if ($return) {
-                                // suppression des certificats
+							if (isset($return) && !empty($return) && !is_string($return)){
                                 referentiel_delete_referentiel_certificats($form->referentiel_id);
-
-								// Mise � jour de la reference du referentiel dans l'instance de certification
+								// Mise a jour de la reference du referentiel dans l'instance de certification
 								referentiel_de_associe_referentiel_instance($form->instance);
 							}
 							
 							$msg=get_string('deletereferentiel', 'referentiel').' '.$form->referentiel_id;
 		    				add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
-							redirect("$CFG->wwwroot/course/view.php?id=$course->id");
+                            redirect($returnlink_course,$msg);
 							exit;	
 						}
 					}
 				}
-				
-	        	if (isset($form->redirect)) {
-    	        	$SESSION->returnpage = $form->redirecturl;
-        	    } 
-				else {
-            		$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/view.php?id=$cm->id&amp;non_redirection=1";
-	            }
 			}
 		}
 	}
@@ -387,7 +343,6 @@
     // affichage de la page
     $PAGE->set_url($url);
     $PAGE->requires->css('/mod/referentiel/referentiel.css');
-    //if ($CFG->version < 2011120100) $PAGE->requires->js('/lib/overlib/overlib.js');  else
     $PAGE->requires->js($OverlibJs);
     $PAGE->requires->js('/mod/referentiel/functions.js');
 

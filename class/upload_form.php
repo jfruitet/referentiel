@@ -37,7 +37,7 @@ class mod_referentiel_upload_form extends moodleform {
         $mform->setType('description', PARAM_TEXT);
 
         $mform->addElement('text','etiquette',get_string('etiquette_document','referentiel'));
-        $mform->setType('titre', PARAM_ALPHANUMEXT);
+        $mform->setType('etiquette', PARAM_ALPHANUMEXT);
 
         $mform->addElement('text','url',get_string('url','referentiel'));
         $mform->setType('url', PARAM_URL);

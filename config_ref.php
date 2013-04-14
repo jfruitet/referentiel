@@ -93,18 +93,12 @@
     $url->param('mode', $mode);
 
     // CONTEXTE
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-
-	$returnlink="$CFG->wwwroot/course/view.php?id=$course->id";
     require_login($course->id, false, $cm);
 
     if (!isloggedin() || isguestuser()) {   // nouveaute Moodle 2
+        $returnlink="$CFG->wwwroot/course/view.php?id=$course->id";
         redirect($returnlink);
     }
 
@@ -148,10 +142,6 @@
 	$msg="";
 
 	if (!empty($course) && !empty($cm) && !empty($referentiel_referentiel) && isset($form)) {
-    	// DEBUG
-        // echo "<br />DEBUG : config_ref.php :: Ligne 185<br />\n";
-        // print_r($form);
-        // Traitement des POST
 
 		// le mot de passe est-il actif ?
 		if (!$pass && ($checkpass=='checkpass')){
@@ -164,7 +154,9 @@
                 }
                 if (!$pass){
                     // Abandonner
-                    redirect("$CFG->wwwroot/mod/referentiel/view.php?id=$cm->id");
+                    print_error("error_pass","referentiel",
+                        new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1')),
+                        $referentiel_referentiel->mail_auteur_referentiel );
                     exit;
                 }
             }
@@ -175,11 +167,11 @@
             }
 		}
 
-		// variable d'action
+        // Traitement des POST
+        // variable d'action
 		if (!empty($form->cancel)){
 			if ($form->cancel == get_string("quit", "referentiel")){
-				// Abandonner
-    		    redirect("$CFG->wwwroot/mod/referentiel/view.php?id=$cm->id");
+                redirect(new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1')));
        			exit;
 			}
 		}
@@ -198,7 +190,8 @@
                 $SESSION->returnpage = $form->redirecturl;
         	}
 			else {
-                $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/view.php?id=$cm->id";
+                $SESSION->returnpage = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+
 	        }
 	        redirect($SESSION->returnpage);
 		}

@@ -101,7 +101,7 @@ include('print_lib_task.php');	// AFFICHAGES TACHES
 	else{
 		$data_filtre->filtre_auteur=0;
 	}
-/*
+
 // DEBUG
 $sdebug0= "<br>DEBUG : TOUT LES PARAMETRES AVANT TRAITEMENT<br>***************************************\n";
 $sdebug0.= "
@@ -128,7 +128,7 @@ $sdebug0.= "
  &nbsp; AUTEUR:$filtre_auteur,
 <br>SQL_WHERE:''".htmlentities($sql_filtre_where)."'',
 <br>SQL_ORDER:''".htmlentities($sql_filtre_order)."''\n";
-*/
+
     // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/activite.php');
 
@@ -854,7 +854,6 @@ $sdebug0.= "
     
         }
     }
-    /*
 // DEBUG
 $sdebug= "<br><br>DEBUG : TOUT LES PARAMETRES APRES TRAITEMENT<br>#####################################################\n";
 $sdebug.= "
@@ -881,7 +880,7 @@ $sdebug.= "
  &nbsp; AUTEUR:$filtre_auteur,
 <br>SQL_WHERE:''".htmlentities($sql_filtre_where)."'',
 <br>SQL_ORDER:''".htmlentities($sql_filtre_order)."''\n";
-*/
+
     // afficher les formulaires
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
     $modform = "activite.html";
@@ -983,8 +982,8 @@ $sdebug.= "
 
     echo $OUTPUT->header();
 // DEBUG
-//    echo $sdebug0;
-//    echo $sdebug;
+    echo $sdebug0;
+    echo $sdebug;
 // $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 

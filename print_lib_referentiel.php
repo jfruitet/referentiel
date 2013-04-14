@@ -102,7 +102,9 @@ function referentiel_select_referentiels($params){
 }
 
 
-function referentiel_affiche_referentiel_instance($instance_id){
+
+function referentiel_affiche_referentiel_instance($cm, $instance_id){
+
 // Affiche l'instance et le referentiel associe
 	if (isset($instance_id) && ($instance_id>0)){
 		// saisie de l'instance
@@ -169,13 +171,12 @@ function referentiel_affiche_referentiel_instance($instance_id){
     		$params->label_domaine = $labels->domaine;
 			$params->label_competence = $labels->competence;
 			$params->label_item = $labels->item;
-			referentiel_affiche_referentiel($referentiel_instance->ref_referentiel, $params, $instance_id);
+			referentiel_affiche_referentiel($cm, $instance_id, $referentiel_instance->ref_referentiel, $params);
 		}
 	}
 }
 
-
-function referentiel_affiche_referentiel($id, $params=NULL, $instance_id){
+function referentiel_affiche_referentiel($cm, $instance_id, $occurrence_id, $params=NULL){
 // Affiche le référentiel
 // DEBUG
 // echo "<br />DEBUG :: print_lib_refernetiel :: 179\n";
@@ -218,8 +219,8 @@ global $DB;
 	// affichage leger du referentiel
 	$not_light_display=referentiel_site_light_display($instance_id)>0;
 
-	if (isset($id) && ($id>0)){
-		$record_a = referentiel_get_referentiel_referentiel($id);
+	if (isset($occurrence_id) && ($occurrence_id>0)){
+		$record_a = referentiel_get_referentiel_referentiel($occurrence_id);
         $referentiel_id=$record_a->id;
 		$name = $record_a->name;
 		$code_referentiel = stripslashes($record_a->code_referentiel);
@@ -230,7 +231,7 @@ global $DB;
 		$nb_domaines = $record_a->nb_domaines;
 		$liste_codes_competence=$record_a->liste_codes_competence;
 		$liste_empreintes_competence=$record_a->liste_empreintes_competence;
-		$liste_poids_competence=referentiel_get_liste_poids_competence($id);
+		$liste_poids_competence=referentiel_get_liste_poids_competence($occurrence_id);
 		// local ou global ?
 		if (isset($record_a->local))
 			$referentiel_local=$record_a->local;
@@ -326,11 +327,10 @@ else{
 <?php
 
 		// charger les domaines associes au referentiel courant
-		if (isset($id) && ($id>0)){
-			$ref_referentiel=$id; // plus pratique
+		if (isset($occurrence_id) && ($occurrence_id>0)){
 			// AFFICHER LA LISTE DES DOMAINES
 			$compteur_domaine=0;
-			$records_domaine = referentiel_get_domaines($ref_referentiel);
+			$records_domaine = referentiel_get_domaines($occurrence_id);
 	    	if ($records_domaine){
     			// afficher
 				// DEBUG

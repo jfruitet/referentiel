@@ -589,16 +589,10 @@
                 // A4 paysage en mm
                 $nom_fichier = 'certification-'.date("Ymshis").'-'.md5(uniqid());
                 $rtf=new RTFClass();
-                /*
-                'P','mm','A4');
-                $pdf->SetDisplayMode('real');
-                $pdf->Open();
-                */
                 $copyright = chr(169);
                 $registered ="�";
                 $puce =  chr(149);
-                // $pdf->AliasNbPages();
-			 
+
                 rtf_write_certification($referentiel, $referentiel_referentiel, $userid, $param, $records_certificats);
                 $rtf->sendRtf($nom_fichier);
                 exit;
@@ -615,18 +609,18 @@
                     else{
                         $image_logo="";
                     }
-                    // Instanciation de la classe d�riv�e
+                    // Instanciation de la classe derivee
                     // A4 paysage en mm
-                    $pdf=new PDF('P','mm','A4');        
-                    $pdf->SetDisplayMode('real');
-                    $pdf->Open();
+                    $Refpdf=new Referentiel_PDF('P','mm','A4');
+                    $Refpdf->SetDisplayMode('real');
+                    $Refpdf->Open();
                     $copyright = chr(169);
                     $registered ="�";
-                    $puce =  chr(149);                    
-                    $pdf->AliasNbPages();
-                     
+                    $puce =  chr(149);
+                    $Refpdf->AliasNbPages();
+
                     pdf_write_certification($referentiel, $referentiel_referentiel, $userid, $param, $records_certificats);
-                    $pdf->Output();
+                    $Refpdf->Output();
                     exit;
         }
         elseif ($print=="msword"){

@@ -66,19 +66,19 @@ if ($referentiel && $referentiel_referentiel){
 <center>
 <table cellpadding="5" bgcolor="#eeeeee">
 <tr valign="top">
-    <td align="right"><b><?php  echo get_string('name','referentiel').' ('.get_string('code','referentiel').') '; ?>:</b></td>
+    <td align="right"><b><?php  echo get_string('name','referentiel').' ('.get_string('code','referentiel').') '; ?></b></td>
     <td align="left">
        <?php  p($name); ?> ( <?php  p($code_referentiel); ?>)
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php  print_string('description_instance','referentiel') ?>:</b></td>
+    <td align="right"><b><?php  print_string('description_instance','referentiel') ?></b></td>
     <td align="left">
 		<?php  p($description_referentiel); ?>
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php  print_string('referentiel_config_global','referentiel') ?>:</b></td>
+    <td align="right"><b><?php  print_string('referentiel_config_global','referentiel') ?></b></td>
     <td align="left">
 <?php 
     echo '<i>';
@@ -92,7 +92,7 @@ if ($referentiel && $referentiel_referentiel){
 			if (referentiel_global_can_print_referentiel($referentiel_id)){
 				echo ' <!-- impression certificat -->
 <tr valign="top">
-    <td align="right"><b>'.get_string('referentiel_config_global_impression','referentiel').':</b></td>
+    <td align="right"><b>'.get_string('referentiel_config_global_impression','referentiel').'</b></td>
     <td align="left">'.referentiel_selection_configuration($form->config_impression, 'config_impression').'
     </td>
 </tr>
@@ -109,6 +109,7 @@ if ($referentiel && $referentiel_referentiel){
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="configref" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
+<input type="reset" value="<?php  print_string("cancel") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("quit", "referentiel") ?>" />
 
 </center>

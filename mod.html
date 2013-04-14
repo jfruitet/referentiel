@@ -45,7 +45,7 @@ if (isset($update) && ($update>0)){
 			$form->config_impression_globale=referentiel_ref_get_vecteur_config_imp($referentiel_instance->ref_referentiel);
 
             if ($referentiel_instance->course){
-                $course= get_record('course', 'id', $referentiel_instance->course);
+                $course= $DB->get_record('course', arry('id' => $referentiel_instance->course));
                 $maxbytes=get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
             }
             else{

@@ -137,19 +137,11 @@
     }
 
     // check role capability
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_capability('mod/referentiel:import', $context);
 
     // ensure the files area exists for this course
-    // Moodle 1.9
-    // make_upload_directory( "$course->id/$CFG->moddata/referentiel" );
-
 	if (empty($mode)) {
         $mode='import'; // un seul mode possible
     }
@@ -184,11 +176,6 @@
     $options = array('subdirs'=>0, 'maxbytes'=>get_max_upload_file_size($CFG->maxbytes, $course->maxbytes, 0), 'maxfiles'=>1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL);
     $mform = new referentiel_import_form(null, array('d'=>$referentiel->id, 'contextid'=>$context->id, 'filearea'=>'referentiel', 'fileformats' => $fileformatnames, 'override' => 0, 'stoponerror' => 1, 'newinstance' => 1, 'action' => 'importreferentiel', 'msg' =>  get_string('import', 'referentiel'), 'options'=>$options));
 
-    /*
-    if (!empty($referentiel->name)){
-        echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
-    }
-    */
     // mot de passe ?
 	if ($referentiel_referentiel){
     	// Le referentiel est-il protege par mot de passe ?
@@ -233,7 +220,7 @@
     }
     else if ($mform->get_data()) {
 
-        $returnlink = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id));
+        $returnlink = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
 
         if ($formdata = $mform->get_data()) {
             // DEBUG
@@ -267,7 +254,6 @@
                     $format=$formdata->format;
 
                     // echo "<br />DEBUG :: 235 :: $format<br />\n";
-
                     if (! is_readable("format/$format/format.php")) {
                         print_error( get_string('formatnotfound','referentiel', $format) );
                     }
@@ -275,8 +261,6 @@
                     require_once("format.php");  // Parent class
                     require_once("format/$format/format.php");
                     $classname = "rformat_$format";
-                    // echo "<br />DEBUG :: 232 :: $classname<br />\n";
-
                     $rformat = new $classname();
                     // load data into class
                     $rformat->setIReferentiel( $referentiel ); // instance
@@ -290,14 +274,12 @@
                     $rformat->setNewinstance( $formdata->newinstance );
                     $rformat->setAction( $formdata->action );
 
-
                     // Do anything before that we need to
                     if (! $rformat->importpreprocess()) {
                         print_error( get_string('importerror','referentiel') , $returnlink);
                     }
 
                     // Process the uploaded file
-
                     if (! $rformat->importprocess() ) {
                         print_error( get_string('importerror','referentiel') , $returnlink);
                     }
@@ -307,12 +289,12 @@
                         print_error( get_string('importerror','referentiel') , $returnlink);
                     }
 
-                    // Verifier si  referentiel charge
+                    // Verify if referentiel is loaded
                     if (! $rformat->new_referentiel_id) {
                         print_error( get_string('importerror_referentiel_id','referentiel') , $returnlink);
                     }
 
-                    // mettre a jour l'instance
+                    // update instance
                     if (empty($formdata->newinstance)){
                         $DB->set_field ('referentiel','ref_referentiel',$rformat->new_referentiel_id, array("id" => "$referentiel->id"));
                     }
@@ -346,14 +328,10 @@
 
     // ONGLETS
     include('tabs.php');
-
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('importreferentielh','referentiel').'</h2></div>'."\n";
-
-
     echo $OUTPUT->box_start('generalbox');
     $mform->display();
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
     die();
-
 ?>
