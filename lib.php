@@ -1288,10 +1288,10 @@ global $CFG, $USER, $DB, $OUTPUT;
                 $document->url_consigne=$fullpath;
                 $document->type_consigne=$formdata->type;
                 if (empty($formdata->description)){
-                    $document->description_document=get_string('url', 'referentiel');
+                    $document->description_consigne=get_string('url', 'referentiel');
                 }
                 else{
-                    $document->description_document=$formdata->description;
+                    $document->description_consigne=$formdata->description;
                 }
                 $document->ref_task=$formdata->activiteid;
                 $document->cible_consigne=$formdata->cible;

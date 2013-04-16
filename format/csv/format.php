@@ -726,8 +726,6 @@ $expout .= $seuil_referentiel.";".$minima_referentiel
 
 	if (isset($new_referentiel_id) && ($new_referentiel_id>0)){
 		// IMPORTER LE RESTE DU REFERENTIEL
-
-
 		$dindex=0;
 		$cindex=0;
 		$iindex=0;
@@ -735,19 +733,15 @@ $expout .= $seuil_referentiel.";".$minima_referentiel
         $re->domaines = array();
 		$new_domaine_id=0;
 		$new_competence_id=0;
-
 		$numero_domaine=0; // compteur pour suppleer le numero si non importe
 		$numero_competence=0;
 		$numero_item=0;
 		$num_domaine=0;
 		$num_competence=0;
-
-// MODIF JF 2012/02/08
 		$type_domaine=0;
 		$seuil_domaine=0.0;
 		$type_competence=0;
 		$seuil_competence=0.0;
-// MODIF JF 2012/02/26
 		$minima_domaine=0.0;
 		$minima_competence=0;
 
@@ -755,7 +749,6 @@ $expout .= $seuil_referentiel.";".$minima_referentiel
 
 		$is="";
 
-// MODIF JF 2012/03/09
         $pindex=0;
         $is_protocole = false;
 		$ok_protocole_charge=false;
@@ -785,7 +778,7 @@ $expout .= $seuil_referentiel.";".$minima_referentiel
 				// labels
 				// on s'en sert pour construire l'arbre
 				$is=trim($fields[0]);
-// MODIF JF 2012/03/09
+
                 $is_protocole=false;
 
 				$is_domaine=false;
@@ -793,7 +786,7 @@ $expout .= $seuil_referentiel.";".$minima_referentiel
 				$is_item=false;
 
 				switch($is){
-// MODIF JF 2012/03/09
+
 					case '#protocole_seuil' :
                         // #protocole_seuil;l_domaines_oblig;l_seuils_domaines;l_competences_oblig;l_seuils_competences;l_items_oblig;timemodified;actif;commentaire
 						$is_protocole=true;
@@ -820,9 +813,6 @@ $expout .= $seuil_referentiel.";".$minima_referentiel
 				switch($is){
 // MODIF JF 2012/03/09
 					case '#protocole_seuil' :
-                        // #protocole_seuil;l_domaines_oblig;l_seuils_domaines;
- // l_competences_oblig;l_seuils_competences;l_items_oblig;
- // timemodified;actif;commentaire
 						// Protocole
 						// data
 						$seuil_referentiel = trim($fields[0]);
@@ -889,8 +879,18 @@ $commentaire=addslashes($this->input_codage_caractere(trim($fields[11])));
 						$description_domaine = addslashes($this->input_codage_caractere(trim($fields[1])));
 						$num_domaine = trim($fields[2]);
 						$nb_competences = trim($fields[3]);
-						$type_domaine = trim($fields[4]);
-						$seuil_domaine = trim($fields[5]);
+						if (isset($fields[4])){
+                            $type_domaine = trim($fields[4]);
+                        }
+                        else{
+                            $type_domaine = 0;
+                        }
+						if (isset($fields[5])){
+                            $seuil_domaine = trim($fields[5]);
+                        }
+                        else{
+                            $seuil_domaine = 0;
+                        }
 						if (isset($fields[6])){
                             $minima_domaine = trim($fields[6]);
                         }
@@ -918,18 +918,17 @@ $commentaire=addslashes($this->input_codage_caractere(trim($fields[11])));
 								$new_domaine->nb_competences=$nb_competences;
 							else
 								$new_domaine->nb_competences=0;
-// MODIF JF 2012/03/08
+
 							if ($type_domaine!="")
 								$new_domaine->type_domaine=$type_domaine;
 							else
 								$new_domaine->type_domaine=0;
-// MODIF JF 2012/03/08
+
 							if ($seuil_domaine!="")
 								$new_domaine->seuil_domaine=$seuil_domaine;
 							else
 								$new_domaine->seuil_domaine=0.0;
 
-// MODIF JF 2012/03/26
 							if ($minima_domaine!="")
 								$new_domaine->minima_domaine=$minima_domaine;
 							else
@@ -946,10 +945,10 @@ $commentaire=addslashes($this->input_codage_caractere(trim($fields[11])));
 							$new_domaine->new_description_domaine=$new_domaine->description_domaine;
 							$new_domaine->new_num_domaine=$new_domaine->num_domaine;
 							$new_domaine->new_nb_competences=$new_domaine->num_domaine;
-// MODIF JF 2012/03/08
+
 							$new_domaine->new_type_domaine=$new_domaine->type_domaine;
 							$new_domaine->new_seuil_domaine=$new_domaine->seuil_domaine;
-// MODIF JF 2012/03/26
+
 							$new_domaine->new_minima_domaine=$new_domaine->minima_domaine;
 
 
@@ -981,8 +980,19 @@ $commentaire=addslashes($this->input_codage_caractere(trim($fields[11])));
 						$description_competence = addslashes($this->input_codage_caractere(trim($fields[1])));
 						$num_competence = trim($fields[2]);
 						$nb_item_competences = trim($fields[3]);
-						$type_competence = trim($fields[4]);
-						$seuil_competence = trim($fields[5]);
+						if (isset($fields[4])){
+                            $type_competence = trim($fields[4]);
+                        }
+                        else{
+                            $type_competence = 0;
+                        }
+						
+						if (isset($fields[5])){
+                            $seuil_competence = trim($fields[5]);
+                        }
+                        else{
+                            $seuil_competence = 0;
+                        }
 						if (isset($fields[6])){
                             $minima_competence = trim($fields[6]);
                         }
@@ -1008,17 +1018,17 @@ $commentaire=addslashes($this->input_codage_caractere(trim($fields[11])));
 								$new_competence->nb_item_competences=$nb_item_competences;
 							else
 								$new_competence->nb_item_competences=0;
-// MODIF JF 2012/03/08
+
 							if ($type_competence!="")
 								$new_competence->type_competence=$type_competence;
 							else
 								$new_competence->type_competence=0;
-// MODIF JF 2012/03/08
+
 							if ($seuil_competence!="")
 								$new_competence->seuil_competence=$seuil_competence;
 							else
 								$new_competence->seuil_competence=0.0;
-// MODIF JF 2012/03/26
+
 							if ($minima_competence!="")
 								$new_competence->minima_competence=$minima_competence;
 							else
@@ -1041,10 +1051,10 @@ $commentaire=addslashes($this->input_codage_caractere(trim($fields[11])));
 							$new_competence->new_ref_domaine=$new_domaine_id;
 							$new_competence->new_num_competence=$new_competence->num_competence;
 							$new_competence->new_nb_item_competences=$new_competence->nb_item_competences;
-// MODIF JF 2012/03/08
+
 							$new_competence->new_type_competence=$new_competence->type_competence;
 							$new_competence->new_seuil_competence=$new_competence->seuil_competence;
-// MODIF JF 2012/03/26
+
 							$new_competence->new_minima_competence=$new_competence->minima_competence;
 
 							// creation
