@@ -47,13 +47,8 @@ static $referentiel_id = NULL;
         print_error('REFERENTIEL_ERROR 5 :: print_lib_protocole.php :: 46 :: You cannot call this script in that way');
 	}
 
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-	
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
 	$referentiel_id = $referentiel_instance->ref_referentiel;
     $roles=referentiel_roles_in_instance($referentiel_instance->id);
     $iseditor=$roles->is_editor;
@@ -61,14 +56,7 @@ static $referentiel_id = NULL;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
-	/*
-	// DEBUG
-	if ($isadmin) echo "Admin ";
-	if ($isteacher) echo "Teacher ";
-	if ($istutor) echo "Tutor ";
-	if ($isstudent) echo "Student ";
-	*/
+    $isguest=$roles->is_guest;
 
 	if (!empty($referentiel_instance->ref_referentiel)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
@@ -154,9 +142,7 @@ static $referentiel_id = NULL;
 
 // ----------------------------------
 function referentiel_affiche_select_protocole($instance_id, $refrefid, $course_id, $mode, $select_acc=0){
-
 // tables de protocoles (seuils, item obligatoires, etc.
-// MODIF JF 2012/03/26
     global $protocol_seuil_referentiel;
     global $protocol_minima_referentiel;
 
@@ -177,7 +163,6 @@ function referentiel_affiche_select_protocole($instance_id, $refrefid, $course_i
 
     global $OK_REFERENTIEL_DATA;        // les données du certificat sont disponibles
 
-    // MODIF JF 2012/03/26
     // REFERENTIEL
     global $max_minimum_referentiel;
     global $max_seuil_referentiel;
@@ -199,18 +184,13 @@ function referentiel_affiche_select_protocole($instance_id, $refrefid, $course_i
     global $t_item_empreinte;
     global $t_nb_item_domaine;
 
-    // MODIF JF 2012/03/26
     // Ajout pour le protocole des minimas
     global $t_competence_domaine; // index du domaine assicie a une competence
     global $t_nb_competence_domaine; // nombre de competences par domaine
     global $t_nb_item_competence; // nombre d'item par competences
 
-// MODIF JF 2012/06/02
     // recupere les labels des domaine, compoetence, item
     $labels=referentiel_get_labels_instance($instance_id);
-    // echo "<br />DEBUG :: print_lib_protocole.php :: 197 <br />\n";
-    // print_object($labels);
-
 
     $s='';
     $separateur1='/';
@@ -228,37 +208,19 @@ function referentiel_affiche_select_protocole($instance_id, $refrefid, $course_i
         && isset($OK_REFERENTIEL_PROTOCOLE) && ($OK_REFERENTIEL_PROTOCOLE==true)){
         if (!empty($protocol_t_items_oblig) && !empty($protocol_t_competences_oblig) && !empty($protocol_t_domaines_oblig)
             && !empty($protocol_t_competences_seuil) && !empty($protocol_t_domaines_seuil)){
-            // DEBUG
-            /*
-            echo "<br />DEBUG:: lib_protocol.php :: 318 :: PROTOCOL VARIABLES<br />\n";
-            echo "SEUIL : $protocol_seuil_referentiel<br />\n";
-            echo "<br />DOMAINES OBLIG<br />\n";
-            print_object($protocol_t_domaines_oblig);
-            echo "<br />DOMAINES SEUILS<br />\n";
-            print_object($protocol_t_domaines_seuil);
-            echo "<br />COMPETENCES OBLIG<br />\n";
-            print_object($protocol_t_competences_oblig);
-            echo "<br />COMPETENCES SEUILS<br />\n";
-            print_object($protocol_t_competences_seuil);
-            echo "<br />ITEMS OBLIG<br />\n";
-            print_object($protocol_t_items_oblig);
-            */
 
             if (empty($protocol_commentaire)){
                 $protocol_commentaire=get_string('aide_protocole_completer','referentiel');
             }
 
             // Mise en page du tableau
-            // $nlig=count($protocol_t_items_oblig);
             $nbmaxlignes=20;
             if ($max_minimum_referentiel>=60){
                 $nbmaxlignes=30;
             }
 
-
             $nlig=$max_minimum_referentiel;
             $maxlig=min($nbmaxlignes, round($nlig / 2, 0)) ;
-            // echo "<br />DEBUG :: 238 :: NBITEM : $max_minimum_referentiel NBMAXLIGNES : $nbmaxlignes MAXLIG:$maxlig\n";
             $ncol= round($nlig / $maxlig, 0);
 
             $nligc=count($protocol_t_competences_oblig);
@@ -375,14 +337,11 @@ $expression=str_replace(get_string('itemo','referentiel'), $label_i, get_string(
             }
             $s.='</table></td><td>'."\n";
 
-// COMPETENCES
-// <th colspan="2">Comp. obl.</th><th colspan="2">Min/<i>Max</i></th><th colspan="2">Seuil/<i>S(P*E)</i></th>
-
-// MODIF JF 2012/06/02
-$label_c=$labels->competence;
-$expression=str_replace(get_string('compo','referentiel'), $label_c, get_string('competences_oblig_seuil','referentiel'));
-$comp_th=str_replace('[','<th colspan="2">', $expression);
-$comp_th=str_replace(']','</th>', $comp_th);
+            // COMPETENCES
+            $label_c=$labels->competence;
+            $expression=str_replace(get_string('compo','referentiel'), $label_c, get_string('competences_oblig_seuil','referentiel'));
+            $comp_th=str_replace('[','<th colspan="2">', $expression);
+            $comp_th=str_replace(']','</th>', $comp_th);
 
             $s.= '<table class="activite">
 <tr>'. $comp_th.' </tr>'."\n";
@@ -432,22 +391,12 @@ $comp_th=str_replace(']','</th>', $comp_th);
                 }
             }
             $s.='</table></td><td>'."\n";
-// DOMAINE
 
-// DEBUG
-// echo "<br />DEBUG : print_lib_protocole :: 378\n";
-// echo "<br />PROTOCOLE DOMAINE <br />\n";
-// print_object($protocol_t_domaines_oblig);
-// echo "<br />\n";
-// print_object($protocol_t_domaines_seuil);
-// echo "<br />\n";
-// print_object($protocol_t_domaines_minima);
-// echo "<br />EXIT\n";
-// exit;
-$label_d=$labels->domaine;
-$expression=str_replace(get_string('domo','referentiel'), $label_d, get_string('domaines_oblig_seuil','referentiel'));
-$dom_th=str_replace('[','<th colspan="2">', $expression);
-$dom_th=str_replace(']','</th>', $dom_th);
+            // DOMAINE
+            $label_d=$labels->domaine;
+            $expression=str_replace(get_string('domo','referentiel'), $label_d, get_string('domaines_oblig_seuil','referentiel'));
+            $dom_th=str_replace('[','<th colspan="2">', $expression);
+            $dom_th=str_replace(']','</th>', $dom_th);
 
             $s.= '<table class="domaine">
 <tr>'. $dom_th.' </tr>'."\n";
@@ -511,31 +460,25 @@ $dom_th=str_replace(']','</th>', $dom_th);
             $s.='<input type="submit" name="cancel" value="'.get_string('quit', 'referentiel').'" />'."\n";
             $s.='</div>'."\n";
             $s.='
+<input type="hidden" name="pass" value="1" />
 <input type="hidden" name="action" value="modifierprotocole" />
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$course_id.'" />
+<input type="hidden" name="courseid"        value="'.$course_id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="mode"          value="'.$mode.'" />'."\n";
-
             $s.='</form>'."\n";
-
             $s.='</div>'."\n";
         }
     }
-
     return $s;
 }
 
 
-
-
 // ----------------------------------
 function referentiel_affiche_protocole($refrefid, $instanceid=0){
-
 // tables de protocoles (seuils, item obligatoires, etc.
 
-// MODIF JF 2012/06/02
     // recupere les labels des domaine, compoetence, item
     if (!empty($instanceid)){
         $labels=referentiel_get_labels_instance($instanceid);
@@ -543,10 +486,6 @@ function referentiel_affiche_protocole($refrefid, $instanceid=0){
     else {
         $labels=referentiel_get_labels_occurrence($refrefid);
     }
-    // echo "<br />DEBUG :: print_lib_protocole.php :: 534 <br />\n";
-    // print_object($labels);
-
-// MODIF JF 2012/03/26
     global $protocol_seuil_referentiel;
     global $protocol_minima_referentiel;
 
@@ -566,7 +505,6 @@ function referentiel_affiche_protocole($refrefid, $instanceid=0){
     global $OK_REFERENTIEL_PROTOCOLE;  // les données du protocole sont disponibles
     global $OK_REFERENTIEL_DATA;        // les données du certificat sont disponibles
 
-    // MODIF JF 2012/03/26
     // REFERENTIEL
     global $max_minimum_referentiel;
     global $max_seuil_referentiel;
@@ -588,13 +526,10 @@ function referentiel_affiche_protocole($refrefid, $instanceid=0){
     global $t_item_empreinte;
     global $t_nb_item_domaine;
 
-    // MODIF JF 2012/03/26
     // Ajout pour le protocole des minimas
     global $t_competence_domaine; // index du domaine assicie a une competence
     global $t_nb_competence_domaine; // nombre de competences par domaine
     global $t_nb_item_competence; // nombre d'item par competences
-
-    // MODIF JF 2012/03/26
     global $t_competence_minima;    // INUTILE ?
     global $t_domaine_minima;       // INUTILE ?
 
@@ -615,28 +550,12 @@ function referentiel_affiche_protocole($refrefid, $instanceid=0){
 
         if (!empty($protocol_t_items_oblig) && !empty($protocol_t_competences_oblig) && !empty($protocol_t_domaines_oblig)
             && !empty($protocol_t_competences_seuil) && !empty($protocol_t_domaines_seuil)){
-            // DEBUG
-            /*
-            echo "<br />DEBUG:: lib_protocol.php :: 318 :: PROTOCOL VARIABLES<br />\n";
-            echo "SEUIL : $protocol_seuil_referentiel<br />\n";
-            echo "<br />DOMAINES OBLIG<br />\n";
-            print_object($protocol_t_domaines_oblig);
-            echo "<br />DOMAINES SEUILS<br />\n";
-            print_object($protocol_t_domaines_seuil);
-            echo "<br />COMPETENCES OBLIG<br />\n";
-            print_object($protocol_t_competences_oblig);
-            echo "<br />COMPETENCES SEUILS<br />\n";
-            print_object($protocol_t_competences_seuil);
-            echo "<br />ITEMS OBLIG<br />\n";
-            print_object($protocol_t_items_oblig);
-            */
 
             if (empty($protocol_commentaire)){
                 $protocol_commentaire=get_string('aide_protocole_completer','referentiel');
             }
 
             // Mise en page du tableau
-            // $nlig=count($protocol_t_items_oblig);
             $nbmaxlignes=20;
             if ($max_minimum_referentiel>=60){
                 $nbmaxlignes=30;
@@ -644,7 +563,6 @@ function referentiel_affiche_protocole($refrefid, $instanceid=0){
 
             $nlig=$max_minimum_referentiel;
             $maxlig=min($nbmaxlignes, round($nlig / 2, 0)) ;
-            // echo "<br />DEBUG :: 238 :: NBITEM : $max_minimum_referentiel NBMAXLIGNES : $nbmaxlignes MAXLIG:$maxlig\n";
             $ncol= round($nlig / $maxlig, 0);
 
             $nligc=count($protocol_t_competences_oblig);
@@ -735,11 +653,10 @@ $expression=str_replace(get_string('itemo','referentiel'), $label_i, get_string(
 
 
 // COMPETENCES
-// MODIF JF 2012/06/02
-$label_c=$labels->competence;
-$expression=str_replace(get_string('compo','referentiel'), $label_c, get_string('competences_oblig_seuil','referentiel'));
-$comp_th=str_replace('[','<th colspan="2">', $expression);
-$comp_th=str_replace(']','</th>', $comp_th);
+            $label_c=$labels->competence;
+            $expression=str_replace(get_string('compo','referentiel'), $label_c, get_string('competences_oblig_seuil','referentiel'));
+            $comp_th=str_replace('[','<th colspan="2">', $expression);
+            $comp_th=str_replace(']','</th>', $comp_th);
 
             $s.= '<table class="activite">
 <tr>'. $comp_th.'</tr>'."\n";
@@ -793,10 +710,10 @@ $comp_th=str_replace(']','</th>', $comp_th);
             $s.='</table></td><td>'."\n";
 
 // DOMAINES
-$label_d=$labels->domaine;
-$expression=str_replace(get_string('domo','referentiel'), $label_d, get_string('domaines_oblig_seuil','referentiel'));
-$dom_th=str_replace('[','<th colspan="2">', $expression);
-$dom_th=str_replace(']','</th>', $dom_th);
+            $label_d=$labels->domaine;
+            $expression=str_replace(get_string('domo','referentiel'), $label_d, get_string('domaines_oblig_seuil','referentiel'));
+            $dom_th=str_replace('[','<th colspan="2">', $expression);
+            $dom_th=str_replace(']','</th>', $dom_th);
 
             $s.= '<table class="domaine">
 <tr>'. $dom_th.'</tr>'."\n";
@@ -851,7 +768,6 @@ $dom_th=str_replace(']','</th>', $dom_th);
             $s.='</div>'."\n";
         }
     }
-
     return $s;
 }
 

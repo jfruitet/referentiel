@@ -22,8 +22,8 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
     require_once("$CFG->libdir/graphlib.php");
 
 //-------------

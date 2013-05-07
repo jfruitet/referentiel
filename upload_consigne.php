@@ -22,25 +22,18 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
     // require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
-    require_once("../../config.php");
+    require(dirname(__FILE__) . '/../../config.php');
     //require_once(dirname(__FILE__).'/class/upload_form.php');
     require_once('class/upload_form.php');
     require_once("$CFG->dirroot/repository/lib.php");
-    require_once('lib.php');
-    // Moodle 1.9
-    // require_once($CFG->libdir . '/uploadlib.php');	// pour charger un fichier
+    require_once('locallib.php');
     require_once("print_lib_task.php");	// AFFICHAGES
 	
-	// PAS DE RSS
-    // require_once("$CFG->libdir/rsslib.php");
-
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
     $d     = optional_param('d', 0, PARAM_INT);    // referentielbase id
 	
     $taskid   = optional_param('taskid', 0, PARAM_INT);    //record task id
     $consigne_id   = optional_param('consigne_id', 0, PARAM_INT);    //record consigne id
-	
-    // $import   = optional_param('import', 0, PARAM_INT);    // show import form
 
     $action  	= optional_param('action','', PARAM_ALPHANUMEXT); // pour distinguer differentes formes de traitements
     $mode       = optional_param('mode','', PARAM_ALPHANUMEXT);
@@ -55,7 +48,6 @@
 	$souscription    = optional_param('souscription', 0, PARAM_INT);
 	$select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
 	
-    // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/upload_consigne.php');
 
 	if ($d) {     // referentiel_referentiel_id
@@ -91,7 +83,6 @@
         $url->param('id', $id);
     }
 	else{
-    // print_error('You cannot call this script in that way');
 		print_error(get_string('erreurscript','referentiel','Erreur01 : upload_consigne.php'), 'referentiel');
 	}
 
@@ -101,19 +92,8 @@
         redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
     }
 
-
-    //if ($CFG->version < 2011120100) {
-        $contextcourse = get_context_instance(CONTEXT_COURSE, $course->id);
-    //} else {
-        // $contextcourse = context_course::instance($course->id);
-    //}
-
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $contextcourse = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     
     /// If it's hidden then it's don't show anything.  :)
@@ -157,7 +137,7 @@
         else {
         	 // souscription ?
             if ($souscription){
-              redirect($CFG->wwwroot.'/mod/referentiel/souscription.php?d='.$referentiel->id.'&taskid='.$taskid.'&souscription='.$souscription.'&amp;sesskey='.sesskey());
+                redirect($CFG->wwwroot.'/mod/referentiel/souscription.php?d='.$referentiel->id.'&taskid='.$taskid.'&souscription='.$souscription.'&amp;sesskey='.sesskey());
             }
             redirect($CFG->wwwroot.'/mod/referentiel/task.php?d='.$referentiel->id);
         }
@@ -169,7 +149,7 @@
 	$strtask = get_string('depot_consigne','referentiel');
 	$icon = '<img class="icon" src="'.$CFG->wwwroot.'/mod/referentiel/icon.gif" alt="'.get_string('modulename','referentiel').'"/>';
 	/// RSS and CSS and JS meta
-    $meta = '<link rel="stylesheet" type="text/css" href="activite.css" />';
+    $meta = '<link rel="stylesheet" type="text/css" href="referentiel.css" />';
 
 
 $PAGE->set_url($url);
@@ -185,7 +165,6 @@ $mform = new mod_referentiel_upload_form(null, array('d'=>$referentiel->id, 'con
 if ($mform->is_cancelled()) {
         redirect(new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id)));
 } else if ($mform->get_data()) {
-// A TERMINER
     referentiel_upload_document($mform, $referentiel->id);
     die();
 }

@@ -406,7 +406,7 @@ class referentiel {
 <input type="hidden" name="action" value="'.$rformat->action.'" />
 
 <input type="hidden" name="sesskey" value="'.  sesskey().'" />
-<input type="hidden" name="course" value="'. $this->course->id.'" />
+<input type="hidden" name="courseid" value="'. $this->course->id.'" />
 <input type="hidden" name="instance" value="'.  $this->referentiel->id.'" />
 <input type="hidden" name="mode" value="'.$mode.'" />
 <input type="submit" value="'. get_string("continue").'" />
@@ -537,7 +537,7 @@ class referentiel {
 <!-- These hidden variables are always the same -->
 
 <input type="hidden" name="sesskey" value="'. sesskey().'" />
-<input type="hidden" name="course" value="'.  $this->course->id.'" />
+<input type="hidden" name="courseid" value="'.  $this->course->id.'" />
 <input type="hidden" name="instance" value="'. $this->referentiel->id.'" />
 <input type="hidden" name="mode" value="'.$mode.'" />
 
@@ -764,7 +764,7 @@ class referentiel {
 <input type="hidden" name="label_item" value="'.$this->referentiel->label_item.'" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$this->referentiel->course.'" />
+<input type="hidden" name="courseid"        value="'.$this->referentiel->course.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="instance"      value="'.$this->referentiel->id.'" />
 <input type="hidden" name="mode"          value="add" />
@@ -785,7 +785,7 @@ class referentiel {
 <input type="hidden" name="config_impression" value="'.$this->referentiel->config_impression.'" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$this->referentiel->course.'" />
+<input type="hidden" name="courseid"        value="'.$this->referentiel->course.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="instance"      value="'.$this->referentiel->id.'" />
 <input type="hidden" name="mode"          value="add" />
@@ -839,7 +839,7 @@ class referentiel {
 <input type="hidden" name="label_item" value="'.$this->referentiel->label_item.'" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.  $this->course->id  .'" />
+<input type="hidden" name="courseid"        value="'.  $this->course->id  .'" />
 <input type="hidden" name="sesskey"     value="'.  sesskey() .'" />
 
 <input type="hidden" name="mode"          value="add" />
@@ -1131,7 +1131,7 @@ class referentiel {
 <input type="hidden" name="label_item" value="'.$this->referentiel->label_item.'" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.  $this->course->id  .'" />
+<input type="hidden" name="courseid"        value="'.  $this->course->id  .'" />
 <input type="hidden" name="sesskey"     value="'.  sesskey() .'" />
 <input type="hidden" name="mode"          value="add" />
 <input type="submit" value="'.get_string("savechanges")  .'" />

@@ -29,7 +29,7 @@
 * @package referentiel
 */
     require_once('../../config.php');
-    require_once('lib.php');
+    require_once('locallib.php');
     require_once('import_export_lib.php');	// IMPORT / EXPORT
     require_once('class/import_form.php'); // formulaires de choix de fichiers
     // require_once($CFG->libdir . '/uploadlib.php'); // Moodle 1.9
@@ -90,55 +90,13 @@
 	}
 
 
-/*
-
-    // get parameters
-    $params = new stdClass;
-    $params->choosefile = optional_param('choosefile','',PARAM_PATH);
-    $params->stoponerror = optional_param('stoponerror', 0, PARAM_BOOL);
-    $params->override = optional_param('override', 0, PARAM_BOOL);	
-    $params->newinstance = optional_param('newinstance', 0, PARAM_BOOL);		
-
-    // get display strings
-    $txt = new stdClass();
-    $txt->referentiel = get_string('referentiel','referentiel');
-    $txt->fileformat = get_string('fileformat','referentiel');
-	$txt->choosefile = get_string('choosefile','referentiel');
-	
-	$txt->formatincompatible= get_string('formatincompatible','referentiel');
-    $txt->file = get_string('file');
-    $txt->fileformat = get_string('fileformat','referentiel');
-    $txt->fromfile = get_string('fromfile','referentiel');
-    $txt->importerror = get_string('importerror','referentiel');
-    $txt->importfilearea = get_string('importfilearea','referentiel');
-    $txt->importfileupload = get_string('importfileupload','referentiel');
-    $txt->importfromthisfile = get_string('importfromthisfile','referentiel');
-    $txt->modulename = get_string('modulename','referentiel');
-    $txt->modulenameplural = get_string('modulenameplural','referentiel');
-    $txt->onlyteachersimport = get_string('onlyteachersimport','referentiel');
-    $txt->stoponerror = get_string('stoponerror', 'referentiel');
-	$txt->upload = get_string('upload');
-    $txt->uploadproblem = get_string('uploadproblem');
-    $txt->uploadthisfile = get_string('uploadthisfile');
-	$txt->importreferentiel	= get_string('importreferentiel','referentiel');
-	$txt->newinstance	= get_string('newinstance','referentiel');	
-	$txt->choix_newinstance	= get_string('choix_newinstance','referentiel');
-	$txt->choix_notnewinstance	= get_string('choix_notnewinstance','referentiel');
-	$txt->override = get_string('override', 'referentiel');
-	$txt->choix_override	= get_string('choix_override','referentiel');
-	$txt->choix_notoverride	= get_string('choix_notoverride','referentiel');
-*/
-	
-
-    require_login($course->id, false, $cm);   // pas d'autologin guest
-
-    if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/index.php?id='.$course->id);
+    require_login($course->id, false, $cm);
+    if (!isloggedin() || isguestuser()) {
+        redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
 
     // check role capability
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
     require_capability('mod/referentiel:import', $context);
 
     // ensure the files area exists for this course
@@ -326,8 +284,10 @@
     // afficher la page
     echo $OUTPUT->header();
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
+
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('importreferentielh','referentiel').'</h2></div>'."\n";
     echo $OUTPUT->box_start('generalbox');
     $mform->display();

@@ -13,7 +13,7 @@ class mod_referentiel_mod_form extends moodleform_mod {
         global $CFG, $DB;
 
         $mform =& $this->_form;
-        $maxbytes=10000000; // default value 10000000
+        $maxbytes=1073741824; // default value 1073741824
         // this hack is needed for settings of ref_referentiel
         if (!empty($this->_instance)) {
             if ($ref = $DB->get_record("referentiel", array("id"=>"$this->_instance"))) {

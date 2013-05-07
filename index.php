@@ -9,8 +9,8 @@
 
 /// Replace newmodule by with the name of your module referentiel
 
-    require_once("../../config.php");
-    require_once("lib.php");
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
 	require_once("$CFG->dirroot/mod/referentiel/version.php");
 
     $id = required_param('id', PARAM_INT);   // course

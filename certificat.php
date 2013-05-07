@@ -22,115 +22,36 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    require_once("../../config.php");
-    require_once('lib.php');
-
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
+    require_once('onglets.php');
     include('lib_certificat.php');	// AFFICHAGES
     include('print_lib_certificat.php');	// AFFICHAGES 
-	
-	// PAS DE RSS
-    // require_once("$CFG->libdir/rsslib.php");
 
-  $id    = optional_param('id', 0, PARAM_INT);    // course module id    
-  $d     = optional_param('d', 0, PARAM_INT);    // referentielbase id
-	
-  $certificat_id   = optional_param('certificat_id', 0, PARAM_INT);    //record certificat id
-    // $import   = optional_param('import', 0, PARAM_INT);    // show import form
+    $id    = optional_param('id', 0, PARAM_INT);    // course module id
+    $d     = optional_param('d', 0, PARAM_INT);    // referentielbase id
+    $certificat_id= optional_param('certificat_id', 0, PARAM_INT);    //record certificat id
+    $action  	  = optional_param('action','', PARAM_ALPHANUMEXT); // pour distinguer differentes formes de traitements
+    $mode         = optional_param('mode','', PARAM_ALPHA);
+    $add          = optional_param('add','', PARAM_ALPHA);
+    $update       = optional_param('update', 0, PARAM_INT);
+    $delete       = optional_param('delete', 0, PARAM_INT);
+    $approve      = optional_param('approve', 0, PARAM_INT);
+    $comment      = optional_param('comment', 0, PARAM_INT);
+    $courseid = optional_param('courseid', 0, PARAM_INT);
+    $groupmode    = optional_param('groupmode', -1, PARAM_INT);
+    $cancel       = optional_param('cancel', 0, PARAM_BOOL);
+    $userid       = optional_param('userid', 0, PARAM_INT);
+    $select_acc   = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
+    $select_all   = optional_param('select_all', 0, PARAM_INT);      // accompagnement
+    $list_userids = optional_param('list_userids', '',PARAM_TEXT);
+    $initiale     = optional_param('initiale','', PARAM_ALPHA); // selection par les initiales du nom
+    $userids      = optional_param('userids','', PARAM_TEXT); // id user selectionnes par les initiales du nom
+    $mode_select  = optional_param('mode_select','', PARAM_ALPHA);
 
-  $action  	= optional_param('action','', PARAM_ALPHANUMEXT); // pour distinguer differentes formes de traitements
-  $mode       = optional_param('mode','', PARAM_ALPHA);
-  $add        = optional_param('add','', PARAM_ALPHA);
-  $update     = optional_param('update', 0, PARAM_INT);
-  $delete     = optional_param('delete', 0, PARAM_INT);
-  $approve    = optional_param('approve', 0, PARAM_INT);	
-  $comment    = optional_param('comment', 0, PARAM_INT);		
-  $course     = optional_param('course', 0, PARAM_INT);
-  $groupmode  = optional_param('groupmode', -1, PARAM_INT);
-  $cancel     = optional_param('cancel', 0, PARAM_BOOL);
-  $userid = optional_param('userid', 0, PARAM_INT);
-  $select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
-  $select_all = optional_param('select_all', 0, PARAM_INT);      // accompagnement
+    // Filtres
+    require_once('filtres.php'); // Ne pas deplacer
 
-  $list_userids  = optional_param('list_userids', '',PARAM_TEXT);
-
-  $initiale     = optional_param('initiale','', PARAM_ALPHA); // selection par les initiales du nom
-  $userids      = optional_param('userids','', PARAM_TEXT); // id user selectionnes par les initiales du nom
-
-  $mode_select   = optional_param('mode_select','', PARAM_ALPHA);
-  $filtre_auteur = optional_param('filtre_auteur', 0, PARAM_INT);
-  $filtre_verrou = optional_param('filtre_verrou', 0, PARAM_INT);
-// MODIF JF 2012/10/07
-  $filtre_valide = optional_param('filtre_valide', 0, PARAM_INT);
-  
-  $filtre_validation = optional_param('filtre_validation', 0, PARAM_INT);
-  $filtre_referent = optional_param('filtre_referent', 0, PARAM_INT);
-  $filtre_date_decision = optional_param('filtre_date_decision', 0, PARAM_INT);
-  $filtre_date_modif = optional_param('filtre_date_modif', 0, PARAM_INT);
-  $filtre_date_modif_student = optional_param('filtre_date_modif_student', 0, PARAM_INT);
-
-  $sql_filtre_where=optional_param('sql_filtre_where','', PARAM_ALPHA);
-  $sql_filtre_order=optional_param('sql_filtre_order','', PARAM_ALPHA);
-  $sql_filtre_user=optional_param('sql_filtre_user','', PARAM_ALPHA);
-
-	$data_filtre= new Object(); // parametres de filtrage
-// MODIF JF 2012/10/07
-    if (isset($filtre_valide)){
-			$data_filtre->filtre_valide=$filtre_valide;
-	}
-	else {
-		$data_filtre->filtre_valide=0;
-	}
-	
-	if (isset($filtre_verrou)){
-			$data_filtre->filtre_verrou=$filtre_verrou;
-	}
-	else {
-		$data_filtre->filtre_verrou=0;
-	}
-	if (isset($filtre_date_decision)){
-		$data_filtre->filtre_date_decision=$filtre_date_decision;
-	}
-	else{
-		$data_filtre->filtre_date_decision=0;
-	}
-	
-	if (isset($filtre_validation)){
-			$data_filtre->filtre_validation=$filtre_validation;
-	}
-	else {
-		$data_filtre->filtre_validation=0;
-	}
-	if (isset($filtre_referent)){
-		$data_filtre->filtre_referent=$filtre_referent;
-	}
-	else{
-		$data_filtre->filtre_referent=0;
-	}
-	if (isset($filtre_date_modif_student)){
-		$data_filtre->filtre_date_modif_student=$filtre_date_modif_student;
-	}
-	else{
-		$data_filtre->filtre_date_modif_student=0;
-	}
-	if (isset($filtre_date_modif)){
-		$data_filtre->filtre_date_modif=$filtre_date_modif;
-	}
-	else{
-		$data_filtre->filtre_date_modif=0;
-	}
-	if (isset($filtre_auteur)){
-		$data_filtre->filtre_auteur=$filtre_auteur;
-	}
-	else{
-		$data_filtre->filtre_auteur=0;
-	}
-
-    // DEBUG
-    // print_object($data_filtre);
-    // exit;
-
-
-    // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/certificat.php');
 
 	if ($d) {     // referentiel_referentiel_id
@@ -166,19 +87,11 @@
         $url->param('id', $id);
     }
 	else{
-    // print_error('You cannot call this script in that way');
 		print_error(get_string('erreurscript','referentiel','Erreur01 : certificat.php'), 'referentiel');
 	}
 
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
-	
     if ($certificat_id) { // id certificat
         if (! $record = $DB->get_record("referentiel_certificat", array("id" => "$certificat_id"))) {
             print_error('Certificat ID is incorrect');
@@ -205,14 +118,12 @@
         print_error(get_string("activityiscurrentlyhidden"),'error',"$CFG->wwwroot/course/view.php?id=$course->id");
     }
 
-
     if ($certificat_id) {    // So do you have access?
         if (!(has_capability('mod/referentiel:viewrate', $context) 
 			or referentiel_certificat_isowner($certificat_id)) or !confirm_sesskey() ) {
             print_error(get_string('noaccess_certificat','referentiel'));
         }
     }
-
 
 	// RECUPERER LES FORMULAIRES
     if (isset($SESSION->modform)) {   // Variables are stored in the session
@@ -241,87 +152,10 @@
 
 
 	/// selection filtre
-    // MODIF JF 20/09/2012
-    if (empty($userid_filtre) || ($userid_filtre==$USER->id) || (isset($mode_select) && ($mode_select=='selectetab'))){
-
-		// gestion des filtres;
-		$sql_filtre_where='';
-		$sql_filtre_order='';
-        $sql_filtre_user='';
-
-// MODIF JF 2012/10/07
-
-		if (isset($filtre_valide) && ($filtre_valide=='1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND valide=\'1\' ';
-			else
-				$sql_filtre_where.=' AND valide=\'1\' ';
-		}
-		else if (isset($filtre_valide) && ($filtre_valide=='-1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND valide=\'0\' ';
-			else
-				$sql_filtre_where.=' AND valide=\'0\' ';
-		}
-
-		if (isset($filtre_verrou) && ($filtre_verrou=='1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND verrou=\'1\' ';
-			else
-				$sql_filtre_where.=' AND verrou=\'1\' ';
-		}
-		else if (isset($filtre_verrou) && ($filtre_verrou=='-1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND verrou=\'0\' ';
-			else
-				$sql_filtre_where.=' AND verrou=\'0\' ';
-		}
-/*
-// MODIF JF 2013/01/30
-		if (isset($filtre_referent) && ($filtre_referent=='1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND teacherid<>0  ';
-			else
-				$sql_filtre_where.=' AND teacherid<>0  ';
-		}
-		else if (isset($filtre_referent) && ($filtre_referent=='-1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND teacherid=0  ';
-			else
-				$sql_filtre_where.=' AND teacherid=0  ';
-		}
-*/
-		if (isset($filtre_date_decision) && ($filtre_date_decision=='1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_decision ASC ';
-			else
-				$sql_filtre_order.=' date_decision ASC ';
-		}
-		else if (isset($filtre_date_decision) && ($filtre_date_decision=='-1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_decision DESC ';
-			else
-				$sql_filtre_order.=' date_decision DESC ';
-		}
-
-        //
-		if (isset($filtre_auteur) && ($filtre_auteur=='1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', userid ASC ';
-			else
-				$sql_filtre_order.=' userid ASC ';
-		}
-		else if (isset($filtre_auteur) && ($filtre_auteur=='-1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', userid DESC ';
-			else
-				$sql_filtre_order.=' userid DESC ';
-		}
-
-
-		// echo "<br />DEBUG :: certificat.php :: Ligne 199 :: FILTRES : $sql_filtre_where $sql_filtre_order\n";
-
-  }
+    if (empty($userid_filtre) || ($userid_filtre==$USER->id)
+        || (isset($mode_select) && ($mode_select=='selectetab'))){
+        set_filtres_sql();
+    }
 
 
 	if ($cancel) {
@@ -345,7 +179,6 @@
       else {
             redirect("$CFG->wwwroot/mod/referentiel/certificat.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode");
       }
-
        exit;
     }
 
@@ -358,7 +191,6 @@
 		  if (isset($form->mode) && ($form->mode!='')){
 			 $mode=$form->mode;
 		  }
-		  // echo "<br />ACTION : $action  SEARCH : $userid_filtre\n";
 		  unset($form);
 		  unset($action);
 		  // exit;
@@ -372,8 +204,6 @@
 		if (isset($form->select_acc)){
 		  	$select_acc=$form->select_acc;
 		}
-		// DEBUG
-		// echo "<br />ACTION : $action  SEARCH : $userid_filtre\n";
 		unset($form);
 		unset($action);
 		// exit;
@@ -385,17 +215,12 @@
 			&& (has_capability('mod/referentiel:rate', $context) or referentiel_certificat_isowner($delete))) {
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
             if (referentiel_delete_certificat_record($delete)){
-				// DEBUG
-				// echo "<br /> CERTIFICAT REMIS A ZERO\n";
-				// exit;
 				add_to_log($course->id, 'referentiel', 'record delete', "certificat.php?d=$referentiel->id", $delete, $cm->id);
-                // notify(get_string('recorddeleted','referentiel'), 'notifysuccess');
             }
             
 		}
         unset($form);
     }
-
 
 
 	/// Approve any requested records
@@ -406,9 +231,6 @@
 	{
         if ($approverecord = $DB->get_record("referentiel_certificat", array("id" => "$approve"))) {
             $confirm = optional_param('confirm',0,PARAM_INT);
-            // DEBUG
-            // echo "<br />DEBUG :: 353 :: APPROVE:$approve :: CONFIRM:$confirm :: MODE : $mode \n";
-
             if ($confirm) {
                     $verrou = 1;
             }
@@ -435,7 +257,7 @@
 				$approverecord->synthese_certificat=($form->synthese_certificat);
 				$approverecord->competences_certificat=($approverecord->competences_certificat);
 				$approverecord->decision_jury=($approverecord->decision_jury);
-                // MODIF JF 2010/02/11
+
                 if (isset($form->mailnow)){
                     $approverecord->mailnow=$form->mailnow;
                     if ($form->mailnow=='1'){ // renvoyer
@@ -449,11 +271,7 @@
 				if (isset($form->userid) && ($form->userid>0)){
 					$userid_filtre=$form->userid;
 				} 
-				
-				// DEBUG
-				// print_r($approverecord);
-				// echo "<br />\n";
-				
+
 		        if ($DB->update_record('referentiel_certificat', $approverecord)) {
         		   	// notify(get_string('recordapproved','referentiel'), 'notifysuccess');
             	}
@@ -462,29 +280,18 @@
         }
     }
 
-/*	if (!empty($referentiel) && !empty($course)
-		&& isset($form) && isset($form->mode)
-		)
-*/
-  // if (!empty($course) and confirm_sesskey()) {    // add, delete or update form submitted
 
     if (!empty($referentiel) && !empty($course) && isset($form)) {
         /// modification globale
 
         if (isset($_POST['action']) && ($_POST['action']=='modifier_certificat_global')){
 		    $form=$_POST;
-		    // echo "<br />DEBUG :: certificat.php :: 411 :: ACTION : $action \n";
-            //echo "<br />DEBUG :: certificat.php :: 413 :: FORM: \n";
-            //print_r($form);
-
-		        // accompagnement
+	        // accompagnement
             if (isset($form['select_acc'])){
 		    	$select_acc=$form['select_acc'];
 		    }
 
  		    if (isset($form['tcertificat_id']) && ($form['tcertificat_id'])){
-                //echo "<br />DEBUG :: certificat.php :: 422 :: FORM: \n";
-                //print_r($form['tcertificat_id']);
 
                 foreach ($form['tcertificat_id'] as $id_certificat){
                     // echo "<br />DEBUG :: CERTIFICAT.PHP :: 422 <br />ID :: ".$id_certificat."\n";
@@ -517,10 +324,6 @@
                     $form2->mailnow=$form['mailnow_'.$id_certificat];
                     $form2->instance=$form['instance_'.$id_certificat];
 
-                    //echo "<br />DEBUG :: CERTIFICAT.PHP :: 519\n";
-                    //print_object($form2);
-                    //echo "<br />EXIT\n";
-                    //exit;
                     $return = referentiel_update_certificat($form2);
                     if (!$return) {
                         print_error("Could not update certificat $form->certificat_id of the referentiel", "certificat.php?d=$referentiel->id");
@@ -556,17 +359,9 @@
 				
 				if (isset($form->delete) && ($form->delete==get_string('delete'))){
 					// suppression 	
-					// echo "<br />SUPPRESSION\n";
 	    	        $return = $deletefunction($form);
     	    	    if (!$return) {
-							/*
-            	        	if (file_exists($moderr)) {
-                	        	$form = $form;
-	                   		    include_once($moderr);
-    	                   		die;
-	    	               	}
-							*/
-    	         	      	print_error("Could not update certificat $certificat_id of the referentiel", "certificat.php?d=$referentiel->id");
+    	         	    print_error("Could not update certificat $certificat_id of the referentiel", "certificat.php?d=$referentiel->id");
         	    	}
 	                if (is_string($return)) {
     	           	    print_error($return, "certificat.php?d=$referentiel->id");
@@ -583,8 +378,6 @@
 					
 				}
 				else {
-				// DEBUG
-				// echo "<br /> UPDATE\n";
 					if (isset($form->userid) && ($form->userid>0)){
 						$userid_filtre=$form->userid;
 					} 
@@ -592,13 +385,6 @@
 	    	    	$return = $updatefunction($form);
 
     	    	    if (!$return) {
-					/*
-            		    if (file_exists($moderr)) {
-                			$form = $form;
-                    		include_once($moderr);
-                        	die;
-	                    }
-					*/
     	            	print_error("Could not update certificat $form->id of the referentiel", "certificat.php?d=$referentiel->id");
 					}
 		            if (is_string($return)) {
@@ -623,13 +409,6 @@
         		}
 				$return = $addfunction($form);
 				if (!$return) {
-    	        	/*
-					if (file_exists($moderr)) {
-    	    	    	$form = $form;
-        	    	    include_once($moderr);
-            	    	die;
-					}
-	            	*/
 					print_error("Could not add a new certificat to the referentiel", "certificat.php?d=$referentiel->id");
 				}
 	        	if (is_string($return)) {
@@ -672,6 +451,13 @@
         exit;
 	   }
     }
+
+	/// selection filtre
+    if (empty($userid_filtre) || ($userid_filtre==$USER->id)
+        || (isset($mode_select) && ($mode_select=='selectetab'))){
+        set_filtres_sql();
+    }
+
 	// afficher les formulaires
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
@@ -721,18 +507,9 @@
        	$editentry = true;  //used in tabs
     }
     
-    // echo "<br />DEBUG :: MODE $mode CURRENTTAB : $currenttab\n";
-    // exit;
-	// Moodle 2
+
     $url->param('mode', $mode);
 
-
-    /// Mark as viewed  ??????????? A COMMENTER
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
-
-// AFFICHAGE DE LA PAGE Moodle 2
-	/// Print the page header
 	$strreferentiel = get_string('modulenameplural','referentiel');
 	$strcertificat = get_string('certificat','referentiel');
 	$strpagename=get_string('certificats','referentiel');
@@ -744,8 +521,8 @@
 
     $PAGE->set_url($url);
     $PAGE->requires->css('/mod/referentiel/jauge.css');
-    $PAGE->requires->css('/mod/referentiel/activite.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->js($OverlibJs);
     $PAGE->requires->js('/mod/referentiel/functions.js');
 
@@ -761,13 +538,10 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-	// DEBUG
-	// echo "<br /> MODE : $mode\n";
-	
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f);
+    $tab_onglets->display();
 
-
-    // ONGLETS
-    include('tabs.php');
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="referentiel" alt="referentiel" /> '.$strcertificat.' '.$OUTPUT->help_icon('certificath','referentiel').'</h2></div>'."\n";
 
@@ -778,12 +552,12 @@
         referentiel_print_un_certificat_detail($certificat_id, $referentiel, $userid_filtre, $select_acc);
 	}
 	elseif (($mode=='list') || ($mode=='listcertif')){
-		referentiel_liste_certificats($initiale, $userids, $mode, $referentiel, $userid_filtre, $gusers, $sql_filtre_where, $sql_filtre_order, $data_filtre, $select_acc);
+		referentiel_liste_certificats($initiale, $userids, $mode, $referentiel, $userid_filtre, $gusers, $sql_f_where, $sql_f_order, $data_f, $select_acc);
 	}
 	else {
 		// formulaires
         if (($mode=='editcertif') && !$certificat_id && has_capability('mod/referentiel:managecertif', $context)){
-            referentiel_evalue_global_liste_certificats($initiale, $userids, $mode, $referentiel, $userid_filtre, $gusers, $sql_filtre_where, $sql_filtre_order, $data_filtre, $select_acc);
+            referentiel_evalue_global_liste_certificats($initiale, $userids, $mode, $referentiel, $userid_filtre, $gusers, $sql_f_where, $sql_f_order, $data_f, $select_acc);
         }
 		else{
 

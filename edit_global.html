@@ -97,8 +97,8 @@ if (isset($referentiel_referentiel) &&  ($referentiel_referentiel) ){
 	if (!isset($form->defaultsortdir)) {
     	$form->defaultsortdir = '';
 	}
-	if (!isset($form->course)) {
-    	$form->course = $course->id;
+	if (!isset($form->courseid)) {
+    	$form->courseid = $course->id;
 	}
 	
 	if (!isset($form->local)) {
@@ -317,12 +317,12 @@ if (isset($form->local)){
 	}
 	else{
 		echo '<input type="radio" name="local" value="0" checked="checked" />'. get_string("yes").'
-<input type="radio" name="local" value="'.$form->course.'" />'. get_string("no")."\n";
+<input type="radio" name="local" value="'.$form->courseid.'" />'. get_string("no")."\n";
 	}
 }
 else {
 	echo '<input type="radio" name="local" value="0" checked="checked" />'. get_string("yes").'
-<input type="radio" name="local" value="'.$form->course.'" />'. get_string("no")."\n";
+<input type="radio" name="local" value="'.$form->courseid.'" />'. get_string("no")."\n";
 }
 ?>
     </td>
@@ -348,7 +348,7 @@ else {
 
 
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
@@ -547,7 +547,7 @@ echo  '<input type="checkbox" name="tligne_id[]" id="tligne_id_'.$ligne_id.'" va
 <input type="hidden" name="liste_poids_competence" value="<?php  p($form->liste_poids_competence); ?>" />
 
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" /> 
@@ -644,7 +644,7 @@ echo  '<input type="checkbox" name="tligne_id[]" id="tligne_id_'.$ligne_id.'" va
 <input type="hidden" name="liste_poids_competence" value="<?php  p($form->liste_poids_competence); ?>" />
 
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" /> 
@@ -731,7 +731,7 @@ echo  '<input type="checkbox" name="tligne_id[]" id="tligne_id_'.$ligne_id.'" va
 <input type="hidden" name="liste_poids_competence" value="<?php  p($form->liste_poids_competence); ?>" />
 
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
@@ -810,7 +810,7 @@ echo  '<input type="checkbox" name="tligne_id[]" id="tligne_id_'.$ligne_id.'" va
 <input type="hidden" name="liste_poids_competence" value="<?php  p($form->liste_poids_competence); ?>" />
 
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
@@ -883,7 +883,7 @@ echo  '<input type="checkbox" name="tligne_id[]" id="tligne_id_'.$ligne_id.'" va
 <input type="hidden" name="liste_poids_competence" value="<?php  p($form->liste_poids_competence); ?>" />
 
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />

@@ -32,9 +32,9 @@
 
 
 
-  require_once("../../config.php");
-  require_once("lib.php");
-  require_once("print_lib_protocole.php");
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
+    require_once("print_lib_protocole.php");
   
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
     $d     = optional_param('d', 0, PARAM_INT);    // referentiel instance id
@@ -53,11 +53,8 @@
     $modulename     	= optional_param('modulename', '', PARAM_ALPHA);
     $instance 		= optional_param('instance', 0, PARAM_INT);
 
-    // MODIF JF 22/01/2010
     $non_redirection = optional_param('non_redirection', 0, PARAM_INT);    // par defaut on redirige vers activite
 
-
-    // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/edit.php');
 
 	if ($d) {     // referentiel_referentiel_id
@@ -87,11 +84,10 @@
         $url->param('id', $id);
     }
 	else{
-        // print_error('You cannot call this script in that way');
 		print_error(get_string('erreurscript','referentiel','Erreur01 : edit.php'));
 	}
 
-    require_login($course->id, false, $cm);
+    require_login($course->id, true, $cm);
 
     if (!isloggedin() || isguestuser()) {
         redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
@@ -118,16 +114,11 @@
     }
 	else{
 		// rediriger vers la creation du referentiel
-		
-		$returnlink_add="$CFG->wwwroot/mod/referentiel/add.php?d=$referentiel->id";
-        redirect($returnlink_add);
+		redirect(new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey())));
 	}
 
-
-
-	// A MODIFIER / ADAPTER
+	// Capacités
     require_capability('mod/referentiel:write', $context);
-
 
     // RECUPERER LES FORMULAIRES
     if (isset($SESSION->modform)) {   // Variables are stored in the session
@@ -142,25 +133,27 @@
 
 	if (!empty($course) && !empty($cm) && !empty($referentiel_referentiel)) {
         // le mot de passe est-il actif ?
-		if (!$pass && ($checkpass=='checkpass')){
-            if (!empty($form->pass_referentiel) && $referentiel_referentiel){
-                if (!empty($form->force_pass)){  // forcer la sauvegarde sans verification
-                    $pass=referentiel_set_pass($referentiel_referentiel->id, $form->pass_referentiel);
+		if (!$pass){
+            if ($checkpass=='checkpass'){
+                if (!empty($form->pass_referentiel) && $referentiel_referentiel){
+                    if (!empty($form->force_pass)){  // forcer la sauvegarde sans verification
+                        $pass=referentiel_set_pass($referentiel_referentiel->id, $form->pass_referentiel);
+                    }
+                    else{ // tester le mot de passe
+                        $pass=referentiel_check_pass($referentiel_referentiel, $form->pass_referentiel);
+                    }
+                    if (!$pass){
+                        // Abandonner
+                        print_error("error_pass","referentiel",
+                            new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1')),
+                            $referentiel_referentiel->mail_auteur_referentiel );
+                        exit;
+                    }
                 }
-                else{ // tester le mot de passe
-                    $pass=referentiel_check_pass($referentiel_referentiel, $form->pass_referentiel);
-                }
-                if (!$pass){
-                    // Abandonner
-                    print_error("error_pass","referentiel",
-                        new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1')),
-                        $referentiel_referentiel->mail_auteur_referentiel );
-                    exit;
-                }
-            }
-            else{    // mot de passe vide mais c'est un admin qui est connecté
-                if (!empty($form->force_pass)){
-                    $pass=1; // on passe... le mot de passe !
+                else{    // mot de passe vide mais c'est un admin qui est connecté
+                    if (!empty($form->force_pass)){
+                        $pass=1; // on passe... le mot de passe !
+                    }
                 }
             }
 		}
@@ -182,6 +175,7 @@
 
             add_to_log($course->id, 'referentiel', "config", "edit_protocole?id=$cm->id", "$course->id");
 
+            /*
 	        if (isset($form->redirecturl)) {
                 $SESSION->returnpage = $form->redirecturl;
         	}
@@ -190,15 +184,11 @@
                 $SESSION->returnpage = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
 	        }
 	        redirect($SESSION->returnpage);
+	        */
 		}
 	}
 
-
-    /// Mark as viewed  ??????????? A COMMENTER
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
-
-// AFFICHAGE DE LA PAGE Moodle 2
+// AFFICHAGE DE LA PAGE Moodle
 	$strreferentiels = get_string('modulenameplural','referentiel');
 	$strreferentiel = get_string('referentiel','referentiel');
 
@@ -237,8 +227,9 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strpagename.' '.$OUTPUT->help_icon('protocolereferentielh','referentiel').'</h2></div>'."\n";
 
@@ -261,8 +252,7 @@
 	}
 	else{
         // formulaires
-        // echo "<br />DEBUG :: 323 :: edit_protocole.php\n";
-        referentiel_edit_protocole($mode, $referentiel, $select_acc);
+        referentiel_edit_protocole($mode, $referentiel, $select_acc, $pass);
 	}
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();

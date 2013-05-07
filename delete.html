@@ -103,8 +103,8 @@ else{
 		if (!isset($form->defaultsortdir)) {
     		$form->defaultsortdir = '';
 		}
-		if (!isset($form->course)) {
-    		$form->course = $course->id;
+		if (!isset($form->courseid)) {
+    		$form->courseid = $course->id;
 		}
 		
 		if (!isset($form->local)) {
@@ -132,7 +132,7 @@ else{
 // exit;
 
 		$records_instance_id=referentiel_referentiel_list_of_instance($form->referentiel_id);
-		
+		$nbinstances=0;
 		if ($records_instance_id){
 			echo '<h4 align="center">'.get_string("selection_instance_referentiel", "referentiel").'</h4>'."\n";
 		?>
@@ -141,8 +141,10 @@ else{
 <table cellpadding="5" bgcolor="#eeeeee">
 		<?php
 			foreach ($records_instance_id  as $record_id){
+
 				$record_instance = referentiel_get_referentiel($record_id->id);
 				if ($record_instance){
+                    $nbinstances++;
 					$record_course = $DB->get_record("course", array("id" => "$record_instance->course"));
 		?>
 <tr valign="top">
@@ -181,7 +183,7 @@ else{
 <input type="hidden" name="action" value="supprimerinstances" />
 <input type="hidden" name="referentiel_id"      value="<?php  p($form->referentiel_id) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
 
@@ -212,7 +214,7 @@ else{
     </td>
 </tr>
 <?php
-		if (isset($form->mail_auteur_referentiel) && ($form->mail_auteur_referentiel!='')){
+		  if (isset($form->mail_auteur_referentiel) && ($form->mail_auteur_referentiel!='')){
 			echo '
 <tr valign="top">
     <td align="right"><b>'.get_string('auteur','referentiel').' : </b></td>
@@ -221,17 +223,17 @@ else{
     </td>
 </tr>
 ';
-		}
+		  }
 
-		if (($form->pass_referentiel=='') && ($form->mail_auteur_referentiel=='')){ // nouveau referentiel
+		  if (($form->pass_referentiel=='') && ($form->mail_auteur_referentiel=='')){ // nouveau referentiel
 			echo '<tr valign="top">
     <td align="right"><b>'.get_string('pass_referentiel','referentiel').' :</b></td>
     <td align="left">'.get_string('aide_pass_referentiel','referentiel').'
     </td>
 </tr>
 ';
-		}
-		else if (($form->mail_auteur_referentiel!='') 
+		  }
+		  else if (($form->mail_auteur_referentiel!='')
 		&& (trim($email_user)==trim($form->mail_auteur_referentiel))) { // mise a jour
 			echo '
 <tr valign="top">
@@ -255,7 +257,7 @@ else{
     </td>
 </tr>
 ';
-		}
+		  }
 ?>
 <tr valign="top">
     <td align="right"><b><?php  print_string('description','referentiel') ?>:</b></td>
@@ -317,7 +319,7 @@ else{
 <input type="hidden" name="liste_codes_competence" value="<?php  p($form->liste_codes_competence); ?>" />
 <input type="hidden" name="liste_empreintes_competence" value="<?php  p($form->liste_empreintes_competence); ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
 

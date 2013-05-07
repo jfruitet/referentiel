@@ -780,9 +780,9 @@ $string['import_referentiel_xml'] = 'Importar un referencial XML simplificado';
 // version 5.3.3
 $string['aide_referentiel_config_local'] = 'Los parámetros de configuracion e impresion a nivel de instancia de transductor dependen del administrador del sitio. Una inconsistencia en los parámetros de configuracion puede impedirte completar la tarea que deseas realizar en el transductor.';
 $string['not_verrou'] = 'Sin bloquear';
-$string['filtre_auteur'] = 'Autor';
-$string['filtre_verrou'] = 'Bloqueado';
-$string['filtre_date_decision'] = 'Fecha de decision';
+$string['f_auteur'] = 'Autor';
+$string['f_verrou'] = 'Bloqueado';
+$string['f_date_decision'] = 'Fecha de decision';
 $string['decision_favorable'] = 'Decision favorable';
 $string['decision_defavorable'] = 'Decision desfavorable';
 $string['decision_differee'] = 'En espera';
@@ -1005,9 +1005,9 @@ $string['date_modif'] = 'Modificado por el profesor el ';
 $string['date_modif_student'] = 'Modificado por el autor el ';
 $string['listactivityall'] = 'Detalles';
 $string['listactivitysingle'] = 'Detalles';
-$string['filtre_validation'] = 'Validacion';
-$string['filtre_date_modif'] = 'Actualizado';
-$string['filtre_date_modif_student'] = 'Fecha autor';
+$string['f_validation'] = 'Validacion';
+$string['f_date_modif'] = 'Actualizado';
+$string['f_date_modif_student'] = 'Fecha autor';
 
 // version 3.3.4
 $string['evaluation_par'] = 'Evaluacion por';

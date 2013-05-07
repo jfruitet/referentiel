@@ -33,7 +33,7 @@
 
 
   require_once('../../config.php');
-  require_once("lib.php");
+  require_once('locallib.php');
 
   $id    = optional_param('id', 0, PARAM_INT);    // course module id
   $d = optional_param('d', 0, PARAM_INT); // Referentiel ID
@@ -92,17 +92,11 @@
 
     $url->param('mode', $mode);
 
-    // CONTEXTE
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
     require_login($course->id, false, $cm);
-
-    if (!isloggedin() || isguestuser()) {   // nouveaute Moodle 2
-        $returnlink="$CFG->wwwroot/course/view.php?id=$course->id";
-        redirect($returnlink);
+    if (!isloggedin() || isguestuser()) {
+        redirect(new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
 
-  
     $strreferentiels = get_string('modulenameplural', 'referentiel');
     $strreferentiel  = get_string('modulename', 'referentiel');
 	
@@ -113,12 +107,12 @@
     	}
     }
 	else{
-		$returnlink="$CFG->wwwroot/mod/referentiel/add.php?id=$cm->id&amp;sesskey=".sesskey();
-        redirect($returnlink);
+		// rediriger vers la creation du referentiel
+		redirect(new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey())));
 	}
 
-
-	// A MODIFIER / ADAPTER
+    // CONTEXTE
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/referentiel:writereferentiel', $context);
 
     /// Check further parameters that set browsing preferences
@@ -241,8 +235,9 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('configreferentielh','referentiel').'</h2></div>'."\n";
 

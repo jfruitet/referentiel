@@ -61,8 +61,8 @@
 	if (!isset($form->defaultsortdir)) {
     	$form->defaultsortdir = '';
 	}
-	if (!isset($form->course)) {
-    	$form->course = $course->id;
+	if (!isset($form->courseid)) {
+    	$form->courseid = $course->id;
 	}
 	
 	if (!isset($form->local)) {
@@ -84,6 +84,7 @@
     	$form->mode = "update";
 	}
 	
+$str_enregistrer=get_string('savechanges');
 
 ?>
 
@@ -114,6 +115,7 @@
 </tr>
 ';
         echo '<input type="hidden" name="force_pass" value="'.$USER->id.'" />'."\n";
+        $str_enregistrer=get_string('continue');
     }
     else{
 echo '<tr valign="top">
@@ -136,10 +138,10 @@ echo '<tr valign="top">
 <input type="hidden" name="liste_codes_competence" value="<?php  p($form->liste_codes_competence); ?>" />
 <input type="hidden" name="liste_empreintes_competence" value="<?php  p($form->liste_empreintes_competence); ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
-<input type="submit" value="<?php  print_string("savechanges") ?>" />
+<input type="submit" value="<?php echo $str_enregistrer ?>" />
 <!-- input type="reset" value="<?php  print_string("corriger", "referentiel") ?>" / -->
 <input type="submit" name="cancel" value="<?php  print_string("quit", "referentiel") ?>" />
 </td>

@@ -15,8 +15,8 @@ doit être décomprimée dans le dossier
 SERVEUR_MOODLE/admin/report/
 
 
-Moodle 2.2, 2.3, 2.4
---------------------
+Moodle 2.2, 2.3, 2.4, 2.5
+-------------------------
 L'archive referentiel-report.zip
 doit être décomprimée dans le dossier
 SERVEUR_MOODLE/report/

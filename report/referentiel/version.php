@@ -25,6 +25,17 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->requires = 2011120500;  // Requires this Moodle version  2.0
-$plugin->version  = 2013020200;  // The current module version (Date: YYYYMMDDXX)
-$plugin->component = 'report_referentiel'; // Full name of the plugin (used for diagnostics)
+$plugin->version  = 2013040600;  // Plugin version  for 2.0
+$plugin->requires = 2013040500;  // Requires this Moodle version  2.5
+$plugin->release  = 'Referentiel Plugin for Moodle 2.5 - 2013-04-06';    // User-friendly date of release
+
+$plugin->component = 'report_referentiel';  // Full name of the plugin (used for diagnostics)
+/*
+$plugin->cron     = 0; //  Period for cron to check this plugin (secs)
+
+$plugin->maturity  = MATURITY_STABLE;
+*/
+$plugin->dependencies = array(
+    'mod_referentiel' => 2013040500
+);
+

@@ -14,8 +14,8 @@ if (!empty($referentiel) && !empty($referentiel_referentiel) && !empty($course))
 	if (!isset($form->instance)) {
     	$form->instance = $referentiel->id;
 	}		
-	if (!isset($form->course_id)) {
-    	$form->course = $course->id;
+	if (!isset($form->courseid_id)) {
+    	$form->courseid = $course->id;
 	}		
 	if (!isset($form->sesskey)) {
     	$form->sesskey=sesskey();
@@ -53,7 +53,7 @@ if (!empty($referentiel) && !empty($referentiel_referentiel) && !empty($course))
 		// echo "<br/>DEBUG ::<br />\n";
 		// print_object($records_ceerificats);
 		
-		echo '<link rel="stylesheet" type="text/css" href="certificat.css">'."\n";
+		echo '<link rel="stylesheet" type="text/css" href="referentiel.css">'."\n";
 	
 		foreach ($records_certificats as $record){
 			$certificat_id=$record->id;
@@ -169,7 +169,7 @@ echo referentiel_affiche_competences_certificat('/', ':', $competences_certifica
 <input type="hidden" name="mode" value="updatecertif" />
 <input type="hidden" name="action" value="modifier_certificat" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
@@ -268,7 +268,7 @@ echo referentiel_affiche_competences_certificat('/', ':', $competences_certifica
 <input type="hidden" name="mode" value="updatecertif" />
 <input type="hidden" name="action" value="modifier_certificat" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
@@ -320,8 +320,8 @@ if (!empty($referentiel) && !empty($referentiel_referentiel) && !empty($course))
 	if (!isset($form->instance)) {
     	$form->instance = $referentiel->id;
 	}		
-	if (!isset($form->course_id)) {
-    	$form->course = $course->id;
+	if (!isset($form->courseid_id)) {
+    	$form->courseid = $course->id;
 	}		
 	if (!isset($form->sesskey)) {
     	$form->sesskey=sesskey();
@@ -369,7 +369,7 @@ if (!empty($referentiel) && !empty($referentiel_referentiel) && !empty($course))
 			$date_decision_info=userdate($date_decision);
 
 			// AFFICHER certificat
-			echo '<link rel="stylesheet" type="text/css" href="certificat.css">'."\n";
+			echo '<link rel="stylesheet" type="text/css" href="referentiel.css">'."\n";
 
 ?>
 <center>
@@ -460,7 +460,7 @@ echo referentiel_affiche_competences_certificat('/', ':', $competences_certifica
 <input type="hidden" name="mode"          value="listcertifsingle" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />

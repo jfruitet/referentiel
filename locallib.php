@@ -35,6 +35,17 @@
 
 require_once($CFG->libdir . '/portfolio/caller.php');
 require_once($CFG->libdir . '/filelib.php');
+require_once('lib.php');
+
+require_once ("lib_config.php");
+require_once ("lib_referentiel.php");     // MODIF JF 2012/03/08
+require_once ("lib_users.php");
+require_once ("lib_cron.php");
+require_once ("lib_accompagnement.php");
+require_once ("lib_repartition.php"); // version 1.2 decembre 2011
+require_once ("lib_protocole.php"); // protocole de certification // A partir de la version 2.1.05
+require_once ("lib_backup.php");   // nouveauté Moodle 2.0
+
 
 // Artefact MAHARA_REFERENTIEL installé sur Mahara ?
 // Au 1/12/2011 cet artefact n'est pas disponible et donc inutile d'essayer de l'utiliser !
@@ -44,6 +55,30 @@ define ('MAHARA_ARTEFACT_REFERENTIEL', 0);   // placer à 1 pour activer le trai
 
 
 /// FONCTIONS UTILITAIRES /////////////////////////////////////////////////////////////////////////
+
+// -------------------------------------------------------------
+function referentiel_nom_court($nom, $len=13){
+    if (!empty($nom) && (mb_strlen($nom, 'latin1')>$len)){
+        return mb_substr($nom,0,$len).'. ';
+    }
+    else{
+        return $nom;
+    }
+}
+
+// ------------------------------------------------------------------
+function referentiel_nom_prenom($nom, $prenom, $lenmax=24){
+    $len_nom=mb_strlen($nom, 'latin1');
+    $len_prenom=mb_strlen($prenom, 'latin1');
+    if ($len_nom+$len_prenom>$lenmax){
+        if ($len_nom>(2*$lenmax/3)){
+            $nom=mb_substr($nom,0,2*$lenmax/3).'.';
+            $len_nom=mb_strlen($nom, 'latin1');
+        }
+        $prenom=mb_substr($prenom,0,$lenmax-$len_nom).'. ';
+    }
+    return $nom.' '.$prenom;
+}
 
 
 /**
@@ -438,9 +473,10 @@ global $DB;
 	$activite->commentaire_activite=($form->commentaire_activite);
 	$activite->ref_instance=$form->instance;
 	$activite->ref_referentiel=$form->ref_referentiel;
-	$activite->ref_course=$form->course;
-	$activite->date_creation=time();
-	$activite->date_modif_student=time();
+	$activite->ref_course=$form->courseid;
+	$ladate=time();
+	$activite->date_creation=$ladate;
+	$activite->date_modif_student=$ladate;
 	$activite->date_modif=0;
 	$activite->approved=0;
 	$activite->userid=$USER->id;
@@ -515,9 +551,9 @@ global $USER;
 global $DB;
 $ok=true;
     // DEBUG
-	// echo "<br />UPDATE ACTIVITY<br />\n";
-	// print_object($form);
-    // echo "<br />";
+	//echo "<br />locallib 518 :: UPDATE ACTIVITY<br />\n";
+	//print_object($form);
+    //echo "<br />";
 
 	if (isset($form->action) && ($form->action=="modifier_activite")){
 
@@ -551,21 +587,21 @@ $ok=true;
 		$activite->commentaire_activite=($form->commentaire_activite);
 		$activite->ref_instance=$form->instance;
 		$activite->ref_referentiel=$form->ref_referentiel;
-		$activite->ref_course=$form->course;
+		$activite->ref_course=$form->courseid;
 		$activite->date_creation=$form->date_creation;
 		$activite->approved=$form->approved;
 		$activite->userid=$form->userid;
 		$activite->teacherid=$form->teacherid;
 
-
+        $ladate=time();
 		// MODIF JF 2009/10/27
 		if ($USER->id==$activite->userid){
-			$activite->date_modif_student=time();
+			$activite->date_modif_student=$ladate;
 			$activite->date_modif=$form->date_modif;
 			$activite->teacherid=$form->teacherid;
 		}
 		else{
-			$activite->date_modif=time();
+			$activite->date_modif=$ladate;
 			$activite->date_modif_student=$form->date_modif_student;
             $activite->teacherid=$USER->id;
 		}
@@ -1191,42 +1227,16 @@ global $DB;
 		return 0;
 }
 
-//function referentiel_user_can_addactivity($referentiel, $currentgroup, $groupmode) {
 function referentiel_user_can_addactivity($referentiel) {
     global $USER;
     global $CFG;
     if (!$cm = get_coursemodule_from_instance('referentiel', $referentiel->id, $referentiel->course)) {
         print_error('Course Module ID was incorrect');
     }
-    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!has_capability('mod/referentiel:write', $context)) {
         return false;
     }
-/*
-    if (!$groupmode or has_capability('moodle/site:accessallgroups', $context)) {
-        return true;
-    }
-
-    if ($currentgroup) {
-        return ismember($currentgroup);
-    }
-    else {
-        //else it might be group 0 in visible mode
-        if ($groupmode == VISIBLEGROUPS){
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-*/
 	return true;
 }
 
@@ -3852,7 +3862,7 @@ global $CFG;
         foreach ($usergroups as $group){
             $groupstr .= ' <a href="'.$CFG->wwwroot.'/user/index.php?id='.$courseid.'&amp;group='.$group->id.'">'.format_string($group->name).'</a>,';
         }
-        return '<br />'.get_string("group").':' . rtrim($groupstr, ', ');
+        return get_string("group").':' . rtrim($groupstr, ', ');
     }
     return '';
 }

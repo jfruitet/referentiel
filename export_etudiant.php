@@ -33,8 +33,8 @@
 * @package referentiel
 */
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
     require_once('lib_etab.php');
     require_once('print_lib_etudiant.php');	// AFFICHAGES 
     require_once('import_export_lib.php');	// IMPORT / EXPORT	
@@ -122,20 +122,18 @@
 	// PAS DE RSS
     // require_once("$CFG->libdir/rsslib.php");
 
-	
-    require_login($course->id, false, $cm);
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
 
-    if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+    require_login($course->id, false, $cm);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
 
-    // check role capability
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    require_capability('mod/referentiel:export', $context);
 
     require_capability('mod/referentiel:export', $context);
 
@@ -211,9 +209,9 @@
     $PAGE->set_url($url);
     
     /// RSS and CSS and JS meta
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->css('/mod/referentiel/jauge.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
 
     $PAGE->set_title($pagetitle);
     $PAGE->navbar->add($strmessage);
@@ -225,37 +223,27 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('exportetudh','referentiel').'</h2></div>'."\n";
 	
     if (!empty($format) && !empty($referentiel) && !empty($course)) {   
 		/// Filename et format d'exportation
-// DEBUG 
-//echo "<br /> OK 1\n";
         if (!confirm_sesskey()) {
             print_error( 'sesskey' );
         }
-// DEBUG 
-//echo "<br /> OK 2\n";
         if (! is_readable("format/$format/format.php")) {
             print_error( "Format not known ($format)" );  
 		}
-// DEBUG 
-//echo "<br /> OK 3\n";
         // load parent class for import/export
         require("format.php");
-// DEBUG 
-//echo "<br /> OK 4\n";
         // and then the class for the selected format
         require("format/$format/format.php");
-// DEBUG 
-//echo "<br /> OK 5\n";
+
         $classname = "eformat_$format";
         $eformat = new $classname();
-// DEBUG 
-// echo "<br /> OK 6\n";
         // $eformat->setCategory( $category );
 		$eformat->setCoursemodule( $cm );
         $eformat->setCourse( $course );
@@ -264,37 +252,21 @@
         $eformat->setIReferentiel( $referentiel);
         $eformat->setRReferentiel( $referentiel_referentiel);
 		$eformat->setRefReferentiel( $referentiel->ref_referentiel);
-// DEBUG 
-// echo "<br /> OK 7\n";
-
         if (! $eformat->exportpreprocess()) {   // Do anything before that we need to
             print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/export_etudiant.php?id='.$cm->id);
         }
-// echo "<br /> OK 8\n";
+
         if (! $eformat->exportprocess()) {         // Process the export data
             print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/export_etudiant.php?id='.$cm->id);
         }
-// echo "<br /> OK 9\n";
+
         if (! $eformat->exportpostprocess()) {                    // In case anything needs to be done after
             print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/export_etudiant.php?d='.$cm->id);
         }
         echo "<hr />";
-// echo "<br /> OK 10\n";
 
         // link to download the finished file
         $file_ext = $eformat->export_file_extension();
-
-        // Moodle 1.9
-        /*
-        if ($CFG->slasharguments) {
-          $efile = "{$CFG->wwwroot}/file.php/".$eformat->get_export_dir()."/$exportfilename".$file_ext."?forcedownload=1";
-        }
-        else {
-          $efile = "{$CFG->wwwroot}/file.php?file=/".$eformat->get_export_dir()."/$exportfilename".$file_ext."&forcedownload=1";
-        }
-        */
-
-        // Moodle 2.0
         $fullpath = '/'.$context->id.'/mod_referentiel/scolarite/0'.$eformat->get_export_dir().$exportfilename.$file_ext;
         $efile = new moodle_url($CFG->wwwroot.'/pluginfile.php'.$fullpath);
 

@@ -35,7 +35,7 @@
 
 
     require_once('../../config.php');
-    require_once('lib.php');
+    require_once('locallib.php');
     // require_once('pagelib.php'); // ENTETES
 	
 	// PAS DE RSS
@@ -211,7 +211,16 @@
 						      					// exit;
 											
 							     				if 	($that_instance){
-                                                    if (referentiel_delete_instance($that_instance->id)) {
+                                                    if (function_exists('course_delete_module')){  // Moodle v 2.5 et suivantes
+                                                        if (course_delete_module($course_module->id)) {
+                                                            if (delete_mod_from_section($course_module->id, "$course_module->section")) {
+                                                                rebuild_course_cache($course_record->id);
+		          				      						    $msg=get_string('instance_deleted', 'referentiel').' '.$that_instance->name;
+				              		      					    add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
+                                                            }
+                                                        }
+									                }
+									                else{ // Moodle v 2.x
                                                         if (delete_course_module($course_module->id)) {
                                                             if (delete_mod_from_section($course_module->id, "$course_module->section")) {
                                                                 rebuild_course_cache($course_record->id);
@@ -219,16 +228,16 @@
 				              		      					    add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
 										                    }
 									                    }
-								                    }
+                                                    }
+								                }
+								                else{ // cette 'instance' n'existe dans aucun module, c'est juste un fant�me, on peut la d�truire
+								                    if (!referentiel_delete_instance($instanceid)) {
+                                                        ;//print_error("Could not delete that referentiel instance", "$CFG->wwwroot/course/view.php?id=$course->id");
+            			    		                }
                                                 }
-							                }
-						                }
-					                }
-                                }
-                                else{ // cette 'instance' n'existe dans aucun module, c'est juste un fant�me, on peut la d�truire
-								    if (!referentiel_delete_instance($instanceid)) {
-                                        ;//print_error("Could not delete that referentiel instance", "$CFG->wwwroot/course/view.php?id=$course->id");
-            			    	    }
+							                 }
+						                  }
+					                   }
                                 }
                             }
                         }
@@ -356,13 +365,14 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('suppreferentielh','referentiel').'</h2></div>'."\n";
 
 	if ($mode=='listreferentiel'){
-		referentiel_affiche_referentiel($referentiel->id); 
+		referentiel_affiche_referentiel($cm, $referentiel->id, $referentiel->ref_referentiel);
 	}
 	else {
         echo $OUTPUT->box_start('generalbox  boxaligncenter');

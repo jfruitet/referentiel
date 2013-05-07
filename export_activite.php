@@ -33,8 +33,8 @@
 * @package referentiel
 */
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
     // require_once('pagelib.php'); // ENTETES
     require_once('print_lib_activite.php');	// AFFICHAGES 
     require_once('import_export_lib.php');	// IMPORT / EXPORT	
@@ -59,45 +59,9 @@
     $cancel        = optional_param('cancel', 0, PARAM_BOOL);
     $select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
 
-    $filtre_validation = optional_param('filtre_validation', 0, PARAM_INT);
-    $filtre_referent = optional_param('filtre_referent', 0, PARAM_INT);
-    $filtre_date_modif = optional_param('filtre_date_modif', 0, PARAM_INT);
-    $filtre_date_modif_student = optional_param('filtre_date_modif_student', 0, PARAM_INT);
-    $filtre_auteur = optional_param('filtre_auteur', 0, PARAM_INT);
+    // Filtres
+    require_once('filtres.php'); // Ne pas deplacer
 
-	$data_filtre= new Object(); // parametres de filtrage
-	if (isset($filtre_validation)){
-			$data_filtre->filtre_validation=$filtre_validation;
-	}
-	else {
-		$data_filtre->filtre_validation=0;
-	}
-	if (isset($filtre_referent)){
-		$data_filtre->filtre_referent=$filtre_referent;
-	}
-	else{
-		$data_filtre->filtre_referent=0;
-	}
-	if (isset($filtre_date_modif_student)){
-		$data_filtre->filtre_date_modif_student=$filtre_date_modif_student;
-	}
-	else{
-		$data_filtre->filtre_date_modif_student=0;
-	}
-	if (isset($filtre_date_modif)){
-		$data_filtre->filtre_date_modif=$filtre_date_modif;
-	}
-	else{
-		$data_filtre->filtre_date_modif=0;
-	}
-	if (isset($filtre_auteur)){
-		$data_filtre->filtre_auteur=$filtre_auteur;
-	}
-	else{
-		$data_filtre->filtre_auteur=0;
-	}
-
-    // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/export_activite.php');
 
 	if ($d) {     // referentiel_referentiel_id
@@ -162,26 +126,18 @@
     // require_once("$CFG->libdir/rsslib.php");
 
 	
-    require_login($course->id, false, $cm);
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
 
-    if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+    require_login($course->id, false, $cm);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
-    
-    // check role capability
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_capability('mod/referentiel:export', $context);
-
-    // Moodle 1.9
-    // ensure the files area exists for this course
-    // make_upload_directory( "$course->id/$CFG->moddata/referentiel" );
-
 
     if ($activite_id) {    // So do you have access?
         if (!(has_capability('mod/referentiel:writereferentiel', $context) 
@@ -254,9 +210,9 @@
     $icon = $OUTPUT->pix_url('icon','referentiel');
 
     $PAGE->set_url($url);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->css('/mod/referentiel/jauge.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
 
     $PAGE->set_title($pagetitle);
     $PAGE->navbar->add($stractivite);
@@ -269,8 +225,9 @@
     }
 
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('exportactiviteh','referentiel').'</h2></div>'."\n";
 
@@ -319,15 +276,6 @@
         // link to download the finished file
         $file_ext = $aformat->export_file_extension();
         
-        // Moodle 1.9
-        /*
-        if ($CFG->slasharguments) {
-          $efile = "{$CFG->wwwroot}/file.php/".$aformat->get_export_dir()."/$exportfilename".$file_ext."?forcedownload=1";
-        }
-        else {
-          $efile = "{$CFG->wwwroot}/file.php?file=/".$aformat->get_export_dir()."/$exportfilename".$file_ext."&forcedownload=1";
-        }
-        */
         // Moodle 2.0
         $fullpath = '/'.$context->id.'/mod_referentiel/activite/0'.$aformat->get_export_dir().$exportfilename.$file_ext;
         $efile = new moodle_url($CFG->wwwroot.'/pluginfile.php'.$fullpath);

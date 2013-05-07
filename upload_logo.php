@@ -23,11 +23,11 @@
 ///////////////////////////////////////////////////////////////////////////
 
     // require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
-    require_once("../../config.php");
+    require(dirname(__FILE__) . '/../../config.php');
     //require_once(dirname(__FILE__).'/class/upload_form.php');
     require_once('class/upload_simple_form.php');
     require_once("$CFG->dirroot/repository/lib.php");
-    require_once('lib.php');
+    require_once('locallib.php');
 	// require_once($CFG->libdir . '/uploadlib.php');	// pour charger un fichier
     require_once("print_lib_referentiel.php");	// AFFICHAGES 
 	
@@ -216,8 +216,8 @@
     if (!empty($referentiel->name)){
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+        $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f); $tab_onglets->display();
     echo $OUTPUT->box_start('generalbox');
     $mform->display();
     echo $OUTPUT->box_end();

@@ -889,10 +889,21 @@ mtrace("\n");
                 // Déterminer qui est l'emetteur du message en comparant les dates
                 $emetteur=0; // c'est l'etudiant l'emetteur par defaut
 
-                if (isset($activites[$activiteid]->date_creation)
-                        && isset($activites[$activiteid]->date_modif)
-                        && isset($activites[$activiteid]->date_modif_student)
-                        && ($activites[$activiteid]->date_modif > $activites[$activiteid]->date_modif_student)){
+                if (!empty($activites[$activiteid]->date_creation)
+                    &&
+                   (
+                            empty($activites[$activiteid]->date_modif)
+                            ||
+                            (
+                                !empty($activites[$activiteid]->date_modif)
+                                &&
+                                !empty($activites[$activiteid]->date_modif_student)
+                                &&
+                                ($activites[$activiteid]->date_modif > $activites[$activiteid]->date_modif_student)
+                            )
+                    )
+                )
+                {
                         $emetteur=1;     // enseignant est l'emetteur du message
                         // mtrace("\nlib_cron.php :: 697 :: emetteur... TEACHER\n");
                 }

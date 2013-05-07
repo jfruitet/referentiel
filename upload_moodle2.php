@@ -23,12 +23,12 @@
  */
 
     // require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/config.php');
-    require_once("../../config.php");
+    require(dirname(__FILE__) . '/../../config.php');
     //require_once(dirname(__FILE__).'/class/upload_form.php');
     require_once('class/upload_form.php');
     require_once("$CFG->dirroot/repository/lib.php");
 
-    require_once('lib.php');
+    require_once('locallib.php');
     require_once('lib_etab.php');
     require_once("print_lib_activite.php");	// AFFICHAGES
 
@@ -133,25 +133,16 @@
 		print_error(get_string('erreurscript','referentiel','Erreur01 : upload_moodle2.php'), 'referentiel');
 	}
 
-    require_login($course->id, false, $cm);
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
 
-    if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+    require_login($course->id, false, $cm);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
 
-
-    //if ($CFG->version < 2011120100) {
-        $contextcourse = get_context_instance(CONTEXT_COURSE, $course->id);
-    //} else {
-        // $contextcourse = context_course::instance($course->id);
-    //}
-
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $contextcourse = get_context_instance(CONTEXT_COURSE, $course->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 
 	if ($activite_id) { // id activite
@@ -183,7 +174,7 @@
         )
 
     ) {
-        print_error(get_string("activityiscurrentlyhidden"),'error',"$CFG->wwwroot/course/view.php?id=$course->id");
+        print_error(get_string("activityiscurrentlyhidden"),'error', $returnlink_course);
     }
 
 
@@ -194,7 +185,11 @@ if ($cancel) {
             redirect($return);
         }
         else {
-            redirect('activite.php?d='.$referentiel->id.'&amp;userid='.$userid.'&activite_id='.$activite_id.'&mailnow='.$mailnow.'&amp;mode=listactivityall&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student);
+            redirect(new moodle_url('/mod/referentiel/activite.php',
+        array('id'=>$cm->id, 'userid'=>$userid, 'activite_id'=>$activite_id, 'mailnow'=>$mailnow,
+'mode'=>'listactivityall', 'filtre_auteur'=>$data_filtre->filtre_auteur, 'filtre_validation'=>$data_filtre->filtre_validation,
+'filtre_referent'=>$data_filtre->filtre_referent, 'filtre_date_modif'=>$data_filtre->filtre_date_modif,
+'filtre_date_modif_student'=>$data_filtre->filtre_date_modif_student)));
         }
 }
 
@@ -215,10 +210,11 @@ $options = array('subdirs'=>0, 'maxbytes'=>get_max_upload_file_size($CFG->maxbyt
 $mform = new mod_referentiel_upload_form(null, array('d'=>$referentiel->id, 'contextid'=>$context->id, 'userid'=>$USER->id, 'activiteid'=>$activite_id, 'filearea'=>'document', 'msg' => get_string('document_associe', 'referentiel'), 'mailnow' => $mailnow, 'options'=>$options));
 
 if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/mod/referentiel/activite.php', array('id'=>$cm->id, 'userid'=>$USER->id, 'activiteid'=>$activite_id, 'mailnow' => $mailnow, 'mode' => $old_mode,
-        'filtre_auteur'=>$data_filtre->filtre_auteur, 'filtre_validation'=>$data_filtre->filtre_validation,
-        'filtre_referent'=>$data_filtre->filtre_referent, 'filtre_date_modif'=>$data_filtre->filtre_date_modif,
-        'filtre_date_modif_student'=>$data_filtre->filtre_date_modif_student)));
+    redirect(new moodle_url('/mod/referentiel/activite.php',
+        array('id'=>$cm->id, 'userid'=>$USER->id, 'activite_id'=>$activite_id, 'mailnow'=>$mailnow,
+'mode'=>'listactivityall', 'filtre_auteur'=>$data_filtre->filtre_auteur, 'filtre_validation'=>$data_filtre->filtre_validation,
+'filtre_referent'=>$data_filtre->filtre_referent, 'filtre_date_modif'=>$data_filtre->filtre_date_modif,
+'filtre_date_modif_student'=>$data_filtre->filtre_date_modif_student)));
 }
 else if ($mform->get_data()) {
 // A TERMINER

@@ -33,8 +33,8 @@
 * @package referentiel
 */
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
 
     require_once('import_export_lib.php');	// IMPORT / EXPORT
 
@@ -102,20 +102,16 @@
 		print_error(get_string('erreurscript','referentiel','Erreur01 : export.php'), 'referentiel');
 	}
 
-    require_login($course->id, false, $cm);
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
 
-    if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+    require_login($course->id, false, $cm);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
 
-
-    // check role capability
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_capability('mod/referentiel:export', $context);
 
@@ -174,9 +170,9 @@
     $icon = $OUTPUT->pix_url('icon','referentiel');
 
     $PAGE->set_url($url);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->css('/mod/referentiel/jauge.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
 
     $PAGE->set_title($pagetitle);
     $PAGE->navbar->add($strpagename);
@@ -189,13 +185,14 @@
     }
 
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strpagename.' '.$OUTPUT->help_icon('exportreferentielh','referentiel').'</h2></div>'."\n";
 
 	if ($mode=='listreferentiel'){
-		referentiel_affiche_referentiel($referentiel->id); 
+		referentiel_affiche_referentiel($cm, $referentiel->id, $referentiel->ref_referentiel);
 	}
 
     if (!empty($format)) {   /// Filename et format d'exportation
@@ -245,7 +242,7 @@
         echo "<p><div class=\"boxaligncenter\"><a href=\"$efile\">$txt->download</a></div></p>";
         echo "<p><div class=\"boxaligncenter\"><font size=\"-1\">$txt->downloadextra</font></div></p>";
 
-        print_continue($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+        print_continue($returnlink_ref);
         echo $OUTPUT->footer();
 
         die();
@@ -275,8 +272,6 @@
                     <td><?php echo $txt->fileformat; ?>:</td>
                     <td>
                         <?php
-                        // choose_from_menu($fileformatnames, 'format', 'xml', '');
-                        // helpbutton('format', $txt->referentiel, 'referentiel');
                         echo html_writer::select($fileformatnames, 'format', 'xml', false);
                         echo $OUTPUT->help_icon('formath', 'referentiel');
                         ?>
@@ -302,28 +297,25 @@
     echo "\n</div>\n";
     echo $OUTPUT->box_end();
 
-    // print_heading_with_help($txt->exportreferentiel, 'export', 'referentiel');
     if (REFERENTIEL_OUTCOMES){
-        // print_heading_with_help(get_string('export_bareme','referentiel'), 'outcomes', 'referentiel', $icon);
-        echo '<div align="center"><h3><img src="'.$icon.'" border="0" title="" alt="" /> '.get_string('export_bareme','referentiel').' '.$OUTPUT->help_icon('exportoutcomesh','referentiel').'</h3></div>'."\n";
+        echo '<div align="center"><h3><img src="'.$icon.'" border="0" title="" alt="" /> '.get_string('export_bareme','referentiel').' '.$OUTPUT->help_icon('exportoutcomesh','referentiel').'</h3>'."\n";
+        echo $OUTPUT->box_start('generalbox  boxaligncenter');
 
-      echo $OUTPUT->box_start('generalbox  boxaligncenter');
+        if (!empty($CFG->enableoutcomes)){
+            echo '<a href="'.$CFG->wwwroot.'/mod/referentiel/grade/export_grade_outcomes.php?d='.$referentiel->id.'">'.get_string('export_outcomes','referentiel').'</a>';
+        }
+        else{
+            print_string('activer_outcomes','referentiel');
+        }
+        echo '<br >'.get_string('help_outcomes','referentiel');
 
-      if (!empty($CFG->enableoutcomes)){
-        echo '<a href="'.$CFG->wwwroot.'/mod/referentiel/grade/export_grade_outcomes.php?d='.$referentiel->id.'">'.get_string('export_outcomes','referentiel').'</a>';  
-      }
-      else{
-        print_string('activer_outcomes','referentiel'); 
-      }
-      print_string('help_outcomes','referentiel'); 
-
-      echo $OUTPUT->box_end();
-      
+        echo $OUTPUT->box_end();
+        echo '</div>'."\n";
     }
 
     // Liste de sauvegardes déjà enregistrées
     // Gestion des fichiers d'archives
-    referentiel_get_manage_files($context->id, 'referentiel', 0, get_string('exportedreferentiel', 'referentiel'), "export_activite.php?id=$cm->id");
+    referentiel_get_manage_files($context->id, 'referentiel', 0, get_string('exportedreferentiel', 'referentiel'), "export.php?id=$cm->id");
 
     echo $OUTPUT->footer();
     die();

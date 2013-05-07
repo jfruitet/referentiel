@@ -17,8 +17,8 @@ if (isset($mode) && ($mode=="addactivity")){
 	if (!isset($form->ref_referentiel)) {
     	$form->ref_referentiel = $referentiel_referentiel->id;
 	}
-	if (!isset($form->course)) {
-    	$form->course = $course->id;
+	if (!isset($form->courseid)) {
+    	$form->courseid = $course->id;
 	}	
 	if (!isset($form->type_activite)) {
     	$form->type_activite = '';
@@ -57,8 +57,8 @@ if (isset($mode) && ($mode=="addactivity")){
 	if (!isset($form->url_document)) {
     	$form->url_document = '';
 	}
-	if (!isset($form->course_id)) {
-    	$form->course = $course->id;
+	if (!isset($form->courseid_id)) {
+    	$form->courseid = $course->id;
 	}		
 	if (!isset($form->sesskey)) {
     	$form->sesskey=sesskey();
@@ -131,7 +131,7 @@ if ($jauge_activite_declarees){
 
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="activite_id"        value="<?php  p($form->activite_id) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />

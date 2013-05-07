@@ -1,7 +1,6 @@
 <?php
 /* ************************  RECODAGES de tables de caracteres *************************/
-require_once("$CFG->wwwroot/config.php");
-require_once($CFG->libdir .'/textlib.class.php'); // pour utiliser $textlib
+// require_once($CFG->libdir .'/textlib.class.php'); // pour utiliser $textlib
 
 // FONCTIONS ===================================================================
 
@@ -35,16 +34,17 @@ if (function_exists('current_charset')){
 }
 
 /// Select direction
+/*
 if ( get_string('thisdirection') == 'rtl' ) {
 	$direction = ' dir="rtl"';
 }
 else {
 	$direction = ' dir="ltr"';
 }
-
+*/
 /// Loading the textlib singleton instance. We are going to need it.
 /// pour les fonctions strpos(), substr() et autres conversions de chaines UTF8
-$textlib = textlib_get_instance();
+// $textlib = textlib_get_instance();
 
 
 /* ************************  RECODAGES de tables de caracteres ************************/

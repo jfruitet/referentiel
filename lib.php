@@ -41,18 +41,8 @@ require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
 
 // 2010/10/18 : configuration
-
-require_once ("lib_config.php");
-require_once ("lib_referentiel.php");     // MODIF JF 2012/03/08
-require_once ("lib_users.php");
-require_once ("lib_cron.php");
-require_once ("lib_accompagnement.php");
-require_once ("lib_repartition.php"); // version 1.2 decembre 2011
-require_once ("lib_protocole.php"); // protocole de certification // A partir de la version 2.1.05
-require_once ("lib_backup.php");   // nouveauté Moodle 2.0
-
 require_once ("class/referentiel.class.php");
-require_once ("locallib.php");
+
 
 // les constantes suivantes permettent de tuner le fonctionnement du module
 // a ne modifier qu'avec précaution
@@ -90,10 +80,10 @@ define('TIME_LIMIT', 360);// temps  maximal d'exécution d'un script si PHP ne f
 define('EDITOR_ON', 1);// editeur de referentiels simplifié wysiwyg actif (necessite le dossier mod/referentiel/editor sur le serveur)
 // define('EDITOR_ON', 0);   // editeur inactif
 
-define('MAXBOITESSELECTION', 6);  // à réduire si le nombre de boites de selection des etudiants
+define('MAXBOITESSELECTION', 5);  // à réduire si le nombre de boites de selection des etudiants
 // ne tient pas dans la page sans ascenceur horizontal
 
-define('NOTIFICATION_TACHES', 1); // placer à 0 pour désactiver la notification
+define('NOTIFICATION_TACHES', 0); // placer à 1 pour activer la notification
 define('NOTIFICATION_ACTIVITES', 1); // placer à 0 pour désactiver la notification
 define('NOTIFICATION_CERTIFICATS', 1); // placer à 0 pour désactiver la notification
 
@@ -943,8 +933,6 @@ global $DB;
     }
 
 
-
-
     /**
      * write a file
      * @return boolean
@@ -962,8 +950,6 @@ global $DB;
 
         // write file
         $filepath = $path."/".$filename;
-
-		// echo "<br />DEBUG : 2580 :: FILENAME : $filename <br />PATH_TO_DATA : $path_to_data <br />PATH : $path <br />FILEPATH : $filepath\n";
 
         if (!$fh=fopen($filepath,"w")) {
             return "";
@@ -1053,92 +1039,97 @@ function referentiel_deplace_fichier($dest_path, $source, $dest, $sep, $deplace)
  	}
 
 
-
-
-
 // ############################ MOODLE 2.0 FILE API #########################
 
 /**
- * Serves activite documents and other files.
+ * Lists all browsable file areas
  *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @param bool $forcedownload
- * @return bool false if file not found, does not return if found - just send the file
+ * @package  mod_referentiel
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @return array
  */
-function referentiel_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
-// fonction appelée par le gestionnaire de fichier
+function referentiel_get_file_areas($course, $cm, $context) {
+    return array(
+        'referentiel' => get_string('areareferentiel', 'referentiel'),
+        'document' => get_string('areadocument', 'referentiel'),
+        'consigne' => get_string('areaconsigne', 'referentiel'),
+        'activite' => get_string('areaactivite', 'referentiel'),
+        'task' => get_string('areatask', 'referentiel'),
+        'certificat' => get_string('areacertificat', 'referentiel'),
+        'scolarite' => get_string('areascolarite', 'referentiel'),
+        'pedagogie' => get_string('areapedagogie', 'referentiel'),
+        'outcomes' => get_string('areaoutcomes', 'referentiel'),
+        'archive' => get_string('areaarchive', 'referentiel'),
+    );
+}
+
+
+/**
+ * Serves documents and other files.
+ * @package  mod_referentiel
+ * @category files
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
+ * @return bool false if file not found, does not return if found - justsend the file
+ */
+function referentiel_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }
 
-    require_login($course, false, $cm);
+    require_course_login($course, true, $cm);
 
-    // verifier qu'un referentiel est installé dans ce cours
-    if (! $referentiel = $DB->get_record("referentiel", array("id" => "$cm->instance"))) {
+    $areas = referentiel_get_file_areas($course, $cm, $context);
+
+    // filearea must contain a real area
+    if (!isset($areas[$filearea])) {
         return false;
     }
 
-    return referentiel_send_file($course, $cm, $context, $filearea, $args);
-}
 
-/**
- * Serves activite documents and other files.
- *
- * @param object $course
- * @param object $cm
- * @param object $context
- * @param string $filearea
- * @param array $args
- * @return bool false if file not found, does not return if found - just send the file
- */
+    $docid = (int)array_shift($args);
 
-function referentiel_send_file($course, $cm, $context, $filearea, $args) {
-// affiche le contenu d'un fichier
-        global $CFG, $DB, $USER;
-        require_once($CFG->libdir.'/filelib.php');
-
-        require_login($course, false, $cm);
-
-        // DEBUG
-        // echo "<br />DEBUG :: lib.php :: 5619 :: <br />CONTEXT : $context->id :: FILEAREA : $filearea<br />ARGS:\n";
-        // print_r($args);
-        //
-        $docid = (int)array_shift($args);
-
-        // verifier les fileareas acceptables
-        $fileareas = array('referentiel', 'document', 'consigne', 'activite', 'task', 'certificat', 'scolarite', 'pedagogie', 'outcomes', 'archive');
-        if (!in_array($filearea, $fileareas)) {
+    if ($filearea=='referentiel'){
+        // verifier qu'un referentiel est installé dans ce cours
+        if (! $referentiel = $DB->get_record("referentiel", array("id" => "$cm->instance"))) {
             return false;
         }
-
-        if ($filearea=='document'){
+    }
+    if ($filearea=='document'){
             if (!$document = $DB->get_record('referentiel_document', array('id'=>$docid))) {
                 return false;
             }
-        }
-        else if ($filearea=='consigne'){
+    }
+    if ($filearea=='consigne'){
             if (!$document = $DB->get_record('referentiel_consigne', array('id'=>$docid))) {
                 return false;
             }
-        }
-        
-        $relativepath = implode('/', $args);
-        $fullpath = '/'.$context->id.'/mod_referentiel/'.$filearea.'/'.$docid.'/'.$relativepath;
+    }
 
-        $fs = get_file_storage();
+    //return referentiel_send_file($course, $cm, $context, $filearea, $args);
+    $relativepath = implode('/', $args);
+    $fullpath = '/'.$context->id.'/mod_referentiel/'.$filearea.'/'.$docid.'/'.$relativepath;
 
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            return false;
-        }
+    $fs = get_file_storage();
 
-        send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+
+    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+
 }
+
 
 //------------------
 function referentiel_upload_document($mform, $referentiel_id){
@@ -1321,7 +1312,8 @@ global $CFG, $USER, $DB, $OUTPUT;
             }
         }
         if (!empty($retour_url)){
-            redirect($retour_url, get_string('uploadedfile'));
+            //redirect($retour_url, get_string('uploadedfile'));
+            redirect($retour_url);  // inutile d'afficher un message disant que le telechargement est OK !
         }
     }
     redirect($viewurl);
@@ -1402,6 +1394,9 @@ global $OUTPUT;
 
     $fs = get_file_storage();
     if ($files = $fs->get_area_files($contextid, 'mod_referentiel', $filearea, $docid, "timemodified", false)) {
+        // DEBUG
+        //print_object($files);
+        //exit;
         $table = new html_table();
 	    $table->head  = array ($strfilename, $strfilesize, $strtimecreated, $strtimemodified, $strmimetype, $strmenu);
         $table->align = array ("center", "left", "left", "left", "center");
@@ -1412,19 +1407,18 @@ global $OUTPUT;
             $filename = $file->get_filename();
             $mimetype = $file->get_mimetype();
             $filepath = $file->get_filepath();
-            $fullpath ='/'.$contextid.'/mod_referentiel/'.$filearea.'/'.$docid.$filepath.$filename;
-            // echo "<br />FULPATH :: $fullpath \n";
+            $fullpath = '/'.$contextid.'/mod_referentiel/'.$filearea.'/'.$docid.$filepath.$filename;
             $timecreated =  userdate($file->get_timecreated(),"%Y/%m/%d-%H:%M",99,false);
             $timemodified = userdate($file->get_timemodified(),"%Y/%m/%d-%H:%M",99,false);
 
             $link= new moodle_url($CFG->wwwroot.'/pluginfile.php'.$fullpath);
             $url='<a href="'.$link.'" target="_blank">'.$filename.'</a><br />'."\n";
-
             $delete_link='<input type="checkbox" name="deletefile[]"  value="'.$fullpath.'" />'."\n";
             $table->data[] = array ($url, display_size($filesize), $timecreated, $timemodified, $mimetype, $delete_link);
             $total_size+=$filesize;
             $nfile++;
         }
+
         $table->data[] = array (get_string('nbfile', 'referentiel',$nfile), get_string('totalsize', 'referentiel', display_size($total_size)),'','','','');
 
         echo $OUTPUT->box_start('generalbox  boxaligncenter');

@@ -22,20 +22,20 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
     require_once('lib_etab.php');
     require_once('print_lib_etudiant.php');	// AFFICHAGES 
 
-	// PAS DE RSS
-    // require_once("$CFG->libdir/rsslib.php");
-
     $id    = optional_param('id', 0, PARAM_INT);    // course module id    
 	$d     = optional_param('d', 0, PARAM_INT);    // referentielbase id
-	
+
+    $updateprofile = optional_param('updateprofile', 0, PARAM_INT); // forcer la mise à jour des numero d'etudiant
+    $deleteid    = optional_param('deleteid', 0, PARAM_INT);    // id object to delete
+    $delete = optional_param('delete','', PARAM_ALPHANUMEXT);
     $userid   = optional_param('userid', 0, PARAM_INT);    //record etudiant id
 	$etudiant_id   = optional_param('etudiant_id', 0, PARAM_INT);    //record etudiant id
-	$etablissement_id   = optional_param('etablissement_id', 0, PARAM_INT);    //record etablissement id	
+	$etablissement_id   = optional_param('etablissement_id', 0, PARAM_INT);    //record etablissement id
 
     $initiale     = optional_param('initiale','', PARAM_ALPHA); // selection par les initiales du nom
     $userids      = optional_param('userids','', PARAM_TEXT); // id user selectionnes par les initiales du nom
@@ -46,52 +46,13 @@
     $mode       = optional_param('mode','', PARAM_ALPHANUMEXT);
     $add        = optional_param('add','', PARAM_ALPHA);
     $update     = optional_param('update', 0, PARAM_INT);
-    $delete     = optional_param('delete', 0, PARAM_INT);
+
     $approve    = optional_param('approve', 0, PARAM_INT);	
     $comment    = optional_param('comment', 0, PARAM_INT);		
-    $course     = optional_param('course', 0, PARAM_INT);
+    $courseid = optional_param('courseid', 0, PARAM_INT);
     $groupmode  = optional_param('groupmode', -1, PARAM_INT);
     $cancel     = optional_param('cancel', 0, PARAM_BOOL);
 	$select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
-
-    $filtre_validation = optional_param('filtre_validation', 0, PARAM_INT);
-    $filtre_referent = optional_param('filtre_referent', 0, PARAM_INT);
-    $filtre_date_modif = optional_param('filtre_date_modif', 0, PARAM_INT);
-    $filtre_date_modif_student = optional_param('filtre_date_modif_student', 0, PARAM_INT);
-    $filtre_auteur = optional_param('filtre_auteur', 0, PARAM_INT);
-
-    // MODIF JF 2012/09/20
-	$data_filtre= new Object(); // paramettres de filtrage
-	if (isset($filtre_validation)){
-			$data_filtre->filtre_validation=$filtre_validation;
-	}
-	else {
-		$data_filtre->filtre_validation=0;
-	}
-	if (isset($filtre_referent)){
-		$data_filtre->filtre_referent=$filtre_referent;
-	}
-	else{
-		$data_filtre->filtre_referent=0;
-	}
-	if (isset($filtre_date_modif_student)){
-		$data_filtre->filtre_date_modif_student=$filtre_date_modif_student;
-	}
-	else{
-		$data_filtre->filtre_date_modif_student=0;
-	}
-	if (isset($filtre_date_modif)){
-		$data_filtre->filtre_date_modif=$filtre_date_modif;
-	}
-	else{
-		$data_filtre->filtre_date_modif=0;
-	}
-	if (isset($filtre_auteur)){
-		$data_filtre->filtre_auteur=$filtre_auteur;
-	}
-	else{
-		$data_filtre->filtre_auteur=0;
-	}
 
     // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/etudiant.php');
@@ -146,37 +107,24 @@
     //}
 
 
-	if (isset($userid) && ($userid>0)) { 
-		// id etudiant
-		$record = $DB->get_record("referentiel_etudiant", array("userid" => "$userid"));
-		
-		if (!$record) {
-            $record=referentiel_add_etudiant_user($userid);
-        }
-	}
-	if (isset($userid) && ($userid>0)) { 
-		// id etudiant
-        if (! $record){
-            if (! $record=$DB->get_record("referentiel_etudiant", array("userid" => "$userid"))){
-                print_error('Etudiant userid is incorrect');
-            }
-        }
-	}
-	
-	if (isset($etudiant_id) && ($etudiant_id>0)) { 
-		// id etudiant
-
-        if (! $record){
-            if (!$record = $DB->get_record("referentiel_etudiant", array("userid" => "$userid"))) {
-                print_error('Etudiant id is incorrect');
-            }
+	if (isset($userid) && ($userid>0)) {
+		// userid record referentiel_etudiant
+        if (! $record=$DB->get_record("referentiel_etudiant", array("userid" => "$userid"))){
+            print_error('incorrect_userid','referentiel',$CFG->wwwroot.'/mod/referentiel/etudiant.php?id='.$cm->id,$user_id,"Update or delete function");
         }
 	}
 
-	if (isset($etablissement_id) && ($etablissement_id>0)) { 
-		// id etablissement
+	if (isset($etudiant_id) && ($etudiant_id>0)) {
+		// id record referentiel_etudiant
+        if (!$record = $DB->get_record("referentiel_etudiant", array("id" => "$etudiant_id"))) {
+            print_error('incorrect_id','referentiel',$CFG->wwwroot.'/mod/referentiel/etudiant.php?id='.$cm->id,$etudiant_id,"Update or delete function");
+        }
+	}
+
+	if (isset($etablissement_id) && ($etablissement_id>0)) {
+		// id etablissement record referentiel_etudiant
         if (! $record_etab = $DB->get_record("referentiel_etablissement", array("id" => "$etablissement_id"))) {
-            print_error('etablissement id is incorrect');
+            print_error('incorrect_id','referentiel',$CFG->wwwroot.'/mod/referentiel/etudiant.php?id='.$cm->id,$user_id,"Etablissement");
         }
 	}
 
@@ -253,91 +201,99 @@
 
  	
 	/// Delete any requested records
-    if (isset($delete) && ($delete>0 )
-			&& confirm_sesskey() 
-			&& (has_capability('mod/referentiel:managecertif', $context) or referentiel_etudiant_isowner($delete))) {
+    if (!empty($deleteid)
+			&& confirm_sesskey()
+			&& (has_capability('mod/referentiel:managecertif', $context)
+            or referentiel_etudiant_isowner($deleteid))) {
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
-            if (referentiel_delete_etudiant_user($delete)){
+            if (referentiel_delete_etudiant_user($deleteid)){
 				// DEBUG
 				// echo "<br /> DEBUG :: 212 ::  etudiant $delete REMIS A ZERO\n";
 				// exit;
-				add_to_log($course->id, 'referentiel', 'record delete', "etudiant.php?d=$referentiel->id", $delete, $cm->id);
+				add_to_log($course->id, 'referentiel', 'record delete', "etudiant.php?id=$cm->id", $deleteid, $cm->id);
                 // notify(get_string('recorddeleted','referentiel'), 'notifysuccess');
             }
-		} 
+            redirect("$CFG->wwwroot/mod/referentiel/etudiant.php?id=$cm->id&amp;sesskey=".sesskey());
+            exit;
+		}
     }
-	
-	if (!empty($referentiel) && !empty($course) 
-		&& isset($form) && isset($form->mode)
-		)
-	{
-		// add, delete or update form submitted	
+
+    // selections multiples
+    if (isset($_POST['action']) && ($_POST['action']=='modifglobaletudiant')){
+        // echo "<br />DEBUG :: etudiant.php :: 268 :: ACTION : ".$_POST['action']." \n";
+		$form=$_POST;
+		//print_object($form);
+		// exit;
+		if (!empty($form['tetudiant_id'])){
+            //
+            foreach ($form['tetudiant_id'] as $id_etudiant){
+                    // echo "<br />ID :: ".$id_domaine."\n";
+                    // exit;
+                    $record= new Object();
+                    $record->id=$id_etudiant;
+        		    $record->num_etudiant=$form['num_etudiant_'.$id_etudiant];
+        		    $record->ddn_etudiant=$form['ddn_etudiant_'.$id_etudiant];
+        		    $record->lieu_naissance=$form['lieu_naissance_'.$id_etudiant];
+        		    $record->departement_naissance=$form['departement_naissance_'.$id_etudiant];                    //echo "<br />DEBUG :: edit.php :: 262<br />\n";
+        		    $record->ref_etablissement=$form['ref_etablissement_'.$id_etudiant];
+                    $record->userid=$form['userid_'.$id_etudiant];
+                    //print_object($record);
+                    //echo "<br />\n";
+					//exit;
+					if (!$DB->update_record("referentiel_etudiant", $record)){
+                        print_error("Could not update record $record->id ", "etudiant.php?id=".$cm->id.'&amp;sesskey='.sesskey());
+                    }
+                    add_to_log($course->id, "referentiel", "update", "update student ".$record->id);
+            }
+        }
+        unset($form);
+		redirect("$CFG->wwwroot/mod/referentiel/etudiant.php?id=$cm->id&amp;sesskey=".sesskey());
+        exit;
+    }
+
+
+
+	if (!empty($form->mode)){  // add, delete or update form submitted
 		$addfunction    = "referentiel_add_etudiant";
         $updatefunction = "referentiel_update_etudiant";
         $deletefunction = "referentiel_delete_etudiant";
-		
+
 		switch ($form->mode) {
     		case "updateetudiant":
-			
 				// DEBUG
-				// echo "<br /> $form->mode\n";
-				
-				if (isset($form->name)) {
-   		        	if (trim($form->name) == '') {
-       		        	unset($form->name);
-           		    }
-               	}
-				
+				//echo "<br /> $form->mode<br />\n";
+				//print_object($form);
+				//exit;
 				if (isset($form->delete) && ($form->delete==get_string('delete'))){
-					// suppression 	
-					// echo "<br />SUPPRESSION\n";
-	    	        $return = $deletefunction($form->userid);
+					// suppression
+	    	        $return = $deletefunction($form->etudiant_id);
     	    	    if (!$return) {
-							/*
-            	        	if (file_exists($moderr)) {
-                	        	$form = $form;
-	                   		    include_once($moderr);
-    	                   		die;
-	    	               	}
-							*/
-    	         	      	print_error("Could not update etudiant $form->userid of the referentiel", "etudiant.php?d=$referentiel->id");
+    	         	    print_error('incorrect_id','referentiel',$CFG->wwwroot.'/mod/referentiel/etudiant.php?id='.$cm->id,$form->etudiant_id,"Delete function");
         	    	}
-	                if (is_string($return)) {
-    	           	    print_error($return, "etudiant.php?d=$referentiel->id");
-	    	        }
 	        	    if (isset($form->redirect)) {
     	                $SESSION->returnpage = $form->redirecturl;
         	       	}
                        else {
-            	       	$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/etudiant.php?d=$referentiel->id";
+            	       	$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/etudiant.php?id=$cm->id";
 	               	}
-					
+
 	    	        add_to_log($course->id, "referentiel", "delete",
             	          "mise a jour etudiant $form->userid",
                           "$form->etudiant_id", "");
-					
+
 				}
 				else {
-				// DEBUG
-				// echo "<br /> UPDATE\n";
-				
+                    // update
 	    	    	$return = $updatefunction($form);
     	    	    if (!$return) {
-					/*
-            		    if (file_exists($moderr)) {
-                			$form = $form;
-                    		include_once($moderr);
-                        	die;
-	                    }
-					*/
-    	            	print_error("Could not update etudiant $form->userid of the referentiel", "etudiant.php?d=$referentiel->id");
+    	         	    print_error('incorrect_id','referentiel',$CFG->wwwroot.'/mod/referentiel/etudiant.php?id='.$cm->id,$form->etudiant_id,"Delete function");
 					}
 		            if (is_string($return)) {
     		        	print_error($return, "etudiant.php?d=$referentiel->id");
 	    		    }
 	        		if (isset($form->redirect)) {
     	        		$SESSION->returnpage = $form->redirecturl;
-					} 
+					}
 					else {
         	    		$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/etudiant.php?d=$referentiel->id";
 	        	    }
@@ -347,20 +303,13 @@
     	    	}
 
 			break;
-			
+
 			case "addetudiant":
 				if (!isset($form->name) || trim($form->name) == '') {
         			$form->name = get_string("modulename", "referentiel");
         		}
 				$return = $addfunction($form);
 				if (!$return) {
-    	        	/*
-					if (file_exists($moderr)) {
-    	    	    	$form = $form;
-        	    	    include_once($moderr);
-            	    	die;
-					}
-	            	*/
 					print_error("Could not add a new etudiant to the referentiel", "etudiant.php?d=$referentiel->id");
 				}
 	        	if (is_string($return)) {
@@ -368,7 +317,7 @@
 				}
 				if (isset($form->redirect)) {
     	    		$SESSION->returnpage = $form->redirecturl;
-				} 
+				}
 				else {
 					$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/etudiant.php?d=$referentiel->id";
 				}
@@ -376,30 +325,30 @@
                            "creation etudiant $form->etudiant_id ",
                            "$form->instance", "");
             break;
-			
+
 	        case "deleteetudiant":
 				if (! $deletefunction($form->userid)) {
-	            	print_error("Could not delete etudiant of  the referentiel");
+	            	print_error("Could not delete that student");
                 }
 	            unset($SESSION->returnpage);
 	            add_to_log($course->id, referentiel, "add",
                            "suppression etudiant $form->userid ",
                            "$form->etudiant_id", "");
             break;
-            
+
 			default:
             	// print_error("No mode defined");
         }
-       	
+
     	if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
 	        unset($SESSION->returnpage);
     	    redirect($return);
-        } 
+        }
 		else {
 	    	redirect("etudiant.php?d=$referentiel->id");
     	}
-		
+
         exit;
 	}
 
@@ -407,7 +356,7 @@
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
 
-    $modform = "etudiant.html";
+    $modform = "etudiant_inc.php";
 
     /// Check to see if groups are being used here
 	/// find out current groups mode
@@ -466,8 +415,9 @@
     $icon = $OUTPUT->pix_url('icon','referentiel');
 
     $PAGE->set_url($url);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
+    $PAGE->requires->js('/mod/referentiel/functions.js');
     $PAGE->navbar->add($strpagename);
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
@@ -480,18 +430,12 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
-    // ONGLETS
-    include('tabs.php');
-    //  Moodle 1.9
-    //  print_heading_with_help($stretudiant, 'etudiant', 'referentiel', $icon);
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strpagename.' '.$OUTPUT->help_icon('etudianth','referentiel').'</h2></div>'."\n";
 
-	// DEBUG
-	// echo "<br /> MODE : $mode  ; CURRENTTABLE : $currenttab \n";
-	// exit;
-
-	
 	if (($mode=='scolarite') || ($mode=='listetudiant')){
 		referentiel_print_liste_etudiants($initiale, $userids, $mode, $referentiel, $userid_filtre, $gusers, $select_acc);
 	}
@@ -500,36 +444,23 @@
    	    echo $OUTPUT->box_start('generalbox  boxaligncenter');
 		// formulaires
 		if ($mode=='updateetudiant'){
-			// recuperer l'id du etudiant apr�s l'avoir genere automatiquement et mettre en place les competences
-			
-			if (!empty($userid)){
-                if (!$record) { // id etudiant
-                    if (!$record = $DB->get_record("referentiel_etudiant", array("userid" => "$userid"))){
-                        print_error('etudiant ID is incorrect');
-                    }
-                }
+            if (!has_capability('mod/referentiel:managecertif', $context) || !empty($userid)){
+                // etudiant sélectionné
+                $modform = "etudiant_edit_inc.php";
             }
-			else{
-				print_error('etudiant ID is incorrect');
-			}
-			$modform = "etudiant_edit.html";
+            else{
+                $modform = "etudiant_inc.php";
+            }
 		}
 		else if ($mode=='deleteetudiant'){
-			// recuperer l'id du etudiant apr�s l'avoir genere automatiquement et mettre en place les competences
-			
 			if (!empty($userid)){ // id etudiant
-                if (!$record){
-                    if (!$record = $DB->get_record("referentiel_etudiant", array("userid" => "$userid"))){
-	       				print_error('etudiant ID is incorrect');
-    	        	}
-			     }
-            }
+    			$modform = "etudiant_edit_inc.php";
+    		}
 			else{
-				print_error('etudiant ID is incorrect');
-			}
-			$modform = "etudiant_edit.html";
+                $modform = "etudiant_inc.php";
+            }
 		}
-		
+
 	    if (file_exists($modform)) {
 	        if ($usehtmleditor = can_use_html_editor()) {
     	        $defaultformat = FORMAT_HTML;

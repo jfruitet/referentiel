@@ -1,8 +1,74 @@
 <?php
 // referentiel module
 //
-// Moodle 8.05
-$string['competences_declare']= 'Compétences déclarées';
+
+// Moodle 2.5
+$string['consignes_associees']= 'Associated Consigns';
+$string['consigne_associee']= 'Associated Consigns';
+$string['competences_declare']= 'Declarated Skills';
+$string['occurrencereferentiel']='Referential Occurrence';
+$string['areareferentiel']='referential';
+$string['areadocument']='document';
+$string['areaconsigne']='consign';
+$string['areaactivite']='activity';
+$string['areatask']='task';
+$string['areacertificat']='certificate';
+$string['areapedagogie']='pedagogia';
+$string['areaoutcomes']='outcomes';
+$string['areaarchive']='archives';
+$string['areascolarite']='scolarship';
+
+// Moodle 2.4
+$string['regenere_profil'] = 'Update students\' numbers';
+$string['deleted_student'] = 'Student record deleted';
+$string['delete_student'] = 'Delete this student form';
+$string['select_student'] = 'Select this Student';
+$string['student'] = 'Student';
+$string['cocher_enregistrer_students'] = 'Only selected Students will be modified...';
+
+$string['profil_non_modifiable'] = ' &nbsp; &nbsp; &nbsp; &nbsp; (Use Profile to modify Student number...)';
+$string['ref_profilecategory'] = 'Profile category \'name\' for Student number id';
+$string['config_ref_profilecategory'] = 'If the User Profile is used to set a <b>Student number</b>, give his <i>Category name</i>.';
+$string['ref_profilefield'] = 'Profile field \'shortname\' for Student number id';
+$string['config_ref_profilefield'] = 'If the User Profile is used to set a <b>Student number</b>, give the <i>\'shortname\' field</i> where to get this Student number.';
+$string['etudianth'] = 'Students';
+$string['etudianth_help'] = 'Personal data for certification
+
+* Student number: \'idnumber\' value of \'user\' Moodle table.
+(if empty \'username\' is used).
+<br />[N.B.: If the User Profile table is used for Students numbers,
+you have to set \'ref_profilecategory\' and \'ref_profilefield\' in the module settings]
+
+* City and departement birthplace;
+
+* Postal Adress;
+
+* Institution;
+
+Students may edit personnal data.';
+
+$string['modifdomskillitemh'] = 'Domains / Skills / Items modification';
+$string['modifdomskillitemh_help'] = 'To add new domains, skills, items, increase the numbers of domains in the occurrence
+(respectively skills in a domain / items in a skill...).';
+
+$string['deletedomainhelp'] = '(All the Skills and Items associated with it will be also deleted...)';
+$string['deleteskillhelp'] = '(All the Items associated with it will be also deleted...)';
+$string['deleteitemhelp'] = '(This Item will be definitively deleted...)';
+
+$string['delete_domain'] = 'Delete this Domain';
+$string['delete_skill'] = 'Delete this Skill';
+$string['delete_item'] = 'Delete this Item';
+
+$string['select_domain'] = 'Selected Domain';
+$string['select_skill'] = 'Selected Skill';
+$string['select_item'] = 'Selected Item';
+
+$string['new_domaine'] = 'New Domain';
+$string['new_competence'] = 'New Skill';
+$string['new_item'] = 'New Item';
+$string['cocher_enregistrer_domain'] = 'Only selected Domains / Skills / Items  will be modified...';
+
+
 $string['delaidesherence']='Délai de déshérence';
 $string['config_delaidesherence']='Nombre de jours au delà duquel les déclarations d\'activité non évaluées sont signalées...';
 $string['jours']='days';
@@ -90,7 +156,7 @@ Il est recommandé de fermer les dossiers de certification après la saisie des 
 $string['non_modifiable'] = 'Ce dossier de certification n\'est pas modifable.';
 $string['debloquer_dossier'] = 'Rouvrez le dossier de certification pour modifier ce champ.';
 $string['valider_certificat'] = 'Certification process ';
-$string['filtre_valide'] = 'Certification';
+$string['f_valide'] = 'Certification';
 $string['dossier_ouvert'] = 'Open';
 $string['dossier_ferme'] = 'Closed';
 
@@ -187,20 +253,6 @@ $string['etablissementh'] = 'Institutions';
 $string['etablissementh_help'] = '* Insttiution number, name, adress;
 
 Only teacher may edit institution data.';
-
-$string['etudianth'] = 'Students';
-$string['etudianth_help'] = 'Persona data for certication
-
-* Student number: \'idnumber\' value of \'user\' Moodle table.
-(if empty \'username\' is used).
-
-* City and departement birthplace;
-
-* Postal Adress;
-
-* Institution;
-
-Students may edit personnal data.';
 
 $string['pedagoh'] = 'Formations / Pedagogys';
 $string['pedagoh_help'] = 'Les administrateurs du site peuvent selectionner les certificats des etudiants regulièrement inscrits dans une filière de formation habilitee à delivrer le certificat concerne. <br />La liste des formations peut être importee ou saisie. <br />L\'importation permet aussi d\'associer directement les etudiants aux formations qui les concernent.';
@@ -889,9 +941,9 @@ $string['aide_referentiel_config_local'] = 'The parameters of configuration and 
 on parameters defined at the level of the site by the administrator of Moodle. An inconsistent parameter setting can forbid you to complete
 the creation of a new Skills repository or to download an existing one.';
 $string['not_verrou'] = 'Not locked';
-$string['filtre_auteur'] = 'Order';
-$string['filtre_verrou'] = 'Locked';
-$string['filtre_date_decision'] = 'Decision date';
+$string['f_auteur'] = 'Order';
+$string['f_verrou'] = 'Locked';
+$string['f_date_decision'] = 'Decision date';
 $string['decision_favorable'] = 'Receipt';
 $string['decision_defavorable'] = 'Adjourned';
 $string['decision_differee'] = 'In wait';
@@ -1115,9 +1167,9 @@ $string['date_modif'] = 'Modified by teacher the ';
 $string['date_modif_student'] = 'Modified by author the ';
 $string['listactivityall'] = 'Details';
 $string['listactivitysingle'] = 'Details';
-$string['filtre_validation'] = 'Validation';
-$string['filtre_date_modif'] = 'Folow-up Date';
-$string['filtre_date_modif_student'] = 'Author Date';
+$string['f_validation'] = 'Validation';
+$string['f_date_modif'] = 'Folow-up Date';
+$string['f_date_modif_student'] = 'Author Date';
 
 // version 3.3.4
 $string['evaluation_par'] = 'Evaluation by';
@@ -1150,7 +1202,7 @@ $string['selection_instance_referentiel'] = 'Check first instances to be to dele
 
 $string['ressaisir_pass_referentiel'] = 'Input new password ';
 $string['suppression_pass_referentiel'] = 'Delete password ';
-$string['suppression_referentiel_impossible'] = 'Delete first instances of this Skills repository ';
+$string['suppression_referentiel_impossible'] = 'Skills repository {$a} deletion impossible : you have elete first instances to delete ';
 
 // version 3.1.4
 $string['modifier_depot_document'] = 'Modify<br />linked document ';
@@ -1314,7 +1366,7 @@ $string['empreinte'] = 'Fingerprint [0..999]: Number of times this skill must be
 $string['etiquette_inconnue'] = 'Unknow label. Click to show the page';
 $string['etiquette_url'] = 'Label of link ';
 $string['liste_empreintes_competence'] = 'Fingerprints list';
-$string['liste_codes_empreintes_competence'] = 'Codes<br />Weights<br />and <i>Fingerprints</i> lists';
+$string['liste_codes_empreintes_competence'] = 'Codes, Weights and <i>Fingerprints</i> lists';
 $string['listactivitysingle'] = 'Details';
 $string['upload_succes'] = 'File uploaded successfully.';
 

@@ -34,21 +34,18 @@
 */
 	
     require_once('../../config.php');
-    require_once('lib.php');
+    require_once('locallib.php');
 	require_once('print_lib_referentiel.php');
 
     $id    = optional_param('id', 0, PARAM_INT);    // course module id	
     $d     = optional_param('d', 0, PARAM_INT);    // referentiel instance id
-	
 	$action  			= optional_param('action','', PARAM_ALPHA); // pour distinguer differentes formes de creation de referentiel
     $mode  				= optional_param('mode','add', PARAM_ALPHANUMEXT);
-
 	$name_instance		= optional_param('name_instance','', PARAM_ALPHANUMEXT);
 	$description_instance		= optional_param('description_instance','', PARAM_ALPHANUMEXT);
 	$label_domaine    = optional_param('label_domaine','', PARAM_ALPHANUMEXT);
 	$label_competence = optional_param('label_competence','', PARAM_ALPHANUMEXT);
 	$label_item= optional_param('label_item','', PARAM_ALPHANUMEXT);
-
     $sesskey     		= optional_param('sesskey', '', PARAM_ALPHANUM);
     $coursemodule     	= optional_param('coursemodule', 0, PARAM_INT);
     $section 			= optional_param('section', 0, PARAM_INT);	
@@ -56,8 +53,6 @@
 	$modulename     	= optional_param('modulename', '', PARAM_ALPHA);
 	$instance 			= optional_param('instance', 0, PARAM_INT);
  	$select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
-
-    // MODIF JF 22/01/2010
     $non_redirection = optional_param('non_redirection', 0, PARAM_INT);    // par defaut on redirige vers activite
 
     // nouveaute Moodle 1.9 et 2
@@ -255,8 +250,8 @@
     $PAGE->requires->js('/mod/referentiel/functions.js');
     $referentielinstance = new referentiel($cm->id, $referentiel, $cm, $course);
     /// Mark as viewed
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
+    //$completion=new completion_info($course);
+    //$completion->set_module_viewed($cm);
     $referentielinstance->add($non_redirection, $mode);   // Actually select the referentiel!
 
 ?>

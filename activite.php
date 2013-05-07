@@ -22,114 +22,40 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-require_once("../../config.php");
-require_once("lib.php");
-require_once('onglets.php');
-include('lib_etab.php');
-include('print_lib_activite.php');	// AFFICHAGES
-include('lib_task.php');
-include('print_lib_task.php');	// AFFICHAGES TACHES
-// include('print_lib_accompagnement.php');	// AFFICHAGES TACHES  require_once("lib_accompagnement.php");
+    require_once('../../config.php');
+    require_once('locallib.php');
 
-  $id = optional_param('id', 0, PARAM_INT);    // course module id
-  $d  = optional_param('d', 0, PARAM_INT); // Referentiel ID
+    include('lib_etab.php');
+    include('print_lib_activite.php');	// AFFICHAGES
+    include('lib_task.php');
+    include('print_lib_task.php');	// AFFICHAGES TACHES
 
-  $mode  = optional_param('mode', '', PARAM_ALPHANUMEXT);    // Force the browse mode  ('single')
+    $id = optional_param('id', 0, PARAM_INT);    // course module id
+    $d  = optional_param('d', 0, PARAM_INT); // Referentiel ID
+    $mode  = optional_param('mode', '', PARAM_ALPHANUMEXT);    // Force the browse mode  ('single')
+    $group = optional_param('group', -1, PARAM_INT);   // choose the current group
+    $activite_id   = optional_param('activite_id', 0, PARAM_INT);    //record activite id
+    $mailnow      = optional_param('mailnow', 0, PARAM_INT); // pour afficher les destinataires
+    $action  	= optional_param('action','', PARAM_ALPHANUMEXT); // pour distinguer differentes formes de traitements
+    $old_mode   = optional_param('old_mode','', PARAM_ALPHA); // mode anterieur
+    $add        = optional_param('add','', PARAM_ALPHA);
+    $update     = optional_param('update', 0, PARAM_INT);
+    $delete     = optional_param('delete', 0, PARAM_INT);
+    $approve    = optional_param('approve', 0, PARAM_INT);
+    $comment    = optional_param('comment', 0, PARAM_INT);
+    $courseid   = optional_param('courseid', 0, PARAM_INT);
+    $groupmode  = optional_param('groupmode', -1, PARAM_INT);
+    $cancel     = optional_param('cancel', 0, PARAM_BOOL);
+    $userid     = optional_param('userid', 0, PARAM_INT);
+    $initiale   = optional_param('initiale','', PARAM_ALPHA); // selection apr les initiales du nom
+    $userids    = optional_param('userids','', PARAM_TEXT); // id user selectionnes par les initiales du nom
 
-  $group = optional_param('group', -1, PARAM_INT);   // choose the current group
-  $activite_id   = optional_param('activite_id', 0, PARAM_INT);    //record activite id
-    // $import   = optional_param('import', 0, PARAM_INT);    // show import form
+    $mode_select       = optional_param('mode_select','', PARAM_ALPHANUMEXT);
+    $select_acc = optional_param('select_acc', -1, PARAM_INT);      // accompagnement
 
-  $mailnow      = optional_param('mailnow', 0, PARAM_INT); // pour afficher les destinataires
+    // Filtres
+    require_once('filtres.php'); // Ne pas deplacer
 
-  $action  	= optional_param('action','', PARAM_ALPHANUMEXT); // pour distinguer differentes formes de traitements
-  $old_mode   = optional_param('old_mode','', PARAM_ALPHA); // mode anterieur
-  $add        = optional_param('add','', PARAM_ALPHA);
-  $update     = optional_param('update', 0, PARAM_INT);
-  $delete     = optional_param('delete', 0, PARAM_INT);
-  $approve    = optional_param('approve', 0, PARAM_INT);	
-  $comment    = optional_param('comment', 0, PARAM_INT);		
-  $course     = optional_param('course', 0, PARAM_INT);
-  $groupmode  = optional_param('groupmode', -1, PARAM_INT);
-  $cancel     = optional_param('cancel', 0, PARAM_BOOL);
-  $userid     = optional_param('userid', 0, PARAM_INT);
-  $initiale   = optional_param('initiale','', PARAM_ALPHA); // selection apr les initiales du nom
-  $userids    = optional_param('userids','', PARAM_TEXT); // id user selectionnes par les initiales du nom
-
-  $mode_select       = optional_param('mode_select','', PARAM_ALPHANUMEXT);
-  $filtre_validation = optional_param('filtre_validation', 0, PARAM_INT);
-  $filtre_referent = optional_param('filtre_referent', 0, PARAM_INT);
-  $filtre_date_modif = optional_param('filtre_date_modif', 0, PARAM_INT);
-  $filtre_date_modif_student = optional_param('filtre_date_modif_student', 0, PARAM_INT);
-  $filtre_auteur = optional_param('filtre_auteur', 0, PARAM_INT);
-  $sql_filtre_where=optional_param('sql_filtre_where','', PARAM_ALPHA);
-  $sql_filtre_order=optional_param('sql_filtre_order','', PARAM_ALPHA);
-  $select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
-
-	// DEBUG
-	//echo "<br />DEBUG :: 65 :: ACTIVITE.PHP :: MODE : $mode<br />USERID : $userid\n";
-
-
-	$data_filtre= new Object(); // paramettres de filtrage
-	if (isset($filtre_validation)){
-			$data_filtre->filtre_validation=$filtre_validation;
-	}
-	else {
-		$data_filtre->filtre_validation=0;
-	}
-	if (isset($filtre_referent)){
-		$data_filtre->filtre_referent=$filtre_referent;
-	}
-	else{
-		$data_filtre->filtre_referent=0;
-	}
-	if (isset($filtre_date_modif_student)){
-		$data_filtre->filtre_date_modif_student=$filtre_date_modif_student;
-	}
-	else{
-		$data_filtre->filtre_date_modif_student=0;
-	}
-	if (isset($filtre_date_modif)){
-		$data_filtre->filtre_date_modif=$filtre_date_modif;
-	}
-	else{
-		$data_filtre->filtre_date_modif=0;
-	}
-	if (isset($filtre_auteur)){
-		$data_filtre->filtre_auteur=$filtre_auteur;
-	}
-	else{
-		$data_filtre->filtre_auteur=0;
-	}
-/*
-// DEBUG
-$sdebug0= "<br>DEBUG : TOUT LES PARAMETRES AVANT TRAITEMENT<br>***************************************\n";
-$sdebug0.= "
-<br>CMID:$id, REFID:$d,
-<br>OLD_MODE:$old_mode, MODE:$mode,
-<br>GROUP:$group, GROUPMODE:$groupmode
-<br>ACTITEID:$activite_id,
-<br><br>USERID:$userid,
- INITIALES;$initiale,
- USERIDS:$userids,
-<br>MAILNOW:$mailnow,
-<br>ACTION:$action,
-<br>ADD:$add,
- UPDATE:$update,
- DELETE:$delete,
- APPROVE:$approve,
- COMMENT:$comment,
- CANCEL:$cancel,
-<br>MODE_SELECT:$mode_select, &nbsp; SELECT_ACCOMPAGNEMENT:$select_acc,
-<br>FILTRE :: &nbsp; VALiDATION:$filtre_validation,
- &nbsp; REFERENT:$filtre_referent,
- &nbsp; DATE_MODIF:$filtre_date_modif,
- &nbsp; DATE_MODIF_STUDENT:$filtre_date_modif_student,
- &nbsp; AUTEUR:$filtre_auteur,
-<br>SQL_WHERE:''".htmlentities($sql_filtre_where)."'',
-<br>SQL_ORDER:''".htmlentities($sql_filtre_order)."''\n";
-*/
-    // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/activite.php');
 
 	if ($d) {     // referentiel_referentiel_id
@@ -165,14 +91,9 @@ $sdebug0.= "
         $url->param('id', $id);
     } 
 	else{
-    // print_error('You cannot call this script in that way');	
 		print_error(get_string('erreurscript','referentiel','Erreur01 : activite.php'), 'referentiel');
 	}
 	
-
-	// DEBUG
-	//echo "<br />DEBUG :: 143 :: ACTIVITE.PHP :: MODE : $mode<br />USERID : $userid\n";
-
     $contextcourse = get_context_instance(CONTEXT_COURSE, $course->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -183,7 +104,6 @@ $sdebug0.= "
         }
 	}
 
-
     require_login($course->id, false, $cm);   // pas d'autologin guest
 
     if (!isloggedin() or isguestuser()) {
@@ -191,7 +111,6 @@ $sdebug0.= "
     }
 
 	/// If it's hidden then it's don't show anything.  :)
-	/// Some capability checks.
     if (empty($cm->visible)
     && (
         !has_capability('moodle/course:viewhiddenactivities', $context)
@@ -205,154 +124,40 @@ $sdebug0.= "
 
 
 	
-  if ($activite_id) {    // So do you have access?
-      if (!(has_capability('mod/referentiel:write', $context) 
-//			or referentiel_activite_isowner($activite_id)) or !confirm_sesskey() ) {
-			or referentiel_activite_isowner($activite_id)) ) {            
+    if ($activite_id) {    // So do you have access?
+    if (!(has_capability('mod/referentiel:write', $context)
+			or referentiel_activite_isowner($activite_id)) ) {
           print_error(get_string('noaccess','referentiel'));
         }
     }
 	
-	
-	
 	// RECUPERER LES FORMULAIRES
-  if (isset($SESSION->modform)) {   // Variables are stored in the session
+    if (isset($SESSION->modform)) {   // Variables are stored in the session
         $form = $SESSION->modform;
         unset($SESSION->modform);
-  }
-  else{
+    }
+    else{
       $form = (object)$_POST;
-  }
-
-        // DEBUG
-        // echo "<br />DEBUG :: activite.php :: Ligne 195\n";
-        // print_r($form);
-        // exit;
+    }
 
     // selecteur
     $userid_filtre=0;
 	if (isset($userid) && ($userid>0)){
 		$userid_filtre=$userid;
 	} 
-	else if (isset($form->userid) && ($form->userid>0)){
-		$userid_filtre=$form->userid;
-	} 
-		// DEBUG
-		// echo "<br />$userid_filtre\n";
-		// exit;
 
-	/// selection filtre
-    // MODIF JF 20/09/2012
-    if (empty($userid_filtre) || ($userid_filtre==$USER->id) || (isset($mode_select) && ($mode_select=='selectetab'))){
-		// gestion des filtres;
-		$sql_filtre_where='';
-		$sql_filtre_order='';
-		
-		if (isset($filtre_validation) && ($filtre_validation=='1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND approved=\'1\' ';
-			else
-				$sql_filtre_where.=' AND approved=\'1\' ';
-		}
-		else if (isset($filtre_validation) && ($filtre_validation=='-1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND approved=\'0\' ';
-			else
-				$sql_filtre_where.=' AND approved=\'0\' ';
-		}
-		// Modif JF 2013/01/29
-		if (isset($filtre_referent) && ($filtre_referent=='1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND ((date_modif<date_modif_student)  AND (approved=0)) ';
-			else
-				$sql_filtre_where.=' AND ((date_modif<date_modif_student) AND (approved=0))  ';
-		}
-		else if (isset($filtre_referent) && ($filtre_referent=='-1')){
-/*
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND (teacherid<>0)  ';
-			else
-				$sql_filtre_where.=' AND (teacherid<>0)  ';
-*/
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND (date_modif>=date_modif_student) ';
-			else
-				$sql_filtre_where.=' AND (date_modif>=date_modif_student)  ';
-		}
-
-		if (isset($filtre_date_modif) && ($filtre_date_modif=='1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_modif ASC ';
-			else
-				$sql_filtre_order.=' date_modif ASC ';
-		}
-		else if (isset($filtre_date_modif) && ($filtre_date_modif=='-1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_modif DESC ';
-			else
-				$sql_filtre_order.=' date_modif DESC ';
-		}
-		
-		if (isset($filtre_date_modif_student) && ($filtre_date_modif_student=='1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_modif_student ASC ';
-			else
-				$sql_filtre_order.=' date_modif_student ASC ';
-		}
-		else if (isset($filtre_date_modif_student) && ($filtre_date_modif_student=='-1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_modif_student DESC ';
-			else
-				$sql_filtre_order.=' date_modif_student DESC ';
-		}		
-		
-		if (isset($filtre_auteur) && ($filtre_auteur=='1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', userid ASC ';
-			else
-				$sql_filtre_order.=' userid ASC ';
-		}
-		else if (isset($filtre_auteur) && ($filtre_auteur=='-1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', userid DESC ';
-			else
-				$sql_filtre_order.=' userid DESC ';
-		}
-
-
-		// echo "<br />DEBUG :: activite.php :: Ligne 162 :: FILTRES : $sql_filtre_where $sql_filtre_order\n";
-		
-  }
-
-	/// selection d'utilisateurs
-	
   // accompagnement
-	if (!isset($select_acc)){
-        if (isset($form->select_acc)){
-            $select_acc=$form->select_acc;
-        }
-        else{
-            $select_acc=(referentiel_has_pupils($referentiel->id, $course->id, $USER->id)>0);
-        }
-        // DEBUG
-        // echo "<br />DEBUG :: activite.php :: 280 :: ACCOMPAGNEMENT : $select_acc<br />\n";
+	if ($select_acc==-1){
+        $select_acc=(referentiel_has_pupils($referentiel->id, $course->id, $USER->id)>0);
     }
-    
+
 	if ($cancel) {
-	      // DEBUG
-        // echo "<br />DEBUG :: activite.php :: Ligne 285 CANCEL : $cancel SELECT_ACC : $select_acc\n";
-        // print_r($form);
-        // exit;
-        if (isset($form->select_acc)){
-          $select_acc=$form->select_acc;
-        }
-	      
 		$mode ='listactivityall';
 		if (has_capability('mod/referentiel:managecertif', $context)){
-	           $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=0&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+	           $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;userid=0&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 		}
 		else{
-	           $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+	           $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 		}
     	if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
@@ -360,66 +165,30 @@ $sdebug0.= "
     	    redirect($return);
         }
 		else {
-	       redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student");
+	       redirect("$CFG->wwwroot/mod/referentiel/activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student");
     	}
         exit;
     }
-  
-	// selection utilisateurs accompagnés  
-    if (isset($action) && ($action=='select_acc')){
-		  if (isset($form->select_acc) && confirm_sesskey() ){
-		  	$select_acc=$form->select_acc;
-		  }
-		  if (isset($form->mode) && ($form->mode!='')){
-			 $mode=$form->mode;
-		  }
-		  // echo "<br />ACTION : $action  SEARCH : $userid_filtre\n";
-		  unset($form);
-		  unset($action);
-		  // exit;
-    }
-    
+
     // utilisateur
     if (isset($action) && ($action=='selectuser')){
-		  if (isset($form->userid) && ($form->userid>0)
-			&& confirm_sesskey() ){
-		  	$userid_filtre=$form->userid;
-			 // DEBUG
+		  if (!empty($userid) && confirm_sesskey() ){
+		  	$userid_filtre=$userid;
 		  }
-		  if (isset($form->select_acc)){
-		  	$select_acc=$form->select_acc;
-		  }
-
-		  if (isset($form->mode) && ($form->mode!='')){
-			 $mode=$form->mode;
-		  }
-		  // echo "<br />ACTION : $action  SEARCH : $userid_filtre\n";
 		  unset($form);
 		  unset($action);
-		  // exit;
     }
 
     if (isset($action) && ($action=='selectaccompagnement')
-      && isset($form->mode) && ($form->mode=='accompagnement')
-			&& confirm_sesskey() )
+      && ($mode=='accompagnement') && confirm_sesskey() )
     {
-
-        // accompagnement
-        if (isset($form->select_acc)){
-		  	$select_acc=$form->select_acc;
-        }
-			
         if (!empty($form->teachers_list)){
             $teachersids=explode(',',$form->teachers_list);
         }
         if (!empty($form->users_list)){
             $usersids=explode(',',$form->users_list);
         }
-        if (isset($form->mode) && ($form->mode!='')){
-            $mode=$form->mode;
-        }
         foreach($teachersids as $tid){
-            // RAZ
             foreach ($usersids as $uid){
                 $ok=false;
                 $i=0;
@@ -443,7 +212,6 @@ $sdebug0.= "
           
         unset($form);
         unset($action);
-        // exit;
     }
 
  	
@@ -451,9 +219,6 @@ $sdebug0.= "
     if (isset($delete) && ($delete>0 )
 		&& confirm_sesskey() 
 		&& (has_capability('mod/referentiel:write', $context) or referentiel_activite_isowner($delete))) {
-		
-        // echo "<br />DEBUG :: activite.php :: 414\n";
-        // print_r($form);
 
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
             // suppression
@@ -462,10 +227,10 @@ $sdebug0.= "
                 // notify(get_string('recorddeleted','referentiel'), 'notifysuccess');
             }
         }
-        redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student");
+        redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student");
         exit;
     }
-	
+
 	/// Approve any requested records
     if (isset($approve) && ($approve>0) && confirm_sesskey() 
 		&& has_capability('mod/referentiel:approve', $context)) {
@@ -482,16 +247,11 @@ $sdebug0.= "
 			$approverecord->type_activite=addslashes($approverecord->type_activite);			
 			$approverecord->description_activite=addslashes($approverecord->description_activite);
 			$approverecord->commentaire_activite=addslashes($approverecord->commentaire_activite);
-			
-			// DEBUG
-			// print_r($approverecord);
-			// echo "<br />\n";
-			
+
             if ($DB->update_record("referentiel_activite", $approverecord)) {
 				if (($approverecord->userid>0) && ($approverecord->competences_activite!='')){
 					// mise a jour du certificat 
 					if ($approverecord->approved){
-                        // schema referentiel_mise_a_jour_competences_certificat_user($liste_competences_moins, $liste_competences_plus, $userid, $referentiel_id, $approved, $modif_declaration=true, $modif_validation=false);
 						referentiel_mise_a_jour_competences_certificat_user('', $approverecord->competences_activite, $approverecord->userid, $approverecord->ref_referentiel,$approverecord->approved, false, true);
 					}
 					else{
@@ -503,49 +263,38 @@ $sdebug0.= "
 				$userid_filtre=$userid;
 			} 
 
-             // MODIF 19/11/2010
 			if (isset($old_mode) && ($old_mode!='')){
                 $mode=$old_mode;
             }
         }
     }
-	
+
 	/// Comment any requested records
     if (isset($comment) && ($comment>0) && confirm_sesskey()
 		&& has_capability('mod/referentiel:comment', $context)) 
     {
-        if (isset($form) && isset($form->activite_id) && ($form->activite_id>0)){
-            // accompagnement
-            if (isset($form->select_acc)){
-                $select_acc=$form->select_acc;
-            }
-
+        if (!empty($activite_id)){
 			if ($approverecord = $DB->get_record("referentiel_activite", array("id" => "$comment"))) {
 				$approverecord->teacherid=$USER->id;
 				$approverecord->date_modif=time();
 				$approverecord->type_activite=addslashes($approverecord->type_activite);
 				$approverecord->description_activite=addslashes($approverecord->description_activite);
 				$approverecord->commentaire_activite=addslashes($form->commentaire_activite);
-				if (isset($form->approved)) {
-					$approverecord->approved=$form->approved;
+				if (isset($approved)) {
+					$approverecord->approved=$approved;
 				}
-				if (isset($form->userid) && ($form->userid>0)){
-					$userid_filtre=$form->userid;
+				if (isset($userid) && ($userid>0)){
+					$userid_filtre=$userid;
 				} 
-                // MODIF JF 2010/02/11
-                if (isset($form->mailnow)){
-                    $approverecord->mailnow=$form->mailnow;
-                    if ($form->mailnow=='1'){ // renvoyer
+                if (isset($mailnow)){
+                    $approverecord->mailnow=$mailnow;
+                    if ($mailnow=='1'){ // renvoyer
                         $approverecord->mailed=0;   // annuler envoi precedent
                     }
                 }
                 else{
                     $approverecord->mailnow=0;
                 }
-				
-				// DEBUG
-				// print_r($approverecord);
-				// echo "<br />\n";
 				
                 if ($DB->update_record('referentiel_activite', $approverecord)) {
 					if (($approverecord->userid>0) && ($approverecord->competences_activite!='')){
@@ -561,32 +310,23 @@ $sdebug0.= "
 			}
 			unset($form);
 
-			// MODIF JF 2012/05/22
 			// Relancer l'affichage de toutes les activites de l'utilisateur
-			// en supprimant lid de l'activite commentee
+			// en supprimant id de l'activite commentee
 			$activite_id=0;
 
-			// MODIF 19/11/2010
 			if (isset($old_mode) && ($old_mode!='')){
                 $mode=$old_mode;
             }
+        }
     }
-  }
 	
-	
-  // if (!empty($course) and confirm_sesskey()) {    // add, delete or update form submitted
-	
+
     if (!empty($referentiel) && !empty($course) && isset($form)) {
     	/// modification globale
   		  		  
         if (isset($_POST['action']) && ($_POST['action']=='modifier_activite_global')){
 		    // echo "<br />DEBUG :: activite.php :: 274 :: ACTION : $action \n";
 		    $form=$_POST;
-		  
-            // accompagnement
-            if (isset($form['select_acc'])){
-		    	$select_acc=$form['select_acc'];
-		    }
 
 		    if (isset($form['tactivite_id']) && ($form['tactivite_id'])){
                 //
@@ -613,7 +353,7 @@ $sdebug0.= "
                     $form2->commentaire_activite=($form['commentaire_activite_'.$id_activite]);
                     $form2->instance=$form['ref_instance_'.$id_activite];
                     $form2->ref_referentiel=$form['ref_referentiel_'.$id_activite];
-                    $form2->course=$form['ref_course_'.$id_activite];
+                    $form2->courseidid=$form['ref_course_'.$id_activite];
                     $form2->date_creation=$form['date_creation_'.$id_activite];
                     $form2->date_modif_student=$form['date_modif_student_'.$id_activite];
                     $form2->date_modif=$form['date_modif_'.$id_activite];
@@ -641,29 +381,25 @@ $sdebug0.= "
                 }
             }
             unset($form);
-            redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student");
+            redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student");
             exit;
         }
    
-        elseif (!empty($form->mode)){
+        elseif (!empty($action) && (($action=='ajouter_activite') || ($action=='modifier_activite'))
+            && !empty($mode) &&
+                (($mode=='updateactivity') or ($mode=='addactivity') or ($mode=='deleteactivity'))){
             // add, delete or update form submitted
 
             // Afficher la liste des destinataires ?
-            // MODIF JF 2011/11/29
             if (!empty($form->mailnow)){
                 $mailnow=1;
-            }
-
-            // accompagnement
-            if (isset($form->select_acc)){
-		    	$select_acc=$form->select_acc;
             }
 
             $addfunction    = "referentiel_add_activity";
             $updatefunction = "referentiel_update_activity";
             $deletefunction = "referentiel_delete_activity";
 
-            switch ($form->mode) {
+            switch ($mode) {
     		  
                 case "updateactivity":
                     if (isset($form->name)) {
@@ -671,26 +407,10 @@ $sdebug0.= "
        		        	  unset($form->name);
                         }
                     }
-
-                    // echo "<br />DEBUG :: activite.php :: 617\n";
-                    // print_r($form);
-
-                    
                     if (isset($form->delete) && ($form->delete==get_string('delete'))){
-                        // echo "<br />DEBUG :: activite.php :: 621\n";
-                        // print_r($form);
-
                         // suppression
-                        // echo "<br />SUPPRESSION\n";
                         $return = $deletefunction($form);
                         if (!$return) {
-							/*
-            	        	if (file_exists($moderr)) {
-                	        	$form = $form;
-	                   		    include_once($moderr);
-    	                   		die;
-	    	               	}
-							*/
     	         	      	print_error("Could not update activity $form->activite_id of the referentiel", "activite.php?d=$referentiel->id");
                         }
                         if (is_string($return)) {
@@ -704,13 +424,6 @@ $sdebug0.= "
 
                         $return = $updatefunction($form);
                         if (!$return) {
-						  /*
-            		    if (file_exists($moderr)) {
-                			$form = $form;
-                    		include_once($moderr);
-                        	die;
-	                    }
-						  */
                             print_error("Could not update activity $form->id of the referentiel", 'error', "activite.php?d=$referentiel->id");
                         }
                         if (is_string($return)) {
@@ -728,43 +441,31 @@ $sdebug0.= "
                                     $form->ref_activite=$form->activite_id;
                                 }
                                 if (!empty($form->document_id)){
-								  redirect($CFG->wwwroot.'/mod/referentiel/upload_moodle2.php?d='.$referentiel->id.'&amp;userid='.$form->userid.'&amp;activite_id='.$form->ref_activite.'&amp;mailnow='.$mailnow.'&amp;select_acc='.$select_acc.'&amp;document_id='.$form->document_id.'&amp;mode=updatedocument&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student.'&amp;old_mode=listactivityall&amp;sesskey='.sesskey());
-
+								  redirect($CFG->wwwroot.'/mod/referentiel/upload_moodle2.php?d='.$referentiel->id.'&amp;userid='.$form->userid.'&amp;activite_id='.$form->ref_activite.'&amp;mailnow='.$mailnow.'&amp;select_acc='.$select_acc.'&amp;document_id='.$form->document_id.'&amp;mode=updatedocument&amp;f_auteur='.$data_f->f_auteur.'&amp;f_validation='.$data_f->f_validation.'&amp;f_referent='.$data_f->f_referent.'&amp;f_date_modif='.$data_f->f_date_modif.'&amp;f_date_modif_student='.$data_f->f_date_modif_student.'&amp;old_mode=listactivityall&amp;sesskey='.sesskey());
                                 }
                                 else{
-								  redirect($CFG->wwwroot.'/mod/referentiel/upload_moodle2.php?d='.$referentiel->id.'&amp;userid='.$form->userid.'&amp;activite_id='.$form->ref_activite.'&amp;mailnow='.$mailnow.'&amp;select_acc='.$select_acc.'&amp;document_id=0&amp;mode=adddocument&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student.'&amp;old_mode=listactivityall&amp;sesskey='.sesskey());
+								  redirect($CFG->wwwroot.'/mod/referentiel/upload_moodle2.php?d='.$referentiel->id.'&amp;userid='.$form->userid.'&amp;activite_id='.$form->ref_activite.'&amp;mailnow='.$mailnow.'&amp;select_acc='.$select_acc.'&amp;document_id=0&amp;mode=adddocument&amp;f_auteur='.$data_f->f_auteur.'&amp;f_validation='.$data_f->f_validation.'&amp;f_referent='.$data_f->f_referent.'&amp;f_date_modif='.$data_f->f_date_modif.'&amp;f_date_modif_student='.$data_f->f_date_modif_student.'&amp;old_mode=listactivityall&amp;sesskey='.sesskey());
                                 }
                                 exit;
                              }
                         }
                     }
-/*
-                if (isset($form->redirecturl)) {
-    	    		$SESSION->returnpage = $form->redirecturl;
-                }
-                else {
-*/
                     $mode ='listactivityall';
 					if (has_capability('mod/referentiel:managecertif', $context)){
-	    	        	$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+	    	        	$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 					}
 					else{
                         if ($mailnow){
-	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&activite_id=$activite_id&mailnow=$mailnow&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&activite_id=$activite_id&mailnow=$mailnow&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
                         }
                         else{
-	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
                         }
 					}
-/*
-                }
-*/
                 break;
 			
                 case "addactivity":
-				     // echo "<br />activite.php : Ligne 337 : Formulaire\n";
-				     // print_r($form);				
-				
+
                     if (!isset($form->name) || trim($form->name) == '') {
         			    $form->name = get_string("modulename", "referentiel");
                     }
@@ -785,7 +486,7 @@ $sdebug0.= "
                             .'&amp;activite_id='.$return
                             .'&amp;select_acc='.$select_acc
                             .'&amp;mailnow='.$mailnow
-                            .'&amp;document_id=0&amp;mode=adddocument&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student
+                            .'&amp;document_id=0&amp;mode=adddocument&amp;f_auteur='.$data_f->f_auteur.'&amp;f_validation='.$data_f->f_validation.'&amp;f_referent='.$data_f->f_referent.'&amp;f_date_modif='.$data_f->f_date_modif.'&amp;f_date_modif_student='.$data_f->f_date_modif_student
                             .'&amp;old_mode=listactivityall&amp;sesskey='.sesskey());
                             exit;
                         }
@@ -794,27 +495,18 @@ $sdebug0.= "
                            "creation activite $form->activite_id ",
                            "$form->instance", "");
 
-/*
-				    if (isset($form->redirecturl)) {
-    	    		     $SESSION->returnpage = $form->redirecturl;
-				    }
-				    else {
-*/
                     $mode ='listactivityall';
 					if (has_capability('mod/referentiel:managecertif', $context)){
-	    	                  $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&mailnow=$mailnow&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+	    	                  $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&mailnow=$mailnow&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 					}
 					else{
                         if ($mailnow){
-	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&activite_id=$return&mailnow=$mailnow&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&activite_id=$return&mailnow=$mailnow&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
                         }
                         else{
-	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
                         }
 				    }
-/*
-                    }
-*/
                 break;
 			
                 case "deleteactivity":
@@ -829,15 +521,17 @@ $sdebug0.= "
 				    }
       		        $mode ='listactivityall';
 			   	    if (has_capability('mod/referentiel:managecertif', $context)){
-                        $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+                        $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 				    }
 				    else{
-	            	    $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student";
+	            	    $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 				    }
                 break;
             
 			    default:
-            	   // print_error("No mode defined");
+            	   // print_error("Incorrect mode defined");
+            	   // echo "<br>571 :: MODE : $mode\n";
+	               exit;
             }
 		    
 		  
@@ -847,41 +541,20 @@ $sdebug0.= "
                 redirect($return);
             }
 		    else {
-                redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student");
+                redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student");
             }
 		
             exit;
     
         }
     }
-    /*
-// DEBUG
-$sdebug= "<br><br>DEBUG : TOUT LES PARAMETRES APRES TRAITEMENT<br>#####################################################\n";
-$sdebug.= "
-<br>CMID:$id, REFID:$d,
-<br>OLD_MODE:$old_mode, MODE:$mode,
-<br>GROUP:$group, GROUPMODE:$groupmode
-<br>ACTITEID:$activite_id,
-<br><br>USERID:$userid, USERID_FILTRE:$userid_filtre,
- INITIALES;$initiale,
- USERIDS:$userids,
-<br>MAILNOW:$mailnow,
-<br>ACTION:$action,
-<br>ADD:$add,
- UPDATE:$update,
- DELETE:$delete,
- APPROVE:$approve,
- COMMENT:$comment,
- CANCEL:$cancel,
-<br>MODE_SELECT:$mode_select, &nbsp; SELECT_ACCOMPAGNEMENT:$select_acc,
-<br>FILTRE :: &nbsp; VALiDATION:$filtre_validation,
- &nbsp; REFERENT:$filtre_referent,
- &nbsp; DATE_MODIF:$filtre_date_modif,
- &nbsp; DATE_MODIF_STUDENT:$filtre_date_modif_student,
- &nbsp; AUTEUR:$filtre_auteur,
-<br>SQL_WHERE:''".htmlentities($sql_filtre_where)."'',
-<br>SQL_ORDER:''".htmlentities($sql_filtre_order)."''\n";
-*/
+    
+	/// selection filtre
+    if (empty($userid_filtre) || ($userid_filtre==$USER->id)
+        || (isset($mode_select) && ($mode_select=='selectetab'))){
+        set_filtres_sql();
+    }
+
     // afficher les formulaires
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
     $modform = "activite.html";
@@ -895,9 +568,7 @@ $sdebug.= "
     else{
         $currentgroup = groups_get_activity_group($cm, true);
     }
-    // DEBUG
-    // echo "<br>arctivite.php :: 838 : CURRENTGROUP: $currentgroup<br />EXIT\n";
-    // exit;
+
    	/// Get all users that are allowed to submit activite
 	$gusers=NULL;
     if ($gusers = get_users_by_capability($context, 'mod/referentiel:write', 'u.id', 'u.lastname', '', '', $currentgroup, '', false)) {
@@ -910,10 +581,6 @@ $sdebug.= "
        	}
     }
 
-	/// Print the tabs
-
-	// DEBUG
-	// echo "<br />DEBUG :: 795 :: ACTIVITE.PHP :: MODE : $mode<br />USERID_FILTRE : $userid_filtre\n";
 
 	if (!empty($activite_id) && empty($mode)){
 		$mode='listactivitysingle';
@@ -923,13 +590,7 @@ $sdebug.= "
         $mode='listactivity';
 	}
 
-	/*
-	if (isset($mode) && (($mode=="adddocument")|| ($mode=="updatedocument")) && !(has_capability('mod/referentiel:managecertif', $context))){
-		$currenttab ='listactivityall';
-		$mode ='listactivityall';
-	} 
-	else 
-	*/
+
 	if (!empty($mode) && (($mode=="deleteactivity")
 		|| ($mode=="desapproveactivity") || ($mode=="approveactivity") || ($mode=="commentactivity") )){
 		$currenttab ='updateactivity';		
@@ -965,16 +626,11 @@ $sdebug.= "
     $pagetitle = strip_tags($course->shortname.': '.$strreferentiel.': '.format_string($referentiel->name,true));
     $icon = $OUTPUT->pix_url('icon','referentiel');
 
-
-	// DEBUG
-	// echo "<br />DEBUG :: 846 :: ACTIVITE.PHP :: MODE : $mode<br />USERID_FILTRE : $userid_filtre\n";
-
-	// Moodle 2
     $url->param('mode', $mode);
 
     $PAGE->set_url($url);
     $PAGE->set_context($context);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->js($OverlibJs);
     $PAGE->requires->js('/mod/referentiel/functions.js');
     $PAGE->navbar->add($stractivite);
@@ -982,11 +638,6 @@ $sdebug.= "
     $PAGE->set_heading($course->fullname);
 
     echo $OUTPUT->header();
-// DEBUG
-//    echo $sdebug0;
-//    echo $sdebug;
-// $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
 
 	groups_print_activity_menu($cm,  $CFG->wwwroot . '/mod/referentiel/activite.php?d='.$referentiel->id.'&amp;mode='.$mode.'&amp;select_acc='.$select_acc);
 
@@ -995,8 +646,8 @@ $sdebug.= "
     }
 
 
-    // ONGLETS
-    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_filtre);
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f, $mode);
     $tab_onglets->display();
     
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$stractivite.' '.$OUTPUT->help_icon('activiteh','referentiel').'</h2></div>'."\n";
@@ -1013,30 +664,29 @@ $sdebug.= "
 	
 	if ((!$activite_id) && ($mode=='updateactivity') && (has_capability('mod/referentiel:managecertif', $context))) {
        // MODIFIER globalement
-        referentiel_print_evalue_global_liste_activites($mode, $referentiel, $initiale, $userids, $userid_filtre, $gusers, $sql_filtre_where, $sql_filtre_order, $data_filtre, $select_acc);
+        referentiel_print_evalue_global_liste_activites($mode, $referentiel, $initiale, $userids, $userid_filtre, $gusers, $sql_f_where, $sql_f_order, $data_f, $select_acc);
 	}
 	else if  ((($mode=='listactivitysingle') || ($mode=='listactivityall'))
         && ($activite_id)){
-	    referentiel_print_activite_id($activite_id, $referentiel, $mode, $initiale, $userids, $userid_filtre, $gusers, $sql_filtre_where, $sql_filtre_order, $data_filtre, $select_acc);
+	    referentiel_print_activite_id($activite_id, $referentiel, $mode, $initiale, $userids, $userid_filtre, $gusers, $sql_f_where, $sql_f_order, $data_f, $select_acc);
 	}
 	else if  (($mode=='list') || ($mode=='listactivity') || ($mode=='listactivityall') || ($mode=='listactivitysingle')){
         // Affichage detaillé
-        referentiel_print_evalue_liste_activites($mode, $referentiel, $initiale, $userids, $userid_filtre, $gusers, $sql_filtre_where, $sql_filtre_order, $data_filtre, $select_acc);
+        referentiel_print_evalue_liste_activites($mode, $referentiel, $initiale, $userids, $userid_filtre, $gusers, $sql_f_where, $sql_f_order, $data_f, $select_acc);
 	}
 	else {
         echo $OUTPUT->box_start('generalbox  boxaligncenter');
 		// recuperer l'id de l'activite
-		if ($activite_id) { // id 	activite
+		if ($activite_id) {
             // page modification d'une activite
             if (! $record =  $DB->get_record("referentiel_activite", array("id" => "$activite_id"))) {
 		    	print_error('Activite ID is incorrect');
 			}
-			$modform = "activite_edit.html";
+			$modform = "activite_edit_inc.php";
 		}
 		else {
             // saisie d'une nouvelle activite
-            
-			$modform = "activite.html";
+			$modform = "activite_inc.php";
 		}
 
     	// formulaires

@@ -31,7 +31,7 @@
  **/
 
 
-require_once("lib.php");
+require_once('locallib.php');
 
 class OverItemCode {
 // affichage overlib des descriptions d'item

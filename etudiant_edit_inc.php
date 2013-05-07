@@ -1,24 +1,18 @@
-<?php // $Id: mod.html,v 1.5 2006/10/07 12:28:57 gustav_delius Exp $
+<?php
 /**
  * This page defines the form to create or edit an instance of this module
- * It is used from /course/mod.php.  The whole instance is available as $form.
+ * It is used from /mod/referentiel/etudiant.php.  The whole instance is available as $form.
  *
- * @author 
- * @version $Id: mod.html,v 1.5 2006/10/07 12:28:57 gustav_delius Exp $
+ * @author jf
+ * @version $Id: etudiant_edit_inc.php,v 1. 2013/05/04 09:012:00 jf Exp $
  * @package referentiel
  **/
+
  if (isset($mode) && ($mode=="updateetudiant")){
 
 	// Charger les etudiants
-	// filtres
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-	
 	$isteacher = has_capability('mod/referentiel:approve', $context);
 	$isauthor = has_capability('mod/referentiel:write', $context) && !$isteacher;
 	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);	
@@ -26,9 +20,9 @@
 		$userid=$USER->id; 
 	}
 
-	if ($record){
+	if ($record){ // initialise dans etudiant.php
 		// DEBUG
-		// echo "<br/>DEBUG ::<br />\n";
+		// echo "<br/>DEBUG :: etudiant_edit.html :: 24<br />\n";
 		// print_object($record);
 
 			$etudiant_id=$record->id;
@@ -65,7 +59,16 @@
 	<b><?php  print_string('num_etudiant','referentiel') ?>:</b>
 	</td>
     <td align="left">
-<input type="text" name="num_etudiant" size="20" maxlength="20" value="<?php  p($num_etudiant) ?>" />
+<?php
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_profilefield)){  // Profil
+        // profil non modifiable ici
+        echo $num_etudiant.' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="num_etudiant" value="'.$num_etudiant.'" />'."\n";
+    }
+    else {
+        echo '<input type="text" name="num_etudiant" size="20" maxlength="20" value="'.$num_etudiant.'" />'."\n";
+    }
+?>
     </td>
 </tr>
 <tr valign="top">
@@ -123,18 +126,17 @@
 	}
 }
 else if (isset($mode) && ($mode=="deleteetudiant")){
+	// DEBUG
+	// echo "<br/>DEBUG :: etudiant_edit.html :: 129<br />\n";
 	/// Confirmer la suppression d'un enregistrement
-	if (isset($userid) && ($userid>0)){
+    if (!empty($userid)){
         echo $OUTPUT->confirm(get_string('confirmdeleterecord','referentiel'),
-        $CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel->id.'&delete='.$userid.'&confirm=1&amp;sesskey='.sesskey(),
-        $CFG->wwwroot.'/mod/referentiel/etudiant.php?d='.$referentiel->id);
-		// notice_yesno(get_string('confirmdeleterecord','referentiel'),
-		//'etudiant.php?d='.$referentiel->id.'&delete='.$userid.'&confirm=1&amp;sesskey='.sesskey(),
-        //'etudiant.php?d='.$referentiel->id);
+        $CFG->wwwroot.'/mod/referentiel/etudiant.php?id='.$cm->id.'&deleteid='.$userid.'&confirm=1&amp;sesskey='.sesskey(),
+        $CFG->wwwroot.'/mod/referentiel/etudiant.php?id='.$cm->id);
 	}
 	else{
-		print_error(get_string('noetudiant','referentiel'), "etudiant.php?d=$referentiel->id&amp;mode=listetudiant");
+		print_error(get_string('noetudiant','referentiel'), "etudiant.php?id=$cm->id&amp;mode=listetudiant");
 	}
-} 
- 
+}
+
 ?>

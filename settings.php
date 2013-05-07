@@ -30,6 +30,12 @@ if ($ADMIN->fulltree) {
                        get_string('configshortpost', 'forum'), 300, PARAM_INT));
 
 */
+// student profile to get student number id
+$settings->add(new admin_setting_configtext('ref_profilecategory', get_string('ref_profilecategory', 'referentiel'),
+        get_string('config_ref_profilecategory', 'referentiel'), get_string('profiledefaultcategory', 'admin'), PARAM_TEXT));
+
+$settings->add(new admin_setting_configtext('ref_profilefield', get_string('ref_profilefield', 'referentiel'),
+        get_string('config_ref_profilefield', 'referentiel'), '', PARAM_ALPHANUMEXT));
 
 // desherence
 $settings->add(new admin_setting_configtext('delaidesherence', get_string('delaidesherence', 'referentiel'),

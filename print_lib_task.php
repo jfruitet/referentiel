@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `mdl_referentiel_a_user_task` (
  **/
 
  
-require_once("lib.php");
+require_once('locallib.php');
 require_once("lib_task.php");
 
 
@@ -182,7 +182,7 @@ function referentiel_get_content_task($taskid, $all=false){
                     // print_r($records_consigne);
                     if ($all){
                         $s_consigne.='<!-- consigne -->'."\n";
-                        $s_consigne.='<ul><b>'.get_string('consigne','referentiel').'</b>'."\n";
+                        $s_consigne.='<ul><span class="bold">'.get_string('consigne','referentiel').'</span>'."\n";
                     }
                     foreach ($records_consigne as $record_d){
                         $nbconsigne++;
@@ -205,7 +205,7 @@ function referentiel_get_content_task($taskid, $all=false){
                         	$etiquette_consigne='';
                         }
                         if ($all){
-                            $s_consigne.='<li><i>'.$consigne_id.'</i> '.$type_consigne.' '.nl2br($description_consign).' <b>'.get_string('url','referentiel').'</b> :';
+                            $s_consigne.='<li><i>'.$consigne_id.'</i> '.$type_consigne.' '.nl2br($description_consign).' <span class="bold">'.get_string('url','referentiel').'</span> :';
                             $s_consigne.=referentiel_affiche_url($url_consigne, $etiquette_consigne, $cible_consigne);
                             $s_consigne.='</li>'."\n";
                         }
@@ -220,7 +220,7 @@ function referentiel_get_content_task($taskid, $all=false){
 
             $nblig=empty($s_consigne)?1:$nbconsigne;
             if ($all){
-                $s.='<a name="task_'.$taskid.'"</a>'."\n".'<b>'.get_string('task','referentiel').'</b>'.$taskid.' '.get_string('auteur','referentiel').': ';
+                $s.='<a name="task_'.$taskid.'"</a>'."\n".'<span class="bold">'.get_string('task','referentiel').'</span>'.$taskid.' '.get_string('auteur','referentiel').': ';
 	       	    $s.=$user_info.' '.get_string('date_debut','referentiel').': '.$date_debut_info.' '.get_string('date_fin','referentiel').': '.$date_fin_info;
 
                 $s.=get_string('type_task','referentiel').': '.$type_task.' '.get_string('description','referentiel').': '.nl2br($description_task)."\n";
@@ -238,7 +238,7 @@ function referentiel_get_content_task($taskid, $all=false){
                     $criteres_evaluation=substr($criteres_evaluation,0,1024).'<br /><i>(...)</i> ';
                 }
 
-                $s.='<b>'.get_string('auteur','referentiel').'</b>: <i>'.$user_info.'</i><br /><b>'.get_string('date_fin','referentiel').'</b><i>'.$date_fin_info.'</i><br /><b>'.get_string('description','referentiel').'</b>: '.nl2br($description_task).'<br /><b>'.get_string('criteres_evaluation','referentiel').':</b><br /> '.nl2br(substr($criteres_evaluation,0,1024));
+                $s.='<span class="bold">'.get_string('auteur','referentiel').'</span>: <i>'.$user_info.'</i><br /><span class="bold">'.get_string('date_fin','referentiel').'</span><i>'.$date_fin_info.'</i><br /><span class="bold">'.get_string('description','referentiel').'</span>: '.nl2br($description_task).'<br /><span class="bold">'.get_string('criteres_evaluation','referentiel').':</span><br /> '.nl2br(substr($criteres_evaluation,0,1024));
             }
         }
     }
@@ -251,27 +251,6 @@ function referentiel_print_task($record_t, $context, $userid=0){
 global $CFG;
 global $OUTPUT; // Moodle 2 pour les icones
 	$s="";
-	/*
-	CREATE TABLE IF NOT EXISTS `mdl_referentiel_task` (
-  `id` bigint(10) unsigned NOT NULL AUTO_INCREMENT,
-  `type_task` varchar(80) NOT NULL DEFAULT '',
-  `description_task` text NOT NULL,
-  `competences_task` text NOT NULL,
-  `criteres_evaluation` text NOT NULL,
-  `ref_instance` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `ref_referentiel` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `ref_course` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `auteurid` bigint(10) unsigned NOT NULL,
-  `date_creation` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `date_modif` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `date_debut` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `date_fin` bigint(10) unsigned NOT NULL DEFAULT '0',
-  `cle_souscription` varchar(255) NOT NULL DEFAULT '',
-  `souscription_libre` int(4) NOT NULL DEFAULT '1',
-  `tache_masquee` int(4) NOT NULL DEFAULT '0',  
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='task' AUTO_INCREMENT=1 ;
-	*/
 	if ($record_t){
 		$taskid=$record_t->id;
 		$type_task = stripslashes($record_t->type_task);
@@ -350,7 +329,7 @@ global $OUTPUT; // Moodle 2 pour les icones
 		
 		  // menu
 		  $s.='<td align="center">'."\n";
-		  $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/task.php?d='.$ref_instance.'&amp;taskid='.$taskid.'&amp;mode=listtasksingle&amp;sesskey='.sesskey().'#task_'.$taskid.'"><img src="'.$OUTPUT->pix_url('search','referentiel').'" alt="'.get_string('plus', 'referentiel').'" title="'.get_string('plus', 'referentiel').'" /></a>'."\n";
+		  $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/task.php?d='.$ref_instance.'&amp;mode=listtasksingle&amp;sesskey='.sesskey().'#task_'.$taskid.'"><img src="'.$OUTPUT->pix_url('search','referentiel').'" alt="'.get_string('plus', 'referentiel').'" title="'.get_string('plus', 'referentiel').'" /></a>'."\n";
 		
 		  if ($has_capability_add	or $is_owner){
             $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/task.php?d='.$ref_instance.'&amp;taskid='.$taskid.'&amp;mode=imposetask&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('assigner','referentiel').'" alt="'.get_string('assigner', 'referentiel').'"  title="'.get_string('assigner', 'referentiel').'" /></a>'."\n";
@@ -371,12 +350,10 @@ global $OUTPUT; // Moodle 2 pour les icones
         if (has_capability('mod/referentiel:selecttask', $context)){
             if (!$closed){
                 if ($userid && referentiel_user_tache_souscrite($userid, $taskid)){
-                    //$s.='&nbsp; <img src="'.$CFG->pixpath.'/i/tick_amber_big.gif" alt="'.get_string('subscribed_task', 'referentiel').'" title="'.get_string('subscribed_task', 'referentiel').'" />'."\n";
-                    $s.='&nbsp; <img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('subscribed_task', 'referentiel').'" title="'.get_string('subscribed_task', 'referentiel').'" />'."\n";
+                    $s.='&nbsp; <img src="'.$OUTPUT->pix_url('subscribed','referentiel').'" alt="'.get_string('subscribed_task', 'referentiel').'" title="'.get_string('subscribed_task', 'referentiel').'" />'."\n";
                 }
                 else{
-                    //$s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/task.php?d='.$ref_instance.'&amp;taskid='.$taskid.'&amp;mode=selecttask&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('souscrire', 'referentiel').'"  title="'.get_string('souscrire', 'referentiel').'" /></a>';
-                    $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/task.php?d='.$ref_instance.'&amp;taskid='.$taskid.'&amp;mode=selecttask&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('copy','referentiel').'" alt="'.get_string('souscrire', 'referentiel').'"  title="'.get_string('souscrire', 'referentiel').'" /></a>';
+                     $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/task.php?d='.$ref_instance.'&amp;taskid='.$taskid.'&amp;mode=selecttask&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('copy','referentiel').'" alt="'.get_string('souscrire', 'referentiel').'"  title="'.get_string('souscrire', 'referentiel').'" /></a>';
                 }
             }
             else{
@@ -412,13 +389,13 @@ function referentiel_print_entete_task(){
 $s="";
 	$s.='<table class="activite">'."\n";
 	$s.='<tr>';
-	$s.='<th width="3%"><b>'.get_string('id','referentiel').'</b></th>';
-	$s.='<th width="10%"><b>'.get_string('auteur','referentiel').'</b></th>';
-	$s.='<th width="20%"><b>'.get_string('type_task','referentiel').'</b></th>';
-	$s.='<th width="20%"><b>'.get_string('liste_codes_competence','referentiel').'</b></th>';
-	$s.='<th width="10%"><b>'.get_string('date_debut','referentiel').'</b></th>';
-	$s.='<th width="10%"><b>'.get_string('date_fin','referentiel').'</b></th>';
-	$s.='<th width="10%"><b>'.get_string('souscription','referentiel').'</b></th>';
+	$s.='<th width="3%"><span class="bold">'.get_string('id','referentiel').'</span></th>';
+	$s.='<th width="10%"><span class="bold">'.get_string('auteur','referentiel').'</span></th>';
+	$s.='<th width="20%"><span class="bold">'.get_string('type_task','referentiel').'</span></th>';
+	$s.='<th width="20%"><span class="bold">'.get_string('liste_codes_competence','referentiel').'</span></th>';
+	$s.='<th width="10%"><span class="bold">'.get_string('date_debut','referentiel').'</span></th>';
+	$s.='<th width="10%"><span class="bold">'.get_string('date_fin','referentiel').'</span></th>';
+	$s.='<th width="10%"><span class="bold">'.get_string('souscription','referentiel').'</span></th>';
   $s.='<th width="20%">&nbsp;</th>';
 	$s.='</tr>'."\n";
 	return $s;
@@ -458,13 +435,19 @@ function referentiel_print_aucune_task_user($userid){
 }
 
 
+
 // Affiche une task et les consignes associés
 // *****************************************************************
 // input @param a $record_t   of task                            *
 // output null                                                     *
 // *****************************************************************
 
-function referentiel_print_task_detail($record_t){
+function referentiel_print_task_detail($record_t, $detail=true, $numero=0){
+    $s='';
+    $s0='';
+    $s1='';
+    $s2='';
+    $nblignes=4; // hauteur du tableau
 	if ($record_t){
 		$taskid=$record_t->id;
 		$type_task = stripslashes($record_t->type_task);
@@ -494,162 +477,115 @@ function referentiel_print_task_detail($record_t){
 		$date_fin_info=userdate($date_fin);
 		
 		// charger les consignes associees à la tache courante
-    $s='';	
-    
-  	
-    $nbconsigne=0;
-    if (isset($taskid) && ($taskid>0)){
-        $ref_task=$taskid; // plus pratique
-        // AFFICHER LA LISTE DES consigneS
-        $compteur_consigne=0;
-        $records_consigne = referentiel_get_consignes($ref_task);
+
+        if (!empty($taskid)){
+            // AFFICHER LA LISTE DES consigneS
+            $compteur_consigne=0;
+            $records_consigne = referentiel_get_consignes($taskid);
 	    
-        if ($records_consigne){
+            if ($records_consigne){
     			// afficher
 				// DEBUG
 				// echo "<br/>DEBUG ::<br />\n";
 				// print_r($records_consigne);
-				
-            foreach ($records_consigne as $record_d){
-                $nbconsigne++;
-                $compteur_consigne++;
-                $consigne_id=$record_d->id;
-                $type_consigne = stripslashes($record_d->type_consigne);
+				$nbconsigne=count($records_consigne);
+                $s1.='<!-- CONSIGNES -->
+<div class="ref_affdoc">'."\n";
+                if ($nbconsigne>1){
+                    $s1.='<span class="bold">'.get_string('consignes_associees','referentiel',$nbconsigne).'</span>'."\n";
+                }
+                else{
+                    $s1.='<span class="bold">'.get_string('consigne_associee','referentiel',$nbconsigne).'</span>'."\n";
+                }
+                $s1.="\n";
 
-                $description_consigne = stripslashes($record_d->description_consigne);
-                $url_consigne = $record_d->url_consigne;
-                $ref_task = $record_d->ref_task;
-                if (isset($record_d->cible_consigne) && ($record_d->cible_consigne==1)){
-					$cible_consigne='_blank'; // fenêtre cible
-                }
-                else{
-                    $cible_consigne='';
-                }
-                if (isset($record_d->etiquette_consigne)){
-                    $etiquette_consigne=$record_d->etiquette_consigne; // fenêtre cible
-                }
-                else{
-					$etiquette_consigne='';
-                }
-				// Modif JF 2013/02/02
-				$date_creation=userdate($record_d->timestamp);
-                $s.='<!-- consigne -->
-<tr valign="top">
-<td class="jaune">
-<b>'.get_string('consigne','referentiel').'</b><br />
-<i>'.$consigne_id.'</i>
-</td>
-<td class="jaune">
-<b>'.get_string('date_creation','referentiel').'</b><br />
+                foreach ($records_consigne as $record_d){
+                    $consigne_id=$record_d->id;
+                    $type_consigne = stripslashes($record_d->type_consigne);
+                    $description_consigne = stripslashes($record_d->description_consigne);
+                    $url_consigne = $record_d->url_consigne;
+                    $ref_task = $record_d->ref_task;
+                    if (isset($record_d->cible_consigne) && ($record_d->cible_consigne==1)){
+					   $cible_consigne='_blank'; // fenêtre cible
+                    }
+                    else{
+                        $cible_consigne='';
+                    }
+                    if (isset($record_d->etiquette_consigne)){
+                        $etiquette_consigne=$record_d->etiquette_consigne; // fenêtre cible
+                    }
+                    else{
+					   $etiquette_consigne='';
+                    }
+
+    				$date_creation=userdate($record_d->timestamp);
+                    if ($detail){
+                        $s2.='<span class="bold">'.get_string('consigne','referentiel').'</span><i>'.$consigne_id.'</i>
+<span class="bold">'.get_string('date_creation','referentiel').'</span>
 <i>'.$date_creation.'</i>
-</td>
-<td class="jaune">
-<b>'.get_string('type','referentiel').'</b><br />	
+<span class="bold">'.get_string('type','referentiel').'</span>
 '.$type_consigne.'
-</td>
-<td align="left" colspan="2" class="jaune">
-<b>'.get_string('description','referentiel').'</b>	
-<br />'.nl2br($description_consigne).' 
-</td>
-<td align="center" class="jaune">
-<b>'.get_string('url','referentiel').'</b><br />
-';
-        
-                $s.=referentiel_affiche_url($url_consigne, $etiquette_consigne, $cible_consigne);
-                $s.='
-</td>
-</tr>			
-';
+<span class="bold">'.get_string('description','referentiel').'</span><span class="white">
+'.nl2br($description_consigne).'</span>
+<span class="bold">'.get_string('url','referentiel').'</span>'."\n";
+                        $s2.=referentiel_affiche_url($url_consigne, $etiquette_consigne, $cible_consigne);
+                        $s2.='<br />'."\n";
+                    }
+                    else{
+                        $s2.=' &nbsp; '.referentiel_affiche_url($url_consigne, $etiquette_consigne, $cible_consigne);
+                    }
+                }
             }
         }
-    }
-    $nbconsigne+=3;
-    $nblig=empty($s)?3:$nbconsigne;
-   
-?>
+        $s0.='
+<a name="task_'.$taskid.'"></a>'."\n";
+        // details
+        if ($numero%2==0){
+            $s0.= '<div class="ref_affact1">';
+        }
+        else{
+            $s0.= '<div class="ref_affact2">';
+        }
+        $s0.='<span class="titre"><span class="bold">'.get_string('type_task','referentiel').'</span>"'.$type_task.'"</span>'."\n";
+        $s0.='<br /><span class="bold">'.get_string('task','referentiel').' '.get_string('numero','referentiel').'</span>'.$taskid.' <span class="bold">'.get_string('auteur','referentiel').'</span>'.
+$user_info."\n";
+        $s0.='<br /><span class="bold">'.get_string('date_creation','referentiel').'</span>
+<span class="small">'.$date_creation_info.'</span>
+<span class="bold">'.get_string('date_modification','referentiel').'</span>
+<span class="small">'.$date_modification_info.'</span>
+<span class="bold">'.get_string('date_debut','referentiel').'</span>
+<span class="small">'.$date_debut_info.'</span>
+<span class="bold">'.get_string('date_fin','referentiel').'</span>
+<span class="small">'.$date_fin_info.'</span>
+<br />
+<span class="bold">'.get_string('souscription','referentiel').'</span> '."\n";
+    	// Modalite souscription
+        if ($souscription_libre==1){
+            $s0.=get_string('libre','referentiel').' ';
+        }
+        else{
+            if ($cle_souscription!=''){
+                $s0.=get_string('obtenir_cle_souscription', 'referentiel', $user_info).' ';
+            }
+            else{
+                $s0.=get_string('avec_cle','referentiel').' ';
+            }
+        }
+        $s0.='<span class="bold">'.get_string('liste_codes_competence','referentiel').'</span><span class="white">'.
+referentiel_affiche_liste_codes_competence('/',$competences_task, $ref_referentiel)."\n";
+        $s0.='</span><br /><span class="bold">'.get_string('description','referentiel').'</span>'."\n".
+'<div class="ref_aff0">'.nl2br($description_task).'</div></span><br /><span class="bold">'.get_string('criteres_evaluation','referentiel').'</span>
+<div class="ref_aff0">'.nl2br($criteres_evaluation ).'</div>'."\n";
 
-<a name="<?php  echo "task_$taskid"; ?>"></a>
-<table class="activite" width="100%">
-<tr valign="top">
-    <td width="2%" rowspan="<?php echo $nblig ?>">
-	<b><?php  print_string('id','referentiel'); ?> </b>
-	<?php  p($taskid) ?>
-    </td>
-    <td width="15%">
-     <b><?php print_string('auteur','referentiel')?> </b><br />
-		<?php p($user_info) ?>
-    </td>
-	<td width="15%">
-	<b><?php  print_string('date_creation','referentiel') ?> </b><br />
-		<?php  echo '<span class="small">'.$date_creation_info.'</span>'; ?>
-    </td>	
-	<td width="15%">
-	<b><?php  print_string('date_modification','referentiel') ?> </b><br />
-		<?php  echo '<span class="small">'.$date_modification_info.'</span>'; ?>
-    </td>		
-	<td width="15%">
-	<b><?php  print_string('date_debut','referentiel') ?> </b><br />
-		<?php  echo '<span class="small">'.$date_debut_info.'</span>'; ?>
-    </td>	
-	<td width="15%">
-	<b><?php  print_string('date_fin','referentiel') ?> </b><br />
-		<?php  echo '<span class="small">'.$date_fin_info.'</span>'; ?>
-  </td><td width="20%">
-  <b><?php  print_string('souscription','referentiel') ?> </b><br />
-<?php
-		// Modalite souscription	
-    if ($souscription_libre==1){
-      echo get_string('libre','referentiel').' ';
-		}
-    else{
-      if ($cle_souscription!=''){
-        echo get_string('obtenir_cle_souscription', 'referentiel', $user_info).' ';
-      } 
-      else{
-        echo get_string('avec_cle','referentiel').' ';
-      }     
-    }
-?>    
-    </td>		
-</tr>
-
-<tr valign="top">
-    <td align="left" colspan="2">
-	<b><?php  print_string('type_task','referentiel') ?></b>
-	<br />
-    
-        <?php  p($type_task) ?>
-    </td>
-    <td class="valide" align="left" colspan="4">
-	<b><?php  print_string('liste_codes_competence','referentiel') ?> </b>
-	<br />
-<?php
-	echo(referentiel_affiche_liste_codes_competence('/',$competences_task, $ref_referentiel ));
-?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="left" colspan="4">
-	<b><?php  print_string('description','referentiel') ?></b>
-	<br />
-
-        <?php  echo (nl2br($description_task)); ?>
-    </td>
-    <td align="left" colspan="2">
-	<b><?php  print_string('criteres_evaluation','referentiel') ?></b>
-	<br />
-    
-        <?php  echo (nl2br($criteres_evaluation )); ?>
-    </td>
-</tr>
-<?php
-  // consignes
-    if ($s!=''){
-      echo $s;
-    }
-?>
-</table>
-<?php		
+        // affichage
+		if ($s1){
+            $s0.=$s1;
+    	   	if ($s2){
+                $s0.=$s2;
+            }
+            $s0.='</div>'."\n";
+        }
+        echo $s0.'</div>'."\n";
 	}
 }
 
@@ -722,12 +658,10 @@ function referentiel_menu_task_detail($context, $taskid, $referentiel_instance_i
     if (has_capability('mod/referentiel:selecttask', $context)){
         if (!$closed){
             if ($isstudent && $USER->id && referentiel_user_tache_souscrite($USER->id, $taskid)){
-    			//echo '&nbsp; <img src="'.$CFG->pixpath.'/i/tick_amber_big.gif" alt="'.get_string('subscribed_task', 'referentiel').'" title="'.get_string('subscribed_task', 'referentiel').'" />'."\n";
-    			echo '&nbsp; <img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('subscribed_task', 'referentiel').'" title="'.get_string('subscribed_task', 'referentiel').'" />'."\n";
+    			echo '&nbsp; <img src="'.$OUTPUT->pix_url('subscribed','referentiel').'" alt="'.get_string('subscribed_task', 'referentiel').'" title="'.get_string('subscribed_task', 'referentiel').'" />'."\n";
 
 			}
             else{
-			  // echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/task.php?d='.$referentiel_instance_id.'&amp;taskid='.$taskid.'&amp;mode=selecttask&amp;sesskey='.sesskey().'"><img src="'.$CFG->pixpath.'/i/tick_green_big.gif" alt="'.get_string('souscrire', 'referentiel').'"  title="'.get_string('souscrire', 'referentiel').'" /></a>';
                 echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/task.php?d='.$referentiel_instance_id.'&amp;taskid='.$taskid.'&amp;mode=selecttask&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('copy','referentiel').'" alt="'.get_string('souscrire', 'referentiel').'"  title="'.get_string('souscrire', 'referentiel').'" /></a>';
             }
         }
@@ -756,7 +690,7 @@ function referentiel_menu_task_detail($context, $taskid, $referentiel_instance_i
  *       @param string $page                                               *
  * output null                                                             *
  ***************************************************************************/
-function referentiel_print_liste_tasks($mode, $referentiel_instance, $userid_filtre=0, $page=0) {
+function referentiel_print_liste_tasks($mode, $referentiel_instance, $userid_filtre=0) {
 global $CFG;
 global $USER;
 static $isteacher=false;
@@ -772,7 +706,7 @@ global $DB;
     	if (empty($cm) or empty($course)){
             print_error('REFERENTIEL_ERROR 5 :: print_lib_task.php :: 568 :: You cannot call this script in that way');
         }
-	
+
     // Valable pour Moodle 2.1 et Moodle 2.2
     //if ($CFG->version < 2011120100) {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -810,10 +744,11 @@ global $DB;
 	       		else{
 		      		echo referentiel_print_entete_task();
     			}
+    			$num=0;
                 foreach ($record_tasks as $record) {   // afficher les taches
                     if (!$record->tache_masquee || $isauthor){
                         if (isset($mode) && ($mode=='listtasksingle')){
-                            referentiel_print_task_detail($record);
+                            referentiel_print_task_detail($record, 1, $num);
                             referentiel_menu_task_detail($context, $record->id, $referentiel_instance->id, $record->date_fin<time(), $record->tache_masquee);
                         }
                         else{
@@ -824,6 +759,7 @@ global $DB;
                                 echo referentiel_print_task($record, $context);
                             }
                         }
+                        $num++;
                     }
                 }
     			// Afficher
@@ -944,7 +880,8 @@ if (!empty($referentiel_instance)){
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
+    $isguest=$roles->is_guest;
+        
 	if (isset($referentiel_instance->id) && ($referentiel_instance->id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
 		if (!$referentiel_referentiel){
@@ -1055,7 +992,7 @@ if (!empty($referentiel_instance)){
 <input type="hidden" name="ref_referentiel" value="'.$referentiel_instance->ref_referentiel.'" />
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="taskid"        value="'.$taskid.'" />
-<input type="hidden" name="course"        value="'.$course->id.'" />
+<input type="hidden" name="courseid"        value="'.$course->id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="modulename"    value="referentiel" />
 <input type="hidden" name="instance"      value="'.$referentiel_instance->id.'" />'."\n";
@@ -1166,7 +1103,7 @@ global $course;
 		}
 		
         if (NOTIFICATION_ACTIVITES){
-            $s.= '<br /><br /><b>'.get_string('notification_tache','referentiel').'</b>';
+            $s.= '<br /><br /><span class="bold">'.get_string('notification_tache','referentiel').'</span>';
             if (NOTIFICATION_AUTEUR_ACTIVITE){
                 $s.=' (<i>'.get_string('not_activite_tache_3','referentiel').'</i>)';
             }
@@ -1181,7 +1118,7 @@ global $course;
 		$s.='
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="taskid"        value="'.$taskid.'" />
-<input type="hidden" name="course"        value="'.$course->id.'" />
+<input type="hidden" name="courseid"        value="'.$course->id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="mode"          value="'.$mode.'" />
 </form>'."\n";
@@ -1238,15 +1175,7 @@ if (!empty($referentiel_instance)){
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
-	/*
-	// DEBUG
-    if ($iseditor) echo "Editor ";
-    if ($isadmin) echo "Admin ";
-	if ($isteacher) echo "Teacher ";
-	if ($istutor) echo "Tutor ";
-	if ($isstudent) echo "Student ";
-	*/
+    $isguest=$roles->is_guest;
 
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);

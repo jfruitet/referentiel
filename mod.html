@@ -19,22 +19,13 @@ if (isset($update) && ($update>0)){
 			$form->name_instance=stripslashes($referentiel_instance->name);
 			$form->description_instance=stripslashes($referentiel_instance->description_instance);
 
-// MODIF JF 2012/06/02
-            // MODIF JF 2012/06/02
             $labels=referentiel_get_labels($referentiel_instance);
-            // echo "<br />DEBUG :: mod.html :: 25 <br />\n";
-            // print_object($labels);
-            /*
-            $form->label_domaine=stripslashes($referentiel_instance->label_domaine);
-			$form->label_competence=stripslashes($referentiel_instance->label_competence);
-			$form->label_item=stripslashes($referentiel_instance->label_item);
-			*/
 			$form->label_domaine=$labels->domaine;
 			$form->label_competence=$labels->competence;
 			$form->label_item=$labels->item;
 
 		    $form->date_instance=$referentiel_instance->date_instance;
-			$form->course=$referentiel_instance->course;
+			$form->courseid=$referentiel_instance->course;
 			$form->ref_referentiel=$referentiel_instance->ref_referentiel;
 
 			// configuration
@@ -45,13 +36,13 @@ if (isset($update) && ($update>0)){
 			$form->config_impression_globale=referentiel_ref_get_vecteur_config_imp($referentiel_instance->ref_referentiel);
 
             if ($referentiel_instance->course){
-                $course= $DB->get_record('course', arry('id' => $referentiel_instance->course));
+                $course= $DB->get_record('course', array('id'=>$referentiel_instance->course));
                 $maxbytes=get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
             }
             else{
-                $maxbytes=10000000; // default value
+                $maxbytes=1073741824; // default value
             }
-            if (isset($referentiel_instance->maxbytes)){
+            if (!empty($referentiel_instance->maxbytes)){
                 $form->maxbytes=$referentiel_instance->maxbytes;
             }
             else{
@@ -164,7 +155,7 @@ echo '</select>
 <input type="hidden" name="ref_referentiel" value="<?php  p($form->ref_referentiel) ?>" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
 <input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>" />
 <input type="hidden" name="section"       value="<?php  p($form->section) ?>" />
@@ -204,8 +195,8 @@ if (!isset($form->label_item)) {
 if (!isset($form->ref_referentiel)) {
     $form->ref_referentiel = '';
 }
-if (!isset($form->course)) {
-    $form->course = $course->id;
+if (!isset($form->courseid)) {
+    $form->courseid = $course->id;
 }
 
 // configuration
@@ -294,7 +285,7 @@ echo '</select>
 </tr>
 </table>
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
 <input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>" />
 <input type="hidden" name="section"       value="<?php  p($form->section) ?>" />

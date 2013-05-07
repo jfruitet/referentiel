@@ -292,7 +292,7 @@ echo '
 <input type="hidden" name="action" value="'.$rformat->action.'" />
 
 <input type="hidden" name="sesskey" value="'.sesskey().'" />
-<input type="hidden" name="course" value="'.$course->id.'" />
+<input type="hidden" name="courseid" value="'.$course->id.'" />
 <input type="hidden" name="instance" value="'.$referentiel->id.'" />
 <input type="hidden" name="mode" value="'.$mode.'" />
 
@@ -321,8 +321,8 @@ echo '
     }
 
 
-    // ONGLETS
-    // include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    //     $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f); $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title=""  alt="" /> '.$strpagename.' '.$OUTPUT->help_icon('importreferentielh','referentiel').'</h2></div>'."\n";
 

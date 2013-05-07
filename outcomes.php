@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
     require_once('../../config.php');
-    require_once('lib.php');
+    require_once('locallib.php');
     // require_once('grade/cron_outcomes.php');
     require_once('grade/print_outcomes.php');
 
@@ -232,7 +232,7 @@
 	$stractivite = get_string('outcomes','referentiel');
 	$icon = '<img class="icon" src="'.$CFG->wwwroot.'/mod/referentiel/icon.gif" alt="'.get_string('modulename','referentiel').'"/>';
 	/// RSS and CSS and JS meta
-    $meta = '<link rel="stylesheet" type="text/css" href="activite.css" />'."\n";
+    $meta = '<link rel="stylesheet" type="text/css" href="referentiel.css" />'."\n";
     $meta .= '<script type="text/javascript" src="functions.js"></script>'."\n";
 	
 	$strpagename=get_string('modifier_activite','referentiel');
@@ -251,7 +251,7 @@
 
 	print_heading(format_string($referentiel->name));
 
-	include('tabs.php');
+	    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f); $tab_onglets->display();
 */
     /// Mark as viewed  ??????????? A COMMENTER
     $completion=new completion_info($course);
@@ -270,7 +270,7 @@
 
     $PAGE->set_url($url);
     $PAGE->set_context($context);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->js('/mod/referentiel/functions.js');
     $PAGE->navbar->add($stractivite);
     $PAGE->set_title($pagetitle);
@@ -282,8 +282,8 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+        $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f); $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title=""  alt="" /> '.get_string('usedoutcomes','referentiel').' '.$OUTPUT->help_icon('usedoutcomesh','referentiel').'</h2></div>'."\n";
 

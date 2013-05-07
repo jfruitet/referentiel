@@ -33,50 +33,97 @@
 
  // ////////////////////////// ETUDIANT /////////////////////
 
+// ----------------------------------------------------------------
+function referentiel_update_students_numbers($record_id_users) {
+    // DEBUG
+    // echo "<br />DEBUG :: lib_etab.php :: 39 :: Mise à jour des profils<br />\n";
+    foreach ($record_id_users as $record) {   // traiter la liste d'utilisateurs
+        if ($record->userid){
+            referentiel_update_profile_student($record->userid);
+    	}
+	}
+}
+
+// ----------------------------------------------------------------
+function referentiel_update_profile_student($userid){
+global $DB;
+    if (!empty($userid)){
+        $record=$DB->get_record("referentiel_etudiant", array("userid" => $userid));
+        if ($record){
+            $record->num_etudiant=referentiel_get_student_number($userid);
+            if ($DB->set_field('referentiel_etudiant','num_etudiant', $record->num_etudiant, array("userid" => $userid))){
+                return $record;
+            }
+        }
+    }
+    return NULL;
+}
+
+// ----------------------------------------------------------------
+function referentiel_get_student_number($userid){
+    global $CFG, $DB;
+    if (!empty($userid)){
+        if ($user=$DB->get_record("user", array("id" => "$userid"))){
+            // profile table used ?
+            if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_profilefield)){
+                $num_etudiant=referentiel_get_profile($CFG->ref_profilecategory, $CFG->ref_profilefield, $user->id);
+            }
+            if (!empty($num_etudiant)){
+                return $num_etudiant;
+            }
+            else{
+                if (!empty($user->idnumber)){
+                    return $user->idnumber;
+                }
+                else{
+                    return $user->username;
+                }
+            }
+        }
+    }
+    return '';
+}
+
+// ----------------------------------------------------------------
+function referentiel_get_profile($fieldcategory, $fieldname, $userid) {
+    global $CFG, $USER, $DB;
+
+    if ($category = $DB->get_record('user_info_category', array('name'=>$fieldcategory))) {
+        if ($field = $DB->get_record('user_info_field', array('categoryid'=>$category->id, 'shortname'=>$fieldname))) {
+            require_once($CFG->dirroot . '/user/profile/lib.php');
+            require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
+            $newfield = 'profile_field_'.$field->datatype;
+            $formfield = new $newfield($field->id, $userid);
+            if (!$formfield->is_empty()) {
+                return $formfield->display_data();
+            }
+        }
+    }
+}
+
 
  // ---------------------------------------------
 function referentiel_add_etudiant_user($userid){
 // retourne l'id cree
 global $DB;
-	$record=new object();
-	$record->ddn_etudiant = 'l_inconnu';
-	$record->lieu_naissance = 'l_inconnu';
-	$record->departement_naissance = 'l_inconnu';
-	$record->adresse_etudiant = 'l_inconnu';
-	$record->ref_etablissement = referentiel_get_min_etablissement();
-	
-    if ($userid>0){
+	if ($userid){
+    	$record=new object();
         $record->userid=$userid;
-        $user=$DB->get_record("user", array("id" => "$userid"));
-        if ($user){
-            if (!empty($user->idnumber)){
-                $record->num_etudiant = $user->idnumber;
-            }
-            else{
-                $record->num_etudiant = $user->username;
-            }
-        }
-        else{
-            $record->userid=0;
-            // $record->num_etudiant = 'l_inconnu');
-            $record->num_etudiant = '';
-        }
+        $record->ddn_etudiant = 'l_inconnu';
+        $record->lieu_naissance = 'l_inconnu';
+        $record->departement_naissance = 'l_inconnu';
+        $record->adresse_etudiant = 'l_inconnu';
+        $record->ref_etablissement = referentiel_get_min_etablissement();
+        $record->num_etudiant=referentiel_get_student_number($userid);
+	    // DEBUG
+	    // echo "<br />DEBUG :: lib_etab.php :: 145\n";
+	    // print_r($record);
+        return ($DB->insert_record("referentiel_etudiant", $record));
     }
-    // modif pour lionel bonef n'est plus utile car structure db modifiee
-    // mb_internal_encoding("UTF-8");
-    // $record->num_etudiant=mb_substr($record->num_etudiant,0,20);
-	// DEBUG
-	// echo "<br />DEBUG :: lib_etab.php :: 145\n";
-	// print_r($record);
-	if ($record->userid){
-	   return ($DB->insert_record("referentiel_etudiant", $record));
-    }
-    else{
-        return 0;
-    }
+    return 0;
 }
 
- // ---------------------------------------------
+// ---------------------------------------------
 function referentiel_etudiant_isowner($id){
 global $DB;
 global $USER;
@@ -90,6 +137,7 @@ global $USER;
 		return false; 
 } 
 
+// ---------------------------------------------
 function referentiel_get_etudiant_id_by_userid($userid){
 global $DB;
 	if (!empty($userid)){
@@ -176,25 +224,12 @@ $id=0;
 	$record->userid = $form->userid;
 	
 	// controle
-	if (
-    ($record->userid>0) 
-     && 
-    (($record->num_etudiant=='') || ($record->num_etudiant=='l_inconnu'))
-    )
-    {
-      $user=$DB->get_record('user', array("id", "$record->userid"));
-      if ($user){
-        if (!empty($user->idnumber)){
-          $record->num_etudiant = $user->idnumber;
-        }
-        else{
-          $record->num_etudiant = $user->username;      
-        }
+	if (($record->userid>0) && (($record->num_etudiant=='') || ($record->num_etudiant=='l_inconnu'))){
+        $record->num_etudiant = referentiel_get_student_number($record->userid);
     }
-  }
-  
+
 	$id=$DB->insert_record("referentiel_etudiant", $record);
-  return $id;
+    return $id;
 }
 
 
@@ -210,13 +245,13 @@ $id=0;
 function referentiel_update_etudiant($form) {
 // MAJ etudiant
 global $DB;
-$ok=true;
+    $ok=true;
     // DEBUG
     // echo "DEBUG : UPDATE ETUDIANT CALLED";
 	// print_object($form);
     // echo "<br />";
 	// certificat
-if (isset($form->action) && ($form->action=="modifier_etudiant")){
+    if (isset($form->action) && ($form->action=="modifier_etudiant")){
 		$record=new object();
 		$record->id = $form->etudiant_id;
 		$record->num_etudiant = $form->num_etudiant;
@@ -226,39 +261,22 @@ if (isset($form->action) && ($form->action=="modifier_etudiant")){
 		$record->adresse_etudiant = ($form->adresse_etudiant);
 		$record->ref_etablissement = $form->ref_etablissement;
 		$record->userid = $form->userid;
-	// controle	
-	if (
-    ($record->userid>0) 
-     && 
-    (($record->num_etudiant=='') || ($record->num_etudiant=='l_inconnu'))
-    )
-    {
-      $user=$DB->get_record('user', array("id" => "$record->userid"));
-      if ($user){
-        if (!empty($user->idnumber)){
-          $record->num_etudiant = $user->idnumber;
+	    // controle
+	    if (($record->userid>0) && (($record->num_etudiant=='') || ($record->num_etudiant=='l_inconnu'))){
+            $record->num_etudiant = referentiel_get_student_number($record->userid);
         }
-        else{
-          $record->num_etudiant = $user->username;      
+
+    	if(!$DB->update_record("referentiel_etudiant", $record)){
+	       	// echo "<br /> ERREUR UPDATE ETUDIANT\n";
+		  $ok=false;
         }
-      }
+        else {
+		  // echo "<br /> UPDATE ETUDIANT $record->id\n";
+		  $ok=true;
+        }
+	    return $ok;
     }
-    // modif pour lionel bonef n'est plus utile car structure db modifiee
-    // mb_internal_encoding("UTF-8");
-    // $record->num_etudiant=mb_substr($record->num_etudiant,0,20);
-
-	if(!$DB->update_record("referentiel_etudiant", $record)){
-		// echo "<br /> ERREUR UPDATE ETUDIANT\n";
-		$ok=false;
-	}
-	else {
-		// echo "<br /> UPDATE ETUDIANT $record->id\n";
-		$ok=true;
-	}
-	return $ok;
 }
-}
-
 
 function referentiel_etudiant_set_etablissement($userid, $etablissement_id){
 // mise a jour de l'etablisssement

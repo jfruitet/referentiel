@@ -32,7 +32,7 @@
  **/
 
  
-require_once("lib.php");
+require_once('locallib.php');
 require_once("overlib_item.php");
 
 
@@ -121,7 +121,7 @@ exit;
             $index_code_competence=$t_item_competence[0];
             $code_competence=$t_competence[$index_code_competence];
 
-            $s.='&nbsp; &nbsp; &nbsp; <b>'.$code_domaine.'</b> : '.$t_domaine_description[$index_code_domaine]."\n";      // ouvrir domaine
+            $s.='&nbsp; &nbsp; &nbsp; <span class="bold">'.$code_domaine.'</span> : '.$t_domaine_description[$index_code_domaine]."\n";      // ouvrir domaine
             $s.='<br /> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <i>'.$code_competence.'</i> : <span class="small">'.$t_competence_description[$index_code_competence].'</span><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'."\n";     // ouvrir competence
 
             $i=0;
@@ -134,7 +134,7 @@ exit;
                     $index_code_domaine=$t_item_domaine[$i];
                     $code_domaine=$t_domaine[$index_code_domaine];
                     // competence
-                    $s.= '<br /> &nbsp; &nbsp; &nbsp; <b>'.$code_domaine.'</b> : '.$t_domaine_description[$index_code_domaine]."\n";  // nouveau domaine
+                    $s.= '<br /> &nbsp; &nbsp; &nbsp; <span class="bold">'.$code_domaine.'</span> : '.$t_domaine_description[$index_code_domaine]."\n";  // nouveau domaine
                     // nouvelle competence
                     $index_code_competence=$t_item_competence[$i];
                     $code_competence=$t_competence[$index_code_competence];
@@ -271,7 +271,7 @@ print_object($t_item_code);
     $index_code_competence=$t_item_competence[0];
     $code_competence=$t_competence[$index_code_competence];
 
-    $s.= '&nbsp; &nbsp; &nbsp; <b>'.$code_domaine.'</b> : '.$t_domaine_description[$index_code_domaine]."\n";      // ouvrir domaine
+    $s.= '&nbsp; &nbsp; &nbsp; <span class="bold">'.$code_domaine.'</span> : '.$t_domaine_description[$index_code_domaine]."\n";      // ouvrir domaine
     $s.= '<br /> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <i>'.$code_competence.'</i> : <span class="small">'.$t_competence_description[$index_code_competence].'</span><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;'."\n";     // ouvrir competence
 
     $i=0;
@@ -284,7 +284,7 @@ print_object($t_item_code);
                     $index_code_domaine=$t_item_domaine[$i];
                     $code_domaine=$t_domaine[$index_code_domaine];
                     // competence
-                    $s.='<br /> &nbsp; &nbsp; &nbsp; <b>'.$code_domaine.'</b> : '.$t_domaine_description[$index_code_domaine]."\n";  // nouveau domaine
+                    $s.='<br /> &nbsp; &nbsp; &nbsp; <span class="bold">'.$code_domaine.'</span> : '.$t_domaine_description[$index_code_domaine]."\n";  // nouveau domaine
                     // nouvelle competence
                     $index_code_competence=$t_item_competence[$i];
                     $code_competence=$t_competence[$index_code_competence];
@@ -354,7 +354,7 @@ $s='';
 <input type="hidden" name="ref_instance" value="'.$activite->ref_instance.'" />
 <input type="hidden" name="action" value="creer_document" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$form->course.'" />
+<input type="hidden" name="courseid"        value="'.$form->courseid.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="modulename"    value="'.$form->modulename.'" />
 <input type="hidden" name="instance"      value="'.$form->instance.'" />
@@ -468,11 +468,11 @@ function referentiel_affiche_competences_declarees($separateur1, $separateur2, $
 				if ($okc && isset($tcc[1]) && ($tcc[1]>=$t_empreinte[$i])){
 					// Overlib
 					$code_s=referentiel_affiche_overlib_un_item($separateur2, $tca[0], "vert");				
-					$s.='<b>'.$code_s.'</b> ';
+					$s.='<span class="bold">'.$code_s.'</span> ';
 				}
 				else if ($okc && isset($tcc[1]) && ($tcc[1]>0)){
 					$code_s=referentiel_affiche_overlib_un_item($separateur2, $tca[0], "orange");								
-					$s.='<b>'.$code_s.'</b> ';
+					$s.='<span class="bold">'.$code_s.'</span> ';
 				}
 				else if (isset($tca[1]) && ($tca[1]>0)){
 					$code_s=referentiel_affiche_overlib_un_item($separateur2, $tca[0], "rouge");								
@@ -575,10 +575,10 @@ function referentiel_affiche_competences_declarees($separateur1, $separateur2, $
 				$code_s=referentiel_affiche_overlib_un_item($separateur2, $tca[0]);
 				
 				if ($okc && isset($tcc[1]) && ($tcc[1]>=$t_empreinte[$i])){
-					$s.='<td class="vert"><b>'.$code_s.'</b></td> ';
+					$s.='<td class="vert"><span class="bold">'.$code_s.'</span></td> ';
 				}
 				else if ($okc && isset($tcc[1]) && ($tcc[1]>0)){
-					$s.='<td class="orange"><b>'.$code_s.'</b></td> ';
+					$s.='<td class="orange"><span class="bold">'.$code_s.'</span></td> ';
 				}
 				else if (isset($tca[1]) && ($tca[1]>0)){
 					$s.='<td class="rouge"><i>'.$code_s.'</i></td> ';
@@ -785,7 +785,7 @@ function referentiel_print_enqueue_activite(){
 }
 
 // ----------------------------------------------------
-function referentiel_print_activite_id($activite_id, $referentiel_instance, $mode='listactivityall', $initiale=0, $userids='', $userid_filtre=0, $gusers=NULL, $sql_filtre_where='', $sql_filtre_order='', $data_filtre, $select_acc=0) {
+function referentiel_print_activite_id($activite_id, $referentiel_instance, $mode='listactivityall', $initiale=0, $userids='', $userid_filtre=0, $gusers=NULL, $sql_f_where='', $sql_f_order='', $data_f, $select_acc=0) {
 global $DB;
 global $CFG;
 global $USER;
@@ -794,11 +794,10 @@ static $isteacher=false;
 static $isadmin=false;
 static $isstudent=false;
 static $iseditor=false;
-
+static $isguest=false;
 static $referentiel_id = NULL;
 
-// A COMPLETER
-$data=NULL;
+global $COURSE;
 
     // contexte
     $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
@@ -818,15 +817,7 @@ $data=NULL;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
-	/*
-	// DEBUG
-    if ($iseditor) echo "Editor ";
-    if ($isadmin) echo "Admin ";
-	if ($isteacher) echo "Teacher ";
-	if ($istutor) echo "Tutor ";
-	if ($isstudent) echo "Student ";
-	*/
+    $isguest=$roles->is_guest;
 
     if (!empty($referentiel_id)){
         $referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
@@ -839,10 +830,7 @@ $data=NULL;
     		}
 	    }
 
-        // MODIF JF 2012/05/22
-        // Ajouter les boîtes de selection
-		// boite pour selectionner les utilisateurs ?
-	 	// preparer les variables globales pour Overlib
+	 	// Preparer les variables globales pour Overlib ========================
 		referentiel_initialise_descriptions_items_referentiel($referentiel_referentiel->id);
 
         // Specifique car on a l'id de l'activité
@@ -852,8 +840,8 @@ $data=NULL;
                 $userid_filtre=$record_a->userid;
             }
         }
-
-		// boite pour selectionner les utilisateurs ?
+        // Boites de selection  ================================================
+		// boite pour selectionner les utilisateurs
 		if ($isteacher || $iseditor || $istutor){
 			if (!empty($select_acc)){
 			  // eleves accompagnes
@@ -865,14 +853,7 @@ $data=NULL;
                 $record_id_users  = referentiel_get_students_course($course->id,0,0);  //seulement les stagiaires
 			}
             if ($gusers && $record_id_users){ // liste des utilisateurs du groupe courant
-				// echo "<br />DEBUG :: print_lib_activite.php :: 740 :: GUSERS<br />\n";
-				// print_object($gusers);
-				// echo "<br />\n";
-				// exit;
 				$record_users  = array_intersect($gusers, array_keys($record_id_users));
-				// echo "<br />DEBUG :: print_lib_activite.php :: 745 :: RECORD_USERS<br />\n";
-				// print_r($record_users  );
-				// echo "<br />\n";
 				// recopier
 				$record_id_users=array();
 				foreach ($record_users  as $record_id){
@@ -886,8 +867,8 @@ $data=NULL;
             $a_obj->userid=$USER->id;
             $record_id_users[]=$a_obj;
 
-			echo referentiel_select_users_activite_accompagnes($userid_filtre, $select_acc, $mode);
-            echo referentiel_select_users_activite_2($record_id_users, $userid_filtre, $select_acc, $mode, $initiale);
+			echo referentiel_select_users_activite_accompagnes($userid_filtre, $select_acc, $data_f, $mode);
+            echo referentiel_select_users_activite_2($record_id_users, $userid_filtre, $select_acc, $mode, $initiale, $data_f);
 		}
 		else{
             if (!empty($record_a) && ($USER->id == $record_a->userid)){
@@ -898,9 +879,10 @@ $data=NULL;
             }
 		}
 
-		// recuperer les utilisateurs filtres
-			// $userid_filtre est l'id de l'utilisateur dont on affiche les activites
-			// si $userid_filtre ==0 on retourne tous les utilisateurs du cours et du groupe
+        // Liste des utilisateurs a afficher ================================================
+        // recuperer les utilisateurs filtres
+		// $userid_filtre est l'id de l'utilisateur dont on affiche les activites
+		// si $userid_filtre ==0 on retourne tous les utilisateurs du cours et du groupe
         if (!empty($userid_filtre)){
             $record_id_users = referentiel_get_students_course($course->id, $userid_filtre, 0);
         }
@@ -911,9 +893,6 @@ $data=NULL;
             }
             else{
                 $record_id_users = referentiel_get_students_course($course->id, $userid_filtre, 0);
-			  // echo "<br />DEBUG :: print_lib_activite.php :: 1850 :: RECORD_USERS<br />\n";
-			  // print_r($record_users  );
-			  // echo "<br />\n";
             }
         }
 
@@ -928,7 +907,7 @@ $data=NULL;
 			}
 		}
 
-		// ALPHABETIQUE
+		// Utilisateurs selectionnes de façon alphabetique
 		if (!empty($userids)){
             $t_users_select=explode('_', $userids);
             $record_id_users=array();
@@ -937,50 +916,39 @@ $data=NULL;
                 $a_obj->userid=$userid;
                 $record_id_users[]=$a_obj;
             }
-
-            // DEBUG
-            /*
-            echo "<br />DEBUG :: print_lib_activite.php :: 2386<br />USERIDS : $userids<br />\n";
-            print_r($t_users_select);
-            echo "<br />\n";
-            print_r($record_id_users);
-            exit;
-            */
         }
-		else if ((($userid_filtre==$USER->id) || ($userid_filtre==0)) && ($isteacher || $iseditor|| $istutor)){
+		else if ((($userid_filtre==$USER->id) || ($userid_filtre==0))
+            && ($isteacher || $iseditor|| $istutor)){
 			// Ajouter l'utilisateur courant pour qu'il puisse voir ses activites
             $a_obj=new stdClass();
             $a_obj->userid=$USER->id;
             $record_id_users[]=$a_obj;
 		}
 
-		// echo "<br />DEBUG :: print_lib_activite.php :: 1870 :: RECORD_USERS<br />\n";
-		// print_r($record_users  );
-		// echo "<br />\n";
+        // information sur l'utilisateur =======================================
 
-        // Afficher la boite de selection des utilisateurs
-		if ($record_id_users){
-			// Afficher
+        if ($record_id_users){
 			if (isset($mode) && (($mode=='updateactivity') || ($mode=='listactivityall') || ($mode=='listactivitysingle'))){
 				if ($mode=='updateactivity')
-                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;course=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_filtre, false, false);
+                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;courseid=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_f, false, false);
                 else
-                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;course=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_filtre, false, true);
+                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;courseid=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_f, false, true);
 			}
 			else{
-				echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;course=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_filtre, true);
+				echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;courseid=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_f, true);
 			}
-
         }
-
+        // affichage de l'activite  ============================================
         if (!empty($record_a)){
-            echo referentiel_print_jauge_activite($record_a->userid, $referentiel_referentiel->id);
-            referentiel_print_activite_detail($record_a);
-            // Ajout JF 2012/11/29
+			echo '<div align="center">'.get_string('competences_declarees','referentiel', '<span class="bold">'.referentiel_get_user_info($record_a->userid).'</span>')."\n".referentiel_print_jauge_activite($record_a->userid, $referentiel_referentiel->id).'</div>'."\n";
+            referentiel_print_activite_detail($record_a, true, 0);
             if (!$record_a->approved){
                 echo '<div align="center">'.referentiel_ajout_document($record_a, $mode, $select_acc)."</div>\n";
             }
-    	    referentiel_menu_activite_detail($context, $activite_id, $referentiel_instance->id, $record_a->approved, 0, 'listactivitysingle');
+		    // afficher le menu si on l'activité est affichee dans son propre cours de création
+            if ($record_a->ref_course == $COURSE->id){
+                referentiel_menu_activite($cm, $context, $activite_id, $referentiel_instance->id, $record_a->approved, 0, true, 'listactivitysingle');
+            }
         }
     }
 }
@@ -989,34 +957,38 @@ $data=NULL;
 
 // Menu
 // ----------------------------------------------------------
-function referentiel_menu_activite_detail($context, $activite_id, $referentiel_instance_id, $approved, $select_acc=0, $mode='updateactivity'){
+function referentiel_menu_activite($cm, $context, $activite_id, $referentiel_instance_id, $approved, $select_acc=0, $detail=true, $mode='updateactivity'){
 	global $CFG;
 	global $OUTPUT;
 			echo '<div align="center">';
-        	// echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel_instance_id.'&amp;activite_id='.$activite_id.'&amp;mode=listactivity&amp;old_mode='.$mode.'&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'#activite"><img src="pix/search.gif" alt="'.get_string('moins', 'referentiel').'" title="'.get_string('moins', 'referentiel').'" /></a>';
-			echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=listactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'#activite"><img src="'.$OUTPUT->pix_url('nosearch','referentiel').'" alt="'.get_string('moins', 'referentiel').'" title="'.get_string('moins', 'referentiel').'" /></a>';
+			if ($detail){
+                echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=listactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'#activite"><img src="'.$OUTPUT->pix_url('nosearch','referentiel').'" alt="'.get_string('moins', 'referentiel').'" title="'.get_string('moins', 'referentiel').'" /></a>';
+            }
+            else{
+                echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=listactivitysingle&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'#activite"><img src="'.$OUTPUT->pix_url('search','referentiel').'" alt="'.get_string('plus', 'referentiel').'" title="'.get_string('plus', 'referentiel').'" /></a>'."\n";
+            }
 			if (has_capability('mod/referentiel:approve', $context)){
-				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
-				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
+				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
+				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
     	    }
 			else if (referentiel_activite_isowner($activite_id)) {
             	if (!$approved){
-					echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
+					echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
 	            }
-				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
+				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
     	    }
 			// valider
     	    if (has_capability('mod/referentiel:approve', $context)){
 				if (!$approved){
-            		echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=approveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('nonvalide','referentiel').'" alt="'.get_string('approve', 'referentiel').'" title="'.get_string('approve', 'referentiel').'" /></a>';
+            		echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=approveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('nonvalide','referentiel').'" alt="'.get_string('approve', 'referentiel').'" title="'.get_string('approve', 'referentiel').'" /></a>';
 				}
 	       		else{
-    	        	echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=desapproveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('valide','referentiel').'" alt="'.get_string('desapprove', 'referentiel').'" title="'.get_string('desapprove', 'referentiel').'" /></a>';
+    	        	echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=desapproveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('valide','referentiel').'" alt="'.get_string('desapprove', 'referentiel').'" title="'.get_string('desapprove', 'referentiel').'" /></a>';
 				}
 			}
 	        // commentaires
     	    if (has_capability('mod/referentiel:comment', $context)){
-        		echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=commentactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('feedback','referentiel').'" alt="'.get_string('comment', 'referentiel').'" title="'.get_string('comment', 'referentiel').'" /></a>';
+        		echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=commentactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('feedback','referentiel').'" alt="'.get_string('comment', 'referentiel').'" title="'.get_string('comment', 'referentiel').'" /></a>';
 			}
 			echo '</div>'."\n";
 			
@@ -1024,7 +996,7 @@ function referentiel_menu_activite_detail($context, $activite_id, $referentiel_i
 
 
 // ----------------------
-function referentiel_select_users_activite_accompagnes($userid=0, $select_acc=0, $mode='listactivity'){
+function referentiel_select_users_activite_accompagnes($userid=0, $select_acc=0, $data_f=NULL, $mode='listactivity'){
 global $cm;
 global $course;
 
@@ -1044,10 +1016,20 @@ $s="";
       $s.=' <input type="radio" name="select_acc" value="1" checked="checked" />'.get_string('yes')."\n";
 		  $s.='<input type="radio" name="select_acc" value="0" />'.get_string('no')."\n";
   }
+if (!empty($data_f)){
+    $s.='
+<!-- Filtres -->
+<input type="hidden" name="f_auteur" value="'.$data_f->f_auteur.'" />
+<input type="hidden" name="f_validation" value="'.$data_f->f_validation.'" />
+<input type="hidden" name="f_referent" value="'.$data_f->f_referent.'" />
+<input type="hidden" name="f_date_modif" value="'.$data_f->f_date_modif.'" />
+<input type="hidden" name="f_date_modif_student" value="'.$data_f->f_date_modif_student.'" />
+';
+    }
   $s.='</td><td><input type="submit" value="'.get_string('go').'" />'."\n";;
 	$s.='
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$course->id.'" />
+<input type="hidden" name="courseid"        value="'.$course->id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="mode"          value="'.$mode.'" />'."\n";
 	$s.='</td>';
@@ -1061,7 +1043,7 @@ $s="";
 
 
 // ----------------------
-function referentiel_select_users_activite_2($record_users, $userid=0, $select_acc=0, $mode='listactivity', $initiales=''){
+function referentiel_select_users_activite_2($record_users, $userid=0, $select_acc=0, $mode='listactivity', $initiales='', $data_f=NULL){
 // SELECT INPUT  ALPHABETIQUE
 global $CFG;
 global $cm;
@@ -1108,14 +1090,20 @@ $t_users_lastname=array();
         // Should use this variable so that we don't break stuff every time a variable is added or changed.
         $baseurl = $CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;action=selectuser&amp;initiale=';
         $baseurl1 ='&amp;userids=';
-        $baseurl2 = '&amp;select_ac='.$select_acc.'&amp;mode='.$mode.'&amp;course='.$course->id.'&amp;sesskey='.sesskey();
- 
+        $baseurl2 ='&amp;select_ac='.$select_acc.'&amp;mode='.$mode.'&amp;courseid='.$course->id.'&amp;sesskey='.sesskey();
+
+        if (!empty($data_f)){
+            $baseurl3='&amp;f_auteur='.$data_f->f_auteur.'&amp;f_referent='.$data_f->f_referent.'&amp;f_validation='.$data_f->f_validation.'&amp;f_date_modif='.$data_f->f_date_modif.'&amp;f_date_modif_student='.$data_f->f_date_modif_student;
+        }
+        else{
+            $baseurl3 ='';
+        }
         // selection alphabetique
         $s.='<div align="center">'."\n";
-        $s.= '<a class="select" href="'.$baseurl.''.$baseurl1.''.$baseurl2.'">'.get_string('tous', 'referentiel').'</a> '."\n";
+        $s.= '<a class="select" href="'.$baseurl.$baseurl1.$baseurl2.$baseurl3.'">'.get_string('tous', 'referentiel').'</a> '."\n";
         foreach ($alpha as $letter){
             if (!empty($t_alphabetique[$letter])){
-                $s.= '<a class="select" href="'.$baseurl.$letter.$baseurl1.$t_id_alphabetique[$letter].$baseurl2.'">'.$letter.'</a> '."\n";
+                $s.= '<a class="select" href="'.$baseurl.$letter.$baseurl1.$t_id_alphabetique[$letter].$baseurl2.$baseurl3.'">'.$letter.'</a> '."\n";
             }
             else{
                 $s.=''.$letter.' '."\n";
@@ -1184,20 +1172,29 @@ $t_users_lastname=array();
 
 			for ($k=0; $k<$c; $k++){
 				if ($userid==$t_users[$i]['id']){
-					$s.='<option value="'.$t_users[$i]['id'].'" selected="selected">'.$t_users[$i]['lastname'].' '.$t_users[$i]['firstname'].'</option>'."\n";
+					$s.='<option value="'.$t_users[$i]['id'].'" selected="selected">'.referentiel_nom_prenom($t_users[$i]['lastname'], $t_users[$i]['firstname']).'</option>'."\n";
 				}
 				else{
-					$s.='<option value="'.$t_users[$i]['id'].'">'.$t_users[$i]['lastname'].' '.$t_users[$i]['firstname'].'</option>'."\n";
+					$s.='<option value="'.$t_users[$i]['id'].'">'.referentiel_nom_prenom($t_users[$i]['lastname'], $t_users[$i]['firstname']).'</option>'."\n";
 				}
 				$i++;
 			}
 			$s.='</select>'."\n";
+            if (!empty($data_f)){
+                $s.='
+<input type="hidden" name="f_auteur" value="'.$data_f->f_auteur.'" />
+<input type="hidden" name="f_validation" value="'.$data_f->f_validation.'" />
+<input type="hidden" name="f_referent" value="'.$data_f->f_referent.'" />
+<input type="hidden" name="f_date_modif" value="'.$data_f->f_date_modif.'" />
+<input type="hidden" name="f_date_modif_student" value="'.$data_f->f_date_modif_student.'" />
+';
+            }
 			$s.='<br /><input type="submit" value="'.get_string('select', 'referentiel').'" />'."\n";;
 			$s.='
 <!-- accompagnement -->
 <input type="hidden" name="select_acc"        value="'.$select_acc.'" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$course->id.'" />
+<input type="hidden" name="courseid"        value="'.$course->id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="mode"          value="'.$mode.'" />'."\n";
 			$s.='</form>'."\n";
@@ -1217,21 +1214,31 @@ $t_users_lastname=array();
 
             while ($i <$n){
                 if ($userid==$t_users[$i]['id']){
-                    $s.='<option value="'.$t_users[$i]['id'].'" selected="selected">'.$t_users[$i]['lastname'].' '.$t_users[$i]['firstname'].'</option>'."\n";
+                    $s.='<option value="'.$t_users[$i]['id'].'" selected="selected">'.referentiel_nom_prenom($t_users[$i]['lastname'], $t_users[$i]['firstname']).'</option>'."\n";
                 }
 				else{
-					$s.='<option value="'.$t_users[$i]['id'].'">'.$t_users[$i]['lastname'].' '.$t_users[$i]['firstname'].'</option>'."\n";
+					$s.='<option value="'.$t_users[$i]['id'].'">'.referentiel_nom_prenom($t_users[$i]['lastname'], $t_users[$i]['firstname']).'</option>'."\n";
 				}
 				$i++;
 			}
 			$s.='</select>'."\n";
+            if (!empty($data_f)){
+                $s.='
+<input type="hidden" name="f_auteur" value="'.$data_f->f_auteur.'" />
+<input type="hidden" name="f_validation" value="'.$data_f->f_validation.'" />
+<input type="hidden" name="f_referent" value="'.$data_f->f_referent.'" />
+<input type="hidden" name="f_date_modif" value="'.$data_f->f_date_modif.'" />
+<input type="hidden" name="f_date_modif_student" value="'.$data_f->f_date_modif_student.'" />
+';
+            }
+
 			$s.='<br /><input type="submit" value="'.get_string('select', 'referentiel').'" />'."\n";;
 			$s.='
 <!-- accompagnement -->
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
-<input type="hidden" name="course"        value="'.$course->id.'" />
+<input type="hidden" name="courseid"        value="'.$course->id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="mode"          value="'.$mode.'" />'."\n";
             $s.='</form>'."\n";
@@ -1272,30 +1279,30 @@ $appli=$appli.'&amp;mode_select=selectetab';
     }	
     $s.='<th width="2%">'.get_string('id','referentiel').'</th>';
 	$s.='<th width="'.$width.'">'.get_string('auteur','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_auteur" class="popupform">'."\n";
-	$s.=' <select id="selectetab_filtre_auteur" name="filtre_auteur" size="1" 
-onchange="self.location=document.getElementById(\'selectetab_filtre_auteur\').filtre_auteur.options[document.getElementById(\'selectetab_filtre_auteur\').filtre_auteur.selectedIndex].value;">'."\n";
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_auteur" class="popupform">'."\n";
+	$s.=' <select id="selectetab_f_auteur" name="f_auteur" size="1" 
+onchange="self.location=document.getElementById(\'selectetab_f_auteur\').f_auteur.options[document.getElementById(\'selectetab_f_auteur\').f_auteur.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_auteur=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=1&amp;filtre_referent=0&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=-1&amp;filtre_referent=0&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+		if ($data->f_auteur=='1'){
+			$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_auteur=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=1&amp;filtre_referent=0&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=-1&amp;filtre_referent=0&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
+		else if ($data->f_auteur=='-1'){
+			$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=1&amp;filtre_referent=0&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=-1&amp;filtre_referent=0&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_validation=0&amp;filtre_date_modif_student=0&amp;filtre_date_modif=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_auteur=1&amp;filtre_referent=0&amp;filtre_validation=0&amp;filtre_date_modif_student=0&amp;filtre_date_modif=0">'.get_string('croissant','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_auteur=-1&amp;filtre_referent=0&amp;filtre_validation=0&amp;filtre_date_modif_student=0&amp;filtre_date_modif=0">'.get_string('decroissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_validation=0&amp;f_date_modif_student=0&amp;f_date_modif=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_validation=0&amp;f_date_modif_student=0&amp;f_date_modif=0">'.get_string('croissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_validation=0&amp;f_date_modif_student=0&amp;f_date_modif=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
     $s.='</form>'."\n";
@@ -1307,138 +1314,128 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_auteur\').fi
 		$s.='<th width="25%">'.get_string('liste_codes_competence','referentiel').'</th>';
 	}
 	$s.='<th width="'.$width.'">'.get_string('a_evaluer','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_referent" class="popupform">'."\n";
-	$s.=' <select id="selectetab_filtre_referent" name="filtre_referent" size="1" 
-onchange="self.location=document.getElementById(\'selectetab_filtre_referent\').filtre_referent.options[document.getElementById(\'selectetab_filtre_referent\').filtre_referent.selectedIndex].value;">'."\n";
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_referent" class="popupform">'."\n";
+	$s.=' <select id="selectetab_f_referent" name="f_referent" size="1" 
+onchange="self.location=document.getElementById(\'selectetab_f_referent\').f_referent.options[document.getElementById(\'selectetab_f_referent\').f_referent.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_referent=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'" selected="selected">'.get_string('examine','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('non_examine','referentiel').'</option>'."\n";
+		if ($data->f_referent=='1'){
+			$s.='	<option value="'.$appli.'&amp;f_referent=0&amp;f_auteur='.$data->f_auteur.'&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_referent=1&amp;f_auteur='.$data->f_auteur.'&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'" selected="selected">'.get_string('examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_referent=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('non_examine','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_referent=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('examine','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'" selected="selected">'.get_string('non_examine','referentiel').'</option>'."\n";
+		else if ($data->f_referent=='-1'){
+			$s.='	<option value="'.$appli.'&amp;f_referent=0&amp;f_auteur='.$data->f_auteur.'&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_referent=1&amp;f_auteur='.$data->f_auteur.'&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_referent=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'" selected="selected">'.get_string('non_examine','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('examine','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_referent=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation='.$data->filtre_validation.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('non_examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_referent=0&amp;f_auteur='.$data->f_auteur.'&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_referent=1&amp;f_auteur='.$data->f_auteur.'&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_referent=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_validation='.$data->f_validation.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('non_examine','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_validation=0&amp;filtre_date_modif_student=0&amp;filtre_date_modif=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_referent=1&amp;filtre_auteur=0&amp;filtre_validation=0&amp;filtre_date_modif_student=0&amp;filtre_date_modif=0">'.get_string('examine','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_referent=-1&amp;filtre_auteur=0&amp;filtre_validation=0&amp;filtre_date_modif_student=0&amp;filtre_date_modif=0">'.get_string('non_examine','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_referent=0&amp;f_auteur=0&amp;f_validation=0&amp;f_date_modif_student=0&amp;f_date_modif=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_referent=1&amp;f_auteur=0&amp;f_validation=0&amp;f_date_modif_student=0&amp;f_date_modif=0">'.get_string('examine','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_referent=-1&amp;f_auteur=0&amp;f_validation=0&amp;f_date_modif_student=0&amp;f_date_modif=0">'.get_string('non_examine','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
     $s.='</form>'."\n";
 	$s.='</th>';
 	
-	$s.='<th width="'.$width.'">'.get_string('filtre_validation','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_validation" class="popupform">'."\n";
-	$s.=' <select id="selectetab_filtre_validation" name="filtre_validation" size="1" 
-onchange="self.location=document.getElementById(\'selectetab_filtre_validation\').filtre_validation.options[document.getElementById(\'selectetab_filtre_validation\').filtre_validation.selectedIndex].value;">'."\n";
+	$s.='<th width="'.$width.'">'.get_string('f_validation','referentiel');
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_validation" class="popupform">'."\n";
+	$s.=' <select id="selectetab_f_validation" name="f_validation" size="1" 
+onchange="self.location=document.getElementById(\'selectetab_f_validation\').f_validation.options[document.getElementById(\'selectetab_f_validation\').f_validation.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_validation=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_validation=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_validation=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'" selected="selected">'.get_string('approved','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_validation=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('not_approved','referentiel').'</option>'."\n";
+		if ($data->f_validation=='1'){
+			$s.='	<option value="'.$appli.'&amp;f_validation=0&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_validation=1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'" selected="selected">'.get_string('approved','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_validation=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('not_approved','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_validation=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_validation=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_validation=0&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_validation=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('approved','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_validation=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'" selected="selected">'.get_string('not_approved','referentiel').'</option>'."\n";
+		else if ($data->f_validation=='-1'){
+			$s.='	<option value="'.$appli.'&amp;f_validation=0&amp;f_auteur='.$data->f_auteur.'&amp;f_validation=0&amp;f_referent='.$data->f_referent.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_validation=1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('approved','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_validation=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'" selected="selected">'.get_string('not_approved','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_validation=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_validation=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('approved','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_validation=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'">'.get_string('not_approved','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_validation=0&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_validation=1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('approved','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_validation=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_date_modif_student='.$data->f_date_modif_student.'">'.get_string('not_approved','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_validation=0&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_date_modif_student=0&amp;filtre_date_modif=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_validation=1&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_date_modif_student=0&amp;filtre_date_modif=0">'.get_string('approved','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_validation=-1&amp;filtre_auteur=0&amp;filtre_referent=O&amp;filtre_date_modif_student=0&amp;filtre_date_modif=0">'.get_string('not_approved','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_validation=0&amp;f_auteur=0&amp;f_referent=0&amp;f_date_modif_student=0&amp;f_date_modif=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_validation=1&amp;f_auteur=0&amp;f_referent=0&amp;f_date_modif_student=0&amp;f_date_modif=0">'.get_string('approved','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_validation=-1&amp;f_auteur=0&amp;f_referent=O&amp;f_date_modif_student=0&amp;f_date_modif=0">'.get_string('not_approved','referentiel').'</option>'."\n";
 	}
 	
 	$s.='</select>'."\n";
     $s.='</form>'."\n";
 	$s.='</th>';
 	
-	$s.='<th width="'.$width.'">'.get_string('filtre_date_modif_student','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_date_modif_student" class="popupform">'."\n";		
-	$s.=' <select id="selectetab_filtre_date_modif_student" name="filtre_date_modif_student" size="1" 
-onchange="self.location=document.getElementById(\'selectetab_filtre_date_modif_student\').filtre_date_modif_student.options[document.getElementById(\'selectetab_filtre_date_modif_student\').filtre_date_modif_student.selectedIndex].value;">'."\n";
+	$s.='<th width="'.$width.'">'.get_string('f_date_modif_student','referentiel');
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_date_modif_student" class="popupform">'."\n";		
+	$s.=' <select id="selectetab_f_date_modif_student" name="f_date_modif_student" size="1" 
+onchange="self.location=document.getElementById(\'selectetab_f_date_modif_student\').f_date_modif_student.options[document.getElementById(\'selectetab_f_date_modif_student\').f_date_modif_student.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_date_modif_student=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+		if ($data->f_date_modif_student=='1'){
+			$s.='	<option value="'.$appli.'&amp;f_date_modif_student=0&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif_student=1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif_student=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_date_modif_student=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
+		else if ($data->f_date_modif_student=='-1'){
+			$s.='	<option value="'.$appli.'&amp;f_date_modif_student=0&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif_student=1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif_student=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif='.$data->filtre_date_modif.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif_student=0&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif_student=1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif_student=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif='.$data->f_date_modif.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=0&amp;filtre_auteur=0&amp;filtre_date_modif=0&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_validation=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=1&amp;filtre_auteur=0&amp;filtre_date_modif=0&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_validation=0">'.get_string('croissant','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_date_modif_student=-1&amp;filtre_auteur=0&amp;filtre_date_modif=0&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_validation=0">'.get_string('decroissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_date_modif_student=0&amp;f_auteur=0&amp;f_date_modif=0&amp;f_referent=0&amp;f_auteur=0&amp;f_validation=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_date_modif_student=1&amp;f_auteur=0&amp;f_date_modif=0&amp;f_referent=0&amp;f_auteur=0&amp;f_validation=0">'.get_string('croissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_date_modif_student=-1&amp;f_auteur=0&amp;f_date_modif=0&amp;f_referent=0&amp;f_auteur=0&amp;f_validation=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
     $s.='</form>'."\n";
 	$s.='</th>';	
 
-	$s.='<th width="'.$width.'">'.get_string('filtre_date_modif','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_date_modif" class="popupform">'."\n";	
-	$s.=' <select id="selectetab_filtre_date_modif" name="filtre_date_modif" size="1" 
-onchange="self.location=document.getElementById(\'selectetab_filtre_date_modif\').filtre_date_modif.options[document.getElementById(\'selectetab_filtre_date_modif\').filtre_date_modif.selectedIndex].value;">'."\n";
+	$s.='<th width="'.$width.'">'.get_string('f_date_modif','referentiel');
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_date_modif" class="popupform">'."\n";	
+	$s.=' <select id="selectetab_f_date_modif" name="f_date_modif" size="1" 
+onchange="self.location=document.getElementById(\'selectetab_f_date_modif\').f_date_modif.options[document.getElementById(\'selectetab_f_date_modif\').f_date_modif.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_date_modif=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+		if ($data->f_date_modif=='1'){
+			$s.='	<option value="'.$appli.'&amp;f_date_modif=0&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif_student='.$data->f_date_modif_student.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif=1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif_student='.$data->f_date_modif_student.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif_student='.$data->f_date_modif_student.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_date_modif=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'1">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
+		else if ($data->f_date_modif=='-1'){
+			$s.='	<option value="'.$appli.'&amp;f_date_modif=0&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif_student='.$data->f_date_modif_student.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif=1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif_student='.$data->f_date_modif_student.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'1">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif_student='.$data->f_date_modif_student.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_date_modif=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_modif_student='.$data->filtre_date_modif_student.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_validation='.$data->filtre_validation.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif=0&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif_student='.$data->f_date_modif_student.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif=1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif_student='.$data->f_date_modif_student.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_date_modif=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_date_modif_student='.$data->f_date_modif_student.'&amp;f_referent='.$data->f_referent.'&amp;f_validation='.$data->f_validation.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_date_modif=0&amp;filtre_auteur=0&amp;filtre_date_modif_student=0&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_validation=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_date_modif=1&amp;filtre_auteur=0&amp;filtre_date_modif_student=0&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_validation=0">'.get_string('croissant','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_date_modif=-1&amp;filtre_auteur=0&amp;filtre_date_modif_student=0&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_validation=0">'.get_string('decroissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_date_modif=0&amp;f_auteur=0&amp;f_date_modif_student=0&amp;f_referent=0&amp;f_auteur=0&amp;f_validation=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_date_modif=1&amp;f_auteur=0&amp;f_date_modif_student=0&amp;f_referent=0&amp;f_auteur=0&amp;f_validation=0">'.get_string('croissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_date_modif=-1&amp;f_auteur=0&amp;f_date_modif_student=0&amp;f_referent=0&amp;f_auteur=0&amp;f_validation=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
     $s.='</form>'."\n";
 	$s.='</th>';
     $s.='</tr>'."\n";
-
-	/*
-	$s.='<tr>';
-	$s.='<th colspan="3" rowspan="2">'.get_string('type_activite','referentiel').'<br />'.get_string('description','referentiel').'</th>';
-	$s.='<th colspan="3">'.get_string('liste_codes_competence','referentiel').'<br />'.get_string('commentaire','referentiel').'</th>';
-	$s.='</tr>'."\n";
-	$s.='<tr>';
-	$s.='<th colspan="3" class="yellow" align="center">'.get_string('document','referentiel').'</th>';
-	$s.='</tr>'."\n";
-	*/
 	$s.='</table>'."\n";
-	$s.='<table class="activite" width="100%">'."\n";
+
 	return $s;
 }
 
@@ -1457,11 +1454,11 @@ function referentiel_modifie_enqueue_activite(){
  *       @param object $referentiel_instance                              *
  *       @param int $userid_filtre                                        *
  *       @param array of objects $gusers of users get from current group  *
- *       @param string $sql_filtre_where, $sql_filtre_order               *
+ *       @param string $sql_f_where, $sql_f_order               *
  * output null                                                            *
  **************************************************************************/
 
-function referentiel_print_evalue_liste_activites($mode, $referentiel_instance, $initiale=0, $userids='', $userid_filtre=0, $gusers=NULL, $sql_filtre_where='', $sql_filtre_order='', $data_filtre, $select_acc=0) {
+function referentiel_print_evalue_liste_activites($mode, $referentiel_instance, $initiale=0, $userids='', $userid_filtre=0, $gusers=NULL, $sql_f_where='', $sql_f_order='', $data_f, $select_acc=0) {
 global $CFG;
 global $DB;
 global $USER;
@@ -1470,9 +1467,7 @@ static $isteacher=false;
 static $isadmin=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
-
-// A COMPLETER
-    $data=NULL;
+global $COURSE;
 	// contexte
     $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
     $course = $DB->get_record("course", array("id" => "$cm->course"));
@@ -1492,15 +1487,7 @@ static $referentiel_id = NULL;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
-	/*
-	// DEBUG
-    if ($iseditor) echo "Editor ";
-    if ($isadmin) echo "Admin ";
-	if ($isteacher) echo "Teacher ";
-	if ($istutor) echo "Tutor ";
-	if ($isstudent) echo "Student ";
-	*/
+    $isguest=$roles->is_guest;
 
     $record_id_users=array();
     
@@ -1515,10 +1502,9 @@ static $referentiel_id = NULL;
 			}
 		}
 	 	// preparer les variables globales pour Overlib
-		// referentiel_initialise_data_referentiel($referentiel_referentiel->id);
 		referentiel_initialise_descriptions_items_referentiel($referentiel_referentiel->id);
 
-		// boite pour selectionner les utilisateurs ?
+		// boite pour selectionner les utilisateurs ========================================
 		if ($isteacher || $iseditor || $istutor){
 			if (!empty($select_acc)){
 			  // eleves accompagnes
@@ -1530,15 +1516,8 @@ static $referentiel_id = NULL;
                 $record_id_users  = referentiel_get_students_course($course->id,0,0);  //seulement les stagiaires
 			}
             if ($gusers && $record_id_users){ // liste des utilisateurs du groupe courant
-				// echo "<br />DEBUG :: print_lib_activite.php :: 740 :: GUSERS<br />\n";
-				// print_object($gusers);
-				// echo "<br />\n";
-				// exit;
 				$record_users  = array_intersect($gusers, array_keys($record_id_users));
-				// echo "<br />DEBUG :: print_lib_activite.php :: 745 :: RECORD_USERS<br />\n";
-				// print_r($record_users  );
-				// echo "<br />\n";
-				// recopier 
+				// recopier
 				$record_id_users=array();
 				foreach ($record_users  as $record_id){
                     $a_obj=new stdClass();
@@ -1550,8 +1529,8 @@ static $referentiel_id = NULL;
             $a_obj=new stdClass();
             $a_obj->userid=$USER->id;
             $record_id_users[]=$a_obj;
-			echo referentiel_select_users_activite_accompagnes($userid_filtre, $select_acc, $mode);
-            echo referentiel_select_users_activite_2($record_id_users, $userid_filtre, $select_acc, $mode, $initiale);
+			echo referentiel_select_users_activite_accompagnes($userid_filtre, $select_acc, $data_f, $mode);
+            echo referentiel_select_users_activite_2($record_id_users, $userid_filtre, $select_acc, $mode, $initiale, $data_f);
 		}
 		else{
 			$userid_filtre=$USER->id; // les étudiants ne peuvent voir que leur fiche
@@ -1584,7 +1563,7 @@ static $referentiel_id = NULL;
 			}
 		}
 		
-		// ALPHABETIQUE
+		// selection ALPHABETIQUE ==============================================
 		if (!empty($userids)){
             $t_users_select=explode('_', $userids);
             $record_id_users=array();
@@ -1602,24 +1581,21 @@ static $referentiel_id = NULL;
                         $record_id_users[]=$a_obj;
 		}
 
-		// echo "<br />DEBUG :: print_lib_activite.php :: 1870 :: RECORD_USERS<br />\n";
-		// print_r($record_users  );
-		// echo "<br />\n";
-		
+        // Afficher ==========================================================
 		if ($record_id_users){
 			// Afficher 		
 			if (isset($mode) && (($mode=='updateactivity') || ($mode=='listactivityall') || ($mode=='listactivitysingle'))){
 				if ($mode=='updateactivity')
-                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;course=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_filtre, false, false);
+                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;courseid=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_f, false, false);
                 else
-                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;course=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_filtre, false, true);
+                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;courseid=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_f, false, true);
 			}
 			else{
-				echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;course=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_filtre, true);
+				echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=$cm->id&amp;select_acc=$select_acc&amp;courseid=$course->id&amp;userid=$userid_filtre&amp;mode=$mode&amp;sesskey=".sesskey(), $data_f, true);
 			}
-			
+
 			// ordre d'affichage utilisateurs
-			if (isset($data_filtre) && isset($data_filtre->filtre_auteur) && ($data_filtre->filtre_auteur=='-1')){ 
+			if (isset($data_f) && isset($data_f->f_auteur) && ($data_f->f_auteur=='-1')){ 
 				$deb=(-count($record_id_users))+1;
 				$fin=1;
 			}
@@ -1632,7 +1608,6 @@ static $referentiel_id = NULL;
 			for ($j=$deb; $j<$fin; $j++){
 				$i=abs($j);
 				// recupere les enregistrements
-				// MODIF JF 23/10/2009
 				if (isset($userid_filtre) && ($userid_filtre==$USER->id)){
 					$actif=true; 
 				}
@@ -1641,246 +1616,95 @@ static $referentiel_id = NULL;
 				}
 				else{
 					$actif=false;
-					// 	$records=referentiel_get_all_activites_user_course($referentiel_instance->ref_referentiel, $record_id->userid, $course->id);
 				}
-
-				// MODIF JF 2009/11/28
 				// Si des activites existent affichage de la liste des competences declarees
                 if (!empty($record_id_users[$i]->userid)){
                     if (referentiel_user_activites($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid)){
-                        if (isset($mode) && (($mode=='updateactivity') || ($mode=='listactivityall') || ($mode=='listactivitysingle'))){
-                            if ($mode=='updateactivity')
-                                echo '<tr><td colspan="9" align="center">'.get_string('competences_declarees','referentiel', '<b>'.referentiel_get_user_info($record_id_users[$i]->userid).'</b>')."\n".referentiel_print_jauge_activite($record_id_users[$i]->userid, $referentiel_id).'</td></tr>'."\n";
-                            else
-                                echo '<tr><td colspan="10" align="center">'.get_string('competences_declarees','referentiel', '<b>'.referentiel_get_user_info($record_id_users[$i]->userid).'</b>')."\n".referentiel_print_jauge_activite($record_id_users[$i]->userid, $referentiel_id).'</td></tr>'."\n";
-					    }
-					    else{
-						    echo '<tr><td colspan="10" align="center">'.get_string('competences_declarees','referentiel', '<b>'.referentiel_get_user_info($record_id_users[$i]->userid).'</b>')."\n".referentiel_print_jauge_activite($record_id_users[$i]->userid, $referentiel_id).'</td></tr>'."\n";
-					    }
+					    echo '<div align="center">'.get_string('competences_declarees','referentiel', '<span class="bold">'.referentiel_get_user_info($record_id_users[$i]->userid).'</span>')."\n".referentiel_print_jauge_activite($record_id_users[$i]->userid, $referentiel_id).'</div>'."\n";
                     }
 				    else{
 					    if (isset($mode) && ($mode=='listactivity')){
-						    echo '<tr><td class="zero" colspan="10" align="center">'.referentiel_print_aucune_activite_user($record_id_users[$i]->userid).'</td></tr>'."\n";
+						    echo '<div align="center">'.referentiel_print_aucune_activite_user($record_id_users[$i]->userid).'</div>'."\n";
 					   }
 				    }
 
-				
-				    // filtrage des activites demandees
-				    $records=referentiel_get_all_activites_user($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid, $sql_filtre_where, $sql_filtre_order);
+				    // activites a afficher
+				    $records=referentiel_get_all_activites_user($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid, $sql_f_where, $sql_f_order);
 				    if ($records){
-					   foreach ($records as $record) {   // afficher l'activite
-						// Afficher 	
-						if (isset($mode) && ($mode=='updateactivity')){
-							echo referentiel_modifie_activite_complete($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $select_acc);
-						}
-						else if (isset($mode) && ($mode=='listactivityall')){
+                        $num=0;
+                        foreach ($records as $record) {
+                            // Afficher
+                            if (isset($mode) && ($mode=='updateactivity')){
+                                echo referentiel_modifie_activite_complete($data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $select_acc);
+                            }
+                            elseif (isset($mode) && ($mode=='listactivityall')){
+                                // echo referentiel_print_jauge_activite($record->userid, $referentiel_referentiel->id);
+                                referentiel_print_activite_detail($record, true, $num);
+                                if (!$record->approved){
+                                    echo '<div align="center">'.referentiel_ajout_document($record, $mode, $select_acc)."</div>\n";
+                                }
+                                if ($record->ref_course==$COURSE->id){
+                                    referentiel_menu_activite($cm, $context, $record->id, $referentiel_instance->id, $record->approved, $select_acc, true, $mode);
+                                }
+                            }
+                            elseif (isset($mode) && ($mode=='listactivitysingle')){
+                                referentiel_print_activite_detail($record, false, $num);
+                                if (!$record->approved){
+                                    echo '<div align="center">'.referentiel_ajout_document($record, $mode, $select_acc)."</div>\n";
+                                }
+                                if (!$record->approved){
+                                    echo '<div align="center">'.referentiel_ajout_document($record, $mode, $select_acc)."</div>\n";
+                                }
+                                if ($record->ref_course==$COURSE->id){
+                                    referentiel_menu_activite($cm, $context, $record->id, $referentiel_instance->id, $record->approved, $select_acc, false, $mode);
+                                }
+                            }
+                            else {
+                                referentiel_print_activite_detail($record, false, $num);
+                                if ($record->ref_course==$COURSE->id){
+                                    referentiel_menu_activite($cm, $context, $record->id, $referentiel_instance->id, $record->approved, $select_acc, false, $mode);
+                                }
+                            }
+
+                        /*
+                        if (isset($mode) && ($mode=='listactivityall')){
                             // Affichage detaille
-							echo referentiel_print_activite_3_complete($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $select_acc);
+							echo referentiel_print_activite_3_complete($data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $select_acc);
+
 						}
 						elseif (isset($mode) && ($mode=='listactivitysingle')){
-							echo referentiel_print_activite_3_complete($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $select_acc);
+							echo referentiel_print_activite_3_complete($data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $select_acc);
 						}
 						else{
-							echo referentiel_print_activite_2($record, $context, $actif, $select_acc);
-						}
-					}
-				}
-    		  }
-			}
+							echo referentiel_print_activite_2($record, $context, $actif, $select_acc, $data_f);
+                        }
+                        */
+                            $num++;
+                        }
+                }
+            }
+        }
 			
-			if (isset($mode) && ($mode=='updateactivity')){
-				// echo referentiel_modifie_activite_2_complete($record, $context, $actif);
+        if (isset($mode) && ($mode=='updateactivity')){
 				echo referentiel_modifie_enqueue_activite();
-			}
-			else{
+        }
+        else{
 				echo referentiel_print_enqueue_activite();
-			}
-		}
+        }
+    }
 	}
-	//echo '<br /><br />'."\n";
 	return true;
 }
 
 
-// ----------------------------------------------------
-function referentiel_print_activite_2($record_a, $context, $actif=true, $select_acc=0, $mode='listactivity'){
-// $actif = true : le menu est active, sinon il ne l'est pas
-global $CFG;
-global $OUTPUT;
-global $COURSE;
-	$s="";
-	if ($record_a){
-		$activite_id=$record_a->id;
-		$type_activite = stripslashes($record_a->type_activite);
-		$description_activite = stripslashes($record_a->description_activite);
-		$competences_activite = $record_a->competences_activite;
-		$commentaire_activite = stripslashes($record_a->commentaire_activite);
-		$ref_instance = $record_a->ref_instance;
-		$ref_referentiel = $record_a->ref_referentiel;
-		$ref_course = $record_a->ref_course;
-		$userid = $record_a->userid;
-		$teacherid = $record_a->teacherid;
-		$date_creation = $record_a->date_creation;
-		$date_modif = $record_a->date_modif;
-		$date_modif_student = $record_a->date_modif_student;
-		$approved = $record_a->approved;
-		$ref_task = $record_a->ref_task;
-		
-		// MODIF JF 20091108
-		// afficher le menu si on l'activité est affichee dans son propre cours de création 
-		$menu_actif = $actif || ($ref_course == $COURSE->id);
-		
-		$user_info=referentiel_get_user_info($userid);
-		$teacher_info=referentiel_get_user_info($teacherid);
-		
-		// dates
-		if ($date_creation!=0){
-			$date_creation_info=userdate($date_creation);
-		}
-		else{
-			$date_creation_info='';
-		}
-
-		if ($date_modif!=0){
-			$date_modif_info=userdate($date_modif);
-		}
-		else{
-			$date_modif_info='';
-		}
-
-		if ($date_modif_student==0){
-			$date_modif_student=$date_creation;
-		}
-		if ($date_modif_student!=0){
-			$date_modif_student_info=userdate($date_modif_student);
-		}
-		else{
-			$date_modif_student_info='';
-		}
-
-        $prioritaire=referentiel_activite_prioritaire($record_a);
-        
-		// MODIF JF 209/10/23
-		$url_course=referentiel_get_course_link($ref_course);
-		// MODIF JF 2013/01/26
-		$url_instance=referentiel_get_instance_link($ref_instance);
-
-		echo '<tr>';
-		
-		// menu
-		echo '<td align="center">'."\n";
-
-		if ($menu_actif){ 
-			// echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=listactivityall&amp;sesskey='.sesskey().'#activite"><img src="pix/search.gif" alt="'.get_string('plus', 'referentiel').'" title="'.get_string('plus', 'referentiel').'" /></a>'."\n";
-			echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=listactivitysingle&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'#activite"><img src="'.$OUTPUT->pix_url('search','referentiel').'" alt="'.get_string('plus', 'referentiel').'" title="'.get_string('plus', 'referentiel').'" /></a>'."\n";
-			$has_capability=has_capability('mod/referentiel:approve', $context);
-			$is_owner=referentiel_activite_isowner($activite_id);
-			
-			if ($has_capability	or $is_owner){
-				if ($has_capability || ($is_owner && !$approved)) {
-	        		echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
-				}
-				if ($has_capability || ($is_owner && !$approved)) {
-			    	echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
-    			}
-			}
-			// valider
-		    if ($has_capability){
-				if (!$approved){
-					echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=approveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('nonvalide','referentiel').'" alt="'.get_string('approve', 'referentiel').'" title="'.get_string('approve', 'referentiel').'" /></a>'."\n";
-				}
-				else{
-    				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=desapproveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('valide','referentiel').'" alt="'.get_string('desapprove', 'referentiel').'" title="'.get_string('desapprove', 'referentiel').'" /></a>'."\n";
-				}
-			}
-			// commentaires
-    		if (has_capability('mod/referentiel:comment', $context)){
-    			echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=commentactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('feedback','referentiel').'" alt="'.get_string('comment', 'referentiel').'" title="'.get_string('comment', 'referentiel').'" /></a>'."\n";
-			}
-		}
-		else{
-			echo '&nbsp; '.get_string('activite_exterieure', 'referentiel');
-		}
-		echo '</td>'."\n";
-		
-        if (!empty($prioritaire)){
-            echo '<td class="prioritaire">';
-        }
-        else if (isset($approved) && ($approved)){
-			echo '<td class="valide">';
-		}
-		else{
-			echo '<td class="invalide">';
-		}
-
-		echo  $activite_id;
-		echo '</td><td align="center">';
-		echo $user_info;
-        // MODIF JF 2012/05/06
-        echo referentiel_liste_groupes_user($ref_course, $userid);
-		echo '</td><td align="center">';
-		echo $url_course.'<br /><i>'.$url_instance;
-		echo '</i></td><td align="center">';
-		echo $type_activite;
-		// Modif JF 06/10/2010
-		if ($ref_task){
-            // consignes associées à une tâche
-            $titre_task=referentiel_get_theme_task($ref_task);
-            $info_task=referentiel_get_content_task($ref_task);
-            if ($info_task!=''){
-                // lien vers la tâche
-                echo '<br />'.referentiel_affiche_overlib_texte($titre_task, $info_task);
-            }
-            // documents associés à une tâche
-            echo referentiel_print_liste_documents_task($ref_task);
-        }
-
-		
-		if (isset($approved) && ($approved)){
-			echo '</td><td class="valide">';
-		}
-		else{
-			echo '</td><td class="invalide">';
-		}
-
-		// avec overlib
-		echo referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel);
-		
-		echo '</td><td align="center">';
-		echo $teacher_info;
-		echo '</td><td align="center">';
-		if (isset($approved) && ($approved)){
-			echo get_string('approved','referentiel');
-		}
-		else{
-			echo get_string('not_approved','referentiel');	
-		}
-		echo '</td>';
-
-		if (!empty($prioritaire)){
-    		echo '<td class="prioritaire" align="center">';
-        }
-        else{
-            echo '<td align="center">';
-        }
-		echo '<span class="small">'.$date_modif_student_info.'</span>';
-		echo '</td>'."\n";
-		echo '<td align="center">';
-		echo '<span class="small">'.$date_modif_info.'</span>';
-		echo '</td>';
-		echo '</tr>'."\n";		
-	}
-	return $s;
-}
-
-
-// Affiche une activite et les documents associés
-// *****************************************************************
-// input @param a $record_a   of activite                            *
-// output null                                                     *
-// *****************************************************************
-
-function referentiel_print_activite_detail($record_a){
+/** Affiche une activite et les documents associés
+ *
+ *  input @param record_a  an object  activite
+ *  detail true / false
+ *  numero integer
+ *  output null                                                     *
+**/
+function referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
     $s='';
     $s0='';
     $s1='';
@@ -1903,13 +1727,21 @@ function referentiel_print_activite_detail($record_a){
 		$date_modif = $record_a->date_modif;
 		$date_modif_student = $record_a->date_modif_student;
 		$approved = $record_a->approved;
-		
+
 		$user_info=referentiel_get_user_info($userid);
 		$teacher_info=referentiel_get_user_info($teacherid);
-		
+		if (empty($teacher_info)){
+            $teacher_info=get_string('inconnu', 'referentiel');
+        }
 		// dates
 		$date_creation_info=userdate($date_creation);
-		$date_modif_info=userdate($date_modif);
+    	if ($date_modif!=0){
+    	   $date_modif_info=userdate($date_modif);
+        }
+        else{
+            $date_modif_info='';
+        }
+
 		if ($date_modif_student!=0){
 			$date_modif_student_info=userdate($date_modif_student);
 		}
@@ -1917,216 +1749,175 @@ function referentiel_print_activite_detail($record_a){
 			$date_modif_student_info='';
 		}
 		$ref_task = $record_a->ref_task;
-
-		// MODIF JF 2009/10/23
 		$url_course=referentiel_get_course_link($ref_course);
-		// MODIF JF 2013/01/26
 		$url_instance=referentiel_get_instance_link($ref_instance);
-
         // preparation pour overlay
         if (empty($t_item_code) || empty($t_item_description_competence)){
             referentiel_initialise_descriptions_items_referentiel($ref_referentiel);
         }
-        
         $prioritaire=referentiel_activite_prioritaire($record_a);
-
         $s0.='
-<a name="activite_'.$activite_id.'"></a>
-<table class="activite" width="100%">
-<tr valign="top">';
+<a name="activite_'.$activite_id.'"></a>'."\n";
         if (!empty($prioritaire)){
-            $s0.= '<td class="prioritaire" ';
+            $s0.= '<div class="affprioritaire">'."\n";
         }
         else if (isset($approved) && ($approved)){
-			$s0.= '<td class="valide" ';
+			$s0.= '<div class="affvalide">'."\n";
 		}
 		else{
-			$s0.= '<td class="invalide" ';
+			$s0.= '<div class="affinvalide">'."\n";
 		}
-
-        $s0.=' rowspan="';
-        
-        $s1.='">
-	<b>'.get_string('id_activite','referentiel', $activite_id).'  </b>';
-	   // MODIF JF 2013/01/26
-        $s1.='<br /><br />'.$url_course.'<br /><i>'.$url_instance.'</i>';
-        $s1.='</td>
-    <td>
-	<b>'.get_string('type_activite','referentiel').'</b><br />'.$type_activite."\n";
-
+        // entetete
+        $s0.='<span class="bold">'.get_string('id_activite','referentiel', $activite_id).'</span>';
+        $s0.='<span class="bold">'.get_string('type_activite','referentiel').'</span> '.$type_activite."\n";
+	    $s0.='<span class="bold">'.get_string('course').'</span> '.$url_course."\n";
+        $s0.='<span class="bold">'.get_string('instance','referentiel').'</span> '.'<i>'.$url_instance.'</i>'."\n";
+        $s0.='</div>'."\n";
+        // details
+        if ($numero%2==0){
+            $s1.= '<div class="affact1">';
+        }
+        else{
+            $s1.= '<div class="affact2">';
+        }
 		if ($ref_task){
             // consignes associées à une tâche
             $titre_task=referentiel_get_theme_task($ref_task);
             $info_task=referentiel_get_content_task($ref_task);
             if ($info_task!=''){
                 // lien vers la tâche
-                $s1.='<br />'.referentiel_affiche_overlib_texte($titre_task, $info_task)."\n";
+                $s1.=' '.referentiel_affiche_overlib_texte($titre_task, $info_task)."\n";
             }
             // documents associés à une tâche
             $s1.=referentiel_print_liste_documents_task($ref_task)."\n";
         }
-
-
-        $s1.='</td>
-    <td>
-     <b>'.get_string('auteur','referentiel').'  </b><br />'.$user_info;
-        // MODIF JF 2012/05/06
-        $s1.= referentiel_liste_groupes_user($ref_course, $userid);
-        $s1.='
-    </td>
-	<td>
-	<b>'.get_string('date_creation','referentiel').'</b><br />
-<span class="small">'.$date_creation_info.'</span>'.'
-    </td>
-';
-// A COMPLETER PRIORITE
-        $s1.='<td>
-     <b>'.get_string('date_modif_student','referentiel').'</b><br />
-<span class="small">'.$date_modif_student_info.'</span>'.'
-    </td>
-    <td>
-     <b>'.get_string('referent','referentiel').'</b><br />'.$teacher_info.'
-    </td>
-    <td>
-     <b>'.get_string('validation','referentiel').'</b><br />
-';
+        $s1.='<span class="bold">'.get_string('auteur','referentiel').'</span> '.$user_info;
+        $liste_groupes= referentiel_liste_groupes_user($ref_course, $userid);
+        if (!empty($liste_groupes)){
+            $s1.=' &nbsp; <i>'.$liste_groupes.'</i>'."\n";
+        }
+        $s1.='<br /><span class="bold">'.get_string('date_creation','referentiel').'</span>
+<span class="small">'.$date_creation_info.'</span>'."\n";
+        if (!empty($date_modif_student_info) && ($date_modif_student-$date_creation>1000)){
+            $s1.='<span class="bold">'.get_string('date_modif_student','referentiel').'</span>
+<span class="small">'.$date_modif_student_info.'</span>'."\n";
+        }
+        if (!empty($date_modif_info)){
+            $s1.='<span class="bold">'.get_string('date_modif','referentiel').'</span>
+<span class="small">'.$date_modif_info.'</span>'."\n";
+        }
+        $s1.='<br />'."\n";
+        $s1.='<span class="bold">'.get_string('referent','referentiel').'</span> '.$teacher_info.'
+<span class="bold">'.get_string('validation','referentiel').'</span>'."\n";
 		if (isset($approved) && ($approved)){
 			$s1.=get_string('approved','referentiel');
 		}
 		else{
 			$s1.=get_string('not_approved','referentiel');
 		}
-        $s1.='
-    </td>
-    <td>
-     <b>'.get_string('date_modif','referentiel').'</b><br />
-<span class="small">'.$date_modif_info.'</span>'.'
-    </td>
-</tr>
-<tr valign="top">
-';
 
 		if (isset($approved) && ($approved)){
-			$s1.='<td class="valide" colspan="7">'."\n";
+			$s1.=' <span class="valide">'."\n";
 		}
 		else{
-			$s1.='<td class="invalide" colspan="7">'."\n";
+			$s1.=' <span class="invalide">'."\n";
 		}
-		$s1.='<b>'.get_string('liste_codes_competence','referentiel').'</b>'."\n";
+		$s1.='<span class="bold">'.get_string('liste_codes_competence','referentiel').'</span>'."\n";
 		$s1.=referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel)."\n";
-        $s1.='
-    </td>
-</tr>
-
-<tr valign="top">
-    <td align="left" colspan="7">
-	<b>'.get_string('description','referentiel').'</b><br />
-        '.nl2br($description_activite).'
-    </td>
-</tr>
-<tr valign="top">
-    <td align="left" colspan="7">
-	<b>'.get_string('commentaire','referentiel').'</b>
-    <br />'.nl2br($commentaire_activite).'
-    </td>
-</tr>
+        $s1.='</span><br />
+<span class="bold">'.get_string('description','referentiel').'</span><br /><span class="white">'.nl2br($description_activite).'</span>
+<br />
+<span class="bold">'.get_string('commentaire','referentiel').'</span><br /><span class="white">'.nl2br($commentaire_activite).'</span>
+<br />
 ';
+        $s1.= '</div>'."\n";
 
         // charger les documents associes à l'activite courante
-		if (isset($activite_id) && ($activite_id>0)){
-			$ref_activite=$activite_id; // plus pratique
-			// AFFICHER LA LISTE DES DOCUMENTS
-			$compteur_document=0;
-			$records_document = referentiel_get_documents($ref_activite);
-	    	if ($records_document){
-    			// afficher
-				// DEBUG
-				// echo "<br/>DEBUG :: print_lib_activite.php :: Ligne 2028<br />\n";
-				// print_r($records_document);
-				// echo "<br/>\n";
+    	if (isset($activite_id) && ($activite_id>0)){
+            $ref_activite=$activite_id; // plus pratique
+            // AFFICHER LA LISTE DES DOCUMENTS
+            $compteur_document=0;
+            $records_document = referentiel_get_documents($ref_activite);
+	        if ($records_document){
+                // afficher
                 $nbressource=count($records_document);
                 $s2.='<!-- DOCUMENTS -->
-<tr valign="top"><td class="jaune" colspan="7">';
+<div class="affdoc">'."\n";
                 if ($nbressource>1){
-            		$s2.=get_string('ressources_associees','referentiel',$nbressource);
+                    $s2.='<span class="bold">'.get_string('ressources_associees','referentiel',$nbressource).'</span>'."\n";
                 }
                 else{
-            		$s2.=get_string('ressource_associee','referentiel',$nbressource);
+                    $s2.='<span class="bold">'.get_string('ressource_associee','referentiel',$nbressource).'</span>'."\n";
                 }
                 $s2.="\n";
 
 				foreach ($records_document as $record_d){
-					$compteur_document++;
-        			$document_id=$record_d->id;
-					$type_document = stripslashes($record_d->type_document);
-					$description_document = stripslashes($record_d->description_document);
-					$url_document = $record_d->url_document;
-					$ref_activite = $record_d->ref_activite;
-					if (isset($record_d->cible_document) && ($record_d->cible_document==1)){
-						$cible_document='_blank'; // fenêtre cible
+    					$compteur_document++;
+             			$document_id=$record_d->id;
+	   		      		$type_document = stripslashes($record_d->type_document);
+				        $description_document = stripslashes($record_d->description_document);
+    					$url_document = $record_d->url_document;
+	       				$ref_activite = $record_d->ref_activite;
+		      			if (isset($record_d->cible_document) && ($record_d->cible_document==1)){
+			     			$cible_document='_blank'; // fenêtre cible
+				    	}
+					    else{
+					   	   $cible_document='';
+    					}
+	       				if (isset($record_d->etiquette_document)){
+		      				$etiquette_document=$record_d->etiquette_document; // fenêtre cible
+			     		}
+				    	else{
+					       	$etiquette_document='';
+    					}
+	       				if ($record_d->timestamp==0){
+                            $date_creation='';
+                        }
+						else{
+                            $date_creation=userdate($record_d->timestamp);
+						}
+						if ($detail){
+							if ($date_modif<$record_d->timestamp){
+                            $s.='<span class="prioritaire">';
+                            $s.='<br /><span class="bold">'.get_string('num','referentiel').'<i>'.$document_id.'</i></span></span>
+&nbsp;
+<span class="bold">'.get_string('date_creation','referentiel').'</span> : '.$date_creation.'
+&nbsp;
+<span class="bold">'.get_string('type','referentiel').'</span> : '.$type_document.'
+&nbsp;
+<span class="bold">'.get_string('url','referentiel').'</span>  :
+';
+                            $s.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
+                            $s.='&nbsp; <span class="bold">'.get_string('description','referentiel').'</span> : '.nl2br($description_document);
+                            $s.='</span>'."\n";
+                        }
+                        else{
+                            $s.='<br /><span class="bold">'.get_string('num','referentiel').'<i>'.$document_id.'</i></span>
+&nbsp;
+<span class="bold">'.get_string('date_creation','referentiel').'</span> : '.$date_creation.'
+&nbsp;
+<span class="bold">'.get_string('type','referentiel').'</span> : '.$type_document.'
+&nbsp;
+<span class="bold">'.get_string('url','referentiel').'</span>  :
+';
+                            $s.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
+                            $s.='&nbsp; <span class="bold">'.get_string('description','referentiel').'</span> : '.nl2br($description_document)."\n";
+						}
 					}
 					else{
-						$cible_document='';
+						$s.=' &nbsp; '.referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
 					}
-					if (isset($record_d->etiquette_document)){
-						$etiquette_document=$record_d->etiquette_document; // fenêtre cible
-					}
-					else{
-						$etiquette_document='';
-					}
-					// Modif JF 2013/02/02
-					if ($record_d->timestamp==0){
-                        $date_creation='';
-                    }
-                    else{
-                        $date_creation=userdate($record_d->timestamp);
-                    }
-                    if ($date_modif<$record_d->timestamp){
-                        $s.='<span class="prioritaire">';
-                        $s.='<br /><b>'.get_string('num','referentiel').'<i>'.$document_id.'</i></b>
-&nbsp; &nbsp; &nbsp;
-<b>'.get_string('date_creation','referentiel').'</b> : '.$date_creation.'
-&nbsp; &nbsp; &nbsp;
-<b>'.get_string('type','referentiel').'</b> : '.$type_document.'
-&nbsp; &nbsp; &nbsp;
-<b>'.get_string('url','referentiel').'</b>  :
-';
-                    $s.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
-                    $s.='&nbsp; &nbsp; &nbsp; <b>'.get_string('description','referentiel').'</b> : '.nl2br($description_document);
-                    $s.='</span>'."\n";
-                    }
-                    else{
-                  $s.='<br /><b>'.get_string('num','referentiel').'<i>'.$document_id.'</i></b>
-&nbsp; &nbsp; &nbsp;
-<b>'.get_string('date_creation','referentiel').'</b> : '.$date_creation.'
-&nbsp; &nbsp; &nbsp;
-<b>'.get_string('type','referentiel').'</b> : '.$type_document.'
-&nbsp; &nbsp; &nbsp;
-<b>'.get_string('url','referentiel').'</b>  :
-';
-                    $s.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
-                    $s.='&nbsp; &nbsp; &nbsp; <b>'.get_string('description','referentiel').'</b> : '.nl2br($description_document).'
-';
-                    }
-
-  				}
-			}
-		}
-        if ($nbressource){
-            $nblignes=$nblignes+$nbressource+1;
+	       		}
+            }
         }
-        echo $s0.$nblignes.$s1;
-
+        echo $s0.$s1;
 		if ($s2){
             echo $s2;
+    	   	if ($s){
+                echo $s."\n";
+            }
+            echo '</div>'."\n";
         }
-		if ($s){
-            echo $s.'</td></tr>'."\n";
-        }
-
-        echo '</table>
-';
-
 	}
 }
 
@@ -2138,10 +1929,10 @@ function referentiel_print_activite_detail($record_a){
  *       @param object $referentiel_instance                              *
  *       @param int $userid_filtre                                        *
  *       @param array of objects $gusers of users get from current group  *
- *       @param string $sql_filtre_where, $sql_filtre_order               *
+ *       @param string $sql_f_where, $sql_f_order               *
  * output null                                                            *
  **************************************************************************/
-function referentiel_print_evalue_global_liste_activites($mode, $referentiel_instance, $initiale=0, $userids='', $userid_filtre=0, $gusers=NULL, $sql_filtre_where='', $sql_filtre_order='', $data_filtre, $select_acc=0) {
+function referentiel_print_evalue_global_liste_activites($mode, $referentiel_instance, $initiale=0, $userids='', $userid_filtre=0, $gusers=NULL, $sql_f_where='', $sql_f_order='', $data_f, $select_acc=0) {
 
 // idem  que referentiel_print_evalue_liste_activite() 
 // mais  specialise modification
@@ -2157,8 +1948,7 @@ static $isadmin=false;
 static $iseditor=false;
 static $referentiel_id = NULL;
 
-    // A COMPLETER
-    $data=NULL;
+
 	// contexte
     $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
     $course = $DB->get_record("course", array("id" => "$cm->course"));
@@ -2166,14 +1956,8 @@ static $referentiel_id = NULL;
         print_error('REFERENTIEL_ERROR 5 :: print_lib_activite.php :: You cannot call this script in that way');
 	}
 	
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-	
 	$records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
     $roles=referentiel_roles_in_instance($referentiel_instance->id);
@@ -2182,18 +1966,8 @@ static $referentiel_id = NULL;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
+    $isguest=$roles->is_guest;
 
-	/*
-	// DEBUG
-    if ($iseditor) echo "Editor ";
-    if ($isadmin) echo "Admin ";
-	if ($isteacher) echo "Teacher ";
-	if ($istutor) echo "Tutor ";
-	if ($isstudent) echo "Student ";
-	*/
-
-
-	
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
 		if (!$referentiel_referentiel){
@@ -2204,8 +1978,8 @@ static $referentiel_id = NULL;
 			    print_error(get_string('creer_referentiel','referentiel'), ".$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
+
 	 	// preparer les variables globales pour Overlib
-		// referentiel_initialise_data_referentiel($referentiel_referentiel->id);
 		referentiel_initialise_descriptions_items_referentiel($referentiel_referentiel->id);
 
 		// boite pour selectionner les utilisateurs ?
@@ -2220,35 +1994,26 @@ static $referentiel_id = NULL;
                 $record_id_users  = referentiel_get_students_course($course->id,0,0);  //seulement les stagiaires
 			}
             if ($gusers && $record_id_users){ // liste des utilisateurs du groupe courant
-				// echo "<br />DEBUG :: print_lib_activite.php :: 740 :: GUSERS<br />\n";
-				// print_object($gusers);
-				// echo "<br />\n";
-				// exit;
 				$record_users  = array_intersect($gusers, array_keys($record_id_users));
-				// echo "<br />DEBUG :: print_lib_activite.php :: 745 :: RECORD_USERS<br />\n";
-				// print_r($record_users  );
-				// echo "<br />\n";
-				// recopier 
 				$record_id_users=array();
 				foreach ($record_users  as $record_id){
-                        $a_obj=new stdClass();
-                        $a_obj->userid=$record_id;
-                        $record_id_users[]=$a_obj;
+                    $a_obj=new stdClass();
+                    $a_obj->userid=$record_id;
+                    $record_id_users[]=$a_obj;
 				}
 			}
-			// Ajouter l'utilisateur courant pour qu'il voit ses activités
+            $a_obj=new stdClass();
+            $a_obj->userid=$USER->id;
+            $record_id_users[]=$a_obj;
 
-                        $a_obj=new stdClass();
-                        $a_obj->userid=$USER->id;
-                        $record_id_users[]=$a_obj;
-
-            echo referentiel_select_users_activite_accompagnes($userid_filtre, $select_acc, $mode);
-            echo referentiel_select_users_activite_2($record_id_users, $userid_filtre, $select_acc, $mode, $initiale);
+            echo referentiel_select_users_activite_accompagnes($userid_filtre, $select_acc, $data_f, $mode);
+            echo referentiel_select_users_activite_2($record_id_users, $userid_filtre, $select_acc, $mode, $initiale, $data_f);
 		}
 		else{
 			$userid_filtre=$USER->id; // les étudiants ne peuvent voir que leur fiche
 		}
-		// recuperer les utilisateurs filtres
+		
+		// recuperer les utilisateurs filtres ==================================
 				
         if (!empty($select_acc) && ($userid_filtre == 0)){
             // eleves accompagnes
@@ -2271,7 +2036,7 @@ static $referentiel_id = NULL;
 			}
 		}
 		
-        // ALPHABETIQUE
+        // selection ALPHABETIQUE
         if (!empty($userids)){
             $t_users_select=explode('_', $userids);
             $record_id_users=array();
@@ -2280,44 +2045,32 @@ static $referentiel_id = NULL;
                         $a_obj->userid=$userid;
                         $record_id_users[]=$a_obj;
             }
-
-            // DEBUG
-            /*
-            echo "<br />DEBUG :: print_lib_activite.php :: 2386<br />USERIDS : $userids<br />\n";
-            print_r($t_users_select);
-            echo "<br />\n";
-            print_r($record_id_users);
-            exit;
-            */
         }
 
 		else if ((($userid_filtre==$USER->id) || ($userid_filtre==0)) && ($isteacher || $iseditor|| $istutor)){
 			// Ajouter l'utilisateur courant pour qu'il puisse voir ses propres activites
-                        $a_obj=new stdClass();
-                        $a_obj->userid=$USER->id;
-                        $record_id_users[]=$a_obj;
+            $a_obj=new stdClass();
+            $a_obj->userid=$USER->id;
+            $record_id_users[]=$a_obj;
 		}
-
-		// echo "<br />DEBUG :: print_lib_activite.php :: 1870 :: RECORD_USERS<br />\n";
-		// print_r($record_users  );
-		// echo "<br />\n";
-		// afficher les activites
+		// afficher les activites ==============================================
 		if ($record_id_users){
 			// Afficher 		
 			if (isset($mode) && (($mode=='updateactivity') || ($mode=='listactivityall') || ($mode=='listactivitysingle'))){
                 if ($mode=='updateactivity'){
-                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=".$cm->id."&amp;course=".$course->id."&amp;userid=".$userid_filtre."&amp;select_acc=".$select_acc."&amp;mode=".$mode."&amp;sesskey=".sesskey(), $data_filtre, false, false);
+                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=".$cm->id."&amp;courseid=".$course->id."&amp;userid=".$userid_filtre."&amp;select_acc=".$select_acc."&amp;mode=".$mode."&amp;sesskey=".sesskey(), $data_f, false, false);
                 }
                 else{
-                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=".$cm->id."&amp;course=".$course->id."&amp;userid=".$userid_filtre."&amp;select_acc=".$select_acc."&amp;mode=".$mode."&amp;sesskey=".sesskey(), $data_filtre, false);
+                    echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=".$cm->id."&amp;courseid=".$course->id."&amp;userid=".$userid_filtre."&amp;select_acc=".$select_acc."&amp;mode=".$mode."&amp;sesskey=".sesskey(), $data_f, false);
                 }
 			}
 			else{
-				echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=".$cm->id."&amp;course=".$course->id."&amp;userid=".$userid_filtre."&amp;select_acc=".$select_acc."&amp;mode=".$mode."&amp;sesskey=".sesskey(), $data_filtre, true);
+				echo referentiel_modifie_entete_activite_complete_filtre("activite.php?id=".$cm->id."&amp;courseid=".$course->id."&amp;userid=".$userid_filtre."&amp;select_acc=".$select_acc."&amp;mode=".$mode."&amp;sesskey=".sesskey(), $data_f, true);
 			}
 			
+echo '<table class="activite" width="100%">'."\n";
 			// ordre d'affichage utilisateurs
-			if (isset($data_filtre) && isset($data_filtre->filtre_auteur) && ($data_filtre->filtre_auteur=='-1')){ 
+			if (isset($data_f) && isset($data_f->f_auteur) && ($data_f->f_auteur=='-1')){ 
 				$deb=(-count($record_id_users))+1;
 				$fin=1;
 			}
@@ -2327,77 +2080,45 @@ static $referentiel_id = NULL;
 			}
 
 			// formulaire global
-			echo "\n\n".'<form name="form" id="form" action="activite.php?id='.$cm->id.'&amp;course='.$course->id.'&amp;mode='.$mode.'&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student.'&amp;select_acc='.$select_acc.'&amp;sesskey='.sesskey().'" method="post">'."\n";
-    	
+			echo "\n\n".'<form name="form" id="form" action="activite.php?id='.$cm->id.'&amp;courseid='.$course->id.'&amp;mode='.$mode.'&amp;select_acc='.$select_acc.'&amp;sesskey='.sesskey().'" method="post">'."\n";
+
             echo  '<tr valign="top">
 <td class="ardoise" colspan="9">
  <img class="selectallarrow" src="'.$OUTPUT->pix_url('arrow_ltr_bas','referentiel').'" width="38" height="22" alt="Pour la sélection :" />
- <i>'.get_string('cocher_enregistrer', 'referentiel').'</i>
+ <i>'.get_string('cocher_enregistrer', 'referentiel').'</i>';
+            echo '
 <input type="submit" value="'.get_string("savechanges").'" />
 <input type="reset" value="'.get_string("corriger", "referentiel").'" />
 <input type="submit" name="cancel" value="'.get_string("quit", "referentiel").'" />
 </td></tr>'."\n";
 
 
-			// Parcours des utilisateurs
-			for ($j=$deb; $j<$fin; $j++){
-				$i=abs($j);
-				// recupere les enregistrements
-				// MODIF JF 23/10/2009
-				if (isset($userid_filtre) && ($userid_filtre==$USER->id)){
+		// Parcours des utilisateurs
+		for ($j=$deb; $j<$fin; $j++){
+			$i=abs($j);
+			if (isset($userid_filtre) && ($userid_filtre==$USER->id)){
 					$actif=true; 
-				}
-				else if (isset($mode) && ($mode=='listactivityall')){
+			}
+			else{
 					$actif=false;
-				}
-				else{
-					$actif=false;
-					// 	$records=referentiel_get_all_activites_user_course($referentiel_instance->ref_referentiel, $record_id->userid, $course->id);
-				}
+			}
 
-				// MODIF JF 2009/11/28
-				// Si des activites existent affichage de la liste des competences declarees
-				if (referentiel_user_activites($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid)){
-					if (isset($mode) && (($mode=='updateactivity') || ($mode=='listactivityall') || ($mode=='listactivitysingle'))){
-                        if ($mode=='updateactivity'){
-                            echo '<tr valign="top"><td colspan="8" align="center">'.get_string('competences_declarees','referentiel', '<b>'.referentiel_get_user_info($record_id_users[$i]->userid).'</b>')."\n".referentiel_print_jauge_activite($record_id_users[$i]->userid, $referentiel_id).'</td></tr>'."\n";
-                        }
-                        else{
-                            echo '<tr valign="top"><td colspan="9" align="center">'.get_string('competences_declarees','referentiel', '<b>'.referentiel_get_user_info($record_id_users[$i]->userid).'</b>')."\n".referentiel_print_jauge_activite($record_id_users[$i]->userid, $referentiel_id).'</td></tr>'."\n";
-                        }
-					}
-					else{
-						echo '<tr valign="top"><td colspan="10" align="center">'.get_string('competences_declarees','referentiel', '<b>'.referentiel_get_user_info($record_id_users[$i]->userid).'</b>')."\n".referentiel_print_jauge_activite($record_id_users[$i]->userid, $referentiel_id).'</td></tr>'."\n";
-					}
-				}
-				else{
-					if (isset($mode) && ($mode=='listactivity')){
-						echo '<tr valign="top"><td class="zero" colspan="10" align="center">'.referentiel_print_aucune_activite_user($record_id_users[$i]->userid).'</td></tr>'."\n";
-					}
-				}
-				
-				
+			// Si des activites existent affichage de la liste des competences declarees
+			if (referentiel_user_activites($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid)){
+                echo '<tr valign="top"><td colspan="8">'."\n";
+                echo '<div align="center">'.get_string('competences_declarees','referentiel', '<span class="bold">'.referentiel_get_user_info($record_id_users[$i]->userid).'</span>')."\n".referentiel_print_jauge_activite($record_id_users[$i]->userid, $referentiel_id).'</div>'."\n";
 				// filtrage des activites demandees
-				$records=referentiel_get_all_activites_user($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid, $sql_filtre_where, $sql_filtre_order);
+				$records=referentiel_get_all_activites_user($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid, $sql_f_where, $sql_f_order);
 				if ($records){
-
+                    $numero=0;
   					foreach ($records as $record) {   // afficher l'activite
 	   					// Afficher 	
-		  				if (isset($mode) && ($mode=='updateactivity')){
-			   				echo referentiel_modifie_global_activite_complete($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif);		   				
-				  		}
-					   	else if (isset($mode) && ($mode=='listactivityall')){
-						  	echo referentiel_print_activite_3_complete($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $select_acc);
-						  }
-						  elseif (isset($mode) && ($mode=='listactivitysingle')){
-							 echo referentiel_print_activite_3_complete($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $select_acc);
-						  }
-						  else{
-							 echo referentiel_print_activite_2($record, $context, $actif, $select_acc);
-						  }
-					}
-
+			   			referentiel_modifie_global_activite_complete($data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $numero);
+                        $numero++;
+                    }
 				}
+				echo '</td></tr>'."\n";
+            }
     	}
     	
     	echo  '<tr valign="top">
@@ -2408,6 +2129,14 @@ static $referentiel_id = NULL;
 <input type="hidden" name="action" value="modifier_activite_global" />
 <!-- accompagnement -->
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
+
+<!-- Filtres -->
+<input type="hidden" name="f_auteur" value="'.$data_f->f_auteur.'" />
+<input type="hidden" name="f_validation" value="'.$data_f->f_validation.'" />
+<input type="hidden" name="f_referent" value="'.$data_f->f_referent.'" />
+<input type="hidden" name="f_date_modif" value="'.$data_f->f_date_modif.'" />
+<input type="hidden" name="f_date_modif_student" value="'.$data_f->f_date_modif_student.'" />
+
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="modulename"    value="referentiel" />
@@ -2419,26 +2148,20 @@ static $referentiel_id = NULL;
 </form>'."\n";
 
 			// liste des utilisateur achevee
-			if (isset($mode) && ($mode=='updateactivity')){
-				// echo referentiel_modifie_activite_2_complete($record, $context, $actif);
-				echo referentiel_modifie_enqueue_activite();
-			}
-			else{
-				echo referentiel_print_enqueue_activite();
-			}
+			echo referentiel_print_enqueue_activite();
+
 		}
 	}
-	//echo '<br /><br />'."\n";
 	return true;
 }
 
 
 
 // ----------------------------------------------------
-function referentiel_modifie_activite_complete($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif=true){
+function referentiel_modifie_activite_complete($data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif=true){
 // $actif = true : le menu est active, sinon il ne l'est pas
 //	Saisie et validation
-// $data_filtre : parametres de filtrage
+// $data_f : parametres de filtrage
 // $mode : mode d'affichage
 // $cm : course_module
 // $course : enregistrement cours
@@ -2468,7 +2191,7 @@ static $iseditor=false;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
+    $isguest=$roles->is_guest;
 	/*
 	// DEBUG
     if ($iseditor) echo "Editor ";
@@ -2556,31 +2279,31 @@ static $iseditor=false;
 		$menu_actif = $actif || ($ref_course == $COURSE->id);
 
 		if ($menu_actif){ 
-			// $s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=listactivityall&amp;sesskey='.sesskey().'#activite"><img src="pix/search.gif" alt="'.get_string('plus', 'referentiel').'" title="'.get_string('plus', 'referentiel').'" /></a>'."\n";
-			$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=listactivity&amp;sesskey='.sesskey().'#activite"><img src="'.$OUTPUT->pix_url('nosearch','referentiel').'" alt="'.get_string('moins', 'referentiel').'" title="'.get_string('moins', 'referentiel').'" /></a>'."\n";
+			// $s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=listactivityall&amp;sesskey='.sesskey().'#activite"><img src="pix/search.gif" alt="'.get_string('plus', 'referentiel').'" title="'.get_string('plus', 'referentiel').'" /></a>'."\n";
+			$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=listactivity&amp;sesskey='.sesskey().'#activite"><img src="'.$OUTPUT->pix_url('nosearch','referentiel').'" alt="'.get_string('moins', 'referentiel').'" title="'.get_string('moins', 'referentiel').'" /></a>'."\n";
 			$has_capability=has_capability('mod/referentiel:approve', $context);
 			$is_owner=referentiel_activite_isowner($activite_id);
 			
 			if ($has_capability	or $is_owner){
 				if ($has_capability || ($is_owner && !$approved)) {
-	        		$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=updateactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
+	        		$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=updateactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
 				}
             if ($has_capability || ($is_owner && !$approved)) {
-			    	$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=deleteactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
+			    	$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=deleteactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
     			}
 			}
 			// valider
 		    if ($has_capability){
 				if (!$approved){
-					$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=approveactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('nonvalide','referentiel').'" alt="'.get_string('approve', 'referentiel').'" title="'.get_string('approve', 'referentiel').'" /></a>'."\n";
+					$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=approveactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('nonvalide','referentiel').'" alt="'.get_string('approve', 'referentiel').'" title="'.get_string('approve', 'referentiel').'" /></a>'."\n";
 				}
 				else{
-    				$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=desapproveactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('valide','referentiel').'" alt="'.get_string('desapprove', 'referentiel').'" title="'.get_string('desapprove', 'referentiel').'" /></a>'."\n";
+    				$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=desapproveactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('valide','referentiel').'" alt="'.get_string('desapprove', 'referentiel').'" title="'.get_string('desapprove', 'referentiel').'" /></a>'."\n";
 				}
 			}
 			// commentaires
     		if (has_capability('mod/referentiel:comment', $context)){
-    			$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=commentactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('feedback','referentiel').'" alt="'.get_string('comment', 'referentiel').'" title="'.get_string('comment', 'referentiel').'" /></a>'."\n";
+    			$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=commentactivity&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('feedback','referentiel').'" alt="'.get_string('comment', 'referentiel').'" title="'.get_string('comment', 'referentiel').'" /></a>'."\n";
 			}
 		}
 		else{
@@ -2628,7 +2351,7 @@ static $iseditor=false;
 		
 		// AFFICHAGE
 		if ($ref_course == $COURSE->id){
-			echo "\n".'<form action="activite.php?id='.$cm->id.'&amp;course='.$course->id.'&amp;mode='.$mode.'&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student.'&amp;sesskey='.sesskey().'" method="post">'."\n";
+			echo "\n".'<form action="activite.php?id='.$cm->id.'&amp;courseid='.$course->id.'&amp;mode='.$mode.'&amp;sesskey='.sesskey().'" method="post">'."\n";
 		}
 		echo '<tr valign="top">';
         if (!empty($prioritaire)){
@@ -2659,7 +2382,7 @@ static $iseditor=false;
 		echo '</td><td align="center">';
 		
 		if (($ref_course == $COURSE->id) && (has_capability('mod/referentiel:approve', $context))){
-			echo '<b>'.get_string('validation','referentiel').'</b> : ';
+			echo '<span class="bold">'.get_string('validation','referentiel').'</span> : ';
 			if (isset($approved) && ($approved)){
 				echo  '<input type="radio" name="approved"  id="approved" value="1" checked="checked" />'.get_string('yes').' &nbsp; <input type="radio" name="approved"  id="approved" value="0" />'.get_string('no').' &nbsp; &nbsp; '."\n";
 			}
@@ -2727,7 +2450,7 @@ static $iseditor=false;
 		}
 		
 		if ($ref_course == $COURSE->id){
-			echo '<b>'.get_string('commentaire','referentiel').'</b><br />'."\n";			
+			echo '<span class="bold">'.get_string('commentaire','referentiel').'</span><br />'."\n";			
 			echo '<textarea cols="40" rows="7" name="commentaire_activite">'.$commentaire_activite.'</textarea>'."\n";
             echo '<br />'.get_string('notification_activite','referentiel').'<input type="radio" name="mailnow_'.$activite_id.'" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="mailnow_'.$activite_id.'" value="0" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
 		}
@@ -2764,8 +2487,16 @@ static $iseditor=false;
 <input type="hidden" name="ref_course" value="'.$ref_course.'" />
 <input type="hidden" name="ref_instance" value="'.$ref_instance.'" />
 <input type="hidden" name="action" value="modifier_activite" />
+
+<!-- Filtres -->
+<input type="hidden" name="f_auteur" value="'.$data_f->f_auteur.'" />
+<input type="hidden" name="f_validation" value="'.$data_f->f_validation.'" />
+<input type="hidden" name="f_referent" value="'.$data_f->f_referent.'" />
+<input type="hidden" name="f_date_modif" value="'.$data_f->f_date_modif.'" />
+<input type="hidden" name="f_date_modif_student" value="'.$data_f->f_date_modif_student.'" />
+
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$course->id.'" />
+<input type="hidden" name="courseid"        value="'.$course->id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="modulename"    value="referentiel" />
 <input type="hidden" name="instance"      value="'.$referentiel_instance->id.'" />
@@ -2783,11 +2514,11 @@ static $iseditor=false;
 
 
 // ----------------------------------------------------
-function referentiel_modifie_global_activite_complete($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif=true){
+function referentiel_modifie_global_activite_complete($data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif=true, $numero=0){
 //	Saisie et validation globale
 // idem que referentiel_modifie_globale_activite_complete() sauf que le formulaire est globale
 // $actif = true : le menu est active, sinon il ne l'est pas
-// $data_filtre : parametres de filtrage
+// $data_f : parametres de filtrage
 // $mode : mode d'affichage
 // $cm : course_module
 // $course : enregistrement cours
@@ -2811,7 +2542,8 @@ $s='';
 $s_menu='';
 $s_document='';
 $s_out='';
-	
+$nbressource=0;
+
 // Charger les activites
 // filtres
     $roles=referentiel_roles_in_instance($referentiel_instance->id);
@@ -2820,16 +2552,7 @@ $s_out='';
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
-	/*
-	// DEBUG
-    if ($iseditor) echo "Editor ";
-    if ($isadmin) echo "Admin ";
-	if ($isteacher) echo "Teacher ";
-	if ($istutor) echo "Tutor ";
-	if ($isstudent) echo "Student ";
-	*/
-
+    $isguest=$roles->is_guest;
 
 if ($record){
 		$activite_id=$record->id;
@@ -2838,104 +2561,72 @@ if ($record){
 		$competences_activite = stripslashes(strip_tags($record->competences_activite));
 		$commentaire_activite = stripslashes(strip_tags($record->commentaire_activite));
 		$ref_instance = $record->ref_instance;
-
 		$ref_referentiel = $record->ref_referentiel;
-		// liste des codes pur ce référentiel
+		// liste des codes pour ce référentiel
 		$liste_codes_competence=referentiel_get_liste_codes_competence($ref_referentiel);	
-
 		$ref_course = $record->ref_course;
-
+		$approved = $record->approved;
 		$userid = $record->userid;
 		$teacherid = $record->teacherid;
-		if ($teacherid==0){
+    	if ($teacherid==0){
 			if ($isteacher || $iseditor){ 
 				$teacherid=$USER->id;
 			}
 		} 
 
-		$date_creation = $record->date_creation;
-		$date_modif = $record->date_modif;
-		$approved = $record->approved;
 		$ref_task = $record->ref_task;
 		if ($ref_task>0){ // remplacer par la liste definie dans la tache
 			$liste_codes_competences_tache=referentiel_get_liste_codes_competence_tache($ref_task);
-			// DEBUG
-			// echo "<br/>DEBUG ::<br />\n";
-			// echo $liste_codes_competences_tache;				
-		} 
+		}
 		else{
 			$liste_codes_competences_tache=$liste_codes_competence;
 		}
-		// DEBUG
-		// echo "<br/>DEBUG ::<br />\n";
-		// print_object($record);
-		
+
 		$user_info=referentiel_get_user_info($userid);
 		$teacher_info=referentiel_get_user_info($teacherid);
+		if (empty($teacher_info)){
+            $teacher_info=get_string('inconnu', 'referentiel');
+        }
 		// dates
-		$date_creation_info=userdate($date_creation);
-		
-		if ($date_modif!=0){
-			$date_modif_info=userdate($date_modif);
+		$date_creation_info=userdate($record->date_creation);
+		if ($record->date_modif_student==0){
+			$record->date_modif_student=$record->date_creation;
 		}
-		else{
-			$date_modif_info='';
-		}
-
-		// MODIF JF 2009/10/27
-		$date_modif_student = $record->date_modif_student;
-		if ($date_modif_student==0){
-			$date_modif_student=$date_creation;
-		}
-		if ($date_modif_student!=0){
-			$date_modif_student_info=userdate($date_modif_student);
+		if ($record->date_modif_student!=0){
+			$date_modif_student_info=userdate($record->date_modif_student);
 		}
 		else{
 			$date_modif_student_info='';
 		}
-		
+    	if ($record->date_modif!=0){
+    	   $date_modif_info=userdate($record->date_modif);
+        }
+        else{
+            $date_modif_info='';
+        }
+
 		$prioritaire=referentiel_activite_prioritaire($record);
 		
-		// MODIF JF 2009/10/21						
 		$old_liste_competences=stripslashes($record->competences_activite);		
 		
-		// MODIF JF 2009/10/23
 		$url_course=referentiel_get_course_link($ref_course);
-		// MODIF JF 2013/01/26
 		$url_instance=referentiel_get_instance_link($ref_instance);
 
-		// MODIF JF 2009/11/08
-		// afficher le menu si l'activité est affiche dans son propre cours de création 
+		// afficher le menu si l'activité est affiche dans son propre cours de création
 		$menu_actif = $actif || ($ref_course == $COURSE->id);
 
 		if ($menu_actif){ 
-   //             $s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=listactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'#activite"><img src="pix/nosearch.gif" alt="'.get_string('moins', 'referentiel').'" title="'.get_string('moins', 'referentiel').'" /></a>';
 			$has_capability=has_capability('mod/referentiel:approve', $context);
 			$is_owner=referentiel_activite_isowner($activite_id);
 			
 			if ($has_capability	or $is_owner){
 				if ($has_capability || ($is_owner && !$approved)) {
-	        		$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
+	        		$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
 				}
                 if ($has_capability || ($is_owner && !$approved)) {
-			    	$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
+			    	$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
     			}
 			}
-			// valider
-/*
-		    if ($has_capability){
-				if (!$approved){
-					$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=approveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="pix/nonvalide.gif" alt="'.get_string('approve', 'referentiel').'" title="'.get_string('approve', 'referentiel').'" /></a>'."\n";
-				}
-				else{
-    				$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=desapproveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="pix/valide.gif" alt="'.get_string('desapprove', 'referentiel').'" title="'.get_string('desapprove', 'referentiel').'" /></a>'."\n";
-				}
-			}
-			// commentaires
-    		if (has_capability('mod/referentiel:comment', $context)){
-    			$s_menu.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=commentactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="pix/feedback.gif" alt="'.get_string('comment', 'referentiel').'" title="'.get_string('comment', 'referentiel').'" /></a>'."\n";
-			}
-*/
 		}
 		else{
 			$s_menu.='&nbsp; '.get_string('activite_exterieure', 'referentiel');
@@ -2950,10 +2641,17 @@ if ($record){
 			// AFFICHER LA LISTE DES DOCUMENTS
 			$records_document = referentiel_get_documents($ref_activite);
 	    	if ($records_document){
-    			// afficher
-				// DEBUG
-				// echo "<br/>DEBUG <br />\n";
-				// print_r($records_document);
+                // afficher
+                $nbressource=count($records_document);
+                $s_document.='<!-- DOCUMENTS -->
+<div class="affdoc">'."\n";
+                if ($nbressource>1){
+                    $s_document.='<span class="bold">'.get_string('ressources_associees','referentiel',$nbressource).'</span>'."\n";
+                }
+                else{
+                    $s_document.='<span class="bold">'.get_string('ressource_associee','referentiel',$nbressource).'</span>'."\n";
+                }
+                $s_document.="\n";
 				foreach ($records_document as $record_d){
 					$compteur_document++;
         			$document_id=$record_d->id;
@@ -2981,7 +2679,7 @@ if ($record){
                     else{
                         $date_creation=userdate($record_d->timestamp);
                     }
-                    if ($date_modif<$record_d->timestamp){
+                    if ($record->date_modif<$record_d->timestamp){
 					   $s_document.='<span class="prioritaire">'.get_string('document', 'referentiel').' <i>'.$document_id.'</i>::<i>'.$date_creation.'</i> :: '.$type_document.' :: ';
 					   $s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
 					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."'</span><br /> \n";
@@ -2993,175 +2691,140 @@ if ($record){
 					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."<br /> \n";
                     }
 				}
+                $s_document.='</div>'."\n";
 			}
 		}
 		
 		// AFFICHAGE
-		/*
-    if ($ref_course == $COURSE->id){
-			echo "\n".'<form action="activite.php?id='.$cm->id.'&amp;course='.$course->id.'&amp;mode='.$mode.'&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_validation='.$data_filtre->filtre_validation.'&amp;filtre_referent='.$data_filtre->filtre_referent.'&amp;filtre_date_modif='.$data_filtre->filtre_date_modif.'&amp;filtre_date_modif_student='.$data_filtre->filtre_date_modif_student.'&amp;sesskey='.sesskey().'" method="post">'."\n";
-		}
-		*/
-        echo '<tr valign="top">';
+        echo '
+<a name="activite_'.$activite_id.'"></a>'."\n";
         if (!empty($prioritaire)){
-            echo '<td class="prioritaire" rowspan="4">';
+            echo  '<div class="affprioritaire">'."\n";
         }
         else if (isset($approved) && ($approved)){
-			echo '<td class="valide" rowspan="4">';
+			echo  '<div class="affvalide">'."\n";
 		}
 		else{
-			echo '<td class="invalide" rowspan="4">';
+			echo  '<div class="affinvalide">'."\n";
 		}
-		
-    // selection de l'activite
-		/*
-		if ($ref_course == $COURSE->id){
-		  if (isset($approved) && ($approved)){
-        echo  '<input type="checkbox" name="tactivite_id[]" id="tactivite_id_'.$activite_id.'" value="'.$activite_id.'" />';
-		  }
-		  else{
-        echo  '<input type="checkbox" name="tactivite_id[]" id="tactivite_id_'.$activite_id.'" value="'.$activite_id.'" checked="checked" />';      
-      }
-    }
-    */
-    if ($ref_course == $COURSE->id){
-      echo  '<input type="checkbox" name="tactivite_id[]" id="tactivite_id_'.$activite_id.'" value="'.$activite_id.'" />';      
-    }
-    echo  $activite_id;
-	// menu
-	echo '<br />'."\n";
-	echo $s_menu;
 
-	echo '</td>'."\n".'<td align="center">';
-	echo $user_info;
-    // MODIF JF 2012/05/06
-    echo referentiel_liste_groupes_user($ref_course, $userid);
-	echo '</td>'."\n".'<td align="center">';
-	echo $url_course.'<br /><i>'.$url_instance;
-	echo '</i></td>'."\n".'<td align="center">';
-	if ($ref_course == $COURSE->id){
-		echo '<input type="text" name="type_activite_'.$activite_id.'" size="40" maxlength="80" value="'.$type_activite.'" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')"  />'."\n";
-	}
-	else{
-		echo $type_activite;
-	}
-	echo '</td>'."\n".'<td align="center">';
-	echo $teacher_info;
-	echo '</td>'."\n".'<td align="center">';
+        if ($ref_course == $COURSE->id){
+            echo  '<input type="checkbox" name="tactivite_id[]" id="tactivite_id_'.$activite_id.'" value="'.$activite_id.'" />';
+        }
+        echo  $activite_id;
+	    echo '<span class="bold">'.get_string('course').'</span> '.$url_course."\n";
+        echo '<span class="bold">'.get_string('instance','referentiel').'</span> '.'<i>'.$url_instance.'</i>'."\n";
+        // menu
+        echo  '<br />'."\n";
+        echo  $s_menu;
+    	echo  '</div>'."\n";
 
-	if (($ref_course == $COURSE->id) && (has_capability('mod/referentiel:approve', $context))){
-		echo '<b>'.get_string('validation','referentiel').'</b> : ';
+        // details
+        if ($numero%2==0){
+            echo  '<div class="affact1">';
+        }
+        else{
+            echo  '<div class="affact2">';
+        }
+
+        echo '<span class="bold">'.get_string('auteur','referentiel').'</span> '.$user_info;
+        echo referentiel_liste_groupes_user($ref_course, $userid);
+
+        if ($ref_course == $COURSE->id){
+            echo '<span class="bold">'.get_string('type_activite','referentiel').'</span> '."\n";
+            echo '<input type="text" name="type_activite_'.$activite_id.'" size="40" maxlength="80" value="'.$type_activite.'" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')"  />'."\n";
+        }
+        else{
+            echo '<span class="bold">'.get_string('type_activite','referentiel').'</span> '.$type_activite."\n";
+        }
+        echo '<br /><span class="bold">'.get_string('date_creation','referentiel').'</span>
+<span class="small">'.$date_creation_info.'</span>'."\n";
+        if (!empty($date_modif_student_info) && ($record->date_modif_student-$record->date_creation>1000)){
+            echo '<span class="bold">'.get_string('date_modif_student','referentiel').'</span>
+<span class="small">'.$date_modif_student_info.'</span>'."\n";
+        }
+        if (!empty($date_modif_info)){
+            echo '<span class="bold">'.get_string('date_modif','referentiel').'</span>
+<span class="small">'.$date_modif_info.'</span>'."\n";
+        }
+        echo '<br />'."\n";
+        echo '<span class="bold">'.get_string('referent','referentiel').'</span> '.$teacher_info."\n";
+        echo "<br />\n";
 		if (isset($approved) && ($approved)){
-			echo  '<input type="radio" name="approved_'.$activite_id.'"  id="approved" value="1" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="approved_'.$activite_id.'" id="approved" value="0"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
+			echo ' <span class="valide">'."\n";
 		}
 		else{
-			echo '<input type="radio" name="approved_'.$activite_id.'"  id="approved" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="approved_'.$activite_id.'"  id="approved" value="0" checked="checked"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
+			echo ' <span class="invalide">'."\n";
 		}
-	}
-	else{
-		if (isset($approved) && ($approved)){
-			echo get_string('approved','referentiel');
-		}
-		else{
-			echo get_string('not_approved','referentiel');
-		}
-		if ($ref_course == $COURSE->id){
-			echo  '<input type="hidden" name="approved_'.$activite_id.'" value="'.$approved.'" />'."\n";
-		}
-	}
-		
-	echo '</td>';
+        echo '<span class="bold">'.get_string('liste_codes_competence','referentiel').'</span>'."\n";
+        if ($ref_course == $COURSE->id){
+            if (($ref_task!=0) && ($USER->id==$userid)) { // modif competences imposees
+                referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_tache, $competences_activite, $activite_id, 'onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" ');
+                echo '<input type="hidden" name="competences_activite" value="'.$competences_activite.'" />'."\n";
+            }
+            else{ // modif toutes competences
+                referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competence, $competences_activite, $activite_id, 'onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" ' );
+            }
+        }
+        else{
+            echo referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel);
+        }
+        echo '</span><br />'."\n";
+        
+        echo '<span class="bold">'.get_string('description','referentiel').'</span>'."\n";
+    	if (($ref_course == $COURSE->id) && (has_capability('mod/referentiel:comment', $context))){
+        	echo '<br /><textarea cols="100" rows="7" name="description_activite_'.$activite_id.'" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\') ">'.$description_activite.'</textarea>'."\n";
+        }
+        else {
+            echo '<br /><span class="white">'.nl2br($description_activite).'</span>'."\n";
+        }
 
-	if (!empty($prioritaire)){
-   		echo '<td class="prioritaire" align="center">';
-    }
-    else{
-        echo '<td align="center">';
-    }
+        echo '<br />'."\n";
+    	if ($ref_course == $COURSE->id){
+	       	echo '<span class="bold">'.get_string('commentaire','referentiel').'</span><br />'."\n";
+    		echo '<textarea cols="100" rows="7" name="commentaire_activite_'.$activite_id.'"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" >'.$commentaire_activite.'</textarea> <br />'."\n";
+	    }
+        else{
+            echo '<span class="bold">'.get_string('commentaire','referentiel').'</span><br /><span class="white">'.nl2br($commentaire_activite)."</span>\n";
+            if ($ref_course == $COURSE->id) {
+                echo '<input type="hidden" name="commentaire_activite_'.$activite_id.'" value="'.$commentaire_activite.'" />'."\n";
+            }
+        }
 
-	echo '<span class="small">'.$date_modif_student_info.'</span>';
-	echo '</td>';
-	echo '<td align="center">';
-	echo '<span class="small">'.$date_modif_info.'</span>';
-	echo '</td>'."\n";
-	// menu
-	// echo '<td align="center" rowspan="3">'."\n";
-	// echo $s_menu;
-	// echo '</td>';
-	echo '</tr>'."\n";
-	echo '<tr valign="top">';
-	if (isset($approved) && ($approved)){
-		echo '<td  colspan="7" class="valide">';
-	}
-	else{
-		echo '<td colspan="7" class="invalide">';
-	}
-	if ($ref_course == $COURSE->id){
-		if (($ref_task!=0) && ($USER->id==$userid)) { // modif competences imposees
-			referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_tache, $competences_activite, $activite_id, 'onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" ');
-			echo '<input type="hidden" name="competences_activite" value="'.$competences_activite.'" />'."\n";
-		}
-		else{ // modif toutes competences
-			referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competence, $competences_activite, $activite_id, 'onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" ' );
-		}
-	}
-	else{
-		// INUTILE referentiel_initialise_descriptions_items_referentiel($ref_referentiel);
-		echo referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel);
-	}
-	echo '</td></tr>'."\n";
-	echo '<tr valign="top">';
-	if (isset($approved) && ($approved)){
-		echo '<td  colspan="4" class="valide">';
-	}
-	else{
-		echo '<td colspan="4" class="invalide">';
-	}
-	if (($ref_course == $COURSE->id) && (has_capability('mod/referentiel:comment', $context))){
-    	echo '<br /><textarea cols="80" rows="7" name="description_activite_'.$activite_id.'" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\') ">'.$description_activite.'</textarea>'."\n";
-	}
-	else {
-		echo '<br />'.nl2br($description_activite).''."\n";
-	}
+        echo '<br />'."\n";
+        if (($ref_course == $COURSE->id) && (has_capability('mod/referentiel:approve', $context))){
+            echo '<span class="bold">'.get_string('validation','referentiel').'</span> : ';
+            if (isset($approved) && ($approved)){
+			     echo '<input type="radio" name="approved_'.$activite_id.'"  id="approved" value="1" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="approved_'.$activite_id.'" id="approved" value="0"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
+            }
+            else{
+                echo '<input type="radio" name="approved_'.$activite_id.'"  id="approved" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="approved_'.$activite_id.'"  id="approved" value="0" checked="checked"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
+            }
+    	    echo '<br /><span class="bold">'.get_string('notification_activite','referentiel').'</span> <input type="radio" name="mailnow_'.$activite_id.'" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="mailnow_'.$activite_id.'" value="0" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no')."\n";
+        }
+        else{
+            echo '<span class="bold">'.get_string('validation','referentiel').'</span> : ';
+            if (isset($approved) && ($approved)){
+                echo get_string('approved','referentiel');
+            }
+            else{
+                echo get_string('not_approved','referentiel');
+            }
+            if ($ref_course == $COURSE->id){
+                echo '<input type="hidden" name="approved_'.$activite_id.'" value="'.$approved.'" />'."\n";
+            }
+        }
+        echo '</div>'."\n";
 
-	echo '</td>';
+    	if ($s_document!=''){
+            echo $s_document;
+        }
 
-	if (isset($approved) && ($approved)){
-		echo '<td class="valide"  colspan="3">';
-	}
-	else{
-		echo '<td class="invalide" colspan="3">';
-	}
-
-    // echo '<td class="ardoise" colspan="3">';
-	if ($ref_course == $COURSE->id){
-		echo '<b>'.get_string('commentaire','referentiel').'</b><br />'."\n";
-		echo '<textarea cols="80" rows="7" name="commentaire_activite_'.$activite_id.'"  onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" >'.$commentaire_activite.'</textarea> <br />'."\n";
-    	// MODIF 10/2/2010
-	    echo '<br />'.get_string('notification_activite','referentiel').'<input type="radio" name="mailnow_'.$activite_id.'" value="1" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('yes').' &nbsp; <input type="radio" name="mailnow_'.$activite_id.'" value="0" checked="checked" onchange="return validerCheckBox(\'tactivite_id_'.$activite_id.'\')" />'.get_string('no').' &nbsp; &nbsp; '."\n";
-	}
-	else{
-		echo '<b>'.get_string('commentaire','referentiel').'</b><br />'.nl2br($commentaire_activite)."\n";
-		if ($ref_course == $COURSE->id) {
-			echo '<input type="hidden" name="commentaire_activite_'.$activite_id.'" value="'.$commentaire_activite.'" />'."\n";
-		}
-	}
-    echo '</td>';
-    echo '</tr>'."\n";
-	echo '<tr valign="top">'."\n";
-	echo '<td class="yellow" colspan="7" align="center">'."\n";
-	if ($s_document!=''){
-		echo $s_document;
-	}
-	else{
-		echo '&nbsp;';
-	}
-	echo '</td></tr>'."\n";
-	if ($ref_course == $COURSE->id){
+        if ($ref_course == $COURSE->id){
 		echo  '
-<input type="hidden" name="date_creation_'.$activite_id.'" value="'.$date_creation.'" />
-<input type="hidden" name="date_modif_'.$activite_id.'" value="'.$date_modif.'" />
-<input type="hidden" name="date_modif_student_'.$activite_id.'" value="'.$date_modif_student.'" />
+<input type="hidden" name="date_creation_'.$activite_id.'" value="'.$record->date_creation.'" />
+<input type="hidden" name="date_modif_'.$activite_id.'" value="'.$record->date_modif.'" />
+<input type="hidden" name="date_modif_student_'.$activite_id.'" value="'.$record->date_modif_student.'" />
 <input type="hidden" name="old_liste_competences_'.$activite_id.'" value="'.$old_liste_competences.'" />
 <input type="hidden" name="userid_'.$activite_id.'" value="'.$userid.'" />
 <input type="hidden" name="teacherid_'.$activite_id.'" value="'.$teacherid.'" />
@@ -3169,334 +2832,14 @@ if ($record){
 <input type="hidden" name="ref_referentiel_'.$activite_id.'" value="'.$ref_referentiel.'" />
 <input type="hidden" name="ref_course_'.$activite_id.'" value="'.$ref_course.'" />
 <input type="hidden" name="ref_instance_'.$activite_id.'" value="'.$ref_instance.'" />'."\n\n";
-	}
+        }
+
+    }
 }
-	return $s;
-}
 
 
 
 
-// ----------------------------------------------------
-function referentiel_print_activite_3_complete($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif=true, $select_acc=0){
-// $actif = true : le menu est active, sinon il ne l'est pas
-// Saisie et validation
-// $data_filtre : parametres de filtrage
-// $mode : mode d'affichage
-// $cm : course_module
-// $course : enregistrement cours
-// referentiel_instance : enregistrement instance
-// record : enregistrement activite
-// $context : contexte roles et capacites
-// $actif : affichage menu
-global $USER;
-global $CFG;
-global $OUTPUT;
-global $COURSE;
-static $istutor=false;
-static $isteacher=false;
-static $isadmin=false;
-static $isstudent=false;
-static $iseditor=false;
-	$s='';
-	$s_menu='';
-	$s_document='';
-	$s_out='';
-	
-	// Charger les activites
-	// filtres	
-    $roles=referentiel_roles_in_instance($referentiel_instance->id);
-    $iseditor=$roles->is_editor;
-    $isadmin=$roles->is_admin;
-    $isteacher=$roles->is_teacher;
-    $istutor=$roles->is_tutor;
-    $isstudent=$roles->is_student;
-
-	/*
-	// DEBUG
-    if ($iseditor) echo "Editor ";
-    if ($isadmin) echo "Admin ";
-	if ($isteacher) echo "Teacher ";
-	if ($istutor) echo "Tutor ";
-	if ($isstudent) echo "Student ";
-	*/
-
-	if ($record){
-		$activite_id=$record->id;
-		$type_activite = stripslashes($record->type_activite);
-		$description_activite = stripslashes(strip_tags($record->description_activite));
-		$competences_activite = stripslashes(strip_tags($record->competences_activite));
-		$commentaire_activite = stripslashes(strip_tags($record->commentaire_activite));
-		$ref_instance = $record->ref_instance;
-
-		$ref_referentiel = $record->ref_referentiel;
-		// liste des codes pur ce référentiel
-		$liste_codes_competence=referentiel_get_liste_codes_competence($ref_referentiel);	
-
-		$ref_course = $record->ref_course;
-
-		$userid = $record->userid;
-		$teacherid = $record->teacherid;
-		if ($teacherid==0){
-			if ($isteacher || $iseditor){ 
-				$teacherid=$USER->id;
-			}
-		} 
-
-		$date_creation = $record->date_creation;
-		$date_modif = $record->date_modif;
-		$approved = $record->approved;
-		$ref_task = $record->ref_task;
-		if ($ref_task>0){ // remplacer par la liste definie dans la tache
-			$liste_codes_competences_tache=referentiel_get_liste_codes_competence_tache($ref_task);
-			// DEBUG
-			// echo "<br/>DEBUG ::<br />\n";
-			// echo $liste_codes_competences_tache;				
-		} 
-		else{
-			$liste_codes_competences_tache=$liste_codes_competence;
-		}
-		// DEBUG
-		// echo "<br/>DEBUG ::<br />\n";
-		// print_object($record);
-		
-		$user_info=referentiel_get_user_info($userid);
-		$teacher_info=referentiel_get_user_info($teacherid);
-		// dates
-		$date_creation_info=userdate($date_creation);
-		
-		if ($date_modif!=0){
-			$date_modif_info=userdate($date_modif);
-		}
-		else{
-			$date_modif_info='';
-		}
-
-		// MODIF JF 2009/10/27
-		$date_modif_student = $record->date_modif_student;
-		if ($date_modif_student==0){
-			$date_modif_student=$date_creation;
-		}
-		if ($date_modif_student!=0){
-			$date_modif_student_info=userdate($date_modif_student);
-		}
-		else{
-			$date_modif_student_info='';
-		}
-		
-		$prioritaire=referentiel_activite_prioritaire($record);
-		
-		// MODIF JF 2009/10/21						
-		$old_liste_competences=stripslashes($record->competences_activite);		
-		
-		// MODIF JF 2009/10/23
-		$url_course=referentiel_get_course_link($ref_course);
-		// MODIF JF 2013/01/26
-		$url_instance=referentiel_get_instance_link($ref_instance);
-
-		// MODIF JF 2009/11/08
-		// afficher le menu si l'activité est affiche dans son propre cours de création 
-		$menu_actif = $actif || ($ref_course == $COURSE->id);
-
-		if ($menu_actif){ 
-			$has_capability=has_capability('mod/referentiel:approve', $context);
-			$is_owner=referentiel_activite_isowner($activite_id);
-			$s_menu.=' <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=listactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'#activite"><img src="'.$OUTPUT->pix_url('nosearch','referentiel').'" alt="'.get_string('moins', 'referentiel').'" title="'.get_string('moins', 'referentiel').'" /></a>'."\n";
-			if ($has_capability	or $is_owner){
-				if ($has_capability || ($is_owner && !$approved)) {
-	        		$s_menu.=' <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>'."\n";
-				}
-				if ($has_capability || ($is_owner && !$approved)) {
-			    	$s_menu.=' <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>'."\n";
-    			}
-			}
-			// valider
-		    if ($has_capability){
-				if (!$approved){
-					$s_menu.=' <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=approveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('nonvalide','referentiel').'" alt="'.get_string('approve', 'referentiel').'" title="'.get_string('approve', 'referentiel').'" /></a>'."\n";
-				}
-				else{
-    				$s_menu.=' <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=desapproveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('valide','referentiel').'" alt="'.get_string('desapprove', 'referentiel').'" title="'.get_string('desapprove', 'referentiel').'" /></a>'."\n";
-				}
-			}
-			// commentaires
-    		if (has_capability('mod/referentiel:comment', $context)){
-    			$s_menu.=' <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?d='.$ref_instance.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;userid='.$userid.'&amp;mode=commentactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('feedback','referentiel').'" alt="'.get_string('comment', 'referentiel').'" title="'.get_string('comment', 'referentiel').'" /></a>'."\n";
-			}
-		}
-		else{
-			$s_menu.='&nbsp; '.get_string('activite_exterieure', 'referentiel');
-		}
-
-		// DOCUMENTS
-		// charger les documents associes à l'activite courante
-		$compteur_document=0;
-		$s_document='';
-		if (isset($activite_id) && ($activite_id>0)){
-			$ref_activite=$activite_id; // plus pratique
-			// AFFICHER LA LISTE DES DOCUMENTS
-			$records_document = referentiel_get_documents($ref_activite);
-	    	if ($records_document){
-    			// afficher
-				// DEBUG
-				// echo "<br/>DEBUG <br />\n";
-				// print_r($records_document);
-				foreach ($records_document as $record_d){
-					$compteur_document++;
-        			$document_id=$record_d->id;
-					$type_document = stripslashes($record_d->type_document);
-					$description_document = stripslashes($record_d->description_document);
-					$url_document = $record_d->url_document;
-					$ref_activite = $record_d->ref_activite;
-					if (isset($record_d->cible_document) && ($record_d->cible_document==1)){
-						$cible_document='_blank'; // fenêtre cible
-					}
-					else{
-						$cible_document='';
-					}
-					if (isset($record_d->etiquette_document)){
-						$etiquette_document=$record_d->etiquette_document; // fenêtre cible
-					}
-					else{
-						$etiquette_document='';
-					}
-					// Modif JF 2013/02/02
-     					if ($record_d->timestamp==0){
-                        $date_creation='';
-                    }
-                    else{
-                        $date_creation=userdate($record_d->timestamp);
-                    }
-                    if ($date_modif<$record_d->timestamp){
-					   $s_document.='<span class="prioritaire">'.get_string('document', 'referentiel').' <i>'.$document_id.'</i>::<i>'.$date_creation.'</i> :: '.$type_document.' :: ';
-					   $s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
-					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."'</span><br /> \n";
-
-                    }
-                    else{
-					   $s_document.=get_string('document', 'referentiel').' <i>'.$document_id.'</i>::<i>'.$date_creation.'</i> :: '.$type_document.' :: ';
-					   $s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
-					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."<br /> \n";
-                    }
-				}
-			}
-		}
-		
-		// Bouton ajout document
-        if ($menu_actif){   // verifier si l'activité est validee
-            if (empty($approved)){
-                $s_document.=referentiel_ajout_document($record, $mode, $select_acc)."\n";
-            }
-        }
-
-		// AFFICHAGE
-		echo '<tr valign="top">';
-		// menu
-		
-		// Modif JF 2012/10/05
-		echo '<td align="center" rowspan="3" width="3%">'."\n";
-		echo $s_menu;
-		echo '</td>';
-			
-        if (!empty($prioritaire)){
-            echo '<td class="prioritaire" rowspan="3">';
-        }
-        else if (isset($approved) && ($approved)){
-			echo '<td class="valide" rowspan="3">';
-		}
-		else{
-			echo '<td class="invalide" rowspan="3">';
-		}
-
-		echo  $activite_id;
-		echo '</td><td align="center">';
-		echo $user_info;
-        // MODIF JF 2012/05/06
-        echo referentiel_liste_groupes_user($ref_course, $userid);
-		echo '</td><td align="center">';
-		echo $url_course.'<br /><i>'.$url_instance;
-		echo '</i></td><td align="center">';
-		echo $type_activite;
-		// Modif JF 06/10/2010
-		if ($ref_task){
-            // consignes associées à une tâche
-            $titre_task=referentiel_get_theme_task($ref_task);
-            $info_task=referentiel_get_content_task($ref_task);
-            if ($info_task!=''){
-                // lien vers la tâche
-                echo '<br />'.referentiel_affiche_overlib_texte($titre_task, $info_task);
-            }
-            // documents associés à une tâche
-            echo referentiel_print_liste_documents_task($ref_task);
-        }
-
-		echo '</td><td align="center">';
-		echo $teacher_info;
-		echo '</td><td align="center">';
-		
-			if (isset($approved) && ($approved)){
-				echo get_string('approved','referentiel');
-			}
-			else{
-				echo get_string('not_approved','referentiel');
-			}	
-		
-		
-		echo '</td>';
-		if (!empty($prioritaire)){
-    		echo '<td class="prioritaire" align="center">';
-        }
-        else{
-            echo '<td align="center">';
-        }
-
-    	echo '<span class="small">'.$date_modif_student_info.'</span>';
-		echo '</td>';
-		echo '<td align="center">';
-		echo '<span class="small">'.$date_modif_info.'</span>';
-		echo '</td>'."\n";
-		// menu
-		/* 
-		// Modif JF 2012/10/05
-		echo '<td align="center" rowspan="3">'."\n";
-		echo $s_menu;
-		echo '</td>';
-		*/
-		echo '</tr><tr valign="top">'."\n";
-		
-		if (isset($approved) && ($approved)){
-			echo '<td  colspan="5" class="valide">';
-		}
-		else{
-			echo '<td colspan="5" class="invalide">';
-		}
-		echo referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel);
-		echo '<br />'."\n";
-		echo nl2br($description_activite);
-		echo '</td>';
-
-		echo '<td class="ardoise" colspan="2">';
-		if ($commentaire_activite!=''){
-			echo nl2br($commentaire_activite);
-		}
-		else{
-			// echo get_string('nocommentaire','referentiel');
-			echo '&nbsp;';
-		}	
-		echo '</td>';
-		echo '</tr>'."\n";
-		echo '<tr valign="top">'."\n";
-		echo '<td class="yellow" colspan="7" align="center">'."\n";
-		if ($s_document!=''){
-			echo $s_document;
-		}
-		else{
-			echo '&nbsp;';
-		}
-		echo '</td></tr>'."\n";
-	}
-	return $s;
-}
 
 //
 /**
@@ -3518,7 +2861,7 @@ function referentiel_ajout_document($record, $mode, $select_acc=0){
 <input type="hidden" name="ref_instance" value="'.$record->ref_instance.'" />
 <input type="hidden" name="action" value="creer_document" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$record->ref_course.'" />
+<input type="hidden" name="courseid"        value="'.$record->ref_course.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="modulename"    value="referentiel" />
 <input type="hidden" name="instance"      value="'.$record->ref_instance.'" />
@@ -3543,7 +2886,7 @@ function referentiel_get_liens_documents($activite_id){
 		// echo "<br/>DEBUG<br />\n";
 		// print_r($records_document);
         $nbressource=count($records_document);
-        $s='<p><b>'.get_string('document_associe','referentiel').'</b></p>'."\n";
+        $s='<p><span class="bold">'.get_string('document_associe','referentiel').'</span></p>'."\n";
         $s.='<p><i>';
         if ($nbressource>1){
             $s.=get_string('ressources_associees','referentiel',$nbressource);

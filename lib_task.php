@@ -217,7 +217,7 @@ global $USER;
   $task->criteres_evaluation=($form->criteres_evaluation);
 	$task->ref_instance=$form->instance;
 	$task->ref_referentiel=$form->ref_referentiel;
-	$task->ref_course=$form->course;
+	$task->ref_course=$form->courseid;
 	$task->auteurid=$USER->id;		
 	$task->date_creation=time();
 	$task->date_modif=time();
@@ -356,7 +356,7 @@ $ok=true;
 		$task->criteres_evaluation=($form->criteres_evaluation);
 		$task->ref_instance=$form->instance;
 		$task->ref_referentiel=$form->ref_referentiel;
-		$task->ref_course=$form->course;
+		$task->ref_course=$form->courseid;
 		if (empty($form->auteurid)){
             $task->auteurid=$USER->id;
         }
@@ -708,26 +708,20 @@ function referentiel_association_user_task($ref_user, $ref_task, $referent_id=0,
 //  cree l'activite a partir de l'association
 global $DB;
 global $USER;
-	// DEBUG
-	// echo '<br />DEBUG :: lib_task.php :: 559 :: User : '.$ref_user.' Tache : '.$ref_task."\n";
 
 	$activite_id=0;
 	if ($ref_task && $ref_user){
 		// verifier si association existe
 		$params1=array("ref_task" => "$ref_task", "ref_user" => "$ref_user");
 		$sql1="SELECT * FROM {referentiel_a_user_task} WHERE ref_user=:ref_user AND ref_task=:ref_task ";
-		// echo '<br />DEBUG :: lib_task.php :: 565 :: SQL: '.$sql1."\n";
 		$record_association= $DB->get_record_sql($sql1, $params1);
  		
 		if (!$record_association){
-			// inexistant
 			// Recuperer les info de la tache
 
 			$t_record = $DB->get_record("referentiel_task", array("id" => "$ref_task"));
 			if ($t_record){
 				// Creer l'activite
-		 	   	// DEBUG
-			    // echo "DEBUG : ADD ACTIVITY CALLED : lib_task.php : ligne 578";
 				$activite = new object();
 				$activite->type_activite='['.get_string('task','referentiel').' '.$ref_task.'] '.($t_record->type_task);
 				$activite->competences_activite=($t_record->competences_task);
@@ -736,24 +730,18 @@ global $USER;
 				$activite->ref_instance=$t_record->ref_instance;
 				$activite->ref_referentiel=$t_record->ref_referentiel;
 				$activite->ref_course=$t_record->ref_course;
-                // MODIF JF 2012/02/13
-                // Les dates sont initiaisées de la même façon quelle que soit l'origine de la souscription
-                $la_date=time();
-                $activite->date_creation=$la_date;
-                $activite->date_modif_student=$la_date;
-				$activite->date_modif=$la_date;
-				/*
+                $ladate=time();
+                $activite->date_creation=$ladate;
                 if ($force){    // souscription realisee par le referent
-                    $activite->date_creation=time();
-                    $activite->date_modif_student=0;
-				    $activite->date_modif=time();
+                    $activite->date_creation=$ladate;
+                    $activite->date_modif_student=0;     // notification envoyee à l'etudiant
+				    $activite->date_modif=$ladate;      // prioritaire pour l'etudiant
                 }
                 else{
-                    $activite->date_creation=time();
-                    $activite->date_modif_student=time();
-				    $activite->date_modif=0;
+                    $activite->date_creation=$ladate;
+                    $activite->date_modif_student=$ladate;
+				    $activite->date_modif=$ladate+100;  // notification envoyee à l'enseignant mais pas d'affichage prioritaire
                 }
-                */
 
 				$activite->approved=0;
 				$activite->userid=$ref_user;
@@ -765,10 +753,10 @@ global $USER;
                 }
                 $activite->ref_task=$ref_task;
 				
-                $activite->mailed=1;  // MODIF JF 2010/10/05  pour empêcher une notification intempesttive
+                $activite->mailed=1;  //pour empêcher une notification intempestive
                 if (isset($mailnow)){
                     $activite->mailnow=$mailnow;
-                    if ($mailnow=='1'){ // renvoyer
+                    if ($mailnow==1){
                         $activite->mailed=0;   // forcer l'envoi
                     }
                 }
@@ -776,28 +764,15 @@ global $USER;
                     $activite->mailnow=0;
                 }
 
-    			// DEBUG
-    			// echo "<br />DEBUG :: lib_task.php : 592 : APRES CREATION\n";	
-				// print_object($activite);
-    			// echo "<br />";
 				$activite_id= $DB->insert_record("referentiel_activite", $activite);
 				if ($activite_id){
-					// echo "Activite ID : $activite_id<br />";
-					// mise a zero du certificat associe a cette personne pour ce referentiel 
-// Modif JF 2012/10/07
-// referentiel_certificat_user_invalider($activite->userid, $activite->ref_referentiel);
 					referentiel_regenere_certificat_user($activite->userid, $activite->ref_referentiel);
 					$record_association = new object();
 					$record_association->ref_user=$ref_user;
 					$record_association->ref_task=$ref_task;
 					$record_association->ref_activite=$activite_id;
 					$record_association->date_selection=time();
-   					// DEBUG
-					//print_object($record_association);
-    				//echo "<br />";
 					$id_a = $DB->insert_record("referentiel_a_user_task", $record_association);
-    				//echo "association ID : $id_a<br />";
-					//exit;
 				}
 			}
 		}

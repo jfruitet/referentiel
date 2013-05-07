@@ -22,33 +22,8 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/*
-CREATE TABLE referentiel_pedagogie (
-    id BIGINT(10) unsigned NOT NULL auto_increment,
-    userid BIGINT(10) unsigned NOT NULL DEFAULT 0,
-    refrefid BIGINT(10) unsigned DEFAULT NULL,
-    promotion VARCHAR(4) DEFAULT NULL,
-    num_groupe VARCHAR(20) DEFAULT NULL,
-    date_cloture VARCHAR(20) DEFAULT NULL,
-    timemodified BIGINT(10) unsigned NOT NULL,
-    formation VARCHAR(40) DEFAULT NULL,
-    pedagogie VARCHAR(40) DEFAULT NULL,
-    composante VARCHAR(40) DEFAULT NULL,
-CONSTRAINT  PRIMARY KEY (id)
-);
-
-CREATE TABLE referentiel_a_user_pedago (
-    id BIGINT(10) unsigned NOT NULL auto_increment,
-    userid BIGINT(10) unsigned NOT NULL DEFAULT 0,
-    refrefid BIGINT(10) unsigned DEFAULT NULL,
-    refpedago BIGINT(10) unsigned DEFAULT NULL,
-CONSTRAINT  PRIMARY KEY (id)
-);
-
-*/
-
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
     require_once('lib_pedagogie.php');
 
 	// PAS DE RSS
@@ -72,7 +47,7 @@ CONSTRAINT  PRIMARY KEY (id)
     $updateasso     = optional_param('updateasso', 0, PARAM_INT);
     $delete     = optional_param('delete', 0, PARAM_INT);
     $deleteasso = optional_param('deleteasso', 0, PARAM_INT);
-    $course     = optional_param('course', 0, PARAM_INT);
+    $courseid = optional_param('courseid', 0, PARAM_INT);
     $groupmode  = optional_param('groupmode', -1, PARAM_INT);
     $cancel     = optional_param('cancel', 0, PARAM_BOOL);
 
@@ -560,8 +535,8 @@ CONSTRAINT  PRIMARY KEY (id)
     $icon = $OUTPUT->pix_url('icon','referentiel');
 
     $PAGE->set_url($url);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->navbar->add($strpagename);
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
@@ -575,16 +550,11 @@ CONSTRAINT  PRIMARY KEY (id)
     }
 
 
-    // ONGLETS
-    include('tabs.php');
-    
-    //  Moodle 1.9
-    //  print_heading_with_help($stretudiant, 'etudiant', 'referentiel', $icon);
-    echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strpagename.' '.$OUTPUT->help_icon('pedagoh','referentiel').'</h2></div>'."\n";
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, 0, NULL, $mode);
+    $tab_onglets->display();
 
-	// DEBUG
-	// echo "<br /> MODE : $mode  ; CURRENTTABLE : $currenttab \n";
-	// exit;
+    echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strpagename.' '.$OUTPUT->help_icon('pedagoh','referentiel').'</h2></div>'."\n";
 
 	if  ($mode=='editasso'){
         if (has_capability('mod/referentiel:managecertif', $context)) {

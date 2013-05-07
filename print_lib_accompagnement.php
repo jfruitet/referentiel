@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 
-require_once("lib.php");
+require_once('locallib.php');
 
 
 // -----------------------
@@ -451,7 +451,7 @@ function referentiel_select_accompagnement_users_teachers($referentiel_instance_
 <input type="hidden" name="users_list"  value="'.$users_list.'" />
 <input type="hidden" name="type"  value="REF" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$course_id.'" />
+<input type="hidden" name="courseid"        value="'.$course_id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="mode"          value="'.$mode.'" />'."\n";
         $s.='</td></tr>';

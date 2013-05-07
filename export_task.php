@@ -33,8 +33,8 @@
 * @package referentiel
 */
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
     require_once('lib_task.php');
     // require_once('pagelib.php'); // ENTETES
     require_once('print_lib_task.php');	// AFFICHAGES 
@@ -127,25 +127,18 @@
 	// PAS DE RSS
     // require_once("$CFG->libdir/rsslib.php");
 
-    require_login($course->id, false, $cm);
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
 
-    if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+    require_login($course->id, false, $cm);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
 
-    // check role capability
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_capability('mod/referentiel:export', $context);
-
-    // ensure the files area exists for this course
-    // Moodle 1.9
-    // make_upload_directory( "$course->id/$CFG->moddata/referentiel" );
 
     if ($task_id) {    // So do you have access?
         if (!(has_capability('mod/referentiel:writereferentiel', $context) 
@@ -229,9 +222,9 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('exporttaskh','referentiel').'</h2></div>'."\n";
 
@@ -268,9 +261,6 @@
             print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/export_task.php?id='.$cm->id);
         }
 
-// ICI Ajouter les fichiers locaux dans une archive zippee
-// A FAIRE sur le modele des archives
-
         if (! $tformat->exportprocess()) {         // Process the export data
             print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/export_task.php?id='.$cm->id);
         }
@@ -282,20 +272,7 @@
 
         // link to download the finished file
         $file_ext = $tformat->export_file_extension();
-
-        /*
-        // Moodel 1.9
-        if ($CFG->slasharguments) {
-          $efile = "{$CFG->wwwroot}/file.php/".$tformat->get_export_dir()."/$exportfilename".$file_ext."?forcedownload=1";
-        }
-        else {
-          $efile = "{$CFG->wwwroot}/file.php?file=/".$tformat->get_export_dir()."/$exportfilename".$file_ext."&forcedownload=1";
-        }
-        */
-        
-        // Moodle 2.0
         $fullpath = '/'.$context->id.'/mod_referentiel/task/0'.$tformat->get_export_dir().$exportfilename.$file_ext;
-
         $efile = new moodle_url($CFG->wwwroot.'/pluginfile.php'.$fullpath);
 
         echo "<p><div class=\"boxaligncenter\"><a href=\"$efile\">$txt->download</a></div></p>";

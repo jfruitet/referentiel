@@ -34,8 +34,8 @@
 * @package referentiel
 */
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
     require_once('lib_etab.php');
     include('lib_certificat.php');
     include('lib_pedagogie.php');
@@ -74,60 +74,15 @@
     $list_userids  = optional_param('list_userids', '',PARAM_TEXT);
     $export_pedagos = optional_param('export_pedagos', 0, PARAM_INT);  // exporattion des donnees de formation / pedagogie
 
+    // Filtres
+    require_once('filtres.php'); // Ne pas deplacer
+    
     $f_promotion = optional_param('f_promotion', '', PARAM_ALPHANUM);
     $f_formation = optional_param('f_formation', '', PARAM_ALPHANUM);
     $f_pedagogie = optional_param('f_pedagogie', '', PARAM_ALPHANUM);
     $f_composante = optional_param('f_composante', '', PARAM_ALPHANUM);
     $f_num_groupe = optional_param('f_num_groupe', '', PARAM_ALPHANUM);
 
-    $sql_filtre_where=optional_param('sql_filtre_where','', PARAM_ALPHA);
-    $sql_filtre_order=optional_param('sql_filtre_order','', PARAM_ALPHA);
-    $sql_filtre_user=optional_param('sql_filtre_user','', PARAM_ALPHA);
-
-	$data_filtre= new Object(); // parametres de filtrage
-	if (isset($filtre_verrou)){
-			$data_filtre->filtre_verrou=$filtre_verrou;
-	}
-	else {
-		$data_filtre->filtre_verrou=0;
-	}
-	if (isset($filtre_date_decision)){
-		$data_filtre->filtre_date_decision=$filtre_date_decision;
-	}
-	else{
-		$data_filtre->filtre_date_decision=0;
-	}
-
-	if (isset($filtre_validation)){
-			$data_filtre->filtre_validation=$filtre_validation;
-	}
-	else {
-		$data_filtre->filtre_validation=0;
-	}
-	if (isset($filtre_referent)){
-		$data_filtre->filtre_referent=$filtre_referent;
-	}
-	else{
-		$data_filtre->filtre_referent=0;
-	}
-	if (isset($filtre_date_modif_student)){
-		$data_filtre->filtre_date_modif_student=$filtre_date_modif_student;
-	}
-	else{
-		$data_filtre->filtre_date_modif_student=0;
-	}
-	if (isset($filtre_date_modif)){
-		$data_filtre->filtre_date_modif=$filtre_date_modif;
-	}
-	else{
-		$data_filtre->filtre_date_modif=0;
-	}
-	if (isset($filtre_auteur)){
-		$data_filtre->filtre_auteur=$filtre_auteur;
-	}
-	else{
-		$data_filtre->filtre_auteur=0;
-	}
 
     // DEBUG
     // print_object($data_filtre);
@@ -240,26 +195,20 @@
 	// PAS DE RSS
     // require_once("$CFG->libdir/rsslib.php");
 
-	
-    require_login($course->id, false, $cm);
 
-    if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
+
+    require_login($course->id, false, $cm);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
 
-    // check role capability
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_capability('mod/referentiel:export', $context);
-
-    // ensure the files area exists for this course
-    // Moodle 1.9
-    // make_upload_directory( "$course->id/$CFG->moddata/referentiel" );
 
     if ($certificat_id) {    // So do you have access?
       if (!(has_capability('mod/referentiel:writereferentiel', $context) 
@@ -293,22 +242,22 @@
 
 // WHERE
 		if (!empty($f_promotion)){
-				$sql_filtre_where.=' AND promotion=\''.$f_promotion.'\' ';
+				$sql_f_where.=' AND promotion=\''.$f_promotion.'\' ';
 		}
 		if (!empty($f_formation)){
-				$sql_filtre_where.=' AND formation=\''.$f_formation.'\' ';
+				$sql_f_where.=' AND formation=\''.$f_formation.'\' ';
 		}
 		if (!empty($f_pedagogie)){
-				$sql_filtre_where.=' AND pedagogie=\''.$f_pedagogie.'\' ';
+				$sql_f_where.=' AND pedagogie=\''.$f_pedagogie.'\' ';
 		}
 		if (!empty($f_composante)){
-				$sql_filtre_where.=' AND composante=\''.$f_composante.'\' ';
+				$sql_f_where.=' AND composante=\''.$f_composante.'\' ';
 		}
 		if (!empty($f_num_groupe)){
-				$sql_filtre_where.=' AND num_groupe=\''.$f_num_groupe.'\' ';
+				$sql_f_where.=' AND num_groupe=\''.$f_num_groupe.'\' ';
 		}
 
-		// echo "<br />DEBUG :: export_certificat.php :: Ligne 265 :: FILTRES : WHERE : $sql_filtre_where \n";
+		// echo "<br />DEBUG :: export_certificat.php :: Ligne 265 :: FILTRES : WHERE : $sql_f_where \n";
 		// exit;
 
   }
@@ -453,8 +402,8 @@
 
 
     /// Mark as viewed  ??????????? A COMMENTER
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
+    //$completion=new completion_info($course);
+    //$completion->set_module_viewed($cm);
 
 // AFFICHAGE DE LA PAGE Moodle 2
     $strreferentiel = get_string('modulename', 'referentiel');
@@ -466,9 +415,9 @@
     $icon = $OUTPUT->pix_url('icon','referentiel');
 
     $PAGE->set_url($url);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->css('/mod/referentiel/jauge.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
 
     $PAGE->set_title($pagetitle);
     $PAGE->navbar->add($strpagename);
@@ -482,8 +431,9 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f, $mode);
+    $tab_onglets->display();
 
     // print_heading_with_help($strmessage, 'exportcertificat', 'referentiel', $icon);
 
@@ -559,16 +509,7 @@
 
         // link to download the finished file
         $file_ext = $cformat->export_file_extension();
-        // Moodle 1.9
-        /*
-        if ($CFG->slasharguments) {
-          $efile = "{$CFG->wwwroot}/file.php/".$cformat->get_export_dir()."/$exportfilename".$file_ext."?forcedownload=1";
-        }
-        else {
-          $efile = "{$CFG->wwwroot}/file.php?file=/".$cformat->get_export_dir()."/$exportfilename".$file_ext."&forcedownload=1";
-        }
-        */
-        
+
         // Moodle 2.0
         $fullpath = '/'.$context->id.'/mod_referentiel/certificat/0'.$cformat->get_export_dir().$exportfilename.$file_ext;
         $efile = new moodle_url($CFG->wwwroot.'/pluginfile.php'.$fullpath);
@@ -584,9 +525,9 @@
     else{ // BOITES DE SELECTION
 
             echo '<div align="center"><h3><img src="'.$icon.'" border="0" title="" alt="" /> '.get_string('selectcertificat','referentiel').' '.$OUTPUT->help_icon('selectcertificath','referentiel').'</h3></div>'."\n";
-            referentiel_select_liste_certificats($referentiel, $list_pedagoids, $userid_filtre, $gusers, $select_acc, $mode, $CFG->wwwroot . '/mod/referentiel/export_certificat.php?d='.$referentiel->id, $select_all, $sql_filtre_where, $export_filtre);
+            referentiel_select_liste_certificats($referentiel, $list_pedagoids, $userid_filtre, $gusers, $select_acc, $mode, $CFG->wwwroot . '/mod/referentiel/export_certificat.php?d='.$referentiel->id, $select_all, $sql_f_where, $export_filtre);
             // liste des certificats selectionnes
-            referentiel_resume_liste_certificats($initiale, $userids, $referentiel, $userid_filtre, $gusers, $sql_filtre_where, $sql_filtre_order, $data_filtre, $select_acc, false);
+            referentiel_resume_liste_certificats($initiale, $userids, $referentiel, $userid_filtre, $gusers, $sql_f_where, $sql_f_order, $data_f, $select_acc, false);
 
              /// Display upload form
 

@@ -27,16 +27,11 @@
 *
 * @package referentiel
 */
-
-
-    // require_once('pagelib.php'); // ENTETES
-
     require_once('../../config.php');
     require_once('class/import_form.php'); // formulaires de choix de fichiers
-    // require_once($CFG->libdir . '/uploadlib.php'); // Moodle 1.9
     require_once("$CFG->dirroot/repository/lib.php"); // Moodle 2.0
     require_once('import_export_lib.php');	// IMPORT / EXPORT
-    require_once('lib.php');
+    require_once('locallib.php');
     require_once('lib_task.php');
     require_once('print_lib_task.php');	// AFFICHAGES
 
@@ -45,14 +40,11 @@
     $d     = optional_param('d', 0, PARAM_INT);    // referentiel base id
 	$pass  = optional_param('pass', 0, PARAM_INT);    // mot de passe ok
     $checkpass = optional_param('checkpass','', PARAM_ALPHA); // mot de passe fourni
-
     $mode           = optional_param('mode','', PARAM_ALPHANUMEXT);
-
     $format = optional_param('format','', PARAM_FILE );
     $courseid = optional_param('courseid', 0, PARAM_INT);
 	$select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
     
-    // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/import_task.php');
 
 	if ($d) {     // referentiel_referentiel_id
@@ -88,7 +80,6 @@
         $url->param('id', $id);
     }
 	else{
-    // print_error('You cannot call this script in that way');
 		print_error(get_string('erreurscript','referentiel','Erreur01 : import_task.php'), 'referentiel');
 	}
 
@@ -100,12 +91,7 @@
     }
 
     // check role capability
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_capability('mod/referentiel:import', $context);;
 
@@ -121,9 +107,6 @@
     ) {
         print_error(get_string("activityiscurrentlyhidden"),'error',"$CFG->wwwroot/course/view.php?id=$course->id");
     }
-
-    // ensure the files area exists for this course
-    // make_upload_directory( "$course->id/$CFG->moddata/referentiel" );
 
     if ($usehtmleditor = can_use_html_editor()) {
     	$defaultformat = FORMAT_HTML;
@@ -256,8 +239,9 @@
     // afficher la page
     echo $OUTPUT->header();
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title=""  alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('importtaskh','referentiel').'</h2></div>'."\n";
 

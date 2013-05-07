@@ -32,7 +32,7 @@
  **/
 
 
-require_once("lib.php");
+require_once('locallib.php');
 
 
 // DEBUT DE Etudiant
@@ -245,7 +245,7 @@ function referentiel_menu_etudiant($context, $referentiel_id, $userid){
  *       @param int $page                                               *
  * output null                                                         *
  ************************************************************************/
-function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referentiel_instance, $userid_filtre=0, $gusers=NULL, $select_acc) {
+function referentiel_select_liste_etudiants($initiale, $userids, $mode, $referentiel_instance, $userid_filtre=0, $gusers=NULL, $select_acc) {
     global $CFG;
     global $USER;
     global $DB;
@@ -301,7 +301,7 @@ function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referent
 		}
 		
 		// selection  sur les utilisateurs ?
-		if ($isteacher || $iseditor){
+		if ($isteacher || $iseditor || $isadmin){
 			// cr�er les enrgistrements etudiants si 
 			if ($gusers && $record_id_users){ // liste des utilisateurs du groupe courant
 				// echo "<br />DEBUG :: print_lib_activite.php :: 740 :: GUSERS<br />\n";
@@ -321,12 +321,12 @@ function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referent
                         $record_id_users[]=$a_obj;
 				}
 			}
-			$boite_selection=referentiel_select_users_etudiant($record_id_users, $userid_filtre, $initiale, $select_acc);
+			$boite_selection=referentiel_select_users_etudiant($record_id_users, $mode, $userid_filtre, $initiale, $select_acc);
 		}
 		else $boite_selection="";
 		
 		// filtres
-		if ((!$isteacher) && (!$iseditor)){
+		if ((!$isteacher) && (!$iseditor) && (!$isadmin)){
 			$userid_filtre=$USER->id; 
 		}
 		// recuperer les utilisateurs filtres
@@ -362,6 +362,7 @@ function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referent
             exit;
             */
         }
+/*
 		elseif ((($userid_filtre==$USER->id) || ($userid_filtre==0))
             && ($isteacher || $iseditor|| $istutor)){
 			// Ajouter l'utilisateur courant pour qu'il puisse voir ses propres donnees
@@ -369,15 +370,50 @@ function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referent
                 $a_obj->userid=$USER->id;
                 $record_id_users[]=$a_obj;
 		}
+*/
+		echo $boite_selection;
+        return $record_id_users;
+	}
+	return NULL;
+}
 
 
+/************************************************************************
+ * takes a list of records, the current referentiel, a search string,   *
+ * and mode to display                                                  *
+ * input @param string  $mode                                           *
+ *       @param object $referentiel_instance                            *
+ *       @param int $userid_filtre                                      *
+ *       @param array $gusers                                           *
+ *       @param int $page                                               *
+ * output null                                                         *
+ ************************************************************************/
+function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referentiel_instance, $userid_filtre=0, $gusers=NULL, $select_acc) {
+global $USER, $DB;
+    if (!empty($referentiel_instance)){
+        $cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id);
+        $course = $DB->get_record("course", array("id" => "$cm->course"));
 
-		if ($record_id_users){
-			echo $boite_selection;
-			echo '<table class="certificat">
+        if (empty($cm) or empty($course)){
+            print_error('REFERENTIEL_ERROR 5 :: print_lib_etudiant.php :: You cannot call this script in that way');
+        }
+
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+        $roles=referentiel_roles_in_instance($referentiel_instance->id);
+        $iseditor=$roles->is_editor;
+        $isadmin=$roles->is_admin;
+        $isteacher=$roles->is_teacher;
+        $istutor=$roles->is_tutor;
+        $isstudent=$roles->is_student;
+
+        $record_id_users=referentiel_select_liste_etudiants($initiale, $userids, $mode, $referentiel_instance, $userid_filtre, $gusers, $select_acc);
+
+        if ($record_id_users){
+    		echo '<table class="certificat">
 <tr><th>'.get_string('userid','referentiel').'</th><th>'.get_string('nom_prenom','referentiel').'</th><th>'.get_string('num_etudiant','referentiel').'</th><th>'.get_string('ddn_etudiant','referentiel').'</th><th>'.get_string('lieu_naissance','referentiel').'</th><th>'.get_string('departement_naissance','referentiel').'</th><th>'.get_string('adresse_etudiant','referentiel').'</th><th>'.get_string('ref_etablissement','referentiel').'</th></tr>'."\n";
-		    foreach ($record_id_users as $record) {   // afficher la liste d'etudiant
-				// Afficher 
+	       	foreach ($record_id_users as $record) {   // afficher la liste d'etudiant
+				// Afficher
 				// print_r($record);
 				if ($record->userid){
 					$isauthor = ($USER->id==$record->userid);
@@ -387,11 +423,12 @@ function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referent
 						echo referentiel_print_etudiant_2($record->userid, $referentiel_instance->id, $context, "etudiant.php?d=".$referentiel_instance->id."&amp;mode=selectetab");
     				}
 				}
-			}
-			echo '</table><br /><br />'."\n";
-		}
-	}
+            }
+		    echo '</table><br /><br />'."\n";
+	   }
+    }
 }
+
 
 
 
@@ -402,14 +439,14 @@ function referentiel_print_liste_etudiants($initiale, $userids, $mode, $referent
  * input @param int                                                     *
  * output null                                                          *
  ************************************************************************/
-function referentiel_select_users_etudiant($record_users, $userid=0, $initiales='', $select_acc=0, $select_all=0){
+function referentiel_select_users_etudiant($record_users, $mode, $userid=0, $initiales='', $select_acc=0, $select_all=0){
 
 global $cm;
 global $course;
 $maxcol=MAXBOITESSELECTION;
 $s="";
 $t_users=array();
-$mode="listetudiant";
+
 $appli="etudiant.php";
 
 	if ($record_users){
@@ -483,7 +520,7 @@ $appli="etudiant.php";
         // Formulaire de selection individuelle
 		$n=count($t_users);
         if ($n>=18){
-			$l=$maxcol;
+			$l=$maxcol-1;
 			$c=(int) ($n / $l);
 		}
         elseif ($n>=6){
@@ -505,7 +542,7 @@ $appli="etudiant.php";
 
         $s.='<div align="center">'."\n";
 		$s.='<table class="selection">'."\n";
-		$s.='<tr>';
+        $s.='<tr>'."\n";
 
 		for ($j=0; $j<$l; $j++){
 			$s.='<td>';
@@ -546,10 +583,10 @@ $appli="etudiant.php";
 
             for ($k=0; $k<$c; $k++){
                 if ($userid==$t_users[$i]['id']){
-                    $s.='<option value="'.$t_users[$i]['id'].'" selected="selected">'.$t_users[$i]['lastname'].' '.$t_users[$i]['firstname'].'</option>'."\n";
+                    $s.='<option value="'.$t_users[$i]['id'].'" selected="selected">'.referentiel_nom_prenom($t_users[$i]['lastname'], $t_users[$i]['firstname']).'</option>'."\n";
             	}
 	       		else{
-                    $s.='<option value="'.$t_users[$i]['id'].'">'.$t_users[$i]['lastname'].' '.$t_users[$i]['firstname'].'</option>'."\n";
+                    $s.='<option value="'.$t_users[$i]['id'].'">'.referentiel_nom_prenom($t_users[$i]['lastname'], $t_users[$i]['firstname']).'</option>'."\n";
                 }
 
                 $i++;
@@ -562,7 +599,7 @@ $appli="etudiant.php";
 <!-- accompagnement -->
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$course->id.'" />
+<input type="hidden" name="courseid"        value="'.$course->id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="mode"          value="'.$mode.'" />
 </form>'."\n";
@@ -590,10 +627,10 @@ $appli="etudiant.php";
 			while ($i <$n){
 
 				if ($userid==$t_users[$i]['id']){
-					$s.='<option value="'.$t_users[$i]['id'].'" selected="selected">'.$t_users[$i]['lastname'].' '.$t_users[$i]['firstname'].'</option>'."\n";
+					$s.='<option value="'.$t_users[$i]['id'].'" selected="selected">'.referentiel_nom_prenom($t_users[$i]['lastname'], $t_users[$i]['firstname']).'</option>'."\n";
 				}
 				else{
-					$s.='<option value="'.$t_users[$i]['id'].'">'.$t_users[$i]['lastname'].' '.$t_users[$i]['firstname'].'</option>'."\n";
+					$s.='<option value="'.$t_users[$i]['id'].'">'.referentiel_nom_prenom($t_users[$i]['lastname'], $t_users[$i]['firstname']).'</option>'."\n";
 				}
 				$i++;
 			}
@@ -606,7 +643,7 @@ $appli="etudiant.php";
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
-<input type="hidden" name="course"        value="'.$course->id.'" />
+<input type="hidden" name="courseid"        value="'.$course->id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="mode"          value="'.$mode.'" />
 </form>'."\n";
@@ -615,7 +652,6 @@ $appli="etudiant.php";
 		$s.='</tr></table>'."\n";
 		$s.='</div>'."\n";
 	}
-
 	return $s;
 }
 

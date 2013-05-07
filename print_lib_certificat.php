@@ -32,7 +32,7 @@
  **/
 
 
-require_once("lib.php");
+require_once('locallib.php');
 require_once("overlib_item.php");
 
 
@@ -56,61 +56,61 @@ $appli=$appli.'&amp;mode_select=selectetab';
 	}
 	$s.='<table class="activite" width="100%"><tr valign="top">'."\n";
 	$s.='<th width="2%">'.get_string('id','referentiel').'</th>';
-	$s.='<th width="'.$width.'">'.get_string('filtre_auteur','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_auteur" class="popupform">'."\n";
-	$s.=' <select id="selectetab_filtre_auteur" name="filtre_auteur" size="1"
-onchange="self.location=document.getElementById(\'selectetab_filtre_auteur\').filtre_auteur.options[document.getElementById(\'selectetab_filtre_auteur\').filtre_auteur.selectedIndex].value;">'."\n";
+	$s.='<th width="'.$width.'">'.get_string('f_auteur','referentiel');
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_auteur" class="popupform">'."\n";
+	$s.=' <select id="selectetab_f_auteur" name="f_auteur" size="1"
+onchange="self.location=document.getElementById(\'selectetab_f_auteur\').f_auteur.options[document.getElementById(\'selectetab_f_auteur\').f_auteur.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_auteur=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_date_modif='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=1&amp;filtre_referent=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=-1&amp;filtre_referent=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+		if ($data->f_auteur=='1'){
+			$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_date_modif='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_auteur=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=1&amp;filtre_referent=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=-1&amp;filtre_referent=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
+		else if ($data->f_auteur=='-1'){
+			$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=1&amp;filtre_referent=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur=-1&amp;filtre_referent=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_verrou=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_auteur=1&amp;filtre_referent=0&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0">'.get_string('croissant','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_auteur=-1&amp;filtre_referent=0&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0">'.get_string('decroissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_verrou=0&amp;f_date_decision=0&amp;f_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_verrou=0&amp;f_valide=0&amp;f_date_decision=0&amp;f_date_decision=0">'.get_string('croissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_verrou=0&amp;f_valide=0&amp;f_date_decision=0&amp;f_date_decision=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
 	$s.='</form>'."\n";
 	$s.='</th>';
 // VERROU
-	$s.='<th width="'.$width.'">'.get_string('filtre_verrou','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_verrou" class="popupform">'."\n";
-	$s.=' <select id="selectetab_filtre_verrou" name="filtre_verrou" size="1"
-onchange="self.location=document.getElementById(\'selectetab_filtre_verrou\').filtre_verrou.options[document.getElementById(\'selectetab_filtre_verrou\').filtre_verrou.selectedIndex].value;">'."\n";
+	$s.='<th width="'.$width.'">'.get_string('f_verrou','referentiel');
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_verrou" class="popupform">'."\n";
+	$s.=' <select id="selectetab_f_verrou" name="f_verrou" size="1"
+onchange="self.location=document.getElementById(\'selectetab_f_verrou\').f_verrou.options[document.getElementById(\'selectetab_f_verrou\').f_verrou.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_verrou=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_verrou=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('verrou','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_verrou=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('not_verrou','referentiel').'</option>'."\n";
+		if ($data->f_verrou=='1'){
+			$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide=0&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('not_verrou','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_verrou=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_verrou=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('verrou','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_verrou=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('not_verrou','referentiel').'</option>'."\n";
+		else if ($data->f_verrou=='-1'){
+			$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide=0&amp;f_auteur='.$data->f_auteur.'&amp;f_verrou=0&amp;f_valide=0&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('not_verrou','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_verrou=1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('verrou','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_verrou=-1&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('not_verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide=0&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('not_verrou','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_verrou=0&amp;filtre_valide=0&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_verrou=1&amp;filtre_valide=0&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0">'.get_string('verrou','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_verrou=-1&amp;filtre_valide=0&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0">'.get_string('not_verrou','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide=0&amp;f_auteur=0&amp;f_referent=0&amp;f_date_decision=0&amp;f_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_valide=0&amp;f_auteur=0&amp;f_referent=0&amp;f_date_decision=0&amp;f_date_decision=0">'.get_string('verrou','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_valide=0&amp;f_auteur=0&amp;f_referent=0&amp;f_date_decision=0&amp;f_date_decision=0">'.get_string('not_verrou','referentiel').'</option>'."\n";
 	}
 
 	$s.='</select>'."\n";
@@ -118,31 +118,31 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_verrou\').fi
 	$s.='</th>';
 	
 // VALIDE
-	$s.='<th width="'.$width.'">'.get_string('filtre_valide','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_valide" class="popupform">'."\n";
-	$s.=' <select id="selectetab_filtre_valide" name="filtre_valide" size="1"
-onchange="self.location=document.getElementById(\'selectetab_filtre_valide\').filtre_valide.options[document.getElementById(\'selectetab_filtre_valide\').filtre_valide.selectedIndex].value;">'."\n";
+	$s.='<th width="'.$width.'">'.get_string('f_valide','referentiel');
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_valide" class="popupform">'."\n";
+	$s.=' <select id="selectetab_f_valide" name="f_valide" size="1"
+onchange="self.location=document.getElementById(\'selectetab_f_valide\').f_valide.options[document.getElementById(\'selectetab_f_valide\').f_valide.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_valide=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_valide=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_valide=1&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('dossier_ferme','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_valide=-1&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('dossier_ouvert','referentiel').'</option>'."\n";
+		if ($data->f_valide=='1'){
+			$s.='	<option value="'.$appli.'&amp;f_valide=0&amp;f_verrou='.$data->f_verrou.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_valide=1&amp;f_verrou='.$data->f_verrou.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('dossier_ferme','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_valide=-1&amp;f_verrou='.$data->f_verrou.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('dossier_ouvert','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_valide=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_valide=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_valide=0&amp;filtre_verrou=0&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_valide=1&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('dossier_ferme','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_valide=-1&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('dossier_ouvert','referentiel').'</option>'."\n";
+		else if ($data->f_valide=='-1'){
+			$s.='	<option value="'.$appli.'&amp;f_valide=0&amp;f_verrou='.$data->f_verrou.'&amp;f_auteur='.$data->f_auteur.'&amp;f_valide=0&amp;f_verrou=0&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_valide=1&amp;f_verrou='.$data->f_verrou.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('dossier_ferme','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_valide=-1&amp;f_verrou='.$data->f_verrou.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('dossier_ouvert','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_valide=0&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_valide=1&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('dossier_ferme','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_valide=-1&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('dossier_ouvert','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_valide=0&amp;f_verrou='.$data->f_verrou.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_valide=1&amp;f_verrou='.$data->f_verrou.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('dossier_ferme','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_valide=-1&amp;f_verrou='.$data->f_verrou.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('dossier_ouvert','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_valide=0&amp;filtre_verrou=0&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_valide=1&amp;filtre_verrou=0&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0">'.get_string('valide','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_valide=-1&amp;filtre_verrou=0&amp;filtre_auteur=0&amp;filtre_referent=0&amp;filtre_date_decision=0&amp;filtre_date_decision=0">'.get_string('dossier_ouvert','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_valide=0&amp;f_verrou=0&amp;f_auteur=0&amp;f_referent=0&amp;f_date_decision=0&amp;f_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_valide=1&amp;f_verrou=0&amp;f_auteur=0&amp;f_referent=0&amp;f_date_decision=0&amp;f_date_decision=0">'.get_string('valide','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_valide=-1&amp;f_verrou=0&amp;f_auteur=0&amp;f_referent=0&amp;f_date_decision=0&amp;f_date_decision=0">'.get_string('dossier_ouvert','referentiel').'</option>'."\n";
 	}
 
 	$s.='</select>'."\n";
@@ -155,30 +155,30 @@ $s.='<th width="'.$width.'">&nbsp;</th>'."\n";
 
 /*
 	$s.='<th width="'.$width.'">'.get_string('suivi','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_referent" class="popupform">'."\n";
-	$s.=' <select id="selectetab_filtre_referent" name="filtre_referent" size="1"
-onchange="self.location=document.getElementById(\'selectetab_filtre_referent\').filtre_referent.options[document.getElementById(\'selectetab_filtre_referent\').filtre_referent.selectedIndex].value;">'."\n";
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_referent" class="popupform">'."\n";
+	$s.=' <select id="selectetab_f_referent" name="f_referent" size="1"
+onchange="self.location=document.getElementById(\'selectetab_f_referent\').f_referent.options[document.getElementById(\'selectetab_f_referent\').f_referent.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_referent=='1'){
-			$s.='	<option value="'.$appli.'&filtre_referent=0&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&filtre_referent=1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('examine','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&filtre_referent=-1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('non_examine','referentiel').'</option>'."\n";
+		if ($data->f_referent=='1'){
+			$s.='	<option value="'.$appli.'&f_referent=0&f_auteur='.$data->f_auteur.'&f_verrou='.$data->f_verrou.'&f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&f_referent=1&f_auteur='.$data->f_auteur.'&f_verrou='.$data->f_verrou.'&f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&f_referent=-1&f_auteur='.$data->f_auteur.'&f_verrou='.$data->f_verrou.'&f_date_decision='.$data->f_date_decision.'">'.get_string('non_examine','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_referent=='-1'){
-			$s.='	<option value="'.$appli.'&filtre_referent=0&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&filtre_referent=1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('examine','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&filtre_referent=-1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('non_examine','referentiel').'</option>'."\n";
+		else if ($data->f_referent=='-1'){
+			$s.='	<option value="'.$appli.'&f_referent=0&f_auteur='.$data->f_auteur.'&f_verrou='.$data->f_verrou.'&f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&f_referent=1&f_auteur='.$data->f_auteur.'&f_verrou='.$data->f_verrou.'&f_date_decision='.$data->f_date_decision.'">'.get_string('examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&f_referent=-1&f_auteur='.$data->f_auteur.'&f_verrou='.$data->f_verrou.'&f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('non_examine','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&filtre_referent=0&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&filtre_referent=1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('examine','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&filtre_referent=-1&filtre_auteur='.$data->filtre_auteur.'&filtre_verrou='.$data->filtre_verrou.'&filtre_date_decision='.$data->filtre_date_decision.'">'.get_string('non_examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&f_referent=0&f_auteur='.$data->f_auteur.'&f_verrou='.$data->f_verrou.'&f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&f_referent=1&f_auteur='.$data->f_auteur.'&f_verrou='.$data->f_verrou.'&f_date_decision='.$data->f_date_decision.'">'.get_string('examine','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&f_referent=-1&f_auteur='.$data->f_auteur.'&f_verrou='.$data->f_verrou.'&f_date_decision='.$data->f_date_decision.'">'.get_string('non_examine','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&filtre_referent=0&filtre_auteur=0&filtre_verrou=0&filtre_date_decision=0&filtre_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&filtre_referent=1&filtre_auteur=0&filtre_verrou=0&filtre_date_decision=0&filtre_date_decision=0">'.get_string('examine','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&filtre_referent=-1&filtre_auteur=0&filtre_auteur=0&filtre_verrou=0&filtre_date_decisiont=0&filtre_date_decision=0">'.get_string('non_examine','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&f_referent=0&f_auteur=0&f_verrou=0&f_date_decision=0&f_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&f_referent=1&f_auteur=0&f_verrou=0&f_date_decision=0&f_date_decision=0">'.get_string('examine','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&f_referent=-1&f_auteur=0&f_auteur=0&f_verrou=0&f_date_decisiont=0&f_date_decision=0">'.get_string('non_examine','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
 	$s.='</form>'."\n";
@@ -186,31 +186,31 @@ onchange="self.location=document.getElementById(\'selectetab_filtre_referent\').
 */
 
 
-	$s.='<th width="'.$width.'">'.get_string('filtre_date_decision','referentiel');
-	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_filtre_date_decision" class="popupform">'."\n";
-	$s.=' <select id="selectetab_filtre_date_decision" name="filtre_date_decision" size="1"
-onchange="self.location=document.getElementById(\'selectetab_filtre_date_decision\').filtre_date_decision.options[document.getElementById(\'selectetab_filtre_date_decision\').filtre_date_decision.selectedIndex].value;">'."\n";
+	$s.='<th width="'.$width.'">'.get_string('f_date_decision','referentiel');
+	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_date_decision" class="popupform">'."\n";
+	$s.=' <select id="selectetab_f_date_decision" name="f_date_decision" size="1"
+onchange="self.location=document.getElementById(\'selectetab_f_date_decision\').f_date_decision.options[document.getElementById(\'selectetab_f_date_decision\').f_date_decision.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
-		if ($data->filtre_date_decision=='1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_decision=0&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_decision=1&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_decision=-1&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+		if ($data->f_date_decision=='1'){
+			$s.='	<option value="'.$appli.'&amp;f_auteur='.$data->f_auteur.'&amp;f_date_decision=0&amp;f_referent='.$data->f_referent.'&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur='.$data->f_auteur.'&amp;f_date_decision=1&amp;f_referent='.$data->f_referent.'&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur='.$data->f_auteur.'&amp;f_date_decision=-1&amp;f_referent='.$data->f_referent.'&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
-		else if ($data->filtre_date_decision=='-1'){
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_decision=0&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_decision=1&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_decision=-1&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
+		else if ($data->f_date_decision=='-1'){
+			$s.='	<option value="'.$appli.'&amp;f_auteur='.$data->f_auteur.'&amp;f_date_decision=0&amp;f_referent='.$data->f_referent.'&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur='.$data->f_auteur.'&amp;f_date_decision=1&amp;f_referent='.$data->f_referent.'&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur='.$data->f_auteur.'&amp;f_date_decision=-1&amp;f_referent='.$data->f_referent.'&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'" selected="selected">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_decision=0&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_decision=1&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'">'.get_string('croissant','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;filtre_auteur='.$data->filtre_auteur.'&amp;filtre_date_decision=-1&amp;filtre_referent='.$data->filtre_referent.'&amp;filtre_verrou='.$data->filtre_verrou.'&amp;filtre_valide='.$data->filtre_valide.'">'.get_string('decroissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur='.$data->f_auteur.'&amp;f_date_decision=0&amp;f_referent='.$data->f_referent.'&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur='.$data->f_auteur.'&amp;f_date_decision=1&amp;f_referent='.$data->f_referent.'&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'">'.get_string('croissant','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur='.$data->f_auteur.'&amp;f_date_decision=-1&amp;f_referent='.$data->f_referent.'&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_date_decision=0&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_verrou=0&amp;filtre_valide=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'&amp;filtre_auteur=0&amp;filtre_date_decision=1&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_verrou=0&amp;filtre_valide=0">'.get_string('croissant','referentiel').'</option>'."\n";
-		$s.='	<option value="'.$appli.'1&amp;filtre_auteur=0&amp;filtre_date_decision=-1&amp;filtre_referent=0&amp;filtre_auteur=0&amp;filtre_verrou=0&amp;filtre_valide=0">'.get_string('decroissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_date_decision=0&amp;f_referent=0&amp;f_auteur=0&amp;f_verrou=0&amp;f_valide=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_date_decision=1&amp;f_referent=0&amp;f_auteur=0&amp;f_verrou=0&amp;f_valide=0">'.get_string('croissant','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'1&amp;f_auteur=0&amp;f_date_decision=-1&amp;f_referent=0&amp;f_auteur=0&amp;f_verrou=0&amp;f_valide=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
 	$s.='</select>'."\n";
 	$s.='</form>'."\n";
@@ -238,11 +238,11 @@ function referentiel_enqueue_certificat(){
 // MODIF JF 2012/09/20
 // ajout information certificabilite
 // ----------------------------------------------------
-function referentiel_affiche_un_certificat($roles, $data_filtre, $mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $liste_empreintes, $select_acc, $seuil_certification=0, $protocole_link='', $nb_items=0, $rang=0){
+function referentiel_affiche_un_certificat($roles, $data_f, $mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $liste_empreintes, $select_acc, $seuil_certification=0, $protocole_link='', $nb_items=0, $rang=0){
 //	Saisie et validation globale
 // idem que referentiel_modifie_globale_activite_complete() sauf que le formulaire est globale
 // $actif = true : le menu est active, sinon il ne l'est pas
-// $data_filtre : parametres de filtrage
+// $data_f : parametres de filtrage
 // $mode : mode d'affichage
 // $cm : course_module
 // $course : enregistrement cours
@@ -455,12 +455,12 @@ global $COURSE;
  *       @param object $referentiel_instance                              *
  *       @param int $userid_filtre                                        *
  *       @param array of objects $gusers of users get from current group  *
- *       @param string $sql_filtre_where, $sql_filtre_order               *
+ *       @param string $sql_f_where, $sql_f_order               *
  * output null                                                            *
  **************************************************************************/
 function referentiel_resume_liste_certificats($initiale, $userids, $referentiel_instance,
-$userid_filtre=0, $gusers=NULL, $sql_filtre_where='', $sql_filtre_order='',
-$data_filtre, $select_acc=0, $ok_afficher=false) {
+$userid_filtre=0, $gusers=NULL, $sql_f_where='', $sql_f_order='',
+$data_f, $select_acc=0, $ok_afficher=false) {
 
     global $DB;
     global $CFG;
@@ -514,7 +514,7 @@ $data_filtre, $select_acc=0, $ok_afficher=false) {
 		if ($record_id_users){
 			// Afficher
 			// ordre d'affichage utilisateurs
-			if (isset($data_filtre) && isset($data_filtre->filtre_auteur) && ($data_filtre->filtre_auteur=='-1')){
+			if (isset($data_f) && isset($data_f->f_auteur) && ($data_f->f_auteur=='-1')){
 				$deb=(-count($record_id_users))+1;
 				$fin=1;
 			}
@@ -527,7 +527,7 @@ $data_filtre, $select_acc=0, $ok_afficher=false) {
 			// Parcours des utilisateurs
 			for ($j=$deb; $j<$fin; $j++){
 				$i=abs($j);
-                $records[]=referentiel_certificat_user_select($record_id_users[$i]->userid, $referentiel_instance->ref_referentiel, $sql_filtre_where, $sql_filtre_order);
+                $records[]=referentiel_certificat_user_select($record_id_users[$i]->userid, $referentiel_instance->ref_referentiel, $sql_f_where, $sql_f_order);
             }
 
             if (!empty($records)){
@@ -569,12 +569,12 @@ $data_filtre, $select_acc=0, $ok_afficher=false) {
  *       @param object $referentiel_instance                              *
  *       @param int $userid_filtre                                        *
  *       @param array of objects $gusers of users get from current group  *
- *       @param string $sql_filtre_where, $sql_filtre_order               *
+ *       @param string $sql_f_where, $sql_f_order               *
  * output null                                                            *
  **************************************************************************/
 function referentiel_liste_certificats($initiale, $userids, $mode, $referentiel_instance,
-$userid_filtre=0, $gusers=NULL, $sql_filtre_where='', $sql_filtre_order='',
-$data_filtre, $select_acc=0) {
+$userid_filtre=0, $gusers=NULL, $sql_f_where='', $sql_f_order='',
+$data_f, $select_acc=0) {
 
     global $DB;
     global $CFG;
@@ -598,7 +598,7 @@ $data_filtre, $select_acc=0) {
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
+    $isguest=$roles->is_guest;
 	$records = array();
 
 	if (!empty($referentiel_instance->ref_referentiel)){
@@ -734,7 +734,7 @@ $CFG->wwwroot.'/mod/referentiel/certificat.php',$initiale,$mode, $userid_filtre,
 		if ($record_id_users){
 			// Afficher
 			// ordre d'affichage utilisateurs
-			if (isset($data_filtre) && isset($data_filtre->filtre_auteur) && ($data_filtre->filtre_auteur=='-1')){
+			if (isset($data_f) && isset($data_f->f_auteur) && ($data_f->f_auteur=='-1')){
 				$deb=(-count($record_id_users))+1;
 				$fin=1;
 			}
@@ -764,14 +764,14 @@ $CFG->wwwroot.'/mod/referentiel/certificat.php',$initiale,$mode, $userid_filtre,
 				// recuperation des certificats
                 // ATTENTION
                 // il faut introduire les filtres SQL
-                //	$records=referentiel_get_all_activites_user($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid, $sql_filtre_where, $sql_filtre_order);
-                $records[]=referentiel_certificat_user_select($record_id_users[$i]->userid, $referentiel_instance->ref_referentiel, $sql_filtre_where, $sql_filtre_order);
+                //	$records=referentiel_get_all_activites_user($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid, $sql_f_where, $sql_f_order);
+                $records[]=referentiel_certificat_user_select($record_id_users[$i]->userid, $referentiel_instance->ref_referentiel, $sql_f_where, $sql_f_order);
             }
 
 
 
             if (!empty($records)){
-                echo referentiel_entete_filtre($CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance->id.'&amp;mode='.$mode.'&amp;sesskey='.sesskey(), $data_filtre, false);
+                echo referentiel_entete_filtre($CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance->id.'&amp;mode='.$mode.'&amp;sesskey='.sesskey(), $data_f, false);
                 echo '<table class="activite" width="100%">'."\n";
                 $rang=0;
                 // DEBUG
@@ -781,7 +781,7 @@ $CFG->wwwroot.'/mod/referentiel/certificat.php',$initiale,$mode, $userid_filtre,
                 foreach ($records as $record) {   // afficher le certificat
                     if (!empty($record)){
                         // Afficher
-                        echo referentiel_affiche_un_certificat($roles, $data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $liste_empreintes, $select_acc, $seuil_certification, $protocole_link, $nb_items, $rang);
+                        echo referentiel_affiche_un_certificat($roles, $data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $liste_empreintes, $select_acc, $seuil_certification, $protocole_link, $nb_items, $rang);
                         echo referentiel_menu_certificat($context, $record->id, $referentiel_instance->id, $record->verrou, $record->userid, $select_acc, $rang, ($record->valide && $isstudent));
                         $rang++;
                     }
@@ -803,12 +803,12 @@ $CFG->wwwroot.'/mod/referentiel/certificat.php',$initiale,$mode, $userid_filtre,
  *       @param object $referentiel_instance                              *
  *       @param int $userid_filtre                                        *
  *       @param array of objects $gusers of users get from current group  *
- *       @param string $sql_filtre_where, $sql_filtre_order               *
+ *       @param string $sql_f_where, $sql_f_order               *
  * output null                                                            *
  **************************************************************************/
 function referentiel_evalue_global_liste_certificats($initiale, $userids, $mode, $referentiel_instance,
-$userid_filtre=0, $gusers=NULL, $sql_filtre_where='', $sql_filtre_order='',
-$data_filtre, $select_acc=0) {
+$userid_filtre=0, $gusers=NULL, $sql_f_where='', $sql_f_order='',
+$data_f, $select_acc=0) {
 // idem  que referentiel_print_evalue_liste_activite()
 // mais  specialise modification
 // form globale
@@ -833,7 +833,7 @@ $data_filtre, $select_acc=0) {
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
+    $isguest=$roles->is_guest;
 	$records = array();
 
 	if (isset($referentiel_instance->ref_referentiel) && ($referentiel_instance->ref_referentiel>0)){
@@ -967,7 +967,7 @@ $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance->id.'&a
 		if ($record_id_users){
 			// Afficher
 			// ordre d'affichage utilisateurs
-			if (isset($data_filtre) && isset($data_filtre->filtre_auteur) && ($data_filtre->filtre_auteur=='-1')){
+			if (isset($data_f) && isset($data_f->f_auteur) && ($data_f->f_auteur=='-1')){
 				$deb=(-count($record_id_users))+1;
 				$fin=1;
 			}
@@ -997,18 +997,18 @@ $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance->id.'&a
 				// recuperation des certificats
                 // ATTENTION
                 // il faut introduire les filtres SQL
-                //	$records=referentiel_get_all_activites_user($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid, $sql_filtre_where, $sql_filtre_order);
-                $records[]=referentiel_certificat_user_select($record_id_users[$i]->userid, $referentiel_instance->ref_referentiel, $sql_filtre_where, $sql_filtre_order);
+                //	$records=referentiel_get_all_activites_user($referentiel_instance->ref_referentiel, $record_id_users[$i]->userid, $sql_f_where, $sql_f_order);
+                $records[]=referentiel_certificat_user_select($record_id_users[$i]->userid, $referentiel_instance->ref_referentiel, $sql_f_where, $sql_f_order);
             }
 
 
             if ($records){
                 echo '<table class="activite" width="100%"><tr valign="top">'."\n";
                 echo  '<td colspan="6">'."\n";
-                echo referentiel_entete_filtre($CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance->id.'&amp;mode='.$mode.'&amp;sesskey='.sesskey(), $data_filtre, false);
+                echo referentiel_entete_filtre($CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance->id.'&amp;mode='.$mode.'&amp;sesskey='.sesskey(), $data_f, false);
                 echo  '</td></tr>'."\n";
                 // formulaire global
-                echo "\n\n".'<form name="form" id="form" action="certificat.php?id='.$cm->id.'&amp;course='.$course->id.'&amp;filtre_auteur='.$data_filtre->filtre_auteur.'&amp;filtre_verrou='.$data_filtre->filtre_verrou.'&amp;filtre_valide='.$data_filtre->filtre_valide.'&amp;filtre_referent=0'.$data_filtre->filtre_referent.'&amp;filtre_date_decision='.$data_filtre->filtre_date_decision.'&amp;select_acc='.$select_acc.'&amp;sesskey='.sesskey().'" method="post">'."\n";
+                echo "\n\n".'<form name="form" id="form" action="certificat.php?id='.$cm->id.'&amp;courseid='.$course->id.'&amp;f_auteur='.$data_f->f_auteur.'&amp;f_verrou='.$data_f->f_verrou.'&amp;f_valide='.$data_f->f_valide.'&amp;f_referent=0'.$data_f->f_referent.'&amp;f_date_decision='.$data_f->f_date_decision.'&amp;select_acc='.$select_acc.'&amp;sesskey='.sesskey().'" method="post">'."\n";
                 echo  '<tr valign="top">
 <td class="ardoise" colspan="6">
  <img class="selectallarrow" src="./pix/arrow_ltr_bas.png"
@@ -1022,7 +1022,7 @@ $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance->id.'&a
                 foreach ($records as $record) {   // afficher le certificat
                     // Afficher
                     if (isset($mode) && ($mode=='editcertif')){
-                        echo referentiel_modifie_global_certificat($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $liste_empreintes, $select_acc, $seuil_certification, $protocole_link, $nb_items);
+                        echo referentiel_modifie_global_certificat($data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $liste_empreintes, $select_acc, $seuil_certification, $protocole_link, $nb_items);
                     }
                 }
 
@@ -1064,11 +1064,11 @@ $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance->id.'&a
 // MODIF JF 2012/06/13
 // ajout information certificabilite
 // ----------------------------------------------------
-function referentiel_modifie_global_certificat($data_filtre,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $liste_empreintes, $select_acc, $seuil_certification=0, $protocole_link='', $nb_items=0){
+function referentiel_modifie_global_certificat($data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $liste_empreintes, $select_acc, $seuil_certification=0, $protocole_link='', $nb_items=0){
 //	Saisie et validation globale
 // idem que referentiel_modifie_globale_activite_complete() sauf que le formulaire est globale
 // $actif = true : le menu est active, sinon il ne l'est pas
-// $data_filtre : parametres de filtrage
+// $data_f : parametres de filtrage
 // $mode : mode d'affichage
 // $cm : course_module
 // $course : enregistrement cours
@@ -1095,7 +1095,7 @@ global $COURSE;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
+    $isguest=$roles->is_guest;
 	$records = array();
 
 
@@ -2157,12 +2157,12 @@ function referentiel_print_certificat_detail_une_page($record_a, $nb_items=0, $l
 
 		if (!isset($dossier_ferme) or ($dossier_ferme=="") or ($dossier_ferme==0)){
             echo '<td>';
-            echo '<b>'.get_string('filtre_valide','referentiel').'</b> : ';
+            echo '<b>'.get_string('f_valide','referentiel').'</b> : ';
 			echo get_string('dossier_ouvert', 'referentiel');
 		}
 		else {
             echo '<td class="prioritaire">';
-            echo '<b>'.get_string('filtre_valide','referentiel').'</b> : ';
+            echo '<b>'.get_string('f_valide','referentiel').'</b> : ';
 			echo get_string('dossier_ferme', 'referentiel');
 		}
         echo '</td>'."\n";
@@ -2403,8 +2403,8 @@ function referentiel_menu_certificat($context, $certificat_id, $referentiel_inst
  ************************************************************************/
 function referentiel_print_liste_certificats($initiale, $userids, $mode, $referentiel_instance, $userid_filtre=0, $gusers,
 $select_acc=0,
-$data_filtre=NULL,
-$sql_filtre_where='', $sql_filtre_order='') {
+$data_f=NULL,
+$sql_f_where='', $sql_f_order='') {
 
 global $DB;
 global $CFG;
@@ -2433,7 +2433,7 @@ $protocole_link='';      //MODIF JF 2012/02/18
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
+    $isguest=$roles->is_guest;
 	if (!empty($referentiel_instance->ref_referentiel)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
 		if (!$referentiel_referentiel){
@@ -2549,7 +2549,7 @@ $protocole_link='';      //MODIF JF 2012/02/18
 		if ($record_id_users){
 			// Afficher 		
             // Filtres de selection
-            echo referentiel_entete_filtre($CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_referentiel->id.'&amp;mode='.$mode.'&amp;sesskey='.sesskey(), $data_filtre, false);
+            echo referentiel_entete_filtre($CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_referentiel->id.'&amp;mode='.$mode.'&amp;sesskey='.sesskey(), $data_f, false);
 
 			if (isset($mode) && ($mode=='listcertifsingle')){
 				;
@@ -2560,7 +2560,7 @@ $protocole_link='';      //MODIF JF 2012/02/18
 
 // MODIF JF 2012/09/20
 			// ordre d'affichage utilisateurs
-			if (isset($data_filtre) && isset($data_filtre->filtre_auteur) && ($data_filtre->filtre_auteur=='-1')){
+			if (isset($data_f) && isset($data_f->f_auteur) && ($data_f->f_auteur=='-1')){
 				$deb=(-count($record_id_users))+1;
 				$fin=1;
 			}
@@ -2577,7 +2577,7 @@ $protocole_link='';      //MODIF JF 2012/02/18
 				// recuperation des certificats
                 // ATTENTION
                 // il faut introduire les filtres SQL
-                $records[]=referentiel_certificat_user_select($record_id_users[$i]->userid, $referentiel_instance->ref_referentiel, $sql_filtre_where, $sql_filtre_order);
+                $records[]=referentiel_certificat_user_select($record_id_users[$i]->userid, $referentiel_instance->ref_referentiel, $sql_f_where, $sql_f_order);
             }
 
             if ($records){
@@ -2644,7 +2644,7 @@ global $USER;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
+    $isguest=$roles->is_guest;
 
 	if (!empty($referentiel_instance->ref_referentiel)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
@@ -2720,7 +2720,7 @@ global $USER;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-
+    $isguest=$roles->is_guest;
     // codes item
 	$liste_codes=referentiel_purge_dernier_separateur($referentiel_referentiel->liste_codes_competence, '/');
 	// empreintes

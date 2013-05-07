@@ -33,70 +33,23 @@
 /// (Replace newmodule with the name of your module reference)
 /// inspire du module data
 
-  require_once("../../config.php");
-  require_once("lib.php");
+  require(dirname(__FILE__) . '/../../config.php');
+  require_once('locallib.php');
   require_once("print_lib_referentiel.php");	// AFFICHAGES 
   require_once("lib_accompagnement.php");
 
-  $id = optional_param('id', 0, PARAM_INT);    // course module id
-  $d  = optional_param('d', 0, PARAM_INT); // Referentiel ID
+    $id = optional_param('id', 0, PARAM_INT);    // course module id
+    $d  = optional_param('d', 0, PARAM_INT); // Referentiel ID
+    $mode  = optional_param('mode', '', PARAM_ALPHANUMEXT);    // Force the browse mode  ('single')
+    $edit = optional_param('edit', -1, PARAM_BOOL);
+    $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
+    $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
+    $non_redirection = optional_param('non_redirection', 0, PARAM_INT);    // par defaut on redirige vers activite
+    $select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
 
-  // nouveaute Moodle 1.9 et 2
-  $url = new moodle_url('/mod/referentiel/view.php');
-  
-  $mode  = optional_param('mode', 'all', PARAM_ALPHANUMEXT);    // Force the browse mode  ('single')
-	
-	// editer rubrique
-  $edit = optional_param('edit', -1, PARAM_BOOL);
+    require_once('filtres.php');   // Ne pas deplacer
 
-	/// These can be added to perform an action on a record actuivite
-  $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
-  $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
-  
-  // MODIF JF 22/01/2010
-  $non_redirection = optional_param('non_redirection', 0, PARAM_INT);    // par defaut on redirige vers activite
-	
-  $select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
-  $filtre_validation = optional_param('filtre_validation', 0, PARAM_INT);
-  $filtre_referent = optional_param('filtre_referent', 0, PARAM_INT);
-  $filtre_date_modif = optional_param('filtre_date_modif', 0, PARAM_INT);
-  $filtre_date_modif_student = optional_param('filtre_date_modif_student', 0, PARAM_INT);
-  $filtre_auteur = optional_param('filtre_auteur', 0, PARAM_INT);
-  $sql_filtre_where=optional_param('sql_filtre_where','', PARAM_ALPHA);
-  $sql_filtre_order=optional_param('sql_filtre_order','', PARAM_ALPHA);
-
-    // MODIF JF 2012/09/20
-	$data_filtre= new Object(); // paramettres de filtrage
-	if (isset($filtre_validation)){
-			$data_filtre->filtre_validation=$filtre_validation;
-	}
-	else {
-		$data_filtre->filtre_validation=0;
-	}
-	if (isset($filtre_referent)){
-		$data_filtre->filtre_referent=$filtre_referent;
-	}
-	else{
-		$data_filtre->filtre_referent=0;
-	}
-	if (isset($filtre_date_modif_student)){
-		$data_filtre->filtre_date_modif_student=$filtre_date_modif_student;
-	}
-	else{
-		$data_filtre->filtre_date_modif_student=0;
-	}
-	if (isset($filtre_date_modif)){
-		$data_filtre->filtre_date_modif=$filtre_date_modif;
-	}
-	else{
-		$data_filtre->filtre_date_modif=0;
-	}
-	if (isset($filtre_auteur)){
-		$data_filtre->filtre_auteur=$filtre_auteur;
-	}
-	else{
-		$data_filtre->filtre_auteur=0;
-	}
+    $url = new moodle_url('/mod/referentiel/view.php');
 
 	if ($d) {     // referentiel_referentiel_id
         if (! $referentiel = $DB->get_record("referentiel", array("id" => "$d"))) {
@@ -131,9 +84,7 @@
     $contextcourse = get_context_instance(CONTEXT_COURSE, $course->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-    if ($mode !== 'all') {
-        $url->param('mode', $mode);
-    }
+    $url->param('mode', $mode);
     $url->param('non_redirection', $non_redirection);
     
     require_login($course->id, true, $cm);
@@ -173,15 +124,6 @@
 
 	/// RSS and CSS and JS meta
     $meta = '';
-
-	/// Print the page header
-/*
-	$strreferentiels = get_string('modulenameplural','referentiel');
-	$strreferentiel = get_string('referentiel','referentiel');
-	$strmessage = get_string('referentiel','referentiel');
-	$icon = '<img class="icon" src="'.$CFG->wwwroot.'/mod/referentiel/icon.gif" alt="'.get_string('modulename','referentiel').'"/>';
-	$strpagename=get_string('modifier_referentiel','referentiel');
-*/
     if (isset($mode)){
 		if ($mode=='editreferentiel') {
 			$currenttab = 'editreferentiel';
@@ -199,9 +141,9 @@
     $referentielinstance = new referentiel($cm->id, $referentiel, $cm, $course);
 
     /// Mark as viewed
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
+    // $completion=new completion_info($course);
+    // $completion->set_module_viewed($cm);
 
-    $referentielinstance->view($mode, $currenttab, $select_acc, $data_filtre);   // Actually display the referentiel!
+    $referentielinstance->view($mode, $currenttab, $select_acc, $data_f);   // Actually display the referentiel!
 
 ?>

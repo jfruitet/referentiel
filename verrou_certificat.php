@@ -35,7 +35,7 @@
 */
 
   require_once('../../config.php');
-  require_once('lib.php');
+  require_once('locallib.php');
   require_once('lib_etab.php');
   include('lib_certificat.php');
   include('lib_pedagogie.php');
@@ -386,9 +386,9 @@
     $PAGE->set_url($url);
     
 	/// RSS and CSS and JS meta
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->css('/mod/referentiel/jauge.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
 
     $PAGE->set_title($pagetitle);
     $PAGE->navbar->add($strpagename);
@@ -402,8 +402,9 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('gerercertificath','referentiel').'</h2></div>'."\n";
 

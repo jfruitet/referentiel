@@ -46,8 +46,8 @@ CONSTRAINT  PRIMARY KEY (id)
 * @package referentiel
 */
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
 	require_once('lib_pedagogie.php');
     require_once('import_export_lib.php');	// IMPORT / EXPORT	
     require_once($CFG->libdir . '/uploadlib.php');
@@ -134,26 +134,20 @@ CONSTRAINT  PRIMARY KEY (id)
 	// PAS DE RSS
     // require_once("$CFG->libdir/rsslib.php");
 
-	
-    require_login($course->id, false, $cm);
 
-    if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
+
+    require_login($course->id, false, $cm);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
 
-    // check role capability
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_capability('mod/referentiel:export', $context);
-
-    // ensure the files area exists for this course
-    // Moodle 1.9
-    // make_upload_directory( "$course->id/$CFG->moddata/referentiel" );
 
     if ($pedago_id) {    // So do you have access?
         if (!(has_capability('mod/referentiel:writereferentiel', $context) 
@@ -224,9 +218,9 @@ CONSTRAINT  PRIMARY KEY (id)
     $PAGE->set_url($url);
 
 	/// RSS and CSS and JS meta
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->css('/mod/referentiel/jauge.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
 
     $PAGE->set_title($pagetitle);
     $PAGE->navbar->add($strpagename);
@@ -238,8 +232,10 @@ CONSTRAINT  PRIMARY KEY (id)
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('exportpedagoh','referentiel').'</h2></div>'."\n";
 	

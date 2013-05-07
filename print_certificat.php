@@ -32,9 +32,8 @@
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package referentiel
 */
-
-  require_once("../../config.php");
-  require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+  require_once('locallib.php');
   require_once('lib_etab.php');
   include('lib_certificat.php');
   include('lib_pedagogie.php');
@@ -616,9 +615,9 @@
                     $Refpdf->Open();
                     $copyright = chr(169);
                     $registered ="�";
-                    $puce =  chr(149);
+                    $puce =  chr(149);                    
                     $Refpdf->AliasNbPages();
-
+                     
                     pdf_write_certification($referentiel, $referentiel_referentiel, $userid, $param, $records_certificats);
                     $Refpdf->Output();
                     exit;
@@ -705,8 +704,8 @@
 
             /// RSS and CSS and JS meta
             $PAGE->requires->css('/mod/referentiel/jauge.css');
-            $PAGE->requires->css('/mod/referentiel/activite.css');
-            $PAGE->requires->css('/mod/referentiel/certificat.css');
+            $PAGE->requires->css('/mod/referentiel/referentiel.css');
+            $PAGE->requires->css('/mod/referentiel/referentiel.css');
 
             $PAGE->set_title($pagetitle);
             $PAGE->navbar->add($strpagename);
@@ -720,8 +719,9 @@
                 echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
             }
 
-           // ONGLETS
-            include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
             echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('printcertificath','referentiel').'</h2></div>'."\n";
 
@@ -762,17 +762,6 @@
             echo "<hr />";
             // link to download the finished file
             $file_ext = $pprint->export_file_extension();
-
-            // Moodle 1.9
-            /*
-            if ($CFG->slasharguments) {
-                $efile = "{$CFG->wwwroot}/file.php/".$pprint->get_export_dir()."/$exportfilename".$file_ext."?forcedownload=1";
-            }
-            else {
-	           $efile = "{$CFG->wwwroot}/file.php?file=/".$pprint->get_export_dir()."/$exportfilename".$file_ext."&forcedownload=1";
-            }
-            */
-            // Moodle 2.0
             $fullpath = '/'.$context->id.'/mod_referentiel/certificat/0'.$pprint->get_export_dir().$exportfilename.$file_ext;
             $efile = new moodle_url($CFG->wwwroot.'/pluginfile.php'.$fullpath);
 
@@ -815,8 +804,8 @@
 
         $PAGE->set_url($url);
         $PAGE->requires->css('/mod/referentiel/jauge.css');
-        $PAGE->requires->css('/mod/referentiel/activite.css');
-        $PAGE->requires->css('/mod/referentiel/certificat.css');
+        $PAGE->requires->css('/mod/referentiel/referentiel.css');
+        $PAGE->requires->css('/mod/referentiel/referentiel.css');
         // $PAGE->requires->js($OverlibJs);
         // $PAGE->requires->js('/mod/referentiel/functions.js');
 
@@ -831,9 +820,11 @@
         if (!empty($referentiel->name)){
             echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
         }
+        
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
-        // ONGLETS
-        include('tabs.php');
         echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.get_string('select_print_certificat','referentiel').' '.$OUTPUT->help_icon('selectcertificath','referentiel').'</h2></div>'."\n";
         referentiel_select_liste_certificats($referentiel, $list_pedagoids, $userid_filtre, $gusers, $select_acc, $mode, $CFG->wwwroot . '/mod/referentiel/print_certificat.php?d='.$referentiel->id, $select_all, $sql_filtre_where, $export_filtre);
         // Gestion des fichiers d'archives

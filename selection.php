@@ -28,7 +28,7 @@
 */
 	
     require_once('../../config.php');
-    require_once('lib.php');
+    require_once('locallib.php');
 	require_once('print_lib_referentiel.php');
 
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
@@ -37,7 +37,7 @@
     $checkpass = optional_param('checkpass','', PARAM_ALPHA); // mot de passe fourni
 
     $action  			= optional_param('action','', PARAM_ALPHA); // pour distinguer differentes formes de creation de referentiel
-    $mode = optional_param('mode','add', PARAM_ALPHANUMEXT);
+    $mode               = optional_param('mode','add', PARAM_ALPHANUMEXT);
     $format 			= optional_param('format','', PARAM_FILE );
 
 	$name_instance		= optional_param('name_instance','', PARAM_ALPHANUMEXT);
@@ -118,23 +118,17 @@
 	$txt->cancel = get_string('quit','referentiel');	
 	$txt->filtrerlocalinstance = get_string('filtrerlocalinstance','referentiel');
 	$txt->pass	= get_string('pass_referentiel','referentiel');	
-		
-	$returnlink_erreur=$CFG->wwwroot.'/course/view.php?id='.$course->id;
-	$returnlink_suite=$CFG->wwwroot.'/mod/referentiel/add.php?id='.$cm->id.'&amp;sesskey='.sesskey();
 
-	$returnlink="$CFG->wwwroot/course/view.php?id=$course->id";
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
+
     require_login($course->id, false, $cm);
-
-    if (!isloggedin() || isguestuser()) {   // nouveaute Moodle 2
-        redirect($returnlink);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
 
-    // check role capability
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    //} else {
-    //    $context = context_course::instance($course->id);
-    //}
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
     if ($referentiel->id) {    // So do you have access?
         if (!has_capability('mod/referentiel:select', $context) or !confirm_sesskey() ) {
@@ -164,17 +158,8 @@
 	$msg="";
 	
 	if (!empty($course) && isset($form)) {   
-    // debug
-    // echo "<br />DEBUG 197 ::<br />\n";
-    // print_object($form);
-    // echo "<br />DEBUG 197 ::<br />\n";
-		// select form submitted	
+		// select form submitted
 
-		// lien de retour en cas d'erreur
-		// $returnlink=$CFG->wwwroot.'/mod/referentiel/add.php?id='.$cm->id;
-		// $returnlink=$CFG->wwwroot.'/course/view.php?id='.$course->id;
-		$returnlink=$CFG->wwwroot.'/mod/referentiel/add.php?id='.$cm->id.'&amp;sesskey='.sesskey();
-		
 		// variable d'action cancel
 		if (!empty($form->cancel)){
 			if ($form->cancel == get_string("quit", "referentiel")){
@@ -185,7 +170,7 @@
    	        		redirect($return);
                 }
                 else {
-    		      redirect($returnlink_erreur);
+    		      redirect($returnlink_course);
                 }
                 exit;
 			}
@@ -227,8 +212,10 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    //require_once("onglets.php");
+    //$tab_onglets = new Onglets($context, $referentiel, NULL, $cm, $course, 'list', $select_acc, $data_f);
+    //$tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title=""  alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('selectreferentielh','referentiel').'</h2></div>'."\n";
 
@@ -273,7 +260,7 @@
 					$new_referentiel_id=referentiel_filtrer($form->referentiel_id, $params);
 	        // Verifier si  referentiel charge
 					if (! $new_referentiel_id) {
-    	            	// print_error( $new_referentiel_id , $returnlink);
+    	            	// print_error( $new_referentiel_id , $returnlink_add);
 						// PAS D'ERREUR on propose un autre choix
                     }
 					else{
@@ -291,7 +278,7 @@
 <input type="hidden" name="new_referentiel_id" value="<?php  p($new_referentiel_id); ?>" />
 <input type="hidden" name="action" value="<?php  p($action); ?>" />	
 
-<input type="hidden" name="course"        value="<?php  p($course->id); ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($course->id); ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()); ?>" />
 <input type="hidden" name="instance"      value="<?php  echo $referentiel->id; ?>" />
 <input type="hidden" name="mode"          value="<?php  p($mode); ?>" />
@@ -329,14 +316,14 @@
 
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-<input type="hidden" name="course" value="<?php p($course->id); ?>" />
+<input type="hidden" name="courseid" value="<?php p($course->id); ?>" />
 <input type="hidden" name="instance" value="<?php  echo $referentiel->id; ?>" />
 <input type="hidden" name="mode" value="<?php  p($mode); ?>" />	
 <input type="submit" value="<?php print_string('continue'); ?>" />
 </form>
 </center>
 	<?php
-		// print_error( $txt->selectnoreferentiel , $returnlink);
+		// print_error( $txt->selectnoreferentiel , $returnlink_add);
 	}
 	else {
     ?>
@@ -400,7 +387,7 @@
 		
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-<input type="hidden" name="course" value="<?php p($course->id); ?>" />
+<input type="hidden" name="courseid" value="<?php p($course->id); ?>" />
 <input type="hidden" name="instance" value="<?php  echo $referentiel->id; ?>" />
 <input type="hidden" name="mode" value="<?php  p($mode); ?>" />	
         </fieldset>
@@ -440,7 +427,7 @@
 		
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
-<input type="hidden" name="course" value="<?php p($course->id); ?>" />
+<input type="hidden" name="courseid" value="<?php p($course->id); ?>" />
 <input type="hidden" name="instance" value="<?php  echo $referentiel->id; ?>" />
 <input type="hidden" name="mode" value="<?php  p($mode); ?>" />	
         </fieldset>

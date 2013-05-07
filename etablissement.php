@@ -22,8 +22,8 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
     require_once('lib_etab.php');
     require_once('print_lib_etablissement.php');	// AFFICHAGES 
 	
@@ -44,7 +44,7 @@
     $delete     = optional_param('delete', 0, PARAM_INT);
     $approve    = optional_param('approve', 0, PARAM_INT);	
     $comment    = optional_param('comment', 0, PARAM_INT);		
-    $course     = optional_param('course', 0, PARAM_INT);
+    $courseid = optional_param('courseid', 0, PARAM_INT);
     $groupmode  = optional_param('groupmode', -1, PARAM_INT);
     $cancel     = optional_param('cancel', 0, PARAM_BOOL);
 	$select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
@@ -257,18 +257,6 @@
 			default:
             	// print_error("No mode defined");
         }
-       	/*
-    	if (!empty($SESSION->returnpage)) {
-            $return = $SESSION->returnpage;
-	        unset($SESSION->returnpage);
-    	    redirect($return);
-        } 
-		else {
-	    	redirect("etudiant.php?d=$referentiel->id");
-    	}
-		
-        exit;
-		*/
 		$mode='listeetab';
 	}
 
@@ -317,11 +305,9 @@
        	$editentry = true;  //used in tabs
     }
     
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
+    //$completion=new completion_info($course);
+    //$completion->set_module_viewed($cm);
     
-    /// Mark as viewed  ??????????? A COMMENTER
-
 	/// Print the page header
 	$stretablissement = get_string('etablissement','referentiel');
 	$strpagename=get_string('etablissements','referentiel');
@@ -335,8 +321,8 @@
     $icon = $OUTPUT->pix_url('icon','referentiel');
 
     $PAGE->set_url($url);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->navbar->add($strpagename);
     $PAGE->set_title($pagetitle);
     $PAGE->set_heading($course->fullname);
@@ -349,11 +335,10 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
-    // ONGLETS
-    include('tabs.php');
-    //  Moodle 1.9
-    //  print_heading_with_help($stretudiant, 'etudiant', 'referentiel', $icon);
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title=""  alt="" /> '.$strpagename.' '.$OUTPUT->help_icon('etablissementh','referentiel').'</h2></div>'."\n";
 
     // print_heading_with_help($stretablissement, 'etablissement', 'referentiel', $icon);

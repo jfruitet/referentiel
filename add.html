@@ -17,7 +17,7 @@ if ($referentiel){
 	$form->label_item=$referentiel->label_item;
 	$form->ref_referentiel=$referentiel->ref_referentiel;
 	$form->date_instance=$referentiel->date_instance;
-	$form->course=$referentiel->course;
+	$form->courseid=$referentiel->course;
 	$form->instance=$referentiel->id;	// tres important
 
 
@@ -129,7 +129,7 @@ echo '    </td>
 <!-- <input type="hidden" name="ref_referentiel" value="  echo($form->ref_referentiel); " /> -->
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  echo sesskey(); ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="add" />
@@ -160,7 +160,7 @@ if (($ok_selectionner_referentiel==0) || ($ok_creer_importer_referentiel==0)){
 <input type="hidden" name="label_item" value="<?php  echo($form->label_item) ?>" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  echo sesskey(); ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="add" />
@@ -180,7 +180,7 @@ if (($ok_selectionner_referentiel==0) || ($ok_creer_importer_referentiel==0)){
 <input type="hidden" name="label_item" value="<?php  echo($form->label_item) ?>" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  echo sesskey(); ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="add" />
@@ -222,7 +222,7 @@ if (($ok_creer_importer_referentiel==0) && referentiel_editor_is_ok()){
 <input type="hidden" name="label_item" value="'.$form->label_item.'" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$form->course.'" />
+<input type="hidden" name="courseid"        value="'.$form->courseid.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="instance"      value="'.$form->instance.'" />
 <input type="hidden" name="mode"          value="add" />
@@ -437,12 +437,12 @@ if (isset($form->local)){
 	}
 	else{
 		echo '<input type="radio" name="local" value="0" checked="checked" />'. get_string("yes").'
-<input type="radio" name="local" value="'.$form->course.'" />'. get_string("no")."\n";
+<input type="radio" name="local" value="'.$form->courseid.'" />'. get_string("no")."\n";
 	}
 }
 else {
 	echo '<input type="radio" name="local" value="0" checked="checked" />'. get_string("yes").'
-<input type="radio" name="local" value="'.$form->course.'" />'. get_string("no")."\n";
+<input type="radio" name="local" value="'.$form->courseid.'" />'. get_string("no")."\n";
 }
 ?>
     </td>
@@ -725,7 +725,7 @@ else {
 <input type="hidden" name="logo_referentiel" value="<?php  p($form->logo_referentiel); ?>" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  echo sesskey(); ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"          value="add" />

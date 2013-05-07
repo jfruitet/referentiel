@@ -2,8 +2,74 @@
 // ----------------
 // UTF-8 French
 //
-// Moodle 8.05
+// Moodle 2.5
+$string['consignes_associees']= 'Consignes associées';
+$string['consigne_associee']= 'Consigne associée';
 $string['competences_declare']= 'Compétences déclarées';
+$string['occurrencereferentiel']='Référentiel de compétence (Occurrence)';
+$string['areareferentiel']='référentiel';
+$string['areadocument']='document';
+$string['areaconsigne']='consigne';
+$string['areaactivite']='activité';
+$string['areatask']='tâche';
+$string['areacertificat']='certificat';
+$string['areapedagogie']='pédagogie';
+$string['areaoutcomes']='objectifs';
+$string['areaarchive']='archives';
+$string['areascolarite']='scolarite';
+
+// Moodle 2.4
+$string['regenere_profil'] = 'Actualiser les numéros d\'étudiants';
+$string['deleted_student'] = 'Enregistrement étudiant supprimé';
+$string['delete_student'] = 'Supprimer cet enregistrement';
+$string['select_student'] = 'Sélectionner cet enregistrement';
+$string['student'] = 'Enregistrement';
+$string['cocher_enregistrer_students'] = 'Seuls les enregistrements cochés seront modifiés...';
+
+$string['profil_non_modifiable'] = ' &nbsp; &nbsp; &nbsp; &nbsp; (Passer par le profil pour modifier le numéro d\'étudiant...)';
+$string['ref_profilecategory'] = 'Catégorie du Profil utilisateur';
+$string['config_ref_profilecategory'] = 'Si le Profil utilisateur est utilisé pour enregistrer le <b>numéro d\'étudiant</b>, indiquez la <i>catégorie</i> de celui-ci.';
+$string['ref_profilefield'] = 'Nom abrégé dans Profil utilisateur';
+$string['config_ref_profilefield'] = 'Si le Profil utilisateur est utilisé pour enregistrer <b>le numéro d\'étudiant</b>, indiquez le <i>nom abrégé (\'shortname\')</i> de celui-ci.';
+$string['etudianth'] = 'Etudiants';
+$string['etudianth_help'] = 'Informations d\'état civil destinées aux certificats
+
+* Numéro d\'étudiant :
+Vous pouvez paramétrer le module Référentiel pour qu\'un champ du profil soit consacré au numéro d\'étudiant.
+[Positionnez alors les variables de configuration \'ref_profilecategory\' and \'ref_profilefield\']
+Sinon la valeur du \'idnumber\' de la table \'user\' de Moodle est utilisée. A défaut le champ \'username\' est retenu.
+
+* Lieu et département de naissance ;
+
+* Adresse postale ;
+
+* Etablissement ;
+
+* Les étudiants peuvent modifier leur propre fiche.';
+
+$string['modifdomskillitemh'] = 'Modifier Domaines / Compétences / Items';
+$string['modifdomskillitemh_help'] = 'En augmentant le nombre de domaines / compétences / items d\'une occurrence
+vous pouvez lui ajouter autant de rubriques correspondantes.';
+
+
+$string['deletedomainhelp'] = '(Toutes les compétences et Items associés seront aussi supprimés...)';
+$string['deleteskillhelp'] = '(Tous les Items associés serint aussi supprimés...)';
+$string['deleteitemhelp'] = '(Cet Item sera définitivement supprimé...)';
+
+$string['delete_domain'] = 'Supprimer ce Domaine';
+$string['delete_skill'] = 'Supprimer cette Compétence';
+$string['delete_item'] = 'Supprimer cet Item';
+
+$string['select_domain'] = 'Domaine sélectionné';
+$string['select_skill'] = 'Compétence sélectionnée';
+$string['select_item'] = 'Item sélectionné';
+
+$string['new_domaine'] = 'Nouveau Domaine';
+$string['new_competence'] = 'Nouvelle Competence';
+$string['new_item'] = 'Nouvel Item';
+
+$string['cocher_enregistrer_domain'] = 'Seuls les Domaines / Compétences / Items sélectionnés seront modifiés...';
+
 $string['delaidesherence']='Délai de déshérence';
 $string['config_delaidesherence']='Nombre de jours au delà duquel les déclarations d\'activité non évaluées sont signalées...';
 $string['jours']='jours';
@@ -299,20 +365,6 @@ $string['etablissementh'] = 'Etablissements';
 $string['etablissementh_help'] = '* Numéro, nom et adresse de l\'établissement;
 
 Seuls les enseignants avec droit d\'édition peuvent modifier les fiches d\'établissement.';
-
-$string['etudianth'] = 'Etudiants';
-$string['etudianth_help'] = 'Informations d\'état civil destinés aux certificats
-
-* Numéro d\'étudiant : valeur du \'idnumber\' de la table \'user\' de Moodle.
-(si vide \'username\' est retenu).
-
-* Lieu et département de naissance ;
-
-* Adresse postale ;
-
-* Etablissement ;
-Les étudiants peuvent modifier leur propre fiche.';
-
 
 $string['pedagoh'] = 'Formations / Pédagogies';
 $string['pedagoh_help'] = 'Les administrateurs du site peuvent sélectionner les certificats
@@ -1011,8 +1063,8 @@ $string['rtf'] = 'Format RTF';
 $string['msword'] = 'Format MSWord';
 $string['ooffice'] = 'Format OpenOffice';
 // version 5.4.6
-$string['ressources_associees'] = 'Vous avez déjà associé {$a} ressources à cette activité';
-$string['ressource_associee'] = 'Vous avez déjà associé {$a} ressource à cette activité';
+$string['ressources_associees'] = '{$a} ressources associées à cette activité';
+$string['ressource_associee'] = '{$a} ressource associée à cette activité';
 $string['notification_commentaire'] = 'Notifier par courriel ce commentaire';
 $string['savedoc'] = 'Modifier';
 $string['num'] = 'N° ';
@@ -1062,9 +1114,9 @@ ne sont pris en compte qu\'après ceux définis au niveau du site par l\'adminis
 puis au niveau du référentiel par le créateur de celui-ci.
 Un paramétrage incohérent peut vous interdire de compléter la création d\'un nouveau référentiel ou de télécharger un référentiel existant.</i>';
 $string['not_verrou'] = 'Non verrouillé';
-$string['filtre_auteur'] = 'Auteur';
-$string['filtre_verrou'] = 'Verrouillé';
-$string['filtre_date_decision'] = 'Date de proposition';
+$string['f_auteur'] = 'Auteur';
+$string['f_verrou'] = 'Verrouillé';
+$string['f_date_decision'] = 'Date de proposition';
 
 $string['decision_favorable'] = 'A Recevoir';
 $string['decision_defavorable'] = 'A ajourner';
@@ -1284,9 +1336,9 @@ $string['zero_activite'] = 'Pas d\'activité déclarée à la date du {$a} par '
 $string['menu'] = 'Menu';
 $string['activite_exterieure'] = 'Autre cours...';
 $string['id_activite'] = 'Activité <i>{$a}</i>';
-$string['filtre_validation'] = 'Validation';
-$string['filtre_date_modif'] = 'Date suivi';
-$string['filtre_date_modif_student'] = 'Date auteur';
+$string['f_validation'] = 'Validation';
+$string['f_date_modif'] = 'Date suivi';
+$string['f_date_modif_student'] = 'Date auteur';
 $string['listactivityall'] = 'Détails';
 $string['listactivitysingle'] = 'Détails';
 $string['date_modif'] = 'Modifié par le référent le ';
@@ -1320,7 +1372,7 @@ $string['instance_deleted'] = 'Instance supprimée';
 $string['selection_instance_referentiel'] = 'Cocher d\'abord les instances à supprimer ';
 $string['ressaisir_pass_referentiel'] = 'Ressaisir le mot de passe ';
 $string['suppression_pass_referentiel'] = 'Supprimer le mot de passe ';
-$string['suppression_referentiel_impossible'] = 'Il reste des instances de ce référentiel à supprimer ';
+$string['suppression_referentiel_impossible'] = 'Il reste des instances du référentiel {$a} à supprimer...';
 // version 3.1.4
 
 $string['modifier_depot_document'] = 'Modifier le document attaché ';
@@ -1483,7 +1535,7 @@ $string['empreinte'] = 'Empreinte [0..999] : Nombre de fois où cette compétenc
 $string['etiquette_inconnue'] = 'Afficher';
 $string['etiquette_url'] = 'Etiquette du lien ';
 $string['liste_empreintes_competence'] = 'Liste des empreintes';
-$string['liste_codes_empreintes_competence'] = 'Liste des codes, Poids<br /> et <i>Empreintes (un item d\'empreinte nulle n\'est pas pris en compte dans la certification)</i>';
+$string['liste_codes_empreintes_competence'] = 'Liste des codes, Poids et <i>Empreintes (un item d\'empreinte nulle n\'est pas pris en compte dans la certification)</i>';
 
 $string['upload_succes'] = 'Fichier téléchargé avec succès.';
 

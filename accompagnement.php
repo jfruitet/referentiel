@@ -23,7 +23,8 @@
 ///////////////////////////////////////////////////////////////////////////
 
     require_once('../../config.php');
-    require_once('lib.php');
+    require_once('locallib.php');
+
     include('print_lib_accompagnement.php');	// ACCOMPAGNEMENT
     require_once('lib_repartition.php');	// REPARTION COMPETENCES
     require_once('print_lib_repartition.php');	// REPARTION COMPETENCES
@@ -38,57 +39,16 @@
     $action  	= optional_param('action','', PARAM_ALPHANUMEXT); // pour distinguer differentes formes de traitements
     $mode         = optional_param('mode','', PARAM_ALPHA);
     $old_mode     = optional_param('old_mode','', PARAM_ALPHA); // mode anterieur
-    $course       = optional_param('course', 0, PARAM_INT);
+    $courseid = optional_param('courseid', 0, PARAM_INT);
     $groupmode    = optional_param('groupmode', -1, PARAM_INT);
     $cancel       = optional_param('cancel', 0, PARAM_BOOL);
     $userid       = optional_param('userid', 0, PARAM_INT);
 
-    $mode_select       = optional_param('mode_select','', PARAM_ALPHANUMEXT);
-    $filtre_validation = optional_param('filtre_validation', 0, PARAM_INT);
-    $filtre_referent = optional_param('filtre_referent', 0, PARAM_INT);
-    $filtre_date_modif = optional_param('filtre_date_modif', 0, PARAM_INT);
-    $filtre_date_modif_student = optional_param('filtre_date_modif_student', 0, PARAM_INT);
-    $filtre_auteur = optional_param('filtre_auteur', 0, PARAM_INT);
-    $sql_filtre_where=optional_param('sql_filtre_where','', PARAM_ALPHA);
-    $sql_filtre_order=optional_param('sql_filtre_order','', PARAM_ALPHA);
-    $select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
+    $mode_select  = optional_param('mode_select','', PARAM_ALPHANUMEXT);
+    $select_acc   = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
 
-	// DEBUG
-	//echo "<br />DEBUG :: 65 :: ACTIVITE.PHP :: MODE : $mode<br />USERID : $userid\n";
-
-
-	$data_filtre= new Object(); // paramettres de filtrage
-	if (isset($filtre_validation)){
-			$data_filtre->filtre_validation=$filtre_validation;
-	}
-	else {
-		$data_filtre->filtre_validation=0;
-	}
-	if (isset($filtre_referent)){
-		$data_filtre->filtre_referent=$filtre_referent;
-	}
-	else{
-		$data_filtre->filtre_referent=0;
-	}
-	if (isset($filtre_date_modif_student)){
-		$data_filtre->filtre_date_modif_student=$filtre_date_modif_student;
-	}
-	else{
-		$data_filtre->filtre_date_modif_student=0;
-	}
-	if (isset($filtre_date_modif)){
-		$data_filtre->filtre_date_modif=$filtre_date_modif;
-	}
-	else{
-		$data_filtre->filtre_date_modif=0;
-	}
-	if (isset($filtre_auteur)){
-		$data_filtre->filtre_auteur=$filtre_auteur;
-	}
-	else{
-		$data_filtre->filtre_auteur=0;
-	}
-
+    // Filtres
+    require_once('filtres.php'); // Ne pas deplacer
 
     // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/accompagnement.php');
@@ -130,23 +90,18 @@
 		print_error(get_string('erreurscript','referentiel','Erreur01 : accompagnement.php'), 'referentiel');
 	}
 
+    $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
+    $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
+	$returnlink_accompagnement= new moodle_url('/mod/referentiel/accompagnement.php', array('d'=>$referentiel->id));
+	$returnlink_activite= new moodle_url('/mod/referentiel/activite.php', array('d'=>$referentiel->id));
 
-
-
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
-    
-    require_login($course->id, false, $cm);   // pas d'autologin guest
-
-    if (!isloggedin() or isguestuser()) {
-        redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
+    require_login($course->id, false, $cm);
+    if (!isloggedin() || isguestuser()) {
+        redirect($returnlink_course);
     }
 
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 	/// If it's hidden then it's don't show anything.  :)
 	/// Some capability checks.
@@ -158,7 +113,7 @@
         )
 
     ) {
-        print_error(get_string("activityiscurrentlyhidden"),'error',"$CFG->wwwroot/course/view.php?id=$course->id");
+        print_error(get_string("activityiscurrentlyhidden"),'error',$returnlink_course);
     }
 
 
@@ -191,75 +146,75 @@
 	/// selection filtre
   if (isset($mode_select) && ($mode_select=='selectetab') && confirm_sesskey() ){
 		// gestion des filtres;
-		$sql_filtre_where='';
-		$sql_filtre_order='';
+		$sql_f_where='';
+		$sql_f_order='';
 
-		if (isset($filtre_validation) && ($filtre_validation=='1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND approved=\'1\' ';
+		if (isset($f_validation) && ($f_validation=='1')){
+			if ($sql_f_where!='')
+				$sql_f_where.=' AND approved=\'1\' ';
 			else
-				$sql_filtre_where.=' AND approved=\'1\' ';
+				$sql_f_where.=' AND approved=\'1\' ';
 		}
-		else if (isset($filtre_validation) && ($filtre_validation=='-1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND approved=\'0\' ';
+		else if (isset($f_validation) && ($f_validation=='-1')){
+			if ($sql_f_where!='')
+				$sql_f_where.=' AND approved=\'0\' ';
 			else
-				$sql_filtre_where.=' AND approved=\'0\' ';
+				$sql_f_where.=' AND approved=\'0\' ';
 		}
-		if (isset($filtre_referent) && ($filtre_referent=='1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND teacherid<>0  ';
+		if (isset($f_referent) && ($f_referent=='1')){
+			if ($sql_f_where!='')
+				$sql_f_where.=' AND teacherid<>0  ';
 			else
-				$sql_filtre_where.=' AND teacherid<>0  ';
+				$sql_f_where.=' AND teacherid<>0  ';
 		}
-		else if (isset($filtre_referent) && ($filtre_referent=='-1')){
-			if ($sql_filtre_where!='')
-				$sql_filtre_where.=' AND teacherid=0  ';
+		else if (isset($f_referent) && ($f_referent=='-1')){
+			if ($sql_f_where!='')
+				$sql_f_where.=' AND teacherid=0  ';
 			else
-				$sql_filtre_where.=' AND teacherid=0  ';
-		}
-
-		if (isset($filtre_date_modif) && ($filtre_date_modif=='1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_modif ASC ';
-			else
-				$sql_filtre_order.=' date_modif ASC ';
-		}
-		else if (isset($filtre_date_modif) && ($filtre_date_modif=='-1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_modif DESC ';
-			else
-				$sql_filtre_order.=' date_modif DESC ';
+				$sql_f_where.=' AND teacherid=0  ';
 		}
 
-		if (isset($filtre_date_modif_student) && ($filtre_date_modif_student=='1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_modif_student ASC ';
+		if (isset($f_date_modif) && ($f_date_modif=='1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', date_modif ASC ';
 			else
-				$sql_filtre_order.=' date_modif_student ASC ';
+				$sql_f_order.=' date_modif ASC ';
 		}
-		else if (isset($filtre_date_modif_student) && ($filtre_date_modif_student=='-1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', date_modif_student DESC ';
+		else if (isset($f_date_modif) && ($f_date_modif=='-1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', date_modif DESC ';
 			else
-				$sql_filtre_order.=' date_modif_student DESC ';
-		}
-
-		if (isset($filtre_auteur) && ($filtre_auteur=='1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', userid ASC ';
-			else
-				$sql_filtre_order.=' userid ASC ';
-		}
-		else if (isset($filtre_auteur) && ($filtre_auteur=='-1')){
-			if ($sql_filtre_order!='')
-				$sql_filtre_order.=', userid DESC ';
-			else
-				$sql_filtre_order.=' userid DESC ';
+				$sql_f_order.=' date_modif DESC ';
 		}
 
+		if (isset($f_date_modif_student) && ($f_date_modif_student=='1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', date_modif_student ASC ';
+			else
+				$sql_f_order.=' date_modif_student ASC ';
+		}
+		else if (isset($f_date_modif_student) && ($f_date_modif_student=='-1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', date_modif_student DESC ';
+			else
+				$sql_f_order.=' date_modif_student DESC ';
+		}
 
-		// echo "<br />DEBUG :: accompagnement.php :: Ligne 162 :: FILTRES : $sql_filtre_where $sql_filtre_order\n";
+		if (isset($f_auteur) && ($f_auteur=='1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', userid ASC ';
+			else
+				$sql_f_order.=' userid ASC ';
+		}
+		else if (isset($f_auteur) && ($f_auteur=='-1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', userid DESC ';
+			else
+				$sql_f_order.=' userid DESC ';
+		}
+
+
+		// echo "<br />DEBUG :: accompagnement.php :: Ligne 162 :: FILTRES : $sql_f_where $sql_f_order\n";
 
     }
 
@@ -288,19 +243,14 @@
 
 		$mode ='listactivityall';
 		if (has_capability('mod/referentiel:managecertif', $context)){
-	           $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=0&amp;mode=$mode";
+	           $SESSION->returnpage = $returnlink_activite;
 		}
 		else{
-	           $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode";
+	        $SESSION->returnpage = new moodle_url('/mod/referentiel/activite.php', array('d'=>$referentiel->id, 'select_acc'=>$select_acc, 'userid'=>$userid,'mode'=>$mode));
 		}
-    	if (!empty($SESSION->returnpage)) {
-            $return = $SESSION->returnpage;
-	        unset($SESSION->returnpage);
-    	    redirect($return);
-        }
-		else {
-	       redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode");
-    	}
+        $return = $SESSION->returnpage;
+        unset($SESSION->returnpage);
+    	redirect($return);
 
        exit;
     }
@@ -468,8 +418,8 @@
     $currenttab = $mode;
 
     /// Mark as viewed  ??????????? A COMMENTER
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
+    //$completion=new completion_info($course);
+    //$completion->set_module_viewed($cm);
 
 // AFFICHAGE DE LA PAGE Moodle 2
     $stractivite = get_string('accompagnement','referentiel');
@@ -484,7 +434,7 @@
 
     $PAGE->set_url($url);
     $PAGE->set_context($context);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     //if ($CFG->version < 2011120100) $PAGE->requires->js('/lib/overlib/overlib.js');  else
     $PAGE->requires->js($OverlibJs);
     $PAGE->requires->js('/mod/referentiel/functions.js');
@@ -501,9 +451,9 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
-    
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f, $mode);
+    $tab_onglets->display();
     
 	if  ($mode=='suivi'){
         echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.get_string('repartition','referentiel').' '.$OUTPUT->help_icon('repartitionh','referentiel').'</h2></div>'."\n";
@@ -512,7 +462,7 @@
             referentiel_select_repartition($mode, $referentiel, $USER->id, $select_acc);
         }
         else if (has_capability('mod/referentiel:write', $context)){
-            referentiel_print_suivi_user($mode, $referentiel, $userid_filtre, $gusers, $sql_filtre_where, $sql_filtre_order, $data_filtre, $select_acc);
+            referentiel_print_suivi_user($mode, $referentiel, $userid_filtre, $gusers, $sql_f_where, $sql_f_order, $data_f, $select_acc);
         }
         else{
             referentiel_print_liste_repartitions($referentiel);
@@ -522,7 +472,7 @@
         echo '<div align="center"><h2><img src="'.$icon.'" border="0" title="" alt="" /> '.get_string('repartition_notification','referentiel').' '.$OUTPUT->help_icon('rnotificationh','referentiel').'</h2></div>'."\n";
 
         if (has_capability('mod/referentiel:write', $context)){
-            referentiel_print_suivi_user($mode, $referentiel, $userid_filtre, $gusers, $sql_filtre_where, $sql_filtre_order, $data_filtre, $select_acc);
+            referentiel_print_suivi_user($mode, $referentiel, $userid_filtre, $gusers, $sql_f_where, $sql_f_order, $data_f, $select_acc);
         }
         else{
             referentiel_print_liste_repartitions($referentiel);

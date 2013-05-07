@@ -23,30 +23,25 @@
 ///////////////////////////////////////////////////////////////////////////
 
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
+
 	require_once('print_lib_activite.php'); // AFFICHAGES ACTIVITES
     require_once('lib_task.php');
     require_once('print_lib_task.php');	// AFFICHAGES TACHES
-	
-	// PAS DE RSS
-    // require_once("$CFG->libdir/rsslib.php");
 
     $id    = optional_param('id', 0, PARAM_INT);    // course module id    
 	$d     = optional_param('d', 0, PARAM_INT);    // referentielbase id
     $mode  = optional_param('mode', '', PARAM_ALPHANUMEXT);    // Force the browse mode  ('single')
-
     $taskid   = optional_param('taskid', 0, PARAM_INT);    //record task id
-    // $import   = optional_param('import', 0, PARAM_INT);    // show import form
-
     $action  	= optional_param('action','', PARAM_ALPHANUMEXT); // pour distinguer differentes formes de traitements
-
+    $mailnow    = optional_param('mailnow', 0, PARAM_INT);
     $add        = optional_param('add','', PARAM_ALPHA);
     $update     = optional_param('update', 0, PARAM_INT);
     $delete     = optional_param('delete', 0, PARAM_INT);
     $deleteall  = optional_param('deleteall', 0, PARAM_INT);
-    $select    = optional_param('select', 0, PARAM_INT);
-    $course     = optional_param('course', 0, PARAM_INT);
+    $select     = optional_param('select', 0, PARAM_INT);
+    $courseid   = optional_param('courseid', 0, PARAM_INT);
     $groupmode  = optional_param('groupmode', -1, PARAM_INT);
     $cancel     = optional_param('cancel', 0, PARAM_BOOL);
   	$approve    = optional_param('approve', 0, PARAM_INT);	
@@ -54,46 +49,9 @@
 	$hide    = optional_param('hide', -1, PARAM_INT);
 	$select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
 	
-    $filtre_validation = optional_param('filtre_validation', 0, PARAM_INT);
-    $filtre_referent = optional_param('filtre_referent', 0, PARAM_INT);
-    $filtre_date_modif = optional_param('filtre_date_modif', 0, PARAM_INT);
-    $filtre_date_modif_student = optional_param('filtre_date_modif_student', 0, PARAM_INT);
-    $filtre_auteur = optional_param('filtre_auteur', 0, PARAM_INT);
+     // Filtres
+    require_once('filtres.php'); // Ne pas deplacer
 
-    // MODIF JF 2012/09/20
-	$data_filtre= new Object(); // paramettres de filtrage
-	if (isset($filtre_validation)){
-			$data_filtre->filtre_validation=$filtre_validation;
-	}
-	else {
-		$data_filtre->filtre_validation=0;
-	}
-	if (isset($filtre_referent)){
-		$data_filtre->filtre_referent=$filtre_referent;
-	}
-	else{
-		$data_filtre->filtre_referent=0;
-	}
-	if (isset($filtre_date_modif_student)){
-		$data_filtre->filtre_date_modif_student=$filtre_date_modif_student;
-	}
-	else{
-		$data_filtre->filtre_date_modif_student=0;
-	}
-	if (isset($filtre_date_modif)){
-		$data_filtre->filtre_date_modif=$filtre_date_modif;
-	}
-	else{
-		$data_filtre->filtre_date_modif=0;
-	}
-	if (isset($filtre_auteur)){
-		$data_filtre->filtre_auteur=$filtre_auteur;
-	}
-	else{
-		$data_filtre->filtre_auteur=0;
-	}
-
-    // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/task.php');
 
 	if ($d) {     // referentiel_referentiel_id
@@ -129,7 +87,6 @@
         $url->param('id', $id);
     }
 	else{
-    // print_error('You cannot call this script in that way');
 		print_error(get_string('erreurscript','referentiel','Erreur01 : task.php'), 'referentiel');
 	}
 
@@ -143,7 +100,6 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     require_login($course->id, false, $cm);   // pas d'autologin guest
-
     if (!isloggedin()) {
         redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
     }
@@ -161,24 +117,8 @@
         print_error(get_string("activityiscurrentlyhidden"),'error',$CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
-
-    /*
-    // limiter l'accès aux tâches ?
-    // NON
-    if ($taskid) {    // So do you have access?
-      if (!(has_capability('mod/referentiel:write', $context) 
-			or has_capability('mod/referentiel:selecttask', $context) 
-			or referentiel_task_isowner($taskid)) 
-			// or !confirm_sesskey() 
-      ) {
-            print_error(get_string('noaccess','referentiel'));
-        }
-    }
-	*/
-	
 	// selecteur
 	$userid_filtre=0;
-	
 	
 	// RECUPERER LES FORMULAIRES
     if (isset($SESSION->modform)) {   // Variables are stored in the session
@@ -205,8 +145,6 @@
 		&& isset($form->userid) && ($form->userid>0)
 		&& confirm_sesskey() ){
 		$userid_filtre=$form->userid;
-		// DEBUG
-		// echo "<br />ACTION : $action  SEARCH : $userid_filtre\n";
 		unset($form);
 		unset($action);
 		// exit;
@@ -220,7 +158,6 @@
 			// verifier que la tache existe
 			if (referentiel_delete_task_record($delete)){
 				add_to_log($course->id, 'referentiel', 'record delete', "task.php?d=$referentiel->id", $delete, $cm->id);
-                // notify(get_string('recorddeleted','referentiel'), 'notifysuccess');
             }
         } 
     }
@@ -233,7 +170,6 @@
 			// detruire la taches, les consignes et les activites associes
             if (referentiel_delete_task_and_activities($deleteall)){
 			     add_to_log($course->id, 'referentiel', 'record delete', "task.php?d=$referentiel->id", $deleteall, $cm->id);
-                 // notify(get_string('recorddeleted','referentiel'), 'notifysuccess');
             }
 		}
     }
@@ -256,38 +192,27 @@
         }
     }
 	
-	
 	/// Selection tache
-    if (isset($select) && ($select>0) && confirm_sesskey()  
+    if (isset($select) && ($select>0) && confirm_sesskey()
 		&& has_capability('mod/referentiel:selecttask', $context)) {
-        // Modif JF 2012/10/26
         // Rechercher le referent
         $a_referentid=0;
         $referentids=referentiel_get_accompagnements_user($referentiel->id, $course->id, $USER->id);
-        // echo "<br>DEBUG :: 267 :: task.php ::<br />RECHERCHE REFERENT\n";
-        // print_object($referentids);
 
         if ($referentids){
             print_object($referentids);
             // exit;
             foreach($referentids as $referentid){
-                //echo "<br>DEBUG :: 274 :: task.php ::<br />RECHERCHE REFERENT (Suite)\n";
-                //print_object($referentid);
                 if ($referentid->userid){
                     $a_referentid=$referentid->userid;
                     break;
                 }
             }
             // choisir le premier de la liste !
-            // echo "<br>DEBUG :: 273 :: task.php ::<br />REFERENT : ".$a_referentid."\n";
         }
-        // exit;
-
-		if (referentiel_association_user_task($USER->id, $select, $a_referentid)){
+		if (referentiel_association_user_task($USER->id, $select, $a_referentid, $mailnow, false)){
 			add_to_log($course->id, 'referentiel', 'task', "task.php?d=$referentiel->id", $select, $cm->id);
-            // notify(get_string('task','referentiel').':'.$select, 'notifysuccess');
-            // MODIF JF 2012/10/08
-            redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;mode=listactivityall&amp;filtre_auteur=$data_filtre->filtre_auteur&amp;filtre_validation=$data_filtre->filtre_validation&amp;filtre_referent=$data_filtre->filtre_referent&amp;filtre_date_modif=$data_filtre->filtre_date_modif&amp;filtre_date_modif_student=$data_filtre->filtre_date_modif_student");
+            redirect("$CFG->wwwroot/mod/referentiel/activite.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;mode=listactivityall&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student");
 		}
     }
 	
@@ -316,9 +241,6 @@
 		$addfunction    = "referentiel_add_task";
         $updatefunction = "referentiel_update_task";
         $deletefunction = "referentiel_delete_task";
-		// DEBUG
-		// echo "<br />task.php : Ligne 244: Formulaire\n";
-		// print_r($form);
 
 		switch ($form->mode) {
 		    case "deletetaskall":
@@ -373,17 +295,9 @@
 
                 if (isset($form->delete_all_task_associations) && ($form->delete_all_task_associations==get_string('delete_all_task_associations', 'referentiel'))){
                     // suppression de la tache et de toutes les activites associes
-					// echo "<br />SUPPRESSION\n";
 
                     $return = referentiel_delete_task_and_activities($form->taskid);
                     if (!$return) {
-							/*
-            	        	if (file_exists($moderr)) {
-                	        	$form = $form;
-	                   		    include_once($moderr);
-    	                   		die;
-	    	               	}
-							*/
                         print_error("Could not delete task $taskid of the referentiel", "task.php?d=$referentiel->id");
                     }
                     add_to_log($course->id, "referentiel", "delete",
@@ -395,13 +309,6 @@
 					// echo "<br />SUPPRESSION\n";
                     $return = $deletefunction($form);
                     if (!$return) {
-							/*
-            	        	if (file_exists($moderr)) {
-                	        	$form = $form;
-	                   		    include_once($moderr);
-    	                   		die;
-	    	               	}
-							*/
                         print_error("Could not delete task $taskid of the referentiel", "task.php?d=$referentiel->id");
                     }
                     if (is_string($return)) {
@@ -414,13 +321,6 @@
 				else {
                     $return = $updatefunction($form);
                     if (!$return) {
-						/*
-            		    if (file_exists($moderr)) {
-                			$form = $form;
-                    		include_once($moderr);
-                        	die;
-	                    }
-						*/
                         print_error("Could not update task $form->id of the referentiel", "task.php?d=$referentiel->id");
 					}
                     if (is_string($return)) {
@@ -441,7 +341,7 @@
 								redirect($CFG->wwwroot.'/mod/referentiel/upload_consigne.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&taskid='.$form->ref_task.'&consigne_id=0&amp;mode=addconsigne&soucription='.$form->souscription_forcee.'&amp;sesskey='.sesskey());
 								exit;
 							}
-							
+
 						}
 					}
 					
@@ -454,7 +354,7 @@
                     }
 
                 }
-                
+
 
                 if (isset($form->redirect) and !empty($form->redirecturl)) {
                     $SESSION->returnpage = $form->redirecturl;
@@ -466,23 +366,12 @@
 			    break;
 			
 			case "addtask":
-				// echo "<br />task.php : Ligne 337 : Formulaire\n";
-				// print_r($form);
-				
-				
 				if (!isset($form->name) || trim($form->name) == '') {
         			$form->name = get_string("modulename", "referentiel");
                 }
         
 				$return = $addfunction($form);
 				if (!$return) {
-    	        	/*
-					if (file_exists($moderr)) {
-    	    	    	$form = $form;
-        	    	    include_once($moderr);
-            	    	die;
-					}
-	            	*/
 					print_error("Could not add a new task to the referentiel", "task.php?d=$referentiel->id");
 				}
                 if (is_string($return)) {
@@ -541,10 +430,16 @@
         exit;
 	}
 
+	/// selection filtre
+    if (empty($userid_filtre) || ($userid_filtre==$USER->id)
+        || (isset($mode_select) && ($mode_select=='selectetab'))){
+        set_filtres_sql();
+    }
+
 	// afficher les formulaires
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
-    $modform = "task.html";
+    $modform = "task_inc_html.php";
 
     if (($mode=='approvetask') || ($mode=='deletetaskactivites')){
     	/// Check to see if groups are being used here
@@ -600,10 +495,6 @@
 	// Moodle 2
     $url->param('mode', $mode);
 
-    /// Mark as viewed  ??????????? A COMMENTER
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
-
 // AFFICHAGE DE LA PAGE Moodle 2
 	/// RSS and CSS and JS meta
 	/// Print the page header
@@ -620,7 +511,7 @@
     $pagetitle = strip_tags($course->shortname.': '.$strreferentiel.': '.format_string($referentiel->name,true));
 
     $PAGE->set_url($url);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->css('/mod/referentiel/dhtmlgoodies_calendar.css');
     $PAGE->requires->js($OverlibJs);
     $PAGE->requires->js('/mod/referentiel/functions.js');
@@ -639,17 +530,18 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f, $mode);
+    $tab_onglets->display();
 
     // print_heading_with_help($strtask, 'task', 'referentiel', $icon);
     echo '<div align="center"><h1><img src="'.$icon.'" border="0" title="referentiel" alt="referentiel" /> '.$strtask.' '.$OUTPUT->help_icon('taskh','referentiel').'</h1></div>'."\n";
 
     // DEBUG
     // echo "<br />MODE : $mode\n";
-    
+
 	if (($mode=='list') || ($mode=='listtask')){
-		referentiel_print_liste_tasks($mode, $referentiel); 
+		referentiel_print_liste_tasks($mode, $referentiel);
 	}
 	else if ($mode=='listtasksingle'){
 		if (!empty($taskid)){
@@ -685,7 +577,7 @@
 			    	print_error('task ID is incorrect');
     			}
 			}
-			$modform = "task.html";
+			$modform = "task_inc_html.php";
 		}
     	// formulaires
 	    if (file_exists($modform)) {
@@ -700,7 +592,7 @@
 		else {
     	    notice("ERREUR : No file found at : $modform)", "task.php?d=$referentiel->id");
     	}
-		
+
 		include_once($modform);
 		//   print_simple_box_end();
 		echo $OUTPUT->box_end();

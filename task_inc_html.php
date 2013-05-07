@@ -29,7 +29,7 @@
 	$task->criteres_evaluation=($form->criteres_evaluation);
 	$task->ref_instance=$form->instance;
 	$task->ref_referentiel=$form->ref_referentiel;
-	$task->ref_course=$form->course;
+	$task->ref_course=$form->courseid;
 	$task->auteurid=$USER->id;		
 	$task->date_creation=time();
 	$task->date_modif=time();
@@ -48,8 +48,8 @@ if (isset($mode) && ($mode=="addtask")){
 	if (!isset($form->ref_referentiel)) {
     	$form->ref_referentiel = $referentiel_referentiel->id;
 	}
-	if (!isset($form->course)) {
-    	$form->course = $course->id;
+	if (!isset($form->courseid)) {
+    	$form->courseid = $course->id;
 	}	
 	if (!isset($form->type_task)) {
     	$form->type_task = '';
@@ -250,7 +250,7 @@ if (NOTIFICATION_TACHES){
 
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="taskid"        value="<?php  p($form->taskid) ?>" />
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
@@ -273,8 +273,8 @@ if (NOTIFICATION_TACHES){
             if (!isset($form->ref_referentiel)) {
                 $form->ref_referentiel = $referentiel_referentiel->id;
             }
-            if (!isset($form->course)) {
-                $form->course = $course->id;
+            if (!isset($form->courseid)) {
+                $form->courseid = $course->id;
             }
             if (!isset($form->type_task)) {
                 $form->type_task = '';
@@ -600,7 +600,7 @@ echo get_string('cle_souscription', 'referentiel').' : <input type="text" name="
 
 <input type="hidden" name="action" value="modifier_task" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
@@ -706,7 +706,7 @@ echo get_string('cle_souscription', 'referentiel').' : <input type="text" name="
 
 <input type="hidden" name="action" value="modifier_consigne" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
@@ -750,7 +750,7 @@ echo get_string('cle_souscription', 'referentiel').' : <input type="text" name="
 <tr valign="top">
     <td align="center" colspan="2">
 <input type="radio" name="depot_consigne" value="<?php  p(get_string('yes')); ?>" /> <?php  p(get_string('yes')); ?>
-<input type="radio" name="depot_consigne" value="<?php  p(get_string('no')); ?>" checked="checked" /> <?php  p(get_string('no')); ?>
+&nbsp; <input type="radio" name="depot_consigne" value="<?php  p(get_string('no')); ?>" checked="checked" /> <?php  p(get_string('no')); ?>
     </td>
 </tr>
 	
@@ -767,7 +767,7 @@ echo get_string('cle_souscription', 'referentiel').' : <input type="text" name="
 <input type="hidden" name="ref_instance" value="<?php  p($ref_instance) ?>" />
 <input type="hidden" name="action" value="creer_consigne" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
@@ -789,8 +789,8 @@ echo get_string('cle_souscription', 'referentiel').' : <input type="text" name="
     	if (!isset($form->ref_referentiel)) {
         	$form->ref_referentiel = $referentiel_referentiel->id;
     	}
-    	if (!isset($form->course)) {
-        	$form->course = $course->id;
+    	if (!isset($form->courseid)) {
+        	$form->courseid = $course->id;
     	}    	
     	if (!isset($form->type_task)) {
         	$form->type_task = '';
@@ -1117,7 +1117,7 @@ if (NOTIFICATION_TACHES){
 
 <input type="hidden" name="action" value="modifier_task" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
@@ -1233,7 +1233,7 @@ if (NOTIFICATION_TACHES){
 
 <input type="hidden" name="action" value="modifier_consigne" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
@@ -1290,7 +1290,7 @@ if (NOTIFICATION_TACHES){
 <input type="hidden" name="ref_instance" value="<?php  p($ref_instance) ?>" />
 <input type="hidden" name="action" value="creer_consigne" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />

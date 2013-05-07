@@ -99,7 +99,7 @@ function referentiel_menu_activite($context, $activite_id, $referentiel_instance
 
 
 
-function referentiel_select_users_activite($record_users, $userid=0, $mode='listactivity', $select_acc=0){
+function referentiel_select_users_activite($record_users, $userid=0, $mode='listactivity', $select_acc=0, $data_f=NULL){
 global $cm;
 global $course;
 $maxcol=MAXBOITESSELECTION;
@@ -148,10 +148,20 @@ $s="";
 		}
 			
 		$s.='<td>&nbsp; &nbsp; &nbsp; <input type="submit" value="'.get_string('select', 'referentiel').'" /></td>';
+		if (!empty($data_f)){
+            $s.='
+// Filtres
+<input type="hidden" name="f_auteur" value="'.$data_f->f_auteur.'" />
+<input type="hidden" name="f_validation" value="'.$data_f->f_validation.'" />
+<input type="hidden" name="f_referent" value="'.$data_f->f_referent.'" />
+<input type="hidden" name="f_date_modif" value="'.$data_f->f_date_modif.'" />
+<input type="hidden" name="f_date_modif_student" value="'.$data_f->f_date_modif_student.'" />
+';
+        }
 		$s.='
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="'.$course->id.'" />
+<input type="hidden" name="courseid"        value="'.$course->id.'" />
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="mode"          value="'.$mode.'" />
 </tr></table>
@@ -285,9 +295,6 @@ $s="";
 			$s.='</td><td class="invalide">';
 		}
 		$s.=referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel);
-/*
-		$s.=nl2br($commentaire_activite);
-*/
 		$s.='</td><td>';
 		$s.=$teacher_info;
 		$s.='</td><td>';
@@ -299,56 +306,6 @@ $s="";
 		}
 		$s.='</td><td>';
 		$s.='<span class="small">'.$date_modif_info.'</span>';
-		
-/***************************** DOCUMENTS *******************************
-		// charger les documents associes à l'activite courante
-		if (isset($activite_id) && ($activite_id>0)){
-			$ref_activite=$activite_id; // plus pratique
-			// AFFICHER LA LISTE DES DOCUMENTS
-			$compteur_document=0;
-			$records_document = referentiel_get_documents($ref_activite);
-	    	if ($records_document){
-    			// afficher
-				// DEBUG
-				// echo "<br/>DEBUG ::<br />\n";
-				// print_r($records_document);
-				foreach ($records_document as $record_d){
-					$compteur_document++;
-        			$document_id=$record_d->id;
-					$type_document = $record_d->type_document;
-					$description_document = $record_d->description_document;
-					$url_document = $record_d->url_document;
-					$ref_activite = $record_d->ref_activite;
-					if (isset($record_d->cible_document) && ($record_d->cible_document==1)){
-						$cible_document='_blank'; // fenêtre cible
-					}
-					else{
-						$cible_document='';
-					}
-					if (isset($record_d->etiquette_document)){
-						$etiquette_document=$record_d->etiquette_document; // fenêtre cible
-					}
-					else{
-						$etiquette_document='';
-					}
-
-					print_string('document','referentiel');
-					p($document_id);
-					print_string('type','referentiel');
-					p($type_document); 
-					print_string('description','referentiel');
-					echo (nl2br($description_document)); 
-					print_string('url','referentiel'); 
-					if (eregi("http",$url_document)){
-						echo '<a href="'.$url_document.'" target="_blank">'.$url_document.'</a>';
-					}
-					else{
-						echo $url_document;
-					}
-				}
-			}
-		}
-******************************************************************************/
 		$s.='</td></tr>'."\n";
 	}
 	return $s;
@@ -357,39 +314,6 @@ $s="";
 
 
 
-/************* SUPPRIME 
-// Affiche les activites de ce referentiel
-// ----------------------------------------------------------
-function referentiel_liste_toutes_activites($id_referentiel){
-	if (isset($id_referentiel) && ($id_referentiel>0)){
-		// DEBUG
-		// echo "<br/>DEBUG :: $id_referentiel<br />\n";
-		
-		$records = referentiel_get_activites($id_referentiel);
-		if (!$records){
-			print_error(get_string('noactivite','referentiel'), "activite.php?d=$id_referentiel&amp;mode=add");
-		}
-	    else {
-    		// afficher
-			// DEBUG
-			// echo "<br/>DEBUG ::<br />\n";
-			// print_r($records);
-			foreach ($records as $record){
-				referentiel_print_activite($record);
-			}
-		}
-	}
-}
-***************************/
-
-/**
- * Print Library of functions for activities of module referentiel
- * 
- * @author jfruitet
- * @version $Id: print_lib_activite.php,v 1.0 2008/04/29 00:00:00 jfruitet Exp $
- * @version $Id: print_lib_activite.php,v 2.0 2009/11/30 00:00:00 jfruitet Exp $
- * @package referentiel
- **/
 
 
 /**************************************************************************
@@ -402,7 +326,7 @@ function referentiel_liste_toutes_activites($id_referentiel){
  *       @param string $sql_filtre_where, $sql_filtre_order               *
  * output null                                                            *
  **************************************************************************/
-function referentiel_print_liste_activites($mode, $referentiel_instance, $userid_filtre=0, $gusers=NULL, $sql_filtre_where, $sql_filtre_order, $select_acc) {
+function referentiel_print_liste_activites($mode, $referentiel_instance, $userid_filtre=0, $gusers=NULL, $sql_filtre_where, $sql_filtre_order, $select_acc, $data_f=NULL) {
 global $DB;
 global $CFG;
 global $USER;
@@ -420,13 +344,7 @@ global $appli;
         print_error('REFERENTIEL_ERROR 5 :: print_lib_activite.php :: You cannot call this script in that way');
 	}
 
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 	$records = array();
 	$referentiel_id = $referentiel_instance->ref_referentiel;
@@ -485,7 +403,7 @@ global $appli;
 			// echo "<br />\n";
 			// exit;
 
-			echo referentiel_select_users_activite($record_id_users, $userid_filtre, $mode);
+			echo referentiel_select_users_activite($record_id_users, $userid_filtre, $mode, $select_acc, $data_f);
 		}
 		// filtres
 		if ((!$isteacher) && (!$iseditor) && (!$istutor)){
@@ -538,45 +456,37 @@ global $appli;
 				}
 				else{
 					$actif=false;
-					// 	$records=referentiel_get_all_activites_user_course($referentiel_instance->ref_referentiel, $record_id->userid, $course->id);
 					$records=referentiel_get_all_activites_user($referentiel_instance->ref_referentiel, $record_id->userid, $sql_filtre_where, $sql_filtre_order);
 				}
 
 				if ($records){
-					// MODIF JF 2009/11/28
 					// Liste des competences declarees
 					echo '<td colspan="10" align="center">'.get_string('competences_declarees','referentiel', referentiel_get_user_info($record_id->userid))."\n".referentiel_print_jauge_activite($record_id->userid, $referentiel_id).'</td>'."\n";
 				    foreach ($records as $record) {   // afficher l'activite
 						// Afficher
 						if (isset($mode) && ($mode=='listactivityall')){
-							echo referentiel_print_activite_2($record, $context, $actif, $select_acc);
+							echo referentiel_print_activite_2($record, $context, $actif, $select_acc, $data_f);
 						}
 						elseif (isset($mode) && ($mode=='listactivitysingle')){
-							echo referentiel_print_activite_2($record, $context, $actif, $select_acc);
+							echo referentiel_print_activite_2($record, $context, $actif, $select_acc, $data_f);
 						}
 						else{
-							echo referentiel_print_activite_2($record, $context, $actif, $select_acc);
+							echo referentiel_print_activite_2($record, $context, $actif, $select_acc, $data_f);
 						}
 					}
-					// MODIF JF 2009/11/28
-					// echo '<td colspan="10" align="center">'.get_string('competences_declarees','referentiel', referentiel_get_user_info($record_id->userid))."\n".referentiel_print_jauge_activite($record_id->userid, $referentiel_id).'</td>'."\n";
 				}
 				else{
 					if (isset($mode) && ($mode=='listactivity')){
 						echo '<tr><td class="zero" colspan="10" align="center">'.referentiel_print_aucune_activite_user($record_id->userid).'</td></tr>'."\n";
 					}
 					else if (isset($mode) && ($mode=='listactivityall')){
-						// echo '<tr><td class="zero" colspan="7" align="center">'.referentiel_print_aucune_activite_user($record_id->userid).'</td></tr>'."\n";
 					}
 				}
     		}
 			// Afficher
-			//if ($mode!='listactivitysingle'){
-				echo referentiel_print_enqueue_activite();
-			//}
+			echo referentiel_print_enqueue_activite();
 		}
 	}
-	//echo '<br /><br />'."\n";
 	return true;
 }
 
@@ -590,7 +500,7 @@ global $appli;
  * output true                                                            *
  **************************************************************************/
 
-function referentiel_print_liste_activites_user($referentiel_instance, $userid, $sql_filtre_where='', $sql_filtre_order='') {
+function referentiel_print_liste_activites_user($referentiel_instance, $userid, $sql_filtre_where='', $sql_filtre_order='', $select_acc=0, $data_f=NULL) {
 global $CFG;
 global $DB;
 global $USER;
@@ -617,7 +527,7 @@ global $appli;
     $isteacher=$roles->is_teacher;
     $istutor=$roles->is_tutor;
     $isstudent=$roles->is_student;
-        
+    $isguest=$roles->is_guest;
 	if (isset($referentiel_id) && ($referentiel_id>0)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_id);
 		if (!$referentiel_referentiel){
@@ -641,16 +551,13 @@ global $appli;
 			foreach ($records as $record) {   
 				// Afficher 	
 				referentiel_print_activite_detail($record);
-				referentiel_menu_activite_detail($context, $record->id, $referentiel_instance->id, $record->approved, $select_acc);
+				referentiel_menu_activite_detail($context, $record->id, $referentiel_instance->id, $record->approved, $select_acc, $data_f);
 			}
 		}
 		else{
 			echo referentiel_print_aucune_activite_user($record_id->userid);
 		}
-		// Afficher le menu
-		// referentiel_menu_activite_detail($context, $record->id, $referentiel_instance->id, $record->approved, $select_acc);
 	}
-	//echo '<br /><br />'."\n";
 	return true;
 }
 

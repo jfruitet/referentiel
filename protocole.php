@@ -32,8 +32,8 @@
 
 
 
-  require_once("../../config.php");
-  require_once("lib.php");
+  require(dirname(__FILE__) . '/../../config.php');
+  require_once('locallib.php');
   require_once("print_lib_protocole.php");
   
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
@@ -90,19 +90,13 @@
 	}
 
 	$returnlink="$CFG->wwwroot/course/view.php?id=$course->id";
-    require_login($course->id, false, $cm);
-
+    require_login($course->id, true, $cm);
+/*
     if (!isloggedin() || isguestuser()) {   // nouveaute Moodle 2
         redirect($returnlink);
     }
-
-    // CONTEXTE
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+*/
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 
     if (!empty($referentiel->id)) {    // So do you have access?
@@ -129,12 +123,12 @@
 
 
 	// A MODIFIER / ADAPTER
-    require_capability('mod/referentiel:write', $context);
+    // require_capability('mod/referentiel:write', $context);
 
 
     /// Mark as viewed  ??????????? A COMMENTER
-    $completion=new completion_info($course);
-    $completion->set_module_viewed($cm);
+    //$completion=new completion_info($course);
+    // $completion->set_module_viewed($cm);
 
 // AFFICHAGE DE LA PAGE Moodle 2
 	$strreferentiels = get_string('modulenameplural','referentiel');
@@ -177,8 +171,9 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title=""  alt="" /> '.$strpagename.' '.$OUTPUT->help_icon('protocolereferentielh','referentiel').'</h2></div>'."\n";
 

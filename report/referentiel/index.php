@@ -6,14 +6,33 @@
     require_once($CFG->dirroot.'/mod/referentiel/locallib.php');
 	require_once($CFG->dirroot.'/mod/referentiel/version.php');
     require_once($CFG->dirroot.'/mod/referentiel/lib_archive.php');  // archivage
-    
-/// Get all required strings
 
+
+/// Get all required strings
+    $baseUrl='/report/referentiel/';
+    $reportCss=$baseUrl.'report_referentiel.css';
+    $base_url=$CFG->wwwroot.$baseUrl;
+    
     $strreferentiels = get_string("modulenameplural", "referentiel");
     $strreferentiel  = get_string("modulename", "referentiel");
 
 /// Get all the appropriate data
     $referentiel_referentiels = referentiel_get_referentiel_referentiels( NULL);
+
+    $joursdedelai = optional_param('joursdedelai', -1, PARAM_INT);    // desherence
+    if ($joursdedelai<0){
+        if (isset($CFG->delaidesherence)){
+            $joursdedelai = $CFG->delaidesherence;
+        }
+        else{
+            $joursdedelai=JOURS_DESHERENCE;
+        }
+    }
+    if ($joursdedelai<0) $joursdedelai=0;
+    $delai= (3600*24*$joursdedelai);
+
+    $strselection='<br />'.get_string('avertissementjoursdedelai','referentiel').
+    '<form name="form" method="post" action="'.$base_url.'index.php"> <input type="text" name="joursdedelai" size="3" value="'.$joursdedelai.'" /><input type="submit" value="'.get_string('savechanges').'" /></form>';
 
     $bgc0="#ffffee";
     $bgc1="#eeeedd";
@@ -22,12 +41,16 @@
     
     $table->head  = array (get_string('occurrences', 'referentiel'), get_string('instances', 'referentiel'));
     $table->align = array ("center", "left", "center");
-
+    $table->width = "100%";
+    $table->size = array('20%', '70%');
     $instance_head  = '<table cellspacing="1" cellpadding="2" bgcolor="#333300" width="100%">'.
 '<tr valign="top" bgcolor="#cccccc"><th width="30%">'.get_string('instance', 'referentiel').'</th><th width="40%">'.get_string('description', 'referentiel').'</th><th width="10%">'.get_string('users_actifs','referentiel').'</th><th width="10%">'.get_string('activites_declarees','referentiel').'</th><th width="10%">'.get_string('course').'</th><th width="10%">'.get_string('archives', 'referentiel').'</th></tr>'."\n";
 
 // Print the header & check permissions.
+    $url = new moodle_url($base_url.'index.php');
     admin_externalpage_setup('reportreferentiel');
+    $PAGE->set_url($url);
+    $PAGE->requires->css($reportCss);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('adminreport', 'referentiel'));
 
@@ -49,6 +72,7 @@
         // Liste des occurrences de referentiels
         foreach ($referentiel_referentiels as $referentiel_referentiel) {
             if ($referentiel_referentiel){
+                $nbactivitedesherence=0;
                 if ($referentiel_referentiel->name){
         			$name_referentiel = stripslashes($referentiel_referentiel->name);
                 }
@@ -114,6 +138,13 @@
                         $activites_instance= referentiel_get_activites_instance($referentiel_instance->id);
                         if ($activites_instance){
                             $activites_data = count($activites_instance);
+                            //
+                            $activites_instance_a_suivre= referentiel_get_activites_instance_a_suivre($referentiel_instance->id, $delai);
+                            if ($activites_instance_a_suivre){
+                                $a_suivre=count($activites_instance_a_suivre);
+                                $nbactivitedesherence+=$a_suivre;
+                                $activites_data .=' (<a href="'.$base_url.'liste_activites.php?o='.$referentiel_referentiel->id.'&joursdedelai='.$joursdedelai.'"><b>&nbsp;'.$a_suivre.'&nbsp;</b></a>)';
+                            }
                             // proposer archivage
                             $archives_data .="<a href=\"./archive.php?i=$referentiel_instance->id\">".get_string('gerer_archives', 'referentiel')."</a>";
                             if (!empty($context_instance)){
@@ -146,10 +177,17 @@
                     $instance_data.="<br /><a href=\"./delete.php?r=$referentiel_referentiel->id\">".get_string('supprimer_referentiel', 'referentiel')."</a>";
                 }
                 if ($local){
-                    $table->data[] = array ('<b>'.$code_referentiel. '</b><br />(#'.$referentiel_referentiel->id.')<br /><i>'.get_string('local','referentiel').'</i><br /><i>'.$name_referentiel.'</i>', $instance_data);
+                    $strlocal='<b>'.$code_referentiel. '<br>(#'.$referentiel_referentiel->id.')<br /><i>'.get_string('local','referentiel').'</i></b>';
                 }
                 else{
-                    $table->data[] = array ('<b>'.$code_referentiel. '</b><br />(#'.$referentiel_referentiel->id.')<br /><i>'.$name_referentiel.'</i>', $instance_data);
+                    $strlocal='<b>'.$code_referentiel. '<br>(#'.$referentiel_referentiel->id.')</b>';
+                }
+
+                if ($nbactivitedesherence){
+                    $table->data[] = array ($strlocal.'<br /><i>'.$name_referentiel.'</i><br /><a href="'.$base_url.'liste_activites.php?o='.$referentiel_referentiel->id.'&joursdedelai='.$joursdedelai.'">'.get_string('activitesdesheranceh','referentiel').'</a>', $instance_data);
+                }
+                else{
+                    $table->data[] = array ($strlocal.'<br /><i>'.$name_referentiel.'</i>', $instance_data);
                 }
             }
         }
@@ -170,15 +208,14 @@
 	   $msg.= get_string("version", "referentiel").'<br /><a href="'.$CFG->wwwroot.'/mod/referentiel/info_module_referentiel.html" target="_blank"><i>'.$s_version.'</i></a>'."\n";
 	}
 
+    $msg.=$strselection;
     if ($msg) {
         echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter centerpara');
         echo $msg;
         echo $OUTPUT->box_end();
     }
-
     // Print it.
     echo html_writer::table($table);
-
     // Footer.
     echo $OUTPUT->footer();
 

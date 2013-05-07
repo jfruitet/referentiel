@@ -38,8 +38,8 @@ if (!isset($form->nb_domaines)) {
 if (!isset($form->liste_codes_competence)) {
     $form->liste_codes_competence = '';
 }
-if (!isset($form->course)) {
-    $form->course = $course->id;
+if (!isset($form->courseid)) {
+    $form->courseid = $course->id;
 }
 if (!isset($form->local)) {
     $form->local = 0;
@@ -68,7 +68,7 @@ if (!isset($form->local)) {
 <input type="hidden" name="action" value="creer_instance" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
 <input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>" />
 <input type="hidden" name="section"       value="<?php  p($form->section) ?>" />
@@ -83,8 +83,8 @@ if (!isset($form->local)) {
 
 <?php
 echo '<p align="center">';
-echo '<a href="'.$CFG->wwwroot.'/mod/referentiel/selection.php?courseid='.$form->course.'&amp;sesskey='.$form->sesskey.'&section='.$form->section.'&module='.$form->module.'&modulename='.$form->modulename.'&amp;mode='.$form->mode.'">'.get_string('selectreferentiel','referentiel').'</a>';
-echo '&nbsp; &nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/import_instance.php?courseid='.$form->course.'&amp;sesskey='.$form->sesskey.'&section='.$form->section.'&module='.$form->module.'&modulename='.$form->modulename.'&instance='.$form->instance.'&amp;mode='.$form->mode.'">'.get_string('importreferentiel','referentiel').'</a>';
+echo '<a href="'.$CFG->wwwroot.'/mod/referentiel/selection.php?courseid='.$form->courseid.'&amp;sesskey='.$form->sesskey.'&section='.$form->section.'&module='.$form->module.'&modulename='.$form->modulename.'&amp;mode='.$form->mode.'">'.get_string('selectreferentiel','referentiel').'</a>';
+echo '&nbsp; &nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/import_instance.php?courseid='.$form->courseid.'&amp;sesskey='.$form->sesskey.'&section='.$form->section.'&module='.$form->module.'&modulename='.$form->modulename.'&instance='.$form->instance.'&amp;mode='.$form->mode.'">'.get_string('importreferentiel','referentiel').'</a>';
 echo '</p>'."\n";
 ?>
 
@@ -341,7 +341,7 @@ else{
 <input type="hidden" name="liste_codes_competence" value="<?php  p($form->liste_codes_competence); ?>" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
 <input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>" />
 <input type="hidden" name="section"       value="<?php  p($form->section) ?>" />
@@ -726,7 +726,7 @@ if (isset($update) && ($update!="")){
 <input type="hidden" name="action" value="completer_referentiel" />
 
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($form->courseid) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
 <input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>" />
 <input type="hidden" name="section"       value="<?php  p($form->section) ?>" />

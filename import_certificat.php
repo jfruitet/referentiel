@@ -33,7 +33,7 @@
     // require_once($CFG->libdir . '/uploadlib.php'); // Moodle 1.9
     require_once("$CFG->dirroot/repository/lib.php"); // Moodle 2.0
     require_once('import_export_lib.php');	// IMPORT / EXPORT
-    require_once('lib.php');
+    require_once('locallib.php');
     include('lib_certificat.php');
 
 
@@ -250,8 +250,9 @@
     // afficher la page
     echo $OUTPUT->header();
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title=""  alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('importcertifh','referentiel').'</h2></div>'."\n";
 

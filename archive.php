@@ -32,10 +32,10 @@
 * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
 * @package referentiel
 */
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
     require_once('../../config.php');
-    require_once('lib.php');
+    require_once('locallib.php');
     require_once('lib_etab.php');     // scolarite
     require_once('lib_archive.php');  // archivage
     require_once('lib_certificat.php');
@@ -403,9 +403,9 @@
     $icon = $OUTPUT->pix_url('icon','referentiel');
 
     $PAGE->set_url($url);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->css('/mod/referentiel/jauge.css');
-    $PAGE->requires->css('/mod/referentiel/certificat.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     //if ($CFG->version < 2011120100) $PAGE->requires->js('/lib/overlib/overlib.js');  else
     $PAGE->requires->js($OverlibJs);
     // $PAGE->requires->js('/mod/referentiel/functions.js');
@@ -422,10 +422,10 @@
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
-    // print_heading_with_help($strmessage, 'archivereferentiel', 'referentiel', $icon);
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title=""  alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('archiveh','referentiel').'</h2></div>'."\n";
 
 
@@ -437,17 +437,6 @@
 
     if (!empty($format)) {   /// Filename et format d'exportation
 
-        // echo "<br />DEBUG :: archive.php :: 416 :: MODE : $mode <br /> LISTE_USERS : $list_userids <br /> SELECT_ACC : $select_acc :: SELECT_ALL : $select_all<br />\n";
-        /*
-        echo "<br />DEBUG :: archive.php :: Ligne 418 :: NB USERS EXPORTES :".count($records_users)."<br />\n";
-        echo "<br />USERIDS :<br />\n";
-        foreach($records_users as $rc){
-            echo  $rc->userid." ; ".referentiel_get_user_login($rc->userid)." ; ".referentiel_get_user_info($rc->userid)."<br />\n";
-        }
-        // DEBUG
-        //echo "<br />DEBUG :: 424 : EXIT\n";
-        //exit;
-        */
         if (!confirm_sesskey()) {
             print_error( 'sesskey' );
         }
@@ -504,17 +493,7 @@
         echo "<hr />";
 
         // link to download the finished file
-
         $file_ext = $zformat->export_zip_extension();
-/*
-        if ($CFG->slasharguments) {
-            $efile = "{$CFG->wwwroot}/file.php/".$zformat->get_export_dir()."/$exportfilename".$file_ext."?forcedownload=1";
-        }
-        else {
-            $efile = "{$CFG->wwwroot}/file.php?file=/".$zformat->get_export_dir()."/$exportfilename".$file_ext."&forcedownload=1";
-        }
-*/
-        // Moodle 2.0
         $fullpath = '/'.$context->id.'/mod_referentiel/archive/0'.$zformat->get_export_dir().$exportfilename.$file_ext;
         $efile = new moodle_url($CFG->wwwroot.'/pluginfile.php'.$fullpath);
 

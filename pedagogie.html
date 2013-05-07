@@ -105,7 +105,7 @@ if (isset($mode) && ($mode=="addpedago")){
 <tr valign="top">
     <td align="center" colspan="2">
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($course->id) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($course->id) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
@@ -211,7 +211,7 @@ else if (isset($mode) && ($mode=="updatepedago")){
 
 <input type="hidden" name="action" value="modifier_pedago" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($course->id) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($course->id) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
@@ -298,7 +298,7 @@ else if (isset($mode) && ($mode=="updatepedago")){
 <input type="hidden" name="pedago_id" value="<?php  p($pedago_id) ?>" />
 <input type="hidden" name="action" value="modifier_pedago" />
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($course->id) ?>" />
+<input type="hidden" name="courseid"        value="<?php  p($course->id) ?>" />
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="mode"          value="<?php  p($mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />

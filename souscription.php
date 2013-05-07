@@ -22,32 +22,33 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    require_once("../../config.php");
-    require_once('lib.php');
+    require(dirname(__FILE__) . '/../../config.php');
+    require_once('locallib.php');
 	require_once('print_lib_activite.php'); // AFFICHAGES ACTIVITES
     require_once('lib_task.php');
     require_once('print_lib_task.php');	// AFFICHAGES TACHES
 	
-	// PAS DE RSS
-    // require_once("$CFG->libdir/rsslib.php");
 
     $id    = optional_param('id', 0, PARAM_INT);    // course module id    
 	$d     = optional_param('d', 0, PARAM_INT);    // referentielbase id
     $taskid   = required_param('taskid', PARAM_INT);    //record task id
-    // $import   = optional_param('import', 0, PARAM_INT);    // show import form
-
+    $mailnow    = optional_param('mailnow', 0, PARAM_INT);
     $action  	= optional_param('action','', PARAM_ALPHANUMEXT); // pour distinguer differentes formes de traitements
     $mode       = optional_param('mode','', PARAM_ALPHA);	
     $add        = optional_param('add','', PARAM_ALPHA);
     $update     = optional_param('update', 0, PARAM_INT);
     $delete     = optional_param('delete', 0, PARAM_INT);
     $select    = optional_param('select', 0, PARAM_INT);
-    $course     = optional_param('course', 0, PARAM_INT);
+    $courseid = optional_param('courseid', 0, PARAM_INT);
     $groupmode  = optional_param('groupmode', -1, PARAM_INT);
     $cancel     = optional_param('cancel', 0, PARAM_BOOL);
 	$approve    = optional_param('approve', 0, PARAM_INT);
 	$souscription    = optional_param('souscription', 0, PARAM_INT);
 	$select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
+
+
+     // Filtres
+    require_once('filtres.php'); // Ne pas deplacer
 
     // nouveaute Moodle 1.9 et 2
     $url = new moodle_url('/mod/referentiel/souscription.php');
@@ -87,14 +88,7 @@
 		print_error(get_string('erreurscript','referentiel','Erreur01 : souscription.php'));
 	}
 	
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
-
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 	if ($taskid) { // id task
         if (! $record = $DB->get_record('referentiel_task', array("id" => "$taskid"))) {
@@ -195,32 +189,12 @@
             $mailnow=$form->mailnow;
         }
 
-        // MODIF JF 2012/10/09
-        /*
-        if (!empty($form->select_all) && ($form->select_all=='1')){
-          // recuperer tous les utilisateurs concernes
-			    $record_id_users  = referentiel_get_students_course($course->id,0,0);  //seulement les stagiaires
-			    if ($gusers && $record_id_users){ // liste des utilisateurs du groupe courant
-				      $record_users  = array_intersect($gusers, array_keys($record_id_users));
-				      foreach ($record_users  as $ref_user){
-					      referentiel_association_user_task($ref_user, $form->taskid, $USER->id, $mailnow, true);
-				      }
-			    }           
-        } 
-        else{
-        */
         if (!empty($form->tuserid)){
-            // DEBUG
-            // echo "<br />DEBUG :: souscription.php :: 159 :: $form->taskid <b />\n";
-            // print_object($form->tuserid);
-            // exit;
             foreach($form->tuserid as $ref_user){
-              // echo "<br />DEBUG :: souscription.php :: 163 :: Tache : $form->taskid, $ref_user <br />\n";
-              referentiel_association_user_task($ref_user, $form->taskid, $USER->id, $mailnow, true);
+                referentiel_association_user_task($ref_user, $form->taskid, $USER->id, $mailnow, true);
             }
           } 
     	   
-    	//  }
     }
     if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
@@ -265,7 +239,7 @@
     $pagetitle = strip_tags($course->shortname.': '.$strreferentiel.': '.format_string($referentiel->name,true));
 
     $PAGE->set_url($url);
-    $PAGE->requires->css('/mod/referentiel/activite.css');
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->requires->css('/mod/referentiel/dhtmlgoodies_calendar.css');
     //if ($CFG->version < 2011120100) $PAGE->requires->js('/lib/overlib/overlib.js');  else
     $PAGE->requires->js($OverlibJs);
@@ -279,8 +253,9 @@
 
     groups_print_activity_menu($cm,  $CFG->wwwroot . '/mod/referentiel/souscription.php?d='.$referentiel->id.'&amp;taskid='.$taskid.'&amp;mode='.$mode.'&amp;select_acc='.$select_acc.'&amp;sesskey='.sesskey());
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets 
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f, $mode);
+    $tab_onglets->display();
 
     // print_heading_with_help($strtask, 'task', 'referentiel', $icon);
     echo '<div align="center"><h1><img src="'.$icon.'" border="0" title=""  alt="" /> '.$strtask.' '.$OUTPUT->help_icon('taskh','referentiel').'</h1></div>'."\n";

@@ -31,18 +31,14 @@
 
     require_once('../../config.php');
     require_once('class/import_form.php'); // formulaires de choix de fichiers
-    // require_once($CFG->libdir . '/uploadlib.php'); // Moodle 1.9
     require_once("$CFG->dirroot/repository/lib.php"); // Moodle 2.0
     require_once('import_export_lib.php');	// IMPORT / EXPORT
-    require_once('lib.php');
+    require_once('locallib.php');
 	require_once('lib_pedagogie.php');
-
 
     $id    = optional_param('id', 0, PARAM_INT);    // course module id
     $d     = optional_param('d', 0, PARAM_INT);    // referentiel base id
-
     $mode  = optional_param('mode','', PARAM_ALPHANUMEXT);
-
     $format = optional_param('format','', PARAM_FILE );
     $courseid = optional_param('courseid', 0, PARAM_INT);
     $select_acc = optional_param('select_acc', 0, PARAM_INT);      // accompagnement
@@ -261,8 +257,9 @@
     // afficher la page
     echo $OUTPUT->header();
 
-    // ONGLETS
-    include('tabs.php');
+    require_once('onglets.php'); // menus sous forme d'onglets
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, NULL, $mode);
+    $tab_onglets->display();
 
     echo '<div align="center"><h2><img src="'.$icon.'" border="0" title=""  alt="" /> '.$strmessage.' '.$OUTPUT->help_icon('importpedagoh','referentiel').'</h2></div>'."\n";
 

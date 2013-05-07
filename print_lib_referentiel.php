@@ -32,7 +32,7 @@
  **/
 
 
-require_once("lib.php");
+require_once('locallib.php');
 
 
 
@@ -102,9 +102,7 @@ function referentiel_select_referentiels($params){
 }
 
 
-
 function referentiel_affiche_referentiel_instance($cm, $instance_id){
-
 // Affiche l'instance et le referentiel associe
 	if (isset($instance_id) && ($instance_id>0)){
 		// saisie de l'instance
@@ -112,77 +110,37 @@ function referentiel_affiche_referentiel_instance($cm, $instance_id){
 		if ($referentiel_instance){
 			$name_i=stripslashes($referentiel_instance->name);
 			$description_i=stripslashes($referentiel_instance->description_instance);
-/*
-
-			$label_d=stripslashes($referentiel_instance->label_domaine);
-			$label_c=stripslashes($referentiel_instance->label_competence);
-			$label_i=stripslashes($referentiel_instance->label_item);
-*/
-            // MODIF JF 2012/06/02
             $labels=referentiel_get_labels($referentiel_instance);
-            //echo "<br />DEBUG :: print_lib_referentiel.php :: 121 <br />\n";
-            //print_object($labels);
-
 		    $date_i=$referentiel_instance->date_instance;
 			$course_id=$referentiel_instance->course;
 	        $maxbytes=$referentiel_instance->maxbytes;
 
-?>
-<h3><?php  print_string('referentiel_instance','referentiel') ?></h3>
-
-<table class="referentiel" cellpadding="5">
-<tr valign="top"  class="referentiel">
-    <th class="referentiel" align="center" width="20%"><?php  print_string('name_instance','referentiel') ?></th>
-    <th class="referentiel" align="center" width="40%"><?php  print_string('description_instance','referentiel') ?></th>
-    <th class="referentiel" align="center" width="10%"><?php  print_string('label_domaine','referentiel') ?></th>
-    <th class="referentiel" align="center" width="10%"><?php  print_string('label_competence','referentiel') ?></th>
-    <th class="referentiel" align="center" width="10%"><?php  print_string('label_item','referentiel') ?></th>
-    <th class="referentiel" align="center" width="10%"><?php  print_string('maxdoc','referentiel') ?></th>
-</tr>
-<tr valign="top"  class="referentiel">
-    <td class="referentiel">
-        <?php  p($name_i); ?>
-    </td>
-
-    <td class="referentiel">
-		<?php  echo (nl2br($description_i)); ?>
-    </td>
-       <td class="referentiel">
-		<?php  p($labels->domaine); ?>
-    </td>
-
-    <td class="referentiel">
-		<?php  p($labels->competence); ?>
-    </td>
-    <td class="referentiel">
-		<?php  p($labels->item); ?>
-    </td>
-    <td class="referentiel" >
-		<?php  p(display_size($maxbytes)); ?>
-    </td>
-</tr>
-</table>
-<br />
-<br />
-<?php
+echo '
+<h3>'.get_string('referentiel_instance','referentiel').'</h3>
+<div class="ref_aff0">'.
+'<span class="bold">'.get_string('name_instance','referentiel').'</span> &nbsp; &nbsp; '.$name_i.
+'<br /><span class="bold">'.get_string('description_instance','referentiel').'</span><div class="ref_aff1">'.nl2br($description_i).'</div>'.
+'<span class="bold">'.get_string('label_domaine','referentiel').'</span> &nbsp; '.$labels->domaine.' &nbsp; &nbsp; '.
+'<span class="bold">'.get_string('label_competence','referentiel').'</span> &nbsp; '.$labels->competence.' &nbsp; &nbsp; '.
+'<span class="bold">'.get_string('label_item','referentiel').'</span> &nbsp; '.$labels->item.' &nbsp; &nbsp; '.
+'<span class="bold">'.get_string('maxdoc','referentiel').'</span> &nbsp; '.display_size($maxbytes).
+'</div>'."\n";
 	// get parameters
 
 	    	$params = new stdClass;
     		$params->label_domaine = $labels->domaine;
 			$params->label_competence = $labels->competence;
 			$params->label_item = $labels->item;
-			referentiel_affiche_referentiel($cm, $instance_id, $referentiel_instance->ref_referentiel, $params);
+			//referentiel_affiche_referentiel($cm, $instance_id, $referentiel_instance->ref_referentiel, $params);
+			referentiel_affiche_occurrence($cm, $instance_id, $referentiel_instance->ref_referentiel, $params);
 		}
 	}
+	
 }
+
 
 function referentiel_affiche_referentiel($cm, $instance_id, $occurrence_id, $params=NULL){
 // Affiche le référentiel
-// DEBUG
-// echo "<br />DEBUG :: print_lib_refernetiel :: 179\n";
-// print_object($params);
-// echo "<br />EXIT<br />\n";
-// exit;
 global $DB;
     $labels=NULL;
 	$label_d='';
@@ -200,7 +158,6 @@ global $DB;
 		}
 	}
 	else{
-        // MODIF JF 2012/06/02
         if ($referentiel_instance=$DB->get_record('referentiel', array("id" => $instance_id))){
             if ($labels=referentiel_get_labels($referentiel_instance)){
                 $label_d=$labels->domaine;
@@ -209,17 +166,10 @@ global $DB;
             }
         }
     }
-
-// DEBUG
-// echo "<br />DEBUG :: print_lib_refernetiel :: 204\n";
-// echo "<br />LABELS<br />$label_d, $label_c, $label_i<br />\n";
-// echo "<br />EXIT<br />\n";
-// exit;
-
 	// affichage leger du referentiel
 	$not_light_display=referentiel_site_light_display($instance_id)>0;
 
-	if (isset($occurrence_id) && ($occurrence_id>0)){
+	if (!empty($occurrence_id)){
 		$record_a = referentiel_get_referentiel_referentiel($occurrence_id);
         $referentiel_id=$record_a->id;
 		$name = $record_a->name;
@@ -302,7 +252,7 @@ else{
     </td>
 </tr>
 <?php
-	if (isset($logo)){
+	if (!empty($logo)){
 		echo '
 <tr valign="top"  class="referentiel">
     <th class="referentiel" align="right" width="20%"><b>
@@ -313,7 +263,7 @@ else{
     <td class="referentiel" align="left" width="80%">
 ';
 		echo referentiel_affiche_image($logo);
-		echo referentiel_menu_logo($instance_id, ($logo!=""));
+		echo referentiel_menu_logo($cm, ($logo!=""));
 		echo '    </td>
 </tr>
 ';
@@ -327,15 +277,12 @@ else{
 <?php
 
 		// charger les domaines associes au referentiel courant
-		if (isset($occurrence_id) && ($occurrence_id>0)){
+		if (!empty($occurrence_id)){
 			// AFFICHER LA LISTE DES DOMAINES
 			$compteur_domaine=0;
 			$records_domaine = referentiel_get_domaines($occurrence_id);
 	    	if ($records_domaine){
     			// afficher
-				// DEBUG
-				// echo "<br/>DEBUG ::<br />\n";
-				// print_r($records_domaine);
 				foreach ($records_domaine as $record){
 					$compteur_domaine++;
         			$domaine_id=$record->id;
@@ -372,9 +319,6 @@ echo ' <i>'.s($num_domaine).'</i>';
 					$compteur_competence=0;
 					$records_competences = referentiel_get_competences($domaine_id);
 			    	if ($records_competences){
-						// DEBUG
-						// echo "<br/>DEBUG :: COMPETENCES <br />\n";
-						// print_r($records_competences);
 						foreach ($records_competences as $record_c){
 							$compteur_competence++;
         					$competence_id=$record_c->id;
@@ -413,11 +357,8 @@ else {
 							// ITEM
 							$compteur_item=0;
 							$records_items = referentiel_get_item_competences($competence_id);
-
 						    if ($records_items){
-								// DEBUG
-								// echo "<br/>DEBUG :: ITEMS <br />\n";
-								// print_r($records_items);
+
 ?>
 <tr valign="top" bgcolor="#5555000">
     <th class="item" align="right">
@@ -521,15 +462,279 @@ else {
 	}
 }
 
+function referentiel_affiche_occurrence($cm, $instance_id, $occurrence_id, $params=NULL){
+// Affiche le référentiel
+global $DB;
+    $labels=NULL;
+	$label_d='';
+	$label_c='';
+	$label_i='';
+	if (!empty($params)){
+		if (isset($params->label_domaine)){
+			$label_d=$params->label_domaine;
+		}
+		if (isset($params->label_competence)){
+			$label_c=$params->label_competence;
+		}
+		if (isset($params->label_item)){
+			$label_i=$params->label_item;
+		}
+	}
+	else{
+        if ($referentiel_instance=$DB->get_record('referentiel', array("id" => $instance_id))){
+            if ($labels=referentiel_get_labels($referentiel_instance)){
+                $label_d=$labels->domaine;
+                $label_c=$labels->competence;
+                $label_i=$labels->item;
+            }
+        }
+    }
+	// affichage leger du referentiel
+	$not_light_display=referentiel_site_light_display($instance_id)>0;
+
+	if (!empty($occurrence_id)){
+		$record_a = referentiel_get_referentiel_referentiel($occurrence_id);
+        $referentiel_id=$record_a->id;
+		$name = $record_a->name;
+		$code_referentiel = stripslashes($record_a->code_referentiel);
+		$description_referentiel = stripslashes($record_a->description_referentiel);
+		$url_referentiel = referentiel_affiche_url($record_a->url_referentiel,"");
+		$seuil_certificat = $record_a->seuil_certificat;
+		$timemodified = $record_a->timemodified;
+		$nb_domaines = $record_a->nb_domaines;
+		$liste_codes_competence=$record_a->liste_codes_competence;
+		$liste_empreintes_competence=$record_a->liste_empreintes_competence;
+		$liste_poids_competence=referentiel_get_liste_poids_competence($occurrence_id);
+		// local ou global ?
+		if (isset($record_a->local))
+			$referentiel_local=$record_a->local;
+		else
+			$referentiel_local=0;
+
+		$logo=$record_a->logo_referentiel;
 
 
+echo '<br /><h3>'.get_string('occurrencereferentiel','referentiel').'</h3>'."\n";
+echo '<div class="ref_aff0">'."\n";
+echo '<span class="bold">'.get_string('name','referentiel').'</span> &nbsp; '.$name.' &nbsp; &nbsp; '."\n";
+echo '<span class="bold">'.get_string('code','referentiel').'</span> &nbsp; '.$code_referentiel.' &nbsp; &nbsp; '."\n";
+echo '<br />'.'<span class="bold">'.get_string('description','referentiel').'</span><div class="ref_aff1">'.nl2br($description_referentiel).'</div>'."\n";
+echo get_string('url','referentiel').'</span> &nbsp; '.$url_referentiel.' &nbsp; &nbsp; '."\n";
+if ($not_light_display){
+    echo '<br />'.'<span class="bold">'.get_string('seuil_certificat','referentiel').'</span> &nbsp; '.$seuil_certificat."\n";
+    echo ' &nbsp; '.'<span class="bold">'.get_string('referentiel_global','referentiel').'</span> ';
+    if (!empty($referentiel_local)){
+	   echo '&nbsp;'.get_string("no").' &nbsp; &nbsp; '."\n";
+    }
+    else{
+	   echo '&nbsp; '.get_string("yes").' &nbsp; &nbsp; '."\n";
+    }
+	echo '<br />'.'<span class="bold">'.get_string('logo','referentiel').'</span>  &nbsp; '."\n";
+    if (!empty($logo)){
+        echo referentiel_affiche_image($logo).' &nbsp; &nbsp; '."\n";
+	}
+    echo referentiel_menu_logo($cm, !empty($logo))."\n";
+    echo '<br />'.'<span class="bold">'.get_string('liste_codes_empreintes_competence','referentiel').'</span>';
+    echo '<br />'.referentiel_affiche_liste_codes_empreintes_competence('/', $liste_codes_competence, $liste_empreintes_competence, $liste_poids_competence)."\n";
+}
+echo '</div>'."\n";
+echo '<br />'."\n";
+?>
+<table class="referentiel" cellpadding="5">
+<?php
+
+		// charger les domaines associes au referentiel courant
+		if (!empty($occurrence_id)){
+			// AFFICHER LA LISTE DES DOMAINES
+			$compteur_domaine=0;
+			$records_domaine = referentiel_get_domaines($occurrence_id);
+	    	if ($records_domaine){
+    			// afficher
+				foreach ($records_domaine as $record){
+					$compteur_domaine++;
+        			$domaine_id=$record->id;
+					$nb_competences = $record->nb_competences;
+					$code_domaine = stripslashes($record->code_domaine);
+					$description_domaine = stripslashes($record->description_domaine);
+					$num_domaine = $record->num_domaine;
+?>
+<!-- DOMAINE -->
+<tr valign="top" bgcolor="#ffffcc">
+    <td class="domaine" align="left"><b>
+<?php
+if (!empty($label_d)){
+	p($label_d);
+}
+else {
+	print_string('domaine','referentiel') ;
+}
+echo ' <i>'.s($num_domaine).'</i>';
+
+?>
+</b>
+    </td>
+    <td class="domaine" align="left">
+        <?php  p($code_domaine) ?>
+    </td>
+    <td class="domaine" align="left" colspan="4">
+		<?php  echo (nl2br($record->description_domaine)); ?>
+    </td>
+</tr>
+
+<?php
+					// LISTE DES COMPETENCES DE CE DOMAINE
+					$compteur_competence=0;
+					$records_competences = referentiel_get_competences($domaine_id);
+			    	if ($records_competences){
+						foreach ($records_competences as $record_c){
+							$compteur_competence++;
+        					$competence_id=$record_c->id;
+							$nb_item_competences = $record_c->nb_item_competences;
+							$code_competence = stripslashes($record_c->code_competence);
+							$description_competence = stripslashes($record_c->description_competence);
+							$num_competence = $record_c->num_competence;
+							$ref_domaine = $record_c->ref_domaine;
+?>
+<!-- COMPETENCE -->
+<tr valign="top">
+    <td class="competence" align="left">
+<b>
+<?php
+if (!empty($label_c)){
+	p($label_c);
+}
+else {
+	print_string('competence','referentiel') ;
+}
+?>
+
+<i>
+<?php  p(' '.$num_competence) ?>
+</i>
+</b>
+    </td>
+    <td class="competence" align="left">
+<?php  p($code_competence) ?>
+    </td>
+    <td class="competence" align="left" colspan="4">
+<?php  echo (nl2br($description_competence)); ?>
+    </td>
+</tr>
+<?php
+							// ITEM
+							$compteur_item=0;
+							$records_items = referentiel_get_item_competences($competence_id);
+						    if ($records_items){
+
+?>
+<tr valign="top" bgcolor="#5555000">
+    <th class="item" align="right">
+
+<?php
+if (!empty($label_i)){
+	p($label_i);
+}
+else {
+	print_string('item','referentiel') ;
+}
+    echo ' :: <i>';
+    print_string('numero', 'referentiel');
+    echo '</i>';
+  ?>
+
+    </th>
+    <th class="item" align="left">
+		<?php  print_string('code', 'referentiel');?>
+    </th>
+    <th class="item" align="left">
+<?php  print_string('description', 'referentiel'); ?>
+    </th>
+
+    <?php
+    if ($not_light_display){
+    ?>
+    <th class="item" align="left">
+<?php   print_string('t_item', 'referentiel'); ?>
+    </th>
+    <th class="item" align="left">
+<?php   print_string('p_item', 'referentiel'); ?>
+    </th>
+    <th class="item" align="left">
+<?php   print_string('e_item', 'referentiel'); ?>
+    </th>
+    <?php
+    }
+    else{
+        // echo '<th class="item" colspan="3">&nbsp;</th>'."\n";
+    }
+    ?>
+
+</tr>
+<?php
+
+								foreach ($records_items as $record_i){
+									$compteur_item++;
+	    		    				$item_id=$record_i->id;
+									$code_item = stripslashes($record_i->code_item);
+									$description_item = stripslashes($record_i->description_item);
+									$num_item = $record_i->num_item;
+									$type_item = stripslashes($record_i->type_item);
+									$poids_item = $record_i->poids_item;
+									$empreinte_item = $record_i->empreinte_item;
+									$ref_competence=$record_i->ref_competence;
+?>
+<tr valign="top" bgcolor="#ffeefe">
+    <td class="item" align="right" bgcolor="#ffffff">
+<i>
+<?php  p($num_item) ?>
+</i>
+    </td>
+    <td class="item" align="left">
+		<?php  p($code_item) ?>
+    </td>
+    <td class="item" align="left">
+<?php  echo (nl2br($description_item)); ?>
+    </td>
+    <?php
+    if ($not_light_display){
+    ?>
+    <td class="item" align="left">
+<?php  p($type_item) ?>
+    </td>
+    <td class="poids" align="left">
+<?php  p($poids_item) ?>
+    </td>
+    <td class="empreinte" align="left">
+<?php  p($empreinte_item) ?>
+    </td>
+    <?php
+    }
+    else{
+       // echo '<td colspan="3">&nbsp;</td>'."\n";
+    }
+    ?>
+
+</tr>
+<?php
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+?>
+</table>
+<?php
+	}
+}
 
 // Affiche les certificats de ce referentiel
 function referentiel_liste_certificats($id_referentiel){
 	if (isset($id_referentiel) && ($id_referentiel>0)){
 		$records_certificat = referentiel_get_certificats($id_referentiel);
 		if (!$records_certificat){
-			error(get_string('nocertificat','referentiel'), "certificat.php?d=$id_referentiel&amp;mode=add");
+			print_error(get_string('nocertificat','referentiel'), "certificat.php?d=$id_referentiel&amp;mode=add");
 		}
 	    else {
 			
@@ -537,11 +742,7 @@ function referentiel_liste_certificats($id_referentiel){
 <h3><?php  print_string('certificat','referentiel') ?></h3>
 <table class="certificat" cellpadding="5">
 <?php
-		
     		// afficher
-			// DEBUG
-			// echo "<br/>DEBUG ::<br />\n";
-			// print_r($records_referentiel);
 			foreach ($records_certificat as $record_a){
         		$certificat_id=$record_a->id;
 				$commentaire_certificat = stripslashes($record_a->commentaire_certificat);
@@ -729,6 +930,47 @@ $p="";
 
 $okpoids=false;
 $listecodes=referentiel_purge_dernier_separateur($listecodes,$separateur);
+
+$listeempreintes=referentiel_purge_dernier_separateur($listeempreintes,$separateur);
+if (isset($listepoids) && ($listepoids!='')){
+	$tpoids=explode($separateur,$listepoids);
+	$okpoids=true;
+}
+$tcode=explode($separateur,$listecodes);
+$tempreinte=explode($separateur,$listeempreintes);
+	if (($tcode) && (count($tcode)>0)){
+		$s.="<div class='aff1'>";
+		$i=0;
+		while ($i<count($tcode)){
+			$c="<span class='code'>".$tcode[$i]."</span>";
+			if ($okpoids){
+			 $p="<span class='poids'>".$tpoids[$i]."</span>";
+			}
+			$e="<span class='empreinte'><i>".$tempreinte[$i]."</i></span>";
+            if ($okpoids){
+                $s.=$c.$p.$e;
+            }
+		    else{
+                $s.=$c.$e;
+            }
+            $i++;
+        }
+		$s.="</div>\n";
+	}
+	return $s;
+}
+
+// ----------------------------------------------------
+function referentiel_affiche_liste_codes_empreintes_competence_old($separateur, $listecodes, $listeempreintes, $listepoids=''){
+// affiche des codes, poids et empreintes dans un tableau
+// supprime separateur
+$s="";
+$c="";
+$e="";
+$p="";
+
+$okpoids=false;
+$listecodes=referentiel_purge_dernier_separateur($listecodes,$separateur);
     $maxcol=30;
     // Modif JF   2012/01/30
     // Adapter le nombre de colonnes � la taille des codes � afficher
@@ -804,7 +1046,7 @@ $tempreinte=explode($separateur,$listeempreintes);
 	return $s;
 }
 
-// ------------- 
+// -------------
 function referentiel_affiche_image($logo){
 	if ($logo!=""){
 		return referentiel_affiche_url($logo);
@@ -814,23 +1056,17 @@ function referentiel_affiche_image($logo){
 
 // -------------
 // menu logo
-function referentiel_menu_logo($referentiel_instance_id, $delete=false){
+function referentiel_menu_logo($cm, $delete=false){
 	global $CFG;
-	global $cm;
 	global $OUTPUT;
 	$s="";
 	// CONTEXTE
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 	if (has_capability('mod/referentiel:writereferentiel', $context)) {
-		$s=' &nbsp; &nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/upload_logo.php?d='.$referentiel_instance_id.'&amp;mode=update&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/edit').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
+		$s=' &nbsp; &nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/upload_logo.php?id='.$cm->id.'&amp;mode=update&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/edit').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
 		if ($delete){
-			$s.=' <a href="'.$CFG->wwwroot.'/mod/referentiel/upload_logo.php?d='.$referentiel_instance_id.'&amp;mode=delete&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/delete').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
+			$s.=' <a href="'.$CFG->wwwroot.'/mod/referentiel/upload_logo.php?id='.$cm->id.'&amp;mode=delete&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/delete').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
 		}
 	}
 	return $s;

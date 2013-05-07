@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 // This file is part of Moodle - http://moodle.org/
 //
@@ -462,13 +462,13 @@ $string['fileformat'] = 'Формат файла';
 $string['filename'] = 'Файл';
 $string['fileprint'] = 'Формат печати';
 $string['filesize'] = 'Размер (байты)';
-$string['filtre_auteur'] = 'Порядок';
-$string['filtre_date_decision'] = 'Дата решения';
-$string['filtre_date_modif'] = 'Дата проверки';
-$string['filtre_date_modif_student'] = 'Дата выполнения';
-$string['filtre_validation'] = 'Подтверждение';
-$string['filtre_valide'] = 'Досье';
-$string['filtre_verrou'] = 'Зафиксировано';
+$string['f_auteur'] = 'Порядок';
+$string['f_date_decision'] = 'Дата решения';
+$string['f_date_modif'] = 'Дата проверки';
+$string['f_date_modif_student'] = 'Дата выполнения';
+$string['f_validation'] = 'Подтверждение';
+$string['f_valide'] = 'Досье';
+$string['f_verrou'] = 'Зафиксировано';
 $string['filtrer'] = 'Фильтровать';
 $string['filtrerlocalinstance'] = 'Если указанная выше опция отмечена, выбрать среди экземпляров';
 $string['firstname'] = 'Имя и отчество';

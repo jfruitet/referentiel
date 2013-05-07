@@ -32,7 +32,7 @@
  **/
 
 
-require_once("lib.php");
+require_once('locallib.php');
 
 
 // ///////////////////// ETABLISSEMENT ////////////////////////

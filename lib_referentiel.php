@@ -473,13 +473,13 @@ global $DB;
 					$item = new object();
 					$item->ref_referentiel=$referentiel_referentiel_id;
 					$item->ref_competence=$competence_id;
-                    if (empty($form->code_item)){
-                        $form->code_item=get_string('c_item','referentiel').'.'.$form->num_domaine.'.'.$form->num_competence.'.'.$form->num_item;
-                    }
+          if (empty($form->code_item)){
+          	$form->code_item=get_string('c_item','referentiel').'.'.$form->num_domaine.'.'.$form->num_competence.'.'.$form->num_item;
+          }
 					$item->code_item=$form->code_item;
-                    if (empty($form->description_item)){
-                        $form->description_item=get_string('a_completer', 'referentiel');
-                    }
+          if (empty($form->description_item)){
+          	$form->description_item=get_string('a_completer', 'referentiel');
+          }
 					$item->description_item=$form->description_item;
 					$item->type_item=$form->type_item;
 					$item->poids_item=$form->poids_item;
@@ -1203,49 +1203,49 @@ function referentiel_update_domaine($form) {
     global $CFG;
 	global $DB;
 	$ok=false;
-	// DEBUG
-	// echo "<br />DEBUG :: lib.php :: 652 <br />\n";
-	// print_object($form);
-	// echo "<br />";
+		// DEBUG
+    // echo "\n<br />DEBUG :: lib.php :: 1207<br />\n";
+		// print_object($form);
+		// echo "<br />\n";
 
     if (!empty($form->domaine_id)){
-		if ($domaine = $DB->get_record("referentiel_domaine", array("id" => $form->domaine_id))){
-			$old_code_domaine=$domaine->code_domaine; // pour le protocle
-			$domaine->code_domaine=($form->code_domaine);
-			$domaine->description_domaine=($form->description_domaine);
-			$domaine->num_domaine=$form->num_domaine;
-			$domaine->nb_competences=$form->nb_competences;
-			// MODIF JF 2012/02/20
-			if (isset($form->type_domaine)){
+			if ($domaine = $DB->get_record("referentiel_domaine", array("id" => $form->domaine_id))){
+				$old_code_domaine=$domaine->code_domaine; // pour le protocle
+				$domaine->code_domaine=($form->code_domaine);
+				$domaine->description_domaine=($form->description_domaine);
+				$domaine->num_domaine=$form->num_domaine;
+				$domaine->nb_competences=$form->nb_competences;
+				// MODIF JF 2012/02/20
+				if (isset($form->type_domaine)){
                 $domaine->type_domaine = $form->type_domaine;
             }
-            else{
+        else{
                 $domaine->type_domaine = 0;
             }
-			if (isset($form->seuil_domaine)){
+				if (isset($form->seuil_domaine)){
                 $domaine->seuil_domaine = $form->seuil_domaine;
             }
-            else{
+        else{
                 $domaine->seuil_domaine = 0.0;
             }
-            // MODIF JF 2012/03/26
-            if (isset($form->minima_domaine)){
+        // MODIF JF 2012/03/26
+        if (isset($form->minima_domaine)){
                 $domaine->minima_domaine = $form->minima_domaine;
             }
-            else{
+        else{
                 $domaine->minima_domaine = 0;
             }
 
             
-			if ($ok=$DB->update_record("referentiel_domaine", $domaine)){
-				// DEBUG
-				// print_object($domaine);
-				// echo "<br />MISE A JOUR DOMAINE...";
-				// Mettre a jour le protocole associe
-				// MODIF JF 2012/02/17
+				if ($ok=$DB->update_record("referentiel_domaine", $domaine)){
+					// DEBUG
+					// print_object($domaine);
+					// echo "<br />MISE A JOUR DOMAINE...";
+					// Mettre a jour le protocole associe
+					// MODIF JF 2012/02/17
                 referentiel_update_domaine_protocole($old_code_domaine, $domaine->code_domaine, $domaine->ref_referentiel, $domaine->type_domaine, $domaine->seuil_domaine, $domaine->minima_domaine);
-            }
         }
+      }
 	}
 
 	return $ok;
@@ -1266,69 +1266,70 @@ function referentiel_add_domaine($form) {
     // temp added for debugging
     // echo "<br />DEBUG :: lib_referentiel.php :: 1066 ::  ADD DOMAINE CALLED";
     // DEBUG
-	// print_object($form);
-    // echo "<br />";
+		//print_object($form);
+		//echo "<br />";
 
 		// NOUVEAU DOMAINE
 		if (isset($form->new_code_domaine) && ($form->new_code_domaine!="")){
 			$domaine = new object();
 			if (isset($form->reference_id)){
                 $domaine->ref_referentiel=$form->reference_id;
-            }
-            elseif (isset($form->occurrence)){
+      }
+      elseif (isset($form->occurrence)){
                 $domaine->ref_referentiel=$form->occurrence;
-            }
+      }
 			elseif (isset($form->instance)){
                 $domaine->ref_referentiel=$form->instance;
-            }
-            // Modif JF 2012/03/07
-            if (empty($form->new_code_domaine)){
+      }
+
+      if (empty($form->new_code_domaine)){
                 $form->new_code_domaine=get_string('c_domaine','referentiel').'.'.$form->num_domaine;
-            }
-            if (empty($form->new_description_domaine)){
+      }
+      if (empty($form->new_description_domaine)){
                 $form->new_description_domaine=get_string('a_completer', 'referentiel');
-            }
+      }
 
 			$domaine->code_domaine=$form->new_code_domaine;
 			$domaine->description_domaine=($form->new_description_domaine);
 			$domaine->num_domaine=$form->new_num_domaine;
 			$domaine->nb_competences=$form->new_nb_competences;
-			// MODIF JF 2012/02/20
+
 			if (isset($form->new_type_domaine)){
                 $domaine->type_domaine = $form->new_type_domaine;
-            }
-            else{
-                $domaine->type_domaine = 0;
-            }
+      }
+      else{
+         $domaine->type_domaine = 0;
+      }
 			if (isset($form->new_seuil_domaine)){
-                $domaine->seuil_domaine = $form->new_seuil_domaine;
-            }
-            else{
-                $domaine->seuil_domaine = 0.0;
-            }
-            // MODIF JF 2012/03/26
+         $domaine->seuil_domaine = $form->new_seuil_domaine;
+      }
+      else{
+         $domaine->seuil_domaine = 0.0;
+      }
+
 			if (isset($form->new_minima_domaine)){
-                $domaine->minima_domaine = $form->new_minima_domaine;
-            }
-            else{
-                $domaine->minima_domaine = 0;
-            }
+         $domaine->minima_domaine = $form->new_minima_domaine;
+      }
+      else{
+         $domaine->minima_domaine = 0;
+      }
 
-            if ($exist=$DB->get_record("referentiel_domaine", array("ref_referentiel" => $domaine->ref_referentiel, "code_domaine" => $domaine->code_domaine) )){
-                $domaine->code_domaine=$domaine->code_domaine."-".$exist->id."-Bis";
-            }
+     if ($exist=$DB->get_record("referentiel_domaine", array("ref_referentiel" => $domaine->ref_referentiel, "code_domaine" => $domaine->code_domaine) )){
+        $domaine->code_domaine=$domaine->code_domaine."-".$exist->id."-Bis";
+     }
 
-			$new_domaine_id = $DB->insert_record("referentiel_domaine", $domaine);
-            if ($new_domaine_id){
-                // mettre a jour protocole
-                // MODIF JF 2012/02/17
-                $domaine->id=$new_domaine_id;
-                referentiel_add_domaine_protocole($domaine, $domaine->ref_referentiel);
-            }
+    //print_object($domaine);
+		//echo "<br />";
+		//exit;
+		$new_domaine_id = $DB->insert_record("referentiel_domaine", $domaine);
+    if ($new_domaine_id){
+       $domaine->id=$new_domaine_id;
+       referentiel_add_domaine_protocole($domaine, $domaine->ref_referentiel);
+    }
     		// echo "DOMAINE ID / $new_domaine_id<br />";
 			// echo "<br />";
 
-		}
+	}
 
 	return $new_domaine_id;
 }
@@ -1343,22 +1344,22 @@ function referentiel_add_domaine($form) {
 function referentiel_delete_domaine($domaine_id){
 // suppression
     global $DB;
-$ok_domaine=true;
-$ok_competence=true;
-$ok_item=true;
+		$ok_domaine=true;
+		$ok_competence=true;
+		$ok_item=true;
     # Delete any dependent records here #
-	// Competences
-	if ($competences = $DB->get_records("referentiel_competence", array("ref_domaine" => $domaine_id))) {
-		// DEBUG
-		// print_object($competences);
-		// echo "<br />";
-		// Item
-		foreach ($competences as $competence){
-			$ok_competence=$ok_competence && referentiel_supprime_competence($competence->id);
+		// Competences
+		if ($competences = $DB->get_records("referentiel_competence", array("ref_domaine" => $domaine_id))) {
+			// DEBUG
+			// print_object($competences);
+			// echo "<br />";
+			// Item
+			foreach ($competences as $competence){
+				$ok_competence=$ok_competence && referentiel_supprime_competence($competence->id);
+			}
 		}
-	}
-	// suppression
-	$ok_domaine=$ok_domaine && $DB->delete_records("referentiel_domaine", array("id" => $domaine_id));
+		// suppression
+		$ok_domaine=$ok_domaine && $DB->delete_records("referentiel_domaine", array("id" => $domaine_id));
     return ($ok_domaine && $ok_competence);
 }
 
@@ -1375,12 +1376,12 @@ function referentiel_supprime_domaine($domaine_id){
     global $DB;
 
     $ok=false;
-	if ($domaine_id){
+		if ($domaine_id){
         // suppression du domaine avec mise a jour dans le referentiel associe
-	    $reference_domaine = $DB->get_record_sql("SELECT code_domaine, num_domaine, ref_referentiel FROM {referentiel_domaine} WHERE id=:id", array("id" => $domaine_id) );
+	    	$reference_domaine = $DB->get_record_sql("SELECT code_domaine, num_domaine, ref_referentiel FROM {referentiel_domaine} WHERE id=:id", array("id" => $domaine_id) );
         if ($reference_domaine){
             // maj domaines suivantes
-            $r_domaines = $DB->get_records_sql("SELECT id, num_domaine FROM {referentiel_domaine} WHERE ref_referentiel=:refrefid AND num_domaine > :num_domaine ORDER BY num_domaine", array("rerefid" => $reference_domaine->ref_referentiel, "num_domaine" => $reference_domaine->num_domaine));
+            $r_domaines = $DB->get_records_sql("SELECT id, num_domaine FROM {referentiel_domaine} WHERE ref_referentiel=:refrefid AND num_domaine > :num_domaine ORDER BY num_domaine", array("refrefid" => $reference_domaine->ref_referentiel, "num_domaine" => $reference_domaine->num_domaine));
 
             if ($r_domaines){
                 foreach($r_domaines as $domaine){
@@ -1402,14 +1403,14 @@ function referentiel_supprime_domaine($domaine_id){
                 // supprimer la compétence
                 if ($ok=referentiel_delete_domaine($domaine_id)){
                     // Mise a jour de la liste de competences dans le referentiel_referentiel associe
-		            $liste_codes_competence=referentiel_new_liste_codes_competence($referentiel_referentiel->id);
-        		    // echo "<br />LISTE_CODES_COMPETENCE : $liste_codes_competence\n";
-		            referentiel_set_liste_codes_competence($referentiel_referentiel->id, $liste_codes_competence);
-        		    $liste_empreintes_competence=referentiel_new_liste_empreintes_competence($referentiel_referentiel->id);
-		            // echo "<br />LISTE_empreintes_COMPETENCE : $liste_empreintes_competence\n";
-        		    referentiel_set_liste_empreintes_competence($referentiel_referentiel->id, $liste_empreintes_competence);
+		            	$liste_codes_competence=referentiel_new_liste_codes_competence($referentiel_referentiel->id);
+        		    	// echo "<br />LISTE_CODES_COMPETENCE : $liste_codes_competence\n";
+		            	referentiel_set_liste_codes_competence($referentiel_referentiel->id, $liste_codes_competence);
+        		    	$liste_empreintes_competence=referentiel_new_liste_empreintes_competence($referentiel_referentiel->id);
+			            // echo "<br />LISTE_empreintes_COMPETENCE : $liste_empreintes_competence\n";
+	        		    referentiel_set_liste_empreintes_competence($referentiel_referentiel->id, $liste_empreintes_competence);
                     // Modif JF 2009/10/16
-        		    $liste_poids_competence=referentiel_new_liste_poids_competence($referentiel_referentiel->id);
+        		    	$liste_poids_competence=referentiel_new_liste_poids_competence($referentiel_referentiel->id);
                 }
 	       }
         }
@@ -1442,49 +1443,46 @@ function referentiel_add_competence($form) {
 			else if (isset($form->instance)){ $ref_referentiel=$form->instance;}
 
 			$competence = new object();
-            if (empty($form->new_description_competence)){
-                $form->new_description_competence=get_string('a_completer', 'referentiel');
-            }
+      if (empty($form->new_description_competence)){
+         $form->new_description_competence=get_string('a_completer', 'referentiel');
+      }
 			$competence->code_competence=$form->new_code_competence;
 			$competence->description_competence=$form->new_description_competence;
 			$competence->ref_domaine=$form->new_ref_domaine;
 			$competence->num_competence=$form->new_num_competence;
 			$competence->nb_item_competences=$form->new_nb_item_competences;
-			// MODIF JF 2012/02/20
+
 			if (isset($form->new_type_competence)){
                 $competence->type_competence = $form->new_type_competence;
-            }
-            else{
+      }
+      else{
                 $competence->type_competence = 0;
-            }
+      }
 			if (isset($form->new_seuil_competence)){
                 $competence->seuil_competence = $form->new_seuil_competence;
-            }
-            else{
+      }
+      else{
                 $competence->seuil_competence = 0.0;
-            }
-           // MODIF JF 2012/03/26
+      }
 			if (isset($form->new_minima_competence)){
                 $competence->minima_competence = $form->new_minima_competence;
-            }
-            else{
+      }
+      else{
                 $competence->minima_competence = 0;
-            }
+      }
 
 			// DEBUG
-            // echo "<br />DEBUG :: lib_referentiel :: 1226 :: COMPETENCE_RECORD<br />";
+      //echo "<br />DEBUG :: lib_referentiel :: 1475 :: COMPETENCE_RECORD<br />";
+      //print_object($competence);
+			//echo "<br />\n";
 
-            // print_object($competence);
-			// echo "<br />n";
-            if ($exist=$DB->get_record("referentiel_competence", array("ref_domaine" => $competence->ref_domaine, "code_competence" => $competence->code_competence))){
-                $competence->code_competence=$competence->code_competence."-".$exist->id."-Bis";
-            }
-
+      if ($exist=$DB->get_record("referentiel_competence", array("ref_domaine" => $competence->ref_domaine, "code_competence" => $competence->code_competence))){
+        	$competence->code_competence=$competence->code_competence."-".$exist->id."-Bis";
+      }
 			if ($new_competence_id = $DB->insert_record("referentiel_competence", $competence)){
-                // MODIF JF 2012/02/17
-                $competence->id=$new_competence_id;
-                referentiel_add_competence_protocole($competence, $ref_referentiel);
-            }
+         $competence->id=$new_competence_id;
+         referentiel_add_competence_protocole($competence, $ref_referentiel);
+      }
 			// echo "competence ID / $new_competence_id<br />";
 		}
 
@@ -1502,59 +1500,61 @@ function referentiel_add_competence($form) {
 function referentiel_update_competence($form) {
     global $DB;
 	$ok=false;
-	// DEBUG
-	// print_object($form);
-	// echo "<br />";
+		// DEBUG
+    //echo "\n<br />DEBUG :: lib.php :: 1506<br />\n";
+		//print_object($form);
+		//echo "<br />\n";
 
 		if (!empty($form->competence_id)){
 			if (isset($form->reference_id)){
-                $ref_referentiel=$form->reference_id;
-            }
-            elseif (isset($form->occurrence)){
-                $ref_referentiel=$form->occurrence;
-            }
+				$ref_referentiel=$form->reference_id;
+			}
+			elseif (isset($form->occurrence)){
+				$ref_referentiel=$form->occurrence;
+			}
 			elseif (isset($form->instance)){
-                $ref_referentiel=$form->instance;
-            }
-            $competence=$DB->get_record("referentiel_competence", array("id" => $form->competence_id) );
-            if ($competence){
-                $oldcode=$competence->code_competence;
-    			$competence->code_competence=($form->code_competence);
-                $competence->description_competence=($form->description_competence);
-                $competence->ref_domaine=$form->ref_domaine;
-			    $competence->num_competence=$form->num_competence;
-			    $competence->nb_item_competences=$form->nb_item_competences;
-                if (isset($form->type_competence)){
-                    $competence->type_competence = $form->type_competence;
-                }
-                else{
-                    $competence->type_competence = 0;
-                }
-			    if (isset($form->seuil_competence)){
-                    $competence->seuil_competence = $form->seuil_competence;
-                }
-                else{
-                    $competence->seuil_competence = 0.0;
-                }
-                // MODIF JF 2012/03/26
-                if (isset($form->minima_competence)){
-                    $competence->minima_competence = $form->minima_competence;
-                }
-                else{
-                    $competence->minima_competence = 0;
-                }
+				$ref_referentiel=$form->instance;
+			}
 
-			    // DEBUG
-			    // print_object($competence);
-			    if ($ok=$DB->update_record("referentiel_competence", $competence)){
-    				//echo "<br />DEBUG :: lib_refentiel.php :: 1192 :: MISE A JOUR COMPETENCES...<br />\n";
-    				//print_object($competence);
-    				// MODIF JF 2012/02/17
-                    referentiel_update_competence_protocole($oldcode, $competence->code_competence, $ref_referentiel, $competence->type_competence, $competence->seuil_competence, $competence->minima_competence);
-		      		$ok=true;
-			    }
-            }
+			$competence=$DB->get_record("referentiel_competence", array("id" => $form->competence_id) );
+			if ($competence){
+        $oldcode=$competence->code_competence;
+    		$competence->code_competence=($form->code_competence);
+        $competence->description_competence=($form->description_competence);
+        $competence->ref_domaine=$form->ref_domaine;
+			  $competence->num_competence=$form->num_competence;
+			  $competence->nb_item_competences=$form->nb_item_competences;
+        if (isset($form->type_competence)){
+           $competence->type_competence = $form->type_competence;
         }
+        else{
+           $competence->type_competence = 0;
+        }
+			  if (isset($form->seuil_competence)){
+           $competence->seuil_competence = $form->seuil_competence;
+        }
+        else{
+           $competence->seuil_competence = 0.0;
+        }
+        // MODIF JF 2012/03/26
+        if (isset($form->minima_competence)){
+           $competence->minima_competence = $form->minima_competence;
+        }
+        else{
+           $competence->minima_competence = 0;
+        }
+
+			  // DEBUG
+			  // print_object($competence);
+			  if ($ok=$DB->update_record("referentiel_competence", $competence)){
+    			//echo "<br />DEBUG :: lib_refentiel.php :: 1192 :: MISE A JOUR COMPETENCES...<br />\n";
+    			//print_object($competence);
+    			// MODIF JF 2012/02/17
+          referentiel_update_competence_protocole($oldcode, $competence->code_competence, $ref_referentiel, $competence->type_competence, $competence->seuil_competence, $competence->minima_competence);
+		    	$ok=true;
+			  }
+      }
+  }
 	return $ok;
 }
 
@@ -1650,23 +1650,26 @@ function referentiel_supprime_competence($competence_id){
  **/
 function referentiel_update_item($form) {
     global $DB;
-	$ok=false;
-	// DEBUG
-	// print_object($form);
-	// echo "<br />";
+		$ok=false;
+		// DEBUG
+    //echo "\n<br />DEBUG :: lib.php :: 1655<br />\n";
+		//print_object($form);
+		//echo "<br />\n";
+		//exit;
 		// ITEM COMPETENCES
 		if (!empty($form->item_id)){
 			$item = $DB->get_record("referentiel_item_competence", array("id" => $form->item_id));
-            $oldcode=$item->code_item;
-            $item->code_item=($form->code_item);
+      $oldcode=$item->code_item;
+      $item->code_item=($form->code_item);
 			$item->description_item=($form->description_item);
 			$item->num_item=$form->num_item;
 			$item->type_item=($form->type_item);
 			$item->poids_item=$form->poids_item;
 			$item->empreinte_item=$form->empreinte_item;
 			// DEBUG
-			// print_object($item);
-			// echo "<br />";
+			//print_object($item);
+			//echo "<br />";
+			//exit;
 			if ($ok=$DB->update_record("referentiel_item_competence", $item)){
 			
 				// echo "<br />MISE A JOUR ITEM COMPETENCES...";
@@ -1681,15 +1684,15 @@ function referentiel_update_item($form) {
 				$liste_poids_competence=referentiel_new_liste_poids_competence($item->ref_referentiel);
 				// echo "<br />LISTE_poids_COMPETENCE : $liste_poids_competence\n";
 				referentiel_set_liste_poids_competence($item->ref_referentiel, $liste_poids_competence);
-                // Modif JF 2011/05/11
-                // supprimer si necessaire les items de compétence dans les activites et les certificat
-                if ($item->code_item != $oldcode){
-                    // remplacer le code des items de compétence dans les activites
-                    referentiel_maj_activites_codes_competence($item->ref_referentiel, $oldcode, $item->code_item);
-                }
-                // Modif JF 2012/02/17
-                // mise à jour du protocole
-                referentiel_update_item_protocole($oldcode, $item->code_item, $item->ref_referentiel, $item->type_item);
+        // Modif JF 2011/05/11
+        // supprimer si necessaire les items de compétence dans les activites et les certificat
+        if ($item->code_item != $oldcode){
+          // remplacer le code des items de compétence dans les activites
+        	referentiel_maj_activites_codes_competence($item->ref_referentiel, $oldcode, $item->code_item);
+        }
+        // Modif JF 2012/02/17
+        // mise à jour du protocole
+        referentiel_update_item_protocole($oldcode, $item->code_item, $item->ref_referentiel, $item->type_item);
 			}
 		}
 	return $ok;
@@ -1717,32 +1720,31 @@ function referentiel_add_item($form) {
 		$item->ref_referentiel=$ref_referentiel;
 		$item->ref_competence=$form->new_ref_competence;
 
-        // Modif JF 2012/03/07
-        if (empty($form->new_code_item)){
-            $form->new_code_item=get_string('c_item','referentiel').'.'.$form->num_domaine.'.'.$form->num_competence.'.'.$form->num_item;
-        }
+		// Modif JF 2012/03/07
+		if (empty($form->new_code_item)){
+			$form->new_code_item=get_string('c_item','referentiel').'.'.$form->num_domaine.'.'.$form->num_competence.'.'.$form->new_num_item;
+    }
 		$item->code_item=$form->new_code_item;
-        if (empty($form->new_description_item)){
-            $form->new_description_item=get_string('a_completer', 'referentiel');
-        }
+    if (empty($form->new_description_item)){
+    	$form->new_description_item=get_string('a_completer', 'referentiel');
+    }
 		$item->description_item=$form->new_description_item;
 		$item->num_item=$form->new_num_item;
-		$item->type_item=($form->new_type_item);
+		$item->type_item=$form->new_type_item;
 		$item->poids_item=$form->new_poids_item;
 		$item->empreinte_item=$form->new_empreinte_item;
 
 		// DEBUG
-		// echo "<br />DEBUG :: lib.php :: 921<br />\n";
-		// print_object($item);
-		// echo "<br />";
+		//echo "<br />DEBUG :: lib_referentiel.php :: 1740<br />\n";
+		//print_object($item);
+		//echo "<br />";
 		// Verifier unicite du code item
-
-        if ($exist=$DB->get_record("referentiel_item_competence", array("ref_referentiel" => $ref_referentiel, "code_item" => $item->code_item))){
-            $item->code_item=$item->code_item."-".$exist->id."-Bis";
-        }
+    if ($exist=$DB->get_record("referentiel_item_competence", array("ref_referentiel" => $ref_referentiel, "code_item" => $item->code_item))){
+    	$item->code_item=$item->code_item."-".$exist->id."-Bis";
+    }
 
 		if ($new_item_id = $DB->insert_record("referentiel_item_competence", $item)){
-       		// echo "item ID / $new_item_id<br />";
+      // echo "item ID / $new_item_id<br />";
 			// Mise a jour de la liste des codes de competences
 			$liste_codes_competence=referentiel_new_liste_codes_competence($ref_referentiel);
 			// echo "<br />lib_referentiel.php :: 1546 ::LISTE_CODES_COMPETENCE : $liste_codes_competence\n";
@@ -1755,10 +1757,10 @@ function referentiel_add_item($form) {
 			// echo "<br />LISTE_poids_COMPETENCE : $liste_poids_competence\n";
 			referentiel_set_liste_poids_competence($ref_referentiel, $liste_poids_competence);
 
-            // Modif JF 2012/02/17
-            // protocole
-            referentiel_add_item_protocole($item->code_item, $ref_referentiel, $item->type_item);
-    	}
+			// Modif JF 2012/02/17
+      // protocole
+      referentiel_add_item_protocole($item->code_item, $ref_referentiel, $item->type_item);
+    }
 	}
 	return $new_item_id;
 }

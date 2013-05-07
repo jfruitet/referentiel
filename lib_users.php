@@ -53,6 +53,7 @@ global $DB;
     return $role;
 }
 
+
 // OBSOLETE depuis Moodle v2.0
 
 function referentiel_admins_liste($id_course) {
