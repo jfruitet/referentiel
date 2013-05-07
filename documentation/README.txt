@@ -4,7 +4,7 @@ jean.fruitet@univ-nantes.fr
 2007/2013
 
 Type: Activity Module
-Requires: Moodle 2.4
+Requires: Moodle 2.4 or 2.5
 Status: Contributed
 Maintainer(s): jean.fruitet@univ-nantes.fr
 
@@ -139,8 +139,8 @@ YOUR_MOODLE/admin/report/
 directory
 
 
-Moodle 2.2, 2.3, 2.4
---------------------
+Moodle 2.2, 2.3, 2.4, 2.5
+-------------------------
 Unzip  
 YOUR_MOODLE/mod/referentiel/report/referentiel-report.zip
 in 
@@ -295,5 +295,5 @@ Commentaire à cette adresse :
 Commentary about this bug :
 http://moodle.org/mod/forum/discuss.php?d=145112
 
-Lisez version_history.txt pour les mises à jour
-Read  version_history.txt for updates
+Lisez ./documentation/version_history.txt pour les mises à jour
+Read  ./documentation/version_history.txt for updates

@@ -45,7 +45,7 @@ class Util {
 	 * @static	 
 	 */	
 	function utf8Unicode($str) {
-	  	return Util::unicodeToEntitiesPreservingAscii(Util::utf8ToUnicode($str));
+	  	return $this->unicodeToEntitiesPreservingAscii($this->utf8ToUnicode($str));
 	}
 	
 	/**

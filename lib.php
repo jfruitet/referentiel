@@ -813,15 +813,15 @@ global $DB;
 }
 
 
-	// ------------------
-	function referentiel_get_logo($referentiel){
-	// A TERMINER
-	global $OUTPUT;
-		// Moodle 1.9
-        // return "pix/logo_men.jpg";
-        // Moodle 2.0
-        return $OUTPUT->pix_url('logo_men','referentiel');
-	}
+// ------------------
+function referentiel_get_logo($occurrence){
+        if (!empty($occurrence)){
+            return $occurrence->logo_referentiel;
+        }
+        else{
+            return '';
+        }
+}
 
 
     // ################################ URL  ###############################
@@ -1020,7 +1020,7 @@ function referentiel_deplace_fichier($dest_path, $source, $dest, $sep, $deplace)
 
 
 	// ------------------
-	function referentiel_get_file($filename, $course_id, $path="" ) {
+	function referentiel_get_file_m19($filename, $course_id, $path="" ) {
 	// retourne un path/nom_de_fichier dans le dossier moodledata
  		global $CFG; global $DB;
  		if ($path==""){
@@ -1040,6 +1040,7 @@ function referentiel_deplace_fichier($dest_path, $source, $dest, $sep, $deplace)
 
 
 // ############################ MOODLE 2.0 FILE API #########################
+
 
 /**
  * Lists all browsable file areas
@@ -1480,6 +1481,60 @@ global $CFG;
 
     echo html_writer::table($table);
 }
+
+// ------------------
+function referentiel_get_file($moodlefullpath) {
+	// retourne le chemin absolu du fichier pour traitement par impression PDF et autres
+
+ 	global $CFG;
+    $filedir = $CFG->dataroot;
+    $filedir = str_replace('\\','/',$filedir);
+    $filedir.='/filedir'; // propre à Moodle
+
+    // initialisation par defaut
+    $contextid=0;
+    $component='mod_referentiel';
+    $filearea='referentiel';
+    $itemid=0;
+    $path='/';
+    $filename=$moodlefullpath;
+
+    // Traitement de $fullpath
+    if ($moodlefullpath && preg_match('/\//', $moodlefullpath)){
+        $t_fullpath=explode('/', $moodlefullpath, 6);
+        if (!empty($t_fullpath) && empty($t_fullpath[0])){
+            $garbage=array_shift($t_fullpath);
+        }
+        if (!empty($t_fullpath)){
+            list($contextid, $component, $filearea, $itemid, $path )  = $t_fullpath;
+            if ($path){
+                if (preg_match('/\//', $path)){
+                    $filename=substr($path, strrpos($path, '/')+1);
+                    $path='/'.substr($path, 0, strrpos($path, '/')+1);
+                }
+                else{
+                    $filename=$path;
+                    $path='/';
+                }
+            }
+        }
+    }
+
+    require_once($CFG->libdir.'/filelib.php');
+    $fs = get_file_storage();
+
+    // Get file
+    // echo "<br />($contextid, $component, $filearea, $itemid, $path, $filename)\n";
+    $file = $fs->get_file($contextid, $component, $filearea, $itemid, $path, $filename);
+    if ($file) {
+        $contenthash = $file->get_contenthash(); // nom du fichier tel qu'il est stocké
+        $thefilepath=$filedir.'/'.substr($contenthash,0,2).'/'.substr($contenthash,2,2).'/'.$contenthash;
+        //echo  "<br />FILE PATH : $thefilepath\n";
+        return $thefilepath;
+    }
+    return '';
+}
+
 
 /**
  * This function wil delete a file

@@ -2,7 +2,7 @@
 // referentiel module
 //
 
-// Moodle 2.5
+
 $string['consignes_associees']= 'Associated Consigns';
 $string['consigne_associee']= 'Associated Consigns';
 $string['competences_declare']= 'Declarated Skills';
@@ -18,7 +18,8 @@ $string['areaoutcomes']='outcomes';
 $string['areaarchive']='archives';
 $string['areascolarite']='scolarship';
 
-// Moodle 2.4
+
+$string['no_data'] = 'No data for {$a}';
 $string['regenere_profil'] = 'Update students\' numbers';
 $string['deleted_student'] = 'Student record deleted';
 $string['delete_student'] = 'Delete this student form';

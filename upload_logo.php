@@ -216,9 +216,12 @@
     if (!empty($referentiel->name)){
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
     }
+
     require_once('onglets.php'); // menus sous forme d'onglets 
-        $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, $currenttab, $select_acc, $data_f); $tab_onglets->display();
+    $tab_onglets = new Onglets($context, $referentiel, $referentiel_referentiel, $cm, $course, 'listreferentiel', $select_acc, NULL);
+    $tab_onglets->display();
     echo $OUTPUT->box_start('generalbox');
+
     $mform->display();
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();

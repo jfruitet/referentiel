@@ -2,7 +2,7 @@
 // ----------------
 // UTF-8 French
 //
-// Moodle 2.5
+
 $string['consignes_associees']= 'Consignes associées';
 $string['consigne_associee']= 'Consigne associée';
 $string['competences_declare']= 'Compétences déclarées';
@@ -18,7 +18,7 @@ $string['areaoutcomes']='objectifs';
 $string['areaarchive']='archives';
 $string['areascolarite']='scolarite';
 
-// Moodle 2.4
+$string['no_data'] = 'Aucune donnée pour {$a}';
 $string['regenere_profil'] = 'Actualiser les numéros d\'étudiants';
 $string['deleted_student'] = 'Enregistrement étudiant supprimé';
 $string['delete_student'] = 'Supprimer cet enregistrement';

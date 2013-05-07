@@ -577,9 +577,9 @@
                 require_once("print_rtf.php");
 			
 			    // ************************** INITIALISATION RTF *********************
-                $file_logo=referentiel_get_logo($referentiel);
+                $file_logo=referentiel_get_logo($referentiel_referentiel);
                 if ($file_logo!=""){
-                    $image_logo=referentiel_get_file($file_logo, $referentiel->course);
+                    $image_logo=referentiel_get_file($file_logo);
                 }
                 else{
                     $image_logo="";
@@ -601,9 +601,9 @@
                     require_once("print_pdf.php");
 			
                     // ************************** INITIALISATION PDF *********************
-                    $file_logo=referentiel_get_logo($referentiel);
+                    $file_logo=referentiel_get_logo($referentiel_referentiel);
                     if ($file_logo!=""){
-                        $image_logo=referentiel_get_file($file_logo, $referentiel->course);
+                        $image_logo=referentiel_get_file($file_logo);
                     }
                     else{
                         $image_logo="";
@@ -626,9 +626,9 @@
                     require_once("print_doc_word.php");
                     
                     // ************************** INITIALISATION MSWORD *********************
-                    $file_logo=referentiel_get_logo($referentiel);
+                    $file_logo=referentiel_get_logo($referentiel_referentiel);
                     if ($file_logo!=""){
-                    	$image_logo=referentiel_get_file($file_logo, $referentiel->course);
+                    	$image_logo=referentiel_get_file($file_logo);
                     }
                     else{
                     	$image_logo="";
@@ -651,9 +651,9 @@
                     require_once("print_doc_odt.php");
                     
                     // ************************** INITIALISATION OpenOffice *********************
-                    $file_logo=referentiel_get_logo($referentiel);
+                    $file_logo=referentiel_get_logo($referentiel_referentiel);
                     if ($file_logo!=""){
-                    	$image_logo=referentiel_get_file($file_logo, $referentiel->course);
+                    	$image_logo=referentiel_get_file($file_logo);
                     }
                     else{
                     	$image_logo="";

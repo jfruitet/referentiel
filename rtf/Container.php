@@ -123,8 +123,8 @@ class Container {
 			//$text = preg_replace("/<PAGE[ ]*(\/)?[ ]*>/mi", "\\page ", $text);
 			//$text = preg_replace("/<SECT[ ]*(\/)?[ ]*>/mi", "\\sect", $text);	
 		}	
-					
-		$text = Util::utf8Unicode($text);		
+        $aUtil=new Util();
+		$text = $aUtil->utf8Unicode($text);
 		//content formating
 		$content = (is_a($parFormat, 'ParFormat') && count($this->elements) != 0 && empty($this->emptyPar)) ? '\par ' : '';	
 		$this->emptyPar = false;  	

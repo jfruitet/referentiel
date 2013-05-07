@@ -58,8 +58,9 @@ class Font {
     function Font($size = 10, $font = '', $fontColor = '', $backColor = '') {      
       	$this->size = $size;
 		$this->font = $font;
-		$this->fontColor = Util::formatColor($fontColor);
-		$this->backColor = Util::formatColor($backColor);	  
+		$aUtil= new Util();
+		$this->fontColor = $aUtil->formatColor($fontColor);
+		$this->backColor = $aUtil->formatColor($backColor);
 	}
 	
 	/**

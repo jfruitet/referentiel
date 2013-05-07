@@ -15,12 +15,13 @@ Historique des versions
 Référentiel pour Moodle 2.2, 2.3, 2.4, 2.5
 ------------------------------------------
 
-Version 8.07 for Moodle 2.4, 2.5 - 2013-05-06
+Version 8.07 for Moodle 2.4, 2.5 - 2013-05-07
 Un nouveau paramétrage permet de désigner un champ du profil utilisateur pour récupérer le numéro d'étudiant.
 Modification en profondeur de l'interface de saisie / modification d'une occurrence de référentiel.
 Tous les affichages utilisent désormais une seule feuille de style (referentiel.css)
 L'ergonomie est améliorée pour un affichage sur smartphones.
-
+L'extension report/referentiel permet de suivre les déclarations d'activité en deshérence  et liste les certificats.
+Le logo associé à l'occurrence de référentel est correctement affiché dans les impressons PDF et RTF des certificats.
 
 Version 8.06 (2013040400) Release for Moodle 2.4, 2.5 - 2013-04-30
 Nouvelle interface de modification de l'occurrence d'un référentiel. La saisie des domaines, compétences et items est facilitée.
