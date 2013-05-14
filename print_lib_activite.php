@@ -1759,13 +1759,13 @@ function referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
         $s0.='
 <a name="activite_'.$activite_id.'"></a>'."\n";
         if (!empty($prioritaire)){
-            $s0.= '<div class="affprioritaire">'."\n";
+            $s0.= '<div class="ref_affprioritaire">'."\n";
         }
         else if (isset($approved) && ($approved)){
-			$s0.= '<div class="affvalide">'."\n";
+			$s0.= '<div class="ref_affvalide">'."\n";
 		}
 		else{
-			$s0.= '<div class="affinvalide">'."\n";
+			$s0.= '<div class="ref_affinvalide">'."\n";
 		}
         // entetete
         $s0.='<span class="bold">'.get_string('id_activite','referentiel', $activite_id).'</span>';
@@ -1775,10 +1775,10 @@ function referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
         $s0.='</div>'."\n";
         // details
         if ($numero%2==0){
-            $s1.= '<div class="affact1">';
+            $s1.= '<div class="ref_affact1">';
         }
         else{
-            $s1.= '<div class="affact2">';
+            $s1.= '<div class="ref_affact2">';
         }
 		if ($ref_task){
             // consignes associées à une tâche
@@ -1842,7 +1842,7 @@ function referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
                 // afficher
                 $nbressource=count($records_document);
                 $s2.='<!-- DOCUMENTS -->
-<div class="affdoc">'."\n";
+<div class="ref_affdoc">'."\n";
                 if ($nbressource>1){
                     $s2.='<span class="bold">'.get_string('ressources_associees','referentiel',$nbressource).'</span>'."\n";
                 }
@@ -2644,7 +2644,7 @@ if ($record){
                 // afficher
                 $nbressource=count($records_document);
                 $s_document.='<!-- DOCUMENTS -->
-<div class="affdoc">'."\n";
+<div class="ref_affdoc">'."\n";
                 if ($nbressource>1){
                     $s_document.='<span class="bold">'.get_string('ressources_associees','referentiel',$nbressource).'</span>'."\n";
                 }
@@ -2699,13 +2699,13 @@ if ($record){
         echo '
 <a name="activite_'.$activite_id.'"></a>'."\n";
         if (!empty($prioritaire)){
-            echo  '<div class="affprioritaire">'."\n";
+            echo  '<div class="ref_affprioritaire">'."\n";
         }
         else if (isset($approved) && ($approved)){
-			echo  '<div class="affvalide">'."\n";
+			echo  '<div class="ref_affvalide">'."\n";
 		}
 		else{
-			echo  '<div class="affinvalide">'."\n";
+			echo  '<div class="ref_affinvalide">'."\n";
 		}
 
         if ($ref_course == $COURSE->id){
@@ -2721,10 +2721,10 @@ if ($record){
 
         // details
         if ($numero%2==0){
-            echo  '<div class="affact1">';
+            echo  '<div class="ref_affact1">';
         }
         else{
-            echo  '<div class="affact2">';
+            echo  '<div class="ref_affact2">';
         }
 
         echo '<span class="bold">'.get_string('auteur','referentiel').'</span> '.$user_info;

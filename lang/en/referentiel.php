@@ -35,10 +35,14 @@ $string['config_ref_profilefield'] = 'If the User Profile is used to set a <b>St
 $string['etudianth'] = 'Students';
 $string['etudianth_help'] = 'Personal data for certification
 
-* Student number: \'idnumber\' value of \'user\' Moodle table.
-(if empty \'username\' is used).
-<br />[N.B.: If the User Profile table is used for Students numbers,
-you have to set \'ref_profilecategory\' and \'ref_profilefield\' in the module settings]
+* Student number:
+
+If the User Profile table is used for Students numbers,
+you have to set \'ref_profilecategory\' and \'ref_profilefield\' in the module settings
+
+If no the \'idnumber\' field value of \'user\' Moodle table is used.
+
+If this field is empty the field \'username\' is used.
 
 * City and departement birthplace;
 

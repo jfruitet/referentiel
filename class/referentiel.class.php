@@ -688,12 +688,12 @@ class referentiel {
 
         echo '</table>'."\n";
 */
-        echo '<div class="aff0">';
+        echo '<div class="ref_aff0">';
         if ($this->referentiel->date_instance) {
             echo '<span class="bold">'.get_string('availabledate','referentiel').'</span> &nbsp; &nbsp; '.userdate($this->referentiel->date_instance).' <br />';
         }
         echo '<span class="bold">'.get_string('name_instance','referentiel').'</span> &nbsp; &nbsp; '.$this->referentiel->name .
-'<br /><span class="bold">'.get_string('description_instance','referentiel').'</span><div class="aff1">'.nl2br($this->referentiel->description_instance).'</div>'.
+'<br /><span class="bold">'.get_string('description_instance','referentiel').'</span><div class="ref_aff1">'.nl2br($this->referentiel->description_instance).'</div>'.
 '<span class="bold">'.get_string('label_domaine','referentiel').'</span> &nbsp; '.$this->referentiel->label_domaine.' &nbsp; &nbsp; '.
 '<span class="bold">'.get_string('label_competence','referentiel').'</span> &nbsp; '.$this->referentiel->label_competence.' &nbsp; &nbsp; '.
 '<span class="bold">'.get_string('label_item','referentiel').'</span> &nbsp; '.$this->referentiel->label_item.' &nbsp; &nbsp; '.

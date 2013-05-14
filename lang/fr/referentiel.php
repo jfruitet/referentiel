@@ -35,8 +35,10 @@ $string['etudianth'] = 'Etudiants';
 $string['etudianth_help'] = 'Informations d\'état civil destinées aux certificats
 
 * Numéro d\'étudiant :
+
 Vous pouvez paramétrer le module Référentiel pour qu\'un champ du profil soit consacré au numéro d\'étudiant.
 [Positionnez alors les variables de configuration \'ref_profilecategory\' and \'ref_profilefield\']
+
 Sinon la valeur du \'idnumber\' de la table \'user\' de Moodle est utilisée. A défaut le champ \'username\' est retenu.
 
 * Lieu et département de naissance ;

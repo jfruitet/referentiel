@@ -32,6 +32,11 @@
  **/
 
  // ////////////////////////// ETUDIANT /////////////////////
+//----------------------------------------------
+function referentiel_nom_connu($s){
+    if ($s=='l_inconnu') $s=get_string('l_inconnu', 'referentiel');
+    return $s;
+}
 
 // ----------------------------------------------------------------
 function referentiel_update_students_numbers($record_id_users) {
@@ -50,7 +55,7 @@ global $DB;
     if (!empty($userid)){
         $record=$DB->get_record("referentiel_etudiant", array("userid" => $userid));
         if ($record){
-            $record->num_etudiant=referentiel_get_student_number($userid);
+            $record->num_etudiant=referentiel_get_student_number($userid, true);
             if ($DB->set_field('referentiel_etudiant','num_etudiant', $record->num_etudiant, array("userid" => $userid))){
                 return $record;
             }
@@ -60,28 +65,34 @@ global $DB;
 }
 
 // ----------------------------------------------------------------
-function referentiel_get_student_number($userid){
+function referentiel_get_student_number($userid, $updateprofil=0){
     global $CFG, $DB;
+    $num_etudiant='';
     if (!empty($userid)){
-        if ($user=$DB->get_record("user", array("id" => "$userid"))){
-            // profile table used ?
-            if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_profilefield)){
-                $num_etudiant=referentiel_get_profile($CFG->ref_profilecategory, $CFG->ref_profilefield, $user->id);
-            }
-            if (!empty($num_etudiant)){
-                return $num_etudiant;
-            }
-            else{
-                if (!empty($user->idnumber)){
-                    return $user->idnumber;
+        if ($student=$DB->get_record("referentiel_etudiant", array("userid" => $userid))){
+            $num_etudiant=$student->num_etudiant;
+        }
+        if (empty($num_etudiant) || $updateprofil){
+            if ($user=$DB->get_record("user", array("id" => $userid))){
+                // profile table used ?
+                if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_profilefield)){
+                    $num_etudiant=referentiel_get_profile($CFG->ref_profilecategory, $CFG->ref_profilefield, $user->id);
+                }
+                if (!empty($num_etudiant)){
+                    return $num_etudiant;
                 }
                 else{
-                    return $user->username;
-                }
+                    if (!empty($user->idnumber)){
+                        return $user->idnumber;
+                    }
+                    else{
+                        return $user->username;
+                    }
+               }
             }
         }
     }
-    return '';
+    return $num_etudiant;
 }
 
 // ----------------------------------------------------------------
@@ -400,12 +411,7 @@ $s='';
 		$s.='<div><select id="selectetab'.$userid.'_jump" name="jump" size="1" 
 onchange="self.location=document.getElementById(\'selectetab'.$userid.'\').jump.options[document.getElementById(\'selectetab'.$userid.'\').jump.selectedIndex].value;">'."\n";
 		foreach ($records as $record){
-            if ($record->nom_etablissement=='l_inconnu'){
-                $str_nom_etablissement=get_string('l_inconnu', 'referentiel');
-            }
-            else{
-                $str_nom_etablissement=$record->nom_etablissement;
-            }
+            $str_nom_etablissement=referentiel_nom_connu($record->nom_etablissement);
             if ($etablissement_id==$record->id){
 				$s.='	<option value="'.$appli.'&amp;userid='.$userid.'&amp;etablissement_id='.$record->id.'&amp;sesskey='.sesskey().'" selected="selected" >'.$str_nom_etablissement.'</option>'."\n";
 			}
@@ -419,26 +425,19 @@ onchange="self.location=document.getElementById(\'selectetab'.$userid.'\').jump.
 	return $s;
 }
 
-
-
+//----------------------------------------------
 function referentiel_get_nom_etablissement($id){
 global $DB;
 	if (!empty($id)){
 		$record = $DB->get_record("referentiel_etablissement",  array("id" => "$id"));
 		if ($record ){
-            if ($record->nom_etablissement=='l_inconnu'){
-                $str_nom_etablissement=get_string('l_inconnu', 'referentiel');
-            }
-            else{
-                $str_nom_etablissement=$record->nom_etablissement;
-            }
-
-			return $str_nom_etablissement;
+			return referentiel_nom_connu($record->nom_etablissement);
 		}
 	}
 	return "";
 }
 
+//----------------------------------------------
 function referentiel_delete_etablissement($id){
 global $DB;
 // suppression etablissement
