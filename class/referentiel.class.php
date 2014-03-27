@@ -76,7 +76,7 @@ class referentiel {
      * @todo document this var
      */
     var $context;
-    /*
+	/*
     var $name;
     var $description_instance;
     var $label_domaine;
@@ -90,7 +90,7 @@ class referentiel {
     var $visible;
     var $intro;
     var $introformat;
-    */
+	*/
     
     /**
      * Constructor for the base referentiel class
@@ -124,12 +124,7 @@ class referentiel {
         }
 
 
-        // Valable pour Moodle 2.1 et Moodle 2.2
-        ////if ($CFG->version < 2011120100) {
-            $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
-        //} else {
-        //    //  $this->context = context_module::instance($this->cm); 
-        //}
+        $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
 
         if ($course) {
             $this->course = $course;
@@ -148,8 +143,8 @@ class referentiel {
         $this->referentiel->label_competence=trim(get_string('competence','referentiel'));
         $this->referentiel->label_item=trim(get_string('item','referentiel'));
         $this->referentiel->label_item=trim(get_string('item','referentiel'));
-        $this->referentiel->config=referentiel_creer_configuration('config');
-        $this->referentiel->config_impression=referentiel_creer_configuration('impression');
+        $this->referentiel->config=$this->creer_configuration('config');
+        $this->referentiel->config_impression=$this->creer_configuration('impression');
         $this->referentiel->config_globale=$this->referentiel->config;
         $this->referentiel->config_impression_globale=$this->referentiel->config_impression;
         $this->referentiel->ref_referentiel=0;
@@ -1252,16 +1247,17 @@ class referentiel {
     }
 
     /**
-     * Deletes an referentiel activity
+     * Deletes a referentiel instance activity
      *
-     * Deletes all database records, files and calendar events for this referentiel.
+     * Deletes all database records, files and calendar events for this referentiel instance.
      *
-     * @global object
-     * @global object
-     * @param object $referentiel The referentiel to be deleted
+     * @global object  $CFG
+     * @global object  $DB
+     * @param object $referentiel The referentiel to be purged
+     * @param boolean purge : if true referentiel instance is deleted too
      * @return boolean False indicates error
      */
-    function delete_instance($referentiel) {
+    function delete_instance($referentiel, $purge=true) {
         global $CFG, $DB;
 
         $result = true;
@@ -1296,10 +1292,7 @@ class referentiel {
             }
         }
 
-        // suppression des certificats associes
-        // il serait préférable de ne pas les supprimer
-        // mais plutôt de les recalculer
-
+        // recalcul des certificats associes
         $certificats=referentiel_get_certificats($referentiel->ref_referentiel);
         if ($certificats){
             foreach ($certificats as $certificat){
@@ -1307,21 +1300,27 @@ class referentiel {
             }
         }
 
-
         // suppression des evenements du calendrier
         if (! $DB->delete_records('event', array('modulename'=>'referentiel', 'instance'=>$referentiel->id))) {
             $result = false;
         }
 
-        if (! $DB->delete_records('referentiel', array('id'=>$referentiel->id))) {
-            $result = false;
-        }
+        if ($purge){  // on supprime aussi l'instance
+			if (! $DB->delete_records('referentiel', array('id'=>$referentiel->id))) {
+            	$result = false;
+        	}
+		}
+		else{    // l'instance est conservee après avoir ete videe ; utile pour la reinitialisation du cours
+            $result = true;
+		}
 
         // $mod = $DB->get_field('modules','id',array('name'=>'referentiel'));
         // referentiel_grade_item_delete($referentiel);   // existe pas
 
         return $result;
     }
+
+        /**
 
     /**
      * Updates a new referentiel activity
@@ -1344,6 +1343,20 @@ class referentiel {
         // $referentiel->intro = $referentiel->description_instance;
         $referentiel->description_instance=$referentiel->intro;
         // $referentiel->introformat = 1;
+
+		// traitement de la configuration
+		// DEBUG
+		// echo "<br />DEBUG :: referentiel.class.php :: 1353 <br />\n";
+		// print_object($referentiel);
+		// echo "<br />\n";
+		// exit;
+
+        $referentiel->config=$this->initialise_configuration($referentiel,'config');
+        $referentiel->config_impression=$this->initialise_configuration($referentiel,'config_impression');
+
+		//echo "<br />DEBUG :: referentiel.class.php :: 1358 <br />\n";
+  		//echo $referentiel->config;
+		//exit;
 
         $DB->update_record('referentiel', $referentiel);
 
@@ -1385,6 +1398,575 @@ class referentiel {
         return true;
     }
 
+
+// CONFIGURATION
+// ---------------------------------
+function ref_get_vecteur_config($ref_referentiel_referentiel) {
+// retourne la valeur de configuration globale pour ce referentiel
+global $DB;
+	if (!empty($ref_referentiel_referentiel)){
+		$config = new object();
+		$params= array("refid" => "$ref_referentiel_referentiel");
+		$sql="SELECT config FROM {referentiel_referentiel} WHERE id=:refid";
+		$config = $DB->get_record_sql($sql, $params);
+		if ($config){
+			return($config->config);
+		}
+	}
+	return '';
+}
+
+
+    // ---------------------------------
+function ref_get_vecteur_config_imp($ref_referentiel_referentiel) {
+// retourne la valeur de configuration globale pour ce referentiel
+global $DB;
+	if (!empty($ref_referentiel_referentiel)){
+		$config = new object();
+		$params= array("refid" => "$ref_referentiel_referentiel");
+        $sql="SELECT config_impression FROM {referentiel_referentiel} WHERE id=:refid";
+        $config = $DB->get_record_sql($sql, $params);
+		if ($config){
+			return($config->config_impression);
+		}
+	}
+	return '';
+}
+
+// ---------------------------------
+function get_vecteur_configuration($ref_instance_referentiel) {
+// retourne la valeur de configuration locale pour cette instance de referentiel
+global $DB;
+	if (!empty($ref_instance_referentiel)){
+		$config = new object();
+		$params= array("refid" => "$ref_instance_referentiel");
+        $sql="SELECT config FROM {referentiel} WHERE id=:refid";
+		$config = $DB->get_record_sql($sql, $params);
+		if ($config){
+			return($config->config);
+		}
+	}
+	return '';
+}
+
+// ---------------------------------
+function ref_get_item_config($item, $ref_referentiel_referentiel, $type='config') {
+// retourne la valeur de configuration globale (au niveau du referentiel) pour l'item considere
+// 'scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;hierarchy:0;refcert:1;instcert:0;numetu:1;nometu:1;etabetu:0;ddnetu:0;lieuetu:0;adretu:0;detail:1;pourcent:0;compdec:0;compval:1;nomreferent:0;jurycert:1;comcert:0;'
+// type : config ou config_impression
+global $CFG;
+	if (isset($ref_referentiel_referentiel) && ($ref_referentiel_referentiel>0)){
+		if ($type=='config'){
+			$str_config = $this->ref_get_vecteur_config($ref_referentiel_referentiel);
+		}
+		else{
+			$str_config = $this->ref_get_vecteur_config_imp($ref_referentiel_referentiel);
+		}
+		if ($str_config!=''){
+			$tconfig=explode(';',$str_config);
+			$n=count($tconfig);
+			if ($n>0){
+				$i=0;
+				while ($i<$n){
+					$tconfig[$i]=trim($tconfig[$i]);
+					if ($tconfig[$i]!=''){
+						list($cle, $val)=explode(':',$tconfig[$i]);
+						$cle=trim($cle);
+						$val=trim($val);
+
+						if ($cle==$item){
+							return ($val);
+						}
+					}
+					$i++;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+// -----------------------
+function associe_item_configuration($item){
+// retourne le nom du parametre de configuration
+		switch($item){
+            case 'cfcertif' :  return 'referentiel_certif_config'; break; // config certification
+            case 'certif' :  return 'referentiel_certif_state'; break; // certification active
+            case 'hierarchy' :  return 'referentiel_hierarchy'; break; // affichage hierarchique des competences
+            case 'light' :  return 'referentiel_light_display'; break; // affichage reduit du referentiel sans les poids et les empreintes
+            case 'graph' :  return 'referentiel_affichage_graphique'; break;
+			case 'scol' :	return 'referentiel_scolarite_masquee'; break;
+			case 'creref' :	return 'referentiel_creation_limitee'; break;
+			case 'selref' :	return 'referentiel_selection_autorisee'; break;
+			case 'impcert' : return 'referentiel_impression_autorisee'; break;
+			case 'refcert' : return 'certificat_sel_referentiel'; break;
+			case 'instcert' : return 'certificat_sel_referentiel_instance'; break;
+			case 'numetu' : return 'certificat_sel_etudiant_numero'; break;
+			case 'nometu' : return 'certificat_sel_etudiant_nom_prenom'; break;
+			case 'etabetu' : return 'certificat_sel_etudiant_etablissement'; break;
+			case 'ddnetu' : return 'certificat_sel_etudiant_ddn'; break;
+			case 'lieuetu' : return 'certificat_sel_etudiant_lieu_naissance'; break;
+			case 'adretu' : return 'certificat_sel_etudiant_adresse'; break;
+			case 'detail' : return 'certificat_sel_certificat_detail'; break;
+			case 'pourcent' : return 'certificat_sel_certificat_pourcent'; break;
+			case 'compdec' : return 'certificat_sel_activite_competences'; break;
+			case 'compval' : return 'certificat_sel_certificat_competences'; break;
+			case 'nomreferent' : return 'certificat_sel_certificat_referents'; break;
+			case 'jurycert' : return 'certificat_sel_decision_jury'; break;
+			case 'comcert' : return 'certificat_sel_commentaire'; break;
+		}
+		return '';
+}
+
+// -----------------------
+function creer_configuration($type='config'){
+// initialise le vecteur de configuration
+global $CFG;
+$s='';
+	if ($type=='config'){
+		// configuration
+        // affichage hierarchique saisie des competence
+		$s.='hierarchy:0;';
+
+        // affichage reduit du referentiel sans les poids et les empreintes
+		if (isset($CFG->referentiel_light_display)){
+			$s.='light:'.$CFG->referentiel_light_display.';';
+		}
+		else{
+			$s.='light:0;';
+		}
+
+		if (isset($CFG->referentiel_scolarite_masquee)){
+			$s.='scol:'.$CFG->referentiel_scolarite_masquee.';';
+		}
+		else{
+			$s.='scol:0;';
+		}
+		if (isset($CFG->referentiel_creation_limitee)){
+			$s.='creref:'.$CFG->referentiel_creation_limitee.';';
+		}
+		else{
+			$s.='creref:0;';
+		}
+		if (isset($CFG->referentiel_selection_autorisee)){
+			$s.='selref:'.$CFG->referentiel_selection_autorisee.';';
+		}
+		else{
+			$s.='selref:0;';
+		}
+		if (isset($CFG->referentiel_impression_autorisee)){
+			$s.='impcert:'.$CFG->referentiel_impression_autorisee.';';
+		}
+		else{
+			$s.='impcert:0;';
+		}
+		if (isset($CFG->referentiel_affichage_graphique)){
+			$s.='graph:'.$CFG->referentiel_affichage_graphique.';';
+		}
+		else{
+			$s.='graph:0;';
+		}
+		// config certif
+		if (isset($form->cfcertif)){
+			$s.='cfcertif:'.$form->cfcertif.';';
+		}
+		else {
+			$s.='cfcertif:0;';
+		}
+		// config certif
+		if (isset($form->certif)){
+			$s.='certif:'.$form->certif.';';
+		}
+		else {
+			$s.='certif:1;';
+		}
+
+	}
+	else{
+		// impression certificat
+		// instcert:0;numetu:1;nometu:1;etabetu:0;ddnetu:0;lieuetu:0;adretu:0;pourcent:0;compdec:0;compval:1;nomreferent:0;jurycert:1;comcert:0;
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_referentiel)){
+			$s.='refcert:'.$CFG->certificat_sel_referentiel.';';
+		}
+		else{
+			$s.='refcert:1;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_referentiel_instance)){
+			$s.='instcert:'.$CFG->certificat_sel_referentiel_instance.';';
+		}
+		else{
+			$s.='instcert:0;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_etudiant_numero)){
+			$s.='numetu:'.$CFG->certificat_sel_etudiant_numero.';';
+		}
+		else{
+			$s.='numetu:1;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_etudiant_nom_prenom)){
+			$s.='nometu:'.$CFG->certificat_sel_etudiant_nom_prenom.';';
+		}
+		else{
+			$s.='nometu:1;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_etudiant_etablissement)){
+			$s.='etabetu:'.$CFG->certificat_sel_etudiant_etablissement.';';
+		}
+		else{
+			$s.='etabetu:0;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_etudiant_ddn)){
+			$s.='ddnetu:'.$CFG->certificat_sel_etudiant_ddn.';';
+		}
+		else{
+			$s.='ddnetu:0;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_etudiant_lieu_naissance)){
+			$s.='lieuetu:'.$CFG->certificat_sel_etudiant_lieu_naissance.';';
+		}
+		else{
+			$s.='lieuetu:0;';
+		}
+
+				// impression certificat
+		if (isset($CFG->certificat_sel_etudiant_adresse)){
+			$s.='adretu:'.$CFG->certificat_sel_etudiant_adresse.';';
+		}
+		else{
+			$s.='adretu:0;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_certificat_detail)){
+			$s.='detail:'.$CFG->certificat_sel_certificat_detail.';';
+		}
+		else{
+			$s.='detail:1;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_certificat_pourcent)){
+			$s.='pourcent:'.$CFG->certificat_sel_certificat_pourcent.';';
+		}
+		else{
+			$s.='pourcent:0;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_activite_competences)){
+			$s.='compdec:'.$CFG->certificat_sel_activite_competences.';';
+		}
+		else{
+			$s.='compdec:0;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_certificat_competences)){
+			$s.='compval:'.$CFG->certificat_sel_certificat_competences.';';
+		}
+		else{
+			$s.='compval:1;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_certificat_referents)){
+			$s.='nomreferent:'.$CFG->certificat_sel_certificat_referents.';';
+		}
+		else{
+			$s.='nomreferent:0;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_decision_jury)){
+			$s.='jurycert:'.$CFG->certificat_sel_decision_jury.';';
+		}
+		else{
+			$s.='jurycert:1;';
+		}
+
+		// impression certificat
+		if (isset($CFG->certificat_sel_commentaire)){
+			$s.='comcert:'.$CFG->certificat_sel_commentaire.';';
+		}
+		else{
+			$s.='comcert:0;';
+		}
+	}
+	return $s;
+}
+// ---------------------------------
+function initialise_configuration($form, $type='config'){
+// initialise le vecteur de configuration en fonction des parametres saisis dans le formulaire
+// item type config = 'scol', 'creref', 'selref', 'impcert', 'graph', 'light', 'hierarchy'
+// item type config_impression = 'refcert', 'instcert', 'numetu', nometu, etabetu, ddnetu, lieuetu, adretu, pourcent, compdec, compval, nomreferent, jurycert, comcert,
+// Valeurs par defaut 'scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;
+// Valeurs par defaut : refcert:1;instcert:0;numetu:1;nometu:1;etabetu:0;ddnetu:0;lieuetu:0;adretu:0;detail:1;pourcent:0;compdec:0;compval:1;nomreferent:0;jurycert:1;comcert:0;
+
+$s='';
+	if ($type=='config'){
+		// affichage scolarite
+		if (isset($form->scol)){
+			$s.='scol:'.$form->scol.';';
+		}
+		else {
+			$s.='scol:0;';
+		}
+		// creation referentiel
+		if (isset($form->creref)){
+			$s.='creref:'.$form->creref.';';
+		}
+		else{
+			$s.='creref:0;';
+		}
+		// selection referentiel
+		if (isset($form->selref)){
+			$s.='selref:'.$form->selref.';';
+		}
+		else{
+			$s.='selref:0;';
+		}
+
+		// impression certificat
+		if (isset($form->impcert)){
+			$s.='impcert:'.$form->impcert.';';
+		}
+		else{
+			$s.='impcert:0;';
+		}
+
+		// graphique certification
+		if (isset($form->graph)){
+			$s.='graph:'.$form->graph.';';
+		}
+		else{
+			$s.='graph:0;';
+		}
+
+		// affichage light  du referentiel
+		if (isset($form->light)){
+			$s.='light:'.$form->light.';';
+		}
+		else {
+			$s.='light:0;';
+		}
+		// affichage hierarchique des competences
+		if (isset($form->hierarchy)){
+			$s.='hierarchy:'.$form->hierarchy.';';
+		}
+		else {
+			$s.='hierarchy:0;';
+		}
+		// config certif
+		if (isset($form->cfcertif)){
+			$s.='cfcertif:'.$form->cfcertif.';';
+		}
+		else {
+			$s.='cfcertif:0;';
+		}
+		// config certif
+		if (isset($form->certif)){
+			$s.='certif:'.$form->certif.';';
+		}
+		else {
+			$s.='certif:1;';
+		}
+
+	}
+	else{
+
+		//Valeurs par defaut : refcert:1;instcert:0;numetu:1;nometu:1;etabetu:0;ddnetu:0;lieuetu:0;adretu:0;detail:1;pourcent:0;compdec:0;compval:1;nomreferent:0;jurycert:1;comcert:0;
+
+		// impression certificat
+		if (isset($form->refcert)){
+			$s.='refcert:'.$form->refcert.';';
+		}
+		else{
+			$s.='refcert:1;';
+		}
+
+				// impression certificat
+		if (isset($form->instcert)){
+			$s.='instcert:'.$form->instcert.';';
+		}
+		else{
+			$s.='instcert:0;';
+		}
+
+		// impression certificat
+		if (isset($form->numetu)){
+			$s.='numetu:'.$form->numetu.';';
+		}
+		else{
+			$s.='numetu:1;';
+		}
+
+
+		// impression certificat
+		if (isset($form->nometu)){
+			$s.='nometu:'.$form->nometu.';';
+		}
+		else{
+			$s.='nometu:1;';
+		}
+
+		// impression certificat
+		if (isset($form->etabetu)){
+			$s.='etabetu:'.$form->etabetu.';';
+		}
+		else{
+			$s.='etabetu:0;';
+		}
+
+		// impression certificat
+		if (isset($form->ddnetu)){
+			$s.='ddnetu:'.$form->ddnetu.';';
+		}
+		else{
+			$s.='ddnetu:0;';
+		}
+
+
+		// impression certificat
+		if (isset($form->lieuetu)){
+			$s.='lieuetu:'.$form->lieuetu.';';
+		}
+		else{
+			$s.='lieuetu:0;';
+		}
+
+		// impression certificat
+		if (isset($form->adretu)){
+			$s.='adretu:'.$form->adretu.';';
+		}
+		else{
+			$s.='adretu:0;';
+		}
+
+		// impression certificat
+		if (isset($form->detail)){
+			$s.='detail:'.$form->detail.';';
+		}
+		else{
+			$s.='detail:0;';
+		}
+
+		// impression certificat
+		if (isset($form->pourcent)){
+			$s.='pourcent:'.$form->pourcent.';';
+		}
+		else{
+			$s.='pourcent:0;';
+		}
+
+		// impression certificat
+		if (isset($form->compdec)){
+			$s.='compdec:'.$form->compdec.';';
+		}
+		else{
+			$s.='compdec:0;';
+		}
+
+		// impression certificat
+		if (isset($form->compval)){
+			$s.='compval:'.$form->compval.';';
+		}
+		else{
+			$s.='compval:1;';
+		}
+
+		// impression certificat
+		if (isset($form->nomreferent)){
+			$s.='nomreferent:'.$form->nomreferent.';';
+		}
+		else{
+			$s.='nomreferent:0;';
+		}
+
+		// impression certificat
+		if (isset($form->jurycert)){
+			$s.='jurycert:'.$form->jurycert.';';
+		}
+		else{
+			$s.='jurycert:1;';
+		}
+
+		// impression certificat
+		if (isset($form->comcer)){
+			$s.='comcert:'.$form->comcer.';';
+		}
+		else{
+			$s.='comcert:0;';
+		}
+	}
+	return ($s);
+}
+
+ // -----------------------------
+function affiche_config($str_config, $type='config'){
+// item = 'scol', 'creref', 'selref', 'impcert', refcert, instcert, numetu, nometu, etabetu, ddnetu, lieuetu, adretu, pourcent, compdec, compval, referent, jurycert, comcert,
+// 'scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;refcert:1;instcert:0;numetu:1;nometu:1;etabetu:0;ddnetu:0;lieuetu:0;adretu:0;detail:1;pourcent:0;compdec:0;compval:1;nomreferent:0;jurycert:1;comcert:0;'
+// retourne une liste de selecteurs
+// $type : config ou config_impression
+global $CFG;
+	$s='';
+	if ($str_config==''){
+		$str_config=referentiel_creer_configuration($type);
+	}
+	// DEBUG
+	// echo "<br />DEBUG :: lib.php :: 3675 ::  $str_config\n";
+	if ($str_config!=''){
+		$tconfig=explode(';',$str_config);
+		$n=count($tconfig);
+		if ($n>0){
+			$i=0;
+			while ($i<$n){
+				$tconfig[$i]=trim($tconfig[$i]);
+				if ($tconfig[$i]!=''){
+					list($cle, $val)=explode(':',$tconfig[$i]);
+					$cle=trim($cle);
+					$val=trim($val);
+					if ($cle!=''){
+
+						$s.=''.get_string($cle,'referentiel').' ';
+						$str_conf=$this->associe_item_configuration($cle);
+						// creer le parametre si necessaire
+						if (!isset($CFG->$str_conf)){
+							$CFG->$str_conf=0;
+						}
+						if ($CFG->$str_conf==2){
+							$s.= ' (<i>'.$cle.'</i>) <b>'.get_string('config_verrouillee','referentiel').'</b>'."\n";
+ 						}
+						elseif ($val==1){
+							$s.=' (<i>'.$cle.'</i>) <b>'.get_string('yes')."</b>\n";
+ 						}
+						else {
+							$s.=' (<i>'.$cle.'</i>) <b>'.get_string('no')."</b>\n";
+						}
+						$s.='<br />'."\n";
+					}
+				}
+				$i++;
+			}
+		}
+	}
+	return $s;
+}
+
+
     /**
      * @todo Document this function
      * a partir d'une chaine de configuration affiche les boites de saisie
@@ -1398,13 +1980,19 @@ class referentiel {
     // $type : config ou config_impression
     global $CFG;
 
-	   if ($str_config==''){
-            $str_config=referentiel_creer_configuration($type);
-	   }
-	   // DEBUG
-	   // echo "<br />DEBUG :: lib.php :: 754 ::  $str_config\n";
-	   if ($str_config!=''){
-	    $mform->addElement('header', 'configuration', get_string('configuration','referentiel'));
+		if ($str_config==''){
+            $str_config=$this->creer_configuration($type);
+		}
+		// DEBUG
+		// echo "<br />DEBUG :: referentiel.class.php :: 1820 ::  $str_config\n";
+
+		if ($str_config!=''){
+  		if ($type=='config'){
+	    	$mform->addElement('header', 'configuration', get_string('configuration','referentiel'));
+		}
+		else{
+	    	$mform->addElement('header', 'configuration_impression', get_string('configuration_impression','referentiel'));
+		}
         $mform->addElement('html', get_string('aide_referentiel_config_local','referentiel'));
 
 		$tconfig=explode(';',$str_config);
@@ -1419,7 +2007,7 @@ class referentiel {
 					$val=trim($val);
 					if ($cle!=''){
 
-						$str_conf=referentiel_associe_item_configuration($cle);
+						$str_conf=$this->associe_item_configuration($cle);
 						// creer le parametre si necessaire
 						if (!isset($CFG->$str_conf)){
 							$CFG->$str_conf=0;
@@ -1450,35 +2038,151 @@ class referentiel {
 	    }
     }
 
+// -----------------------
+function instance_get_occurrence($instanceid){
+// retourne l'id de l'occurrence de referentiel associée à une instance
+    global $DB;
+    if ($instanceid){
+        $params= array("refid" => "$instanceid");
+        $sql="SELECT ref_referentiel FROM {referentiel} WHERE id=:refid";
+		$instance=$DB->get_record_sql($sql, $params);
+		if ($instance){
+            return $instance->ref_referentiel;
+        }
+    }
+    return 0;
+}
+
+
+// -----------------------
+function site_can_config_referentiel($referentiel_instance_id) {
+// examine en cascade la configuration au niveau du site, de l'occurrence
+// verifier si autorisation de modification de la configuration
+// au niveau de l'instance
+    global $CFG;
+    $config_creref=0;
+    $config_selref=0;
+    $config_affgraph=0;
+    $config_light=0;
+    $config_hierarchy=0;
+
+    $referentiel_referentiel_id=$this->instance_get_occurrence($referentiel_instance_id);
+
+	// configuration
+    if (!isset($CFG->referentiel_creation_limitee)){
+		$CFG->referentiel_creation_limitee=0;
+	}
+	// configuration
+    if (!isset($CFG->referentiel_selection_autorisee)){
+		$CFG->referentiel_selection_autorisee=0;
+	}
+	// configuration
+    if (!isset($CFG->referentiel_affichage_graphique)){
+		$CFG->referentiel_affichage_graphique=0;
+	}
+    // configuration
+    if (!isset($CFG->referentiel_light_display)){
+		$CFG->referentiel_light_display=0;
+    }
+
+    // configuration
+    if (!isset($CFG->referentiel_hierarchy)){
+		$CFG->referentiel_hierarchy=0;
+    }
+
+	if ($CFG->referentiel_creation_limitee!=2){
+        /// verifier valeur globale
+        if ($referentiel_referentiel_id){
+            if ($this->ref_get_item_config('creref', $referentiel_referentiel_id, 'config')==0){
+                /// retourner valeur locale
+                // $config_creref=(referentiel_get_item_configuration('creref', $referentiel_instance_id, 'config')==0);
+                $config_creref=1;
+            }
+        }
+    }
+
+
+	if ($CFG->referentiel_selection_autorisee!=2) {
+        /// verifier valeur globale
+        if ($referentiel_referentiel_id){
+            if ($this->ref_get_item_config('selref', $referentiel_referentiel_id, 'config')==0){
+            	//$config_selref=(referentiel_get_item_configuration('selref', $referentiel_instance_id, 'config')==0);
+                $config_selref=1;
+            }
+        }
+    }
+	if ($CFG->referentiel_affichage_graphique!=2) {
+        /// verifier valeur globale
+        if ($referentiel_referentiel_id){
+            if ($this->ref_get_item_config('graph', $referentiel_referentiel_id, 'config')==0){
+            	/// renvoyer valeur locale
+                //$config_affgraph=(referentiel_get_item_configuration('graph', $referentiel_instance_id, 'config')==0);
+                $config_affgraph=1;
+            }
+        }
+    }
+	if ($CFG->referentiel_light_display!=2) {
+        /// verifier valeur globale
+        if ($referentiel_referentiel_id){
+            if ($this->ref_get_item_config('light', $referentiel_referentiel_id, 'config')==0){
+            	/// renvoyer valeur locale
+                // $config_light=(referentiel_get_item_configuration('light', $referentiel_instance_id, 'config')==0);
+                $config_light=1;
+            }
+        }
+    }
+	if ($CFG->referentiel_hierarchy!=2) {
+        /// verifier valeur globale
+        if ($referentiel_referentiel_id){
+			// ATTENTION : test inverted
+			if ($this->ref_get_item_config('hierarchy', $referentiel_referentiel_id, 'config')==0){
+            	/// renvoyer valeur locale
+                //$config_hierarchy=(referentiel_get_item_configuration('hierarchy', $referentiel_instance_id, 'config')==0);
+                $config_hierarchy=1;
+            }
+        }
+    }
+	// DEBUG
+	//echo "<br />lib_config.php :: 170 :: CREREF:$config_creref SELREF: $config_selref AFFGRAPH: $config_affgraph LIGTH: $config_light HIERARCHY: $config_hierarchy\n";
+    //exit;
+	return  ($config_creref && $config_selref && $config_affgraph && $config_light && $config_hierarchy);
+}
+
+
     /**
      * @todo Document this function
      */
     function setup_elements(&$mform, $referentielinstance) {
         global $CFG, $COURSE;
+		//print_object($referentielinstance);
 
-        if (empty($referentielinstance->id)){
-            // $this->selection_configuration($mform, $referentielinstance->config, 'config');
+        if (empty($referentielinstance->referentiel->id)){
+            $this->selection_configuration($mform, '', 'config');
+			$this->selection_configuration($mform, '', 'config_impression');
         }
-        else if (!empty($referentielinstance->id) && referentiel_site_can_config_referentiel($referentielinstance->id)){
-            $this->selection_configuration($mform, $referentielinstance->config, 'config');
-        }
-        else{
-            // niveau supérieur de configuration
-            // echo '<i>'.get_string('referentiel_config_local_interdite','referentiel').'</i>'."\n";
-            // echo '<br /><br />'.referentiel_affiche_config($referentielinstance->config_globale, 'config');
-            // echo '<input type="hidden" name="config" value="'.$mform->config.'" />'."\n";
-            $mform->addElement('hidden', 'config', $referentielinstance->config_globale);
-            $mform->setType('config', PARAM_TEXT);
-            $mform->setDefault('config', $referentielinstance->config_globale);
-        }
+        elseif (!empty($referentielinstance->referentiel->id)){
+            $ok=$this->site_can_config_referentiel($referentielinstance->referentiel->id);
+			if ($ok){
+            	$this->selection_configuration($mform, $referentielinstance->referentiel->config, 'config');
+				$this->selection_configuration($mform, $referentielinstance->referentiel->config_impression, 'config_impression');
+        	}
+        	else{
+            	// niveau supérieur de configuration
+	    		$mform->addElement('header', 'configuration', get_string('configuration','referentiel'));
+		        $mform->addElement('html', '<i>'.get_string('referentiel_config_local_interdite','referentiel').'</i>');
+    	        $mform->addElement('html', '<br /><br />'.$this->affiche_config($referentielinstance->referentiel_referentiel->config, 'config'));
+        	    $mform->addElement('html', '<br /><br />'.$this->affiche_config($referentielinstance->referentiel_referentiel->config_impression, 'config_impression'));
 
+	            $mform->addElement('hidden', 'config', $referentielinstance->referentiel_referentiel->config);
+    	        $mform->setType('config', PARAM_TEXT);
+        	    $mform->setDefault('config', $referentielinstance->referentiel_referentiel->config);
+            	$mform->addElement('hidden', 'config_impression', $referentielinstance->referentiel_referentiel->config_impression);
+	            $mform->setType('config_impression', PARAM_TEXT);
+    	        $mform->setDefault('config_impression', $referentielinstance->referentiel_referentiel->config_impression);
+        	}
+		}
 
-
-        ////if ($CFG->version < 2011120100) {
-            $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
-        //} else {
-            //$course_context = context_course::instance($COURSE->id);
-        //}
+        $course_context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 
         // plagiarism_get_form_elements_module($mform, $course_context);
     }
@@ -1505,6 +2209,7 @@ class referentiel {
     function form_validation($data, $files) {
         return array();
     }
+
 
 
 }

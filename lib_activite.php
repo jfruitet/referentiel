@@ -551,7 +551,6 @@ global $appli;
 			foreach ($records as $record) {   
 				// Afficher 	
 				referentiel_print_activite_detail($record);
-				referentiel_menu_activite_detail($context, $record->id, $referentiel_instance->id, $record->approved, $select_acc, $data_f);
 			}
 		}
 		else{

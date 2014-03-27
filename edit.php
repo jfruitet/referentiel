@@ -172,11 +172,11 @@
 							$msg=get_string("referentiel", "referentiel")." ".$referentiel_referentiel->id." ".get_string("domaine", "referentiel")." ".$deleteid;
 					}
 					else if ($action=="modifiercompetence"){
-							$return=referentiel_supprime_competence($form->competence_id);
+							$return=referentiel_supprime_competence($deleteid);
 							$msg=get_string("referentiel", "referentiel")." ".$referentiel_referentiel->id." ".get_string("competence", "referentiel")." ".$deleteid;
 					}
 					else if ($action=="modifieritem"){
-							$return=referentiel_supprime_item($form->item_id);
+							$return=referentiel_supprime_item($deleteid);
 							$msg=get_string("referentiel", "referentiel")." ".$referentiel_referentiel->id." ".get_string("item", "referentiel")." ".$deleteid;
 					}
 
@@ -213,9 +213,9 @@
                     // exit;
                     $form2= new Object();
                     $form2->domaine_id=$id_domaine;
-        		    		$form2->type_domaine=$form['type_domaine_'.$id_domaine];
-        		    		$form2->minima_domaine=$form['minima_domaine_'.$id_domaine];
-        		    		$form2->seuil_domaine=$form['seuil_domaine_'.$id_domaine];
+        		    $form2->type_domaine=$form['type_domaine_'.$id_domaine];
+        		    $form2->minima_domaine=$form['minima_domaine_'.$id_domaine];
+        		    $form2->seuil_domaine=$form['seuil_domaine_'.$id_domaine];
                     $form2->num_domaine=$form['num_domaine_'.$id_domaine];
                     $form2->nb_competences=$form['nb_competences_'.$id_domaine];
                     if (isset($form['code_domaine_'.$id_domaine])){
@@ -223,7 +223,7 @@
                     }
                     else{
                       	$form2->code_domaine='';
-										}
+					}
                     if (isset($form['description_domaine_'.$id_domaine])){
                         $form2->description_domaine=$form['description_domaine_'.$id_domaine];
                     }
@@ -234,8 +234,8 @@
                     //echo "<br />DEBUG :: edit.php :: 262<br />\n";
                     //print_object($form2);
                     //echo "<br />\n";
-										//exit;
-										$return = referentiel_update_domaine($form2);
+					//exit;
+					$return = referentiel_update_domaine($form2);
                     if (!$return) {
                         print_error("Could not update domain $form2->domaine_id of the referentiel", "view.php?id=".$cm->id);
                     }

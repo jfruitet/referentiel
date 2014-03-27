@@ -31,11 +31,18 @@ defined('MOODLE_INTERNAL') || die();
  */
 class moodle1_mod_referentiel_handler extends moodle1_mod_handler {
 
-    /** @var moodle1_file_manager */
-    protected $fileman = null;
-
+    /** @var array in-memory cache for the course module information for the current referentiel  */
+    protected $cminfo = null;
+   
     /** @var int cmid */
     protected $moduleid = null;
+	
+	/** @var moodle1_file_manager */
+    protected $fileman = null;
+
+    /** @var moodle1_inforef_manager */
+    protected $inforefman = null;
+
 
 
     /**
@@ -77,7 +84,7 @@ class moodle1_mod_referentiel_handler extends moodle1_mod_handler {
 
             //@todo process user data
             new convert_path('occurrence', '/MOODLE_BACKUP/COURSE/MODULES/MOD/REFERENTIEL/OCCURRENCE'),
-// MODIF JF 2012/03/12
+
             new convert_path('protocole', '/MOODLE_BACKUP/COURSE/MODULES/MOD/REFERENTIEL/OCCURRENCE/PROTOCOLE'),
 
             new convert_path('domaines', '/MOODLE_BACKUP/COURSE/MODULES/MOD/REFERENTIEL/OCCURRENCE/DOMAINES'),
@@ -125,20 +132,17 @@ class moodle1_mod_referentiel_handler extends moodle1_mod_handler {
     public function process_referentiel($data, $raw) {
         // get the course module id and context id
         $instanceid     = $data['id'];
-        $cminfo         = $this->get_cminfo($instanceid);
-        $this->moduleid = $cminfo['id'];
+        $this->cminfo = $this->get_cminfo($instanceid);
+        $this->moduleid = $this->cminfo['id'];
         $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
+        // get a fresh new inforef manager for this instance
+        $this->inforefman = $this->converter->get_inforef_manager('activity', $moduleid);
+ 		        
         // get a fresh new file manager for this instance
         $this->fileman = $this->converter->get_file_manager($contextid, 'mod_referentiel');
 
         // convert course files embedded into the intro
-        //     $fileareas = array('referentiel', 'document', 'consigne', 'activite', 'task', 'certificat', 'scolarite', 'pedagogie', 'archive');
-        /*
-        $this->fileman->filearea = 'referentiel';
-        $this->fileman->itemid   = 0;
-        $data['referentiel'] = moodle1_converter::migrate_referenced_files($data['referentiel'], $this->fileman);
-        */
         $this->fileman->filearea = 'intro';
         $this->fileman->itemid   = 0;
         $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
@@ -178,7 +182,7 @@ class moodle1_mod_referentiel_handler extends moodle1_mod_handler {
         $this->xmlwriter->end_tag('referentiel');
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
-
+/*
         // write inforef.xml
         $this->open_xml_writer("activities/referentiel_{$this->moduleid}/inforef.xml");
         $this->xmlwriter->begin_tag('inforef');
@@ -189,6 +193,17 @@ class moodle1_mod_referentiel_handler extends moodle1_mod_handler {
         $this->xmlwriter->end_tag('fileref');
         $this->xmlwriter->end_tag('inforef');
         $this->close_xml_writer();
+*/
+
+        // write inforef.xml
+        $this->inforefman->add_refs('file', $this->fileman->get_fileids());
+        $this->open_xml_writer("activities/referentiel_{$this->moduleid}/inforef.xml");
+        $this->inforefman->write_refs($this->xmlwriter);
+        $this->close_xml_writer();
+
+        // get ready for the next instance
+        $this->cminfo   = null;
+		$this->moduleid   = null;     
     }
     
 
@@ -432,6 +447,12 @@ class moodle1_mod_referentiel_handler extends moodle1_mod_handler {
      */
     public function process_consigne($data) {
         $this->write_xml('consigne', $data, array('/consigne/id'));
+
+        $this->fileman->filearea = 'consigne';
+        $this->fileman->itemid   = $data['id'];
+        $this->fileman->userid   = $data['userid'];
+        $data['consigne'] = moodle1_converter::migrate_referenced_files($data['consigne'], $this->fileman);        		             
+        
     }
 
     /**
@@ -508,6 +529,7 @@ class moodle1_mod_referentiel_handler extends moodle1_mod_handler {
      */
     public function on_documents_end() {
         $this->xmlwriter->end_tag('documents');
+        
     }
 
     /**
@@ -516,6 +538,12 @@ class moodle1_mod_referentiel_handler extends moodle1_mod_handler {
      */
     public function process_document($data) {
         $this->write_xml('document', $data, array('/document/id'));
+        
+        $this->fileman->filearea = 'document';
+        $this->fileman->itemid   = $data['id'];
+        $this->fileman->userid   = $data['userid'];
+        $data['document'] = moodle1_converter::migrate_referenced_files($data['document'], $this->fileman);        
+        
     }
 
     /**
@@ -650,6 +678,14 @@ class moodle1_mod_referentiel_handler extends moodle1_mod_handler {
         $this->write_xml('pedagogie_record', $data, array('/pedagogie_record/id'));
     }
 
+    /**
+     * Provides access to the instance's inforef manager
+     *
+     * @return moodle1_inforef_manager
+     */
+    public function get_inforef_manager() {
+        return $this->inforefman;
+    }
 
 
 }

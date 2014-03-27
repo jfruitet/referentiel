@@ -850,7 +850,7 @@ global $DB;
 function referentiel_get_liste_codes_competence_tache($ref_task) {
 global $DB;
 	// DEBUG
-	// echo '<br />DEBUG :: lib_task.php :: 652 :: Tache : '.$ref_task."\n";
+	// echo '<br />DEBUG :: lib_task.php :: 853:: Tache : '.$ref_task."\n";
 	if ($ref_task>0){
 		// verifier si association existe
 		$params=array("ref_task"=>"$ref_task");

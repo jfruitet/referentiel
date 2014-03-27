@@ -27,7 +27,7 @@
  * 
  * @author jfruitet
  * @version $Id: lib.php,v 2.0 2011/04/20 00:00:00 jfruitet Exp $
- * @package referentiel v 6.0.00 2011/20/01 00:00:00
+D:\xampp\htdocs\moodle24\mod\referentiel\lib_repartition.php * @package referentiel v 6.0.00 2011/20/01 00:00:00
  **/
  
 // Version Moodle 2
@@ -43,9 +43,13 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 // 2010/10/18 : configuration
 require_once ("class/referentiel.class.php");
 
+// CRON
+require_once ("lib_cron.php");
 
 // les constantes suivantes permettent de tuner le fonctionnement du module
 // a ne modifier qu'avec précaution
+define('MAXPARPAGE', 15);// Nombre d'items par page pour la pagination des affichages
+
 // La bibliothèque Overlib n'est plus intégrée par défaut depuis Moodle 2.3
 // or je l'utilise pour afficher les compétences en survol...
 $OverlibJs='/mod/referentiel/overlib/overlib.js';
@@ -67,10 +71,10 @@ define ('REFERENTIEL_OUTCOMES', 1);   // placer à 0 pour désactiver le traitem
 // DEBUG ?
 // si à 1 le cron devient très bavard :))
 // et les messages en attente portent sur une semaine au lieu de deux jours.
-define ('REFERENTIEL_DEBUG', 0);    // DEBUG INACTIF
+define ('REFERENTIEL_DEBUG', 0);          // DEBUG INACTIF
 // define ('REFERENTIEL_DEBUG', 1);       // DEBUG ACTIF  : le cron devient très bavard :))
 define ('OUTCOMES_SUPER_DEBUG', 0);       // SUPER DEBUG OUTCOMES INACTIF
-// define ('OUTCOMES_SUPER_DEBUG', 1);       // SUPER DEBUG OUTCOMES ACTIF : affichage tres detaille
+// define ('OUTCOMES_SUPER_DEBUG', 1);    // SUPER DEBUG OUTCOMES ACTIF : affichage tres detaille
 
 define('MAXLENCODE', 220);// Longueur maximale de la liste des codes d'item
 // au delà de laquelle les certificats ne sont plus affichés dans un tableau par la fonction locallib.php::referentiel_affiche_certificat_consolide()
@@ -113,10 +117,1959 @@ define('MAXLIGNEGRAPH', 15);  // Nombre de lignes par graphique
 /// Liste des rubriques (non exhaustive)
 
 /// CRON
+
 /// CONFIGURATION
+
+// USERS
+
+/**
+ * This function get all user role in current course
+ *
+ * @param courseid reference course id
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_course_users($referentiel_instance){
+global $DB;
+    if ($cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id, $referentiel_instance->course)) {
+		// SQL
+		$params = array("$referentiel_instance->course", "$referentiel_instance->course", "guest");
+		
+	    $rq = "SELECT DISTINCT u.id FROM {user} u
+LEFT OUTER JOIN
+    {user_lastaccess} ul on (ul.courseid = ?)
+	WHERE u.deleted = 0
+        AND (ul.courseid = ? OR ul.courseid IS NULL)
+        AND u.username != ?";
+		// DEBUG
+		// echo "<br /> DEBUG <br />\n";
+		// echo "<br /> lib_users.php :: referentiel_get_course_users() :: 171<br />SQL&gt;$rq\n";
+
+        $ru=$DB->get_records_sql($rq, $params);
+		// print_r($ru);
+		// exit;
+		return $ru;
+	}
+	return NULL;
+}
+
+
+// ACCOMPAGNEMENT
+/**
+ * This function returns records of accompagnement from table referentiel_accompagnement
+ *
+ * @param id reference instance
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+// -----------------------
+function referentiel_get_accompagnements($referentiel_id){
+global $DB;
+	if (isset($referentiel_id) && ($referentiel_id>0)){
+        $params=array("refid" => "$referentiel_id");
+        $sql="SELECT * FROM {referentiel_accompagnement} WHERE ref_instance=:refid";
+		return $DB->get_records_sql($sql, $params);
+	}
+	else
+		return NULL;
+}
+
+// -----------------------
+function referentiel_delete_accompagnement_record($id) {
+// suppression de l'accompagnement associe
+global $DB;
+    $ok=false;
+    if (!empty($id)){
+		$ok = $DB->delete_records("referentiel_accompagnement", array("id" => "$id"));
+	}
+    return $ok;
+}
+
+
 /// ACTIVITES
+
+/**
+ * This function returns records from table referentiel_activite
+ *
+ * @param id reference activite
+ * @param select clause : ' AND champ=valeur,  ... '
+ * @param order clause : ' champ ASC|DESC, ... '
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_activites($referentiel_id, $select="", $order=""){
+global $DB;
+	if (!empty($referentiel_id)){
+	    $params = array("refid" => "$referentiel_id");
+
+		if (empty($order)){
+			$order= 'userid ASC, date_creation DESC ';
+		}
+		$sql="SELECT * FROM {referentiel_activite} WHERE ref_referentiel=:refid  $select ORDER BY $order ";
+		return $DB->get_records_sql($sql, $params);
+	}
+	else
+		return 0;
+}
+
+/**
+ * This function returns records from table referentiel_activite
+ *
+ * @param id reference activite
+ * @param select clause : ' AND champ=valeur,  ... '
+ * @param order clause : ' champ ASC|DESC, ... '
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_activites_instance($referentiel_instance_id, $select="", $order=""){
+global $DB;
+	if (isset($referentiel_instance_id) && ($referentiel_instance_id>0)){
+		if (empty($order)){
+			$order= 'userid ASC, date_creation DESC ';
+		}
+		$params = array("refid" => "$referentiel_instance_id");
+        $sql="SELECT * FROM {referentiel_activite} WHERE ref_instance=:refid  $select ORDER BY $order ";
+        return $DB->get_records_sql($sql, $params);
+    }
+
+	else
+		return NULL;
+}
+
+/**
+ * Given an activity id,
+ * this function will permanently delete the activite instance
+ * and any document that depends on it.
+ *
+ * @param object $id
+ * @return boolean Success/Failure
+ **/
+
+function referentiel_delete_activity_record($id) {
+// suppression activite + documents associes
+global $DB;
+$ok_activite=false;
+	if (isset($id) && ($id>0)){
+		if ($activite = $DB->get_record("referentiel_activite", array("id" => "$id"))) {
+	   		// Delete any dependent records here
+
+			// Si c'est une activite - tache il faut aussi supprimer les liens vers cette tache
+			if (isset($activite->ref_task) && ($activite->ref_task>0) && isset($activite->userid) && ($activite->userid>0)){
+                $params=array("taskid" => "$activite->ref_task" , "userid" => "$activite->userid");
+                $sql="SELECT * FROM {referentiel_a_user_task} WHERE ref_task=:taskid AND ref_user=:userid";
+                $a_t_records = $DB->get_records_sql($sql, $params);
+				if ($a_t_records){
+					foreach ($a_t_records as $a_t_record){
+						// suppression
+						referentiel_delete_a_user_task_record($a_t_record->id);
+					}
+				}
+			}
+
+			// Si c'est une activite - module il faut aussi supprimer 
+			if (!empty($activite->id) && !empty($activite->userid)){
+                $params=array("activiteid" => $activite->id, "userid" => $activite->userid);
+                $sql="SELECT * FROM {referentiel_activite_modules} WHERE activiteid=:activiteid AND userid=:userid";
+                $ams = $DB->get_records_sql($sql, $params);
+				if ($ams){
+					foreach ($ams as $am){
+						// suppression
+						$DB->delete_records("referentiel_activite_modules", array("id" => $am->id));
+					}
+				}
+			}
+
+			$ok_document=true;
+			if ($documents = $DB->get_records("referentiel_document", array("ref_activite" => "$id"))) {
+				// DEBUG
+				// print_object($documents);
+				// echo "<br />";
+				// suppression des documents associes dans la table referentiel_document
+				foreach ($documents as $document){
+					// suppression
+					$ok_document=$ok_document && referentiel_delete_document_record($document->id);
+				}
+			}
+			// suppression activite
+			if ($ok_document){
+                $ok_activite = $DB->delete_records("referentiel_activite", array("id" => "$id"));
+				if 	($ok_activite
+					&& isset($activite->userid) && ($activite->userid>0)
+					&& isset($activite->competences_activite) && ($activite->competences_activite!='')){
+					// mise a jour du certificat
+					referentiel_mise_a_jour_competences_certificat_user($activite->competences_activite, '', $activite->userid, $activite->ref_referentiel, $activite->approved, true, true);
+				}
+			}
+		}
+	}
+    return $ok_activite;
+}
+
+/**
+ * Given a document id,
+ * this function will permanently delete the document instance
+ *
+ * @param object $id
+ * @return boolean Success/Failure
+ **/
+
+function referentiel_delete_document_record($id) {
+// suppression document
+global $DB;
+global $USER;
+$ok_document=false;
+	if (isset($id) && ($id>0)){
+		if ($document = $DB->get_record("referentiel_document", array("id" => "$id"))) {
+			//  CODE A AJOUTER SI GESTION DE FICHIERS DEPOSES SUR LE SERVEUR
+			// Moodle 2.0
+			// A TERMINER
+			// DEBUG
+            // echo "<br />lib.php :: 1701 :: GESTION DES FICHIERS A TERMINER ICI\n";
+            // exit;
+            if (!preg_match('/http/', $document->url_document)){
+                // Fichier à supprimer
+                referentiel_delete_a_file( $document->url_document);
+            }
+			// mettre a joure la date de l'activite
+            $activite = $DB->get_record('referentiel_activite', array('id' => $document->ref_activite));
+            if ($activite){
+                if ($USER->id==$activite->userid){
+                    $ok=$DB->set_field('referentiel_activite','date_modif_student',time(),array('id'=>$activite->id));
+		        }
+		        else{
+                   	$ok=$DB->set_field('referentiel_activite','date_modif',time(), array('id'=>$activite->id));
+		        }
+            }
+
+            $ok_document= $DB->delete_records("referentiel_document", array("id" => "$id"));
+		}
+	}
+	return $ok_document;
+}
+
+
 /// TACHES
-/// CERTIFICATS
+/**
+ * This function returns records from table referentiel_task
+ *
+ * @param id reference activite
+ * @param select clause : ' AND champ=valeur,  ... '
+ * @param order clause : ' champ ASC|DESC, ... '
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_tasks_instance($referentiel_instance_id){
+global $DB;
+	if (isset($referentiel_instance_id) && ($referentiel_instance_id>0)){
+    	$params= array("refid" => "$referentiel_instance_id");
+        $sql="SELECT * FROM {referentiel_task} WHERE ref_instance=:refid ";
+		return $DB->get_records_sql($sql, $params);
+	}
+	else
+		return NULL;
+}
+
+/**
+ * Given an task id,
+ * this function will permanently delete the task instance
+ * and any consigne that depends on it.
+ *
+ * @param object $id
+ * @return boolean Success/Failure
+ **/
+
+ // -----------------------
+function referentiel_delete_task_record($id) {
+// suppression task + consignes associes
+global $DB;
+$ok_task=false;
+	if (isset($id) && ($id>0)){
+		if ($task = $DB->get_record("referentiel_task", array("id" => "$id"))) {
+	   		// Delete any dependent records here
+			$ok_association=true;
+			if ($r_a_users_tasks = $DB->get_records("referentiel_a_user_task", array("ref_task"=>$id))) {
+				// DEBUG
+				// print_object($r_a_users_tasks);
+				// echo "<br />";
+				// suppression des associations
+				foreach ($r_a_users_tasks as $r_a_user_task){
+					// suppression
+					$ok_association=$ok_association && referentiel_delete_a_user_task_record($r_a_user_task->id);
+				}
+			}
+
+			$ok_consigne=true;
+			if ($consignes = $DB->get_records("referentiel_consigne", array("ref_task" => "$id"))) {
+				// DEBUG
+				// print_object($consignes);
+				// echo "<br />";
+				// suppression des consignes associes dans la table referentiel_consigne
+				foreach ($consignes as $consigne){
+					// suppression
+					$ok_consigne=$ok_consigne && referentiel_delete_consigne_record($consigne->id);
+				}
+			}
+
+			// suppression task
+			if ($ok_consigne && $ok_association){
+                $ok_task = $DB->delete_records("referentiel_task", array("id" => "$id"));
+			}
+		}
+	}
+    return $ok_task;
+}
+
+
+/**
+ * Given a a_user_task id,
+ * this function will permanently delete the instance
+ *
+ * @param object $id
+ * @return boolean Success/Failure
+
+ **/
+
+// -----------------------
+function referentiel_delete_a_user_task_record($id){
+// suppression association user task
+global $DB;
+$ok_association=false;
+	if (isset($id) && ($id>0)){
+		if ($association = $DB->get_record("referentiel_a_user_task", array("id" => "$id"))) {
+            $ok_association= $DB->delete_records("referentiel_a_user_task", array("id" => "$id"));
+		}
+	}
+	return $ok_association;
+}
+
+
+/**
+ * Given a consigne id,
+ * this function will permanently delete the consigne instance
+ *
+ * @param object $id
+ * @return boolean Success/Failure
+ **/
+// -----------------------
+function referentiel_delete_consigne_record($id) {
+// suppression consigne
+global $DB;
+$ok_consigne=false;
+	if (!empty($id)){
+		if ($consigne = $DB->get_record("referentiel_consigne", array("id" => "$id"))) {
+            if (!preg_match('/http/', $consigne->url_consigne)){
+                // Fichier à supprimer
+                referentiel_delete_a_file($consigne->url_consigne);
+            }
+
+			$ok_consigne= $DB->delete_records("referentiel_consigne", array("id" => "$id"));
+			if ($ok_consigne){
+                $task = $DB->get_record('referentiel_task', array('id' => $consigne->ref_task));
+                if ($task){
+                    $ok=$DB->set_field('referentiel_task','date_modif',time(), array('id'=>$task->id));
+                }
+            }
+		}
+	}
+	return $ok_consigne;
+}
+
+
+// TRAITEMENT DES LISTES code, poids, empreintes
+
+/**
+ purge
+*/
+function referentiel_purge_dernier_separateur($s, $sep){
+	if ($s){
+		$s=trim($s);
+		if ($sep){
+			$pos = strrpos($s, $sep);
+			if ($pos === false) { // note : trois signes egal
+				// pas trouve
+			}
+			else{
+				// supprimer le dernier "/"
+				if ($pos==strlen($s)-1){
+					return substr($s,0, $pos);
+				}
+			}
+		}
+	}
+	return $s;
+}
+
+// COMPETENCES
+
+// Liste des codes de competences du referentiel
+function referentiel_get_liste_codes_competence($id){
+// retourne la liste des codes de competences pour la table referentiel
+global $DB;
+	if (!empty($id)){
+        $params = array("id" => "$id");
+        $sql="SELECT * FROM {referentiel_referentiel} WHERE id=:id";
+		$record_r=$DB->get_record_sql($sql, $params);
+		if ($record_r){
+    		// afficher
+			// DEBUG
+			// echo "<br/>DEBUG ::<br />\n";
+			// print_r($record_r);
+			return ($record_r->liste_codes_competence);
+		}
+	}
+	return 0;
+}
+
+
+// Liste des codes de competences du referentiel
+function referentiel_new_liste_codes_competence($id){
+// regenere la liste des codes de competences pour la table referentiel
+global $DB;
+$liste_codes_competence="";
+	if (!empty($id)){
+        $params = array("id" => "$id");
+        $sql="SELECT * FROM {referentiel_referentiel} WHERE id=:id";
+		$record_r=$DB->get_record_sql($sql, $params);
+		if ($record_r){
+    		// afficher
+			// DEBUG
+			// echo "<br/>DEBUG ::<br />\n";
+			// print_r($record_r);
+			$old_liste_codes_competence=$record_r->liste_codes_competence;
+			$liste_codes_competence="";
+			// charger les domaines associes au referentiel courant
+			$referentiel_id=$id; // plus pratique
+			// LISTE DES DOMAINES
+            $sql2="SELECT * FROM {referentiel_domaine} WHERE ref_referentiel=:id  ORDER BY num_domaine ASC ";
+			$records_domaine = $DB->get_records_sql($sql2, $params);
+			if ($records_domaine){
+    			// afficher
+				// DEBUG
+				// echo "<br/>DEBUG ::<br />\n";
+				// print_r($records_domaine);
+				foreach ($records_domaine as $record_d){
+                    $params3 = array("id" => "$record_d->id");
+                    $sql3="SELECT * FROM {referentiel_competence} WHERE ref_domaine=:id ORDER BY num_competence ASC ";
+					$records_competences = $DB->get_records_sql($sql3, $params3);
+			   		if ($records_competences){
+						// DEBUG
+						// echo "<br/>DEBUG :: COMPETENCES <br />\n";
+						// print_r($records_competences);
+						foreach ($records_competences as $record_c){
+							// ITEM
+							$compteur_item=0;
+                            $params4 = array("id" => "$record_c->id");
+                            $sql4="SELECT * FROM {referentiel_item_competence} WHERE ref_competence=:id ORDER BY num_item ASC ";
+							$records_items = $DB->get_records_sql($sql4, $params4);
+					    	if ($records_items){
+								// DEBUG
+								// echo "<br/>DEBUG :: ITEMS <br />\n";
+								// print_r($records_items);
+								foreach ($records_items as $record_i){
+									$liste_codes_competence.=$record_i->code_item."/";
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return $liste_codes_competence;
+}
+
+// --------------------
+function referentiel_set_liste_codes_competence($id, $liste_codes_competence){
+global $DB;
+	if (isset($id) && ($id>0)){
+        $liste_codes_competence=($liste_codes_competence);
+        $ok=$DB->set_field("referentiel_referentiel", "liste_codes_competence", "$liste_codes_competence", array("id" => "$id"));
+        if ($ok) return 1;
+	}
+	return 0;
+}
+
+
+// Liste des poids de competences du referentiel
+function referentiel_get_liste_poids_competence($id){
+// retourne la liste des poids de competences pour la table referentiel
+// MODIF JF 2009/10/16
+global $DB;
+	if (!empty($id)){
+	    $params = array("id" => "$id");
+        $sql= "SELECT * FROM {referentiel_referentiel} WHERE id=:id";
+		$record_r=$DB->get_record_sql($sql, $params);
+		if ($record_r){
+    		// afficher
+			// DEBUG
+			// echo "<br/>DEBUG ::<br />\n";
+			// print_r($record_r);
+			if ($record_r->liste_poids_competence==''){
+				$record_r->liste_poids_competence=referentiel_new_liste_poids_competence($id);
+				referentiel_set_liste_poids_competence($id, $record_r->liste_poids_competence);
+			}
+			return ($record_r->liste_poids_competence);
+		}
+	}
+	return 0;
+}
+
+
+// Liste des poids de competences du referentiel
+function referentiel_new_liste_poids_competence($id){
+// regenere la liste des poids de competences pour la table referentiel
+global $DB;
+$liste_poids_competence="";
+	if (!empty($id)){
+	    $params = array("id" => "$id");
+        $sql="SELECT * FROM {referentiel_referentiel} WHERE id=:id";
+		$record_r=$DB->get_record_sql($sql, $params);
+		if ($record_r){
+    		// afficher
+			// DEBUG
+			// echo "<br/>DEBUG ::<br />\n";
+			// print_r($record_r);
+			$old_liste_poids_competence=$record_r->liste_poids_competence;
+			$liste_poids_competence="";
+			// charger les domaines associes au referentiel courant
+			// LISTE DES DOMAINES
+			$sql2="SELECT * FROM {referentiel_domaine} WHERE ref_referentiel=:id ORDER BY num_domaine ASC";
+			$records_domaine = $DB->get_records_sql($sql2, $params);
+			if ($records_domaine){
+    			// afficher
+				// DEBUG
+				// echo "<br/>DEBUG ::<br />\n";
+				// print_r($records_domaine);
+				foreach ($records_domaine as $record_d){
+        			$params3 = array("id" => "$record_d->id");
+                    $sql3="SELECT * FROM {referentiel_competence} WHERE ref_domaine=:id ORDER BY num_competence ASC";
+					$records_competences = $DB->get_records_sql($sql3, $params3);
+			   		if ($records_competences){
+						// DEBUG
+						// echo "<br/>DEBUG :: COMPETENCES <br />\n";
+						// print_r($records_competences);
+						foreach ($records_competences as $record_c){
+							$params4 = array("id" => "$record_c->id");
+                            $sql4="SELECT * FROM {referentiel_item_competence} WHERE ref_competence=:id ORDER BY num_item ASC ";
+							// ITEM
+							$compteur_item=0;
+							$records_items = $DB->get_records_sql($sql4, $params4);
+					    	if ($records_items){
+								// DEBUG
+								// echo "<br/>DEBUG :: ITEMS <br />\n";
+								// print_r($records_items);
+								foreach ($records_items as $record_i){
+									$liste_poids_competence.=$record_i->poids_item."/";
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return $liste_poids_competence;
+}
+
+/**
+ * Given an id referentiel_referentiel and a list of poids
+ * this function will update liste_poids_competence.
+ *
+ * @param id, list
+ * @return boolean Success/Fail
+ **/
+
+function referentiel_set_liste_poids_competence($id, $liste_poids_competence){
+global $DB;
+	if (isset($id) && ($id>0)){
+        $ok=$DB->set_field("referentiel_referentiel", "liste_poids_competence", "$liste_poids_competence", array("id" => "$id"));
+        if ($ok) return 1;
+	}
+	return 0;
+}
+
+/**
+ * Given an array ,
+ * return a new liste_codes_competence.
+ *
+ * @param array $instance An object from the form in mod_activite.html
+ * @return string
+ **/
+function reference_conversion_code_2_liste_competence($separateur, $tab_code_item){
+$lc="";
+// print_r($tab_code_item);
+// echo "<br />DEBUG\n";
+
+	if (count($tab_code_item)>0){
+		for ($i=0; $i<count($tab_code_item); $i++){
+			$lc.=$tab_code_item[$i].$separateur;
+		}
+	}
+	return $lc;
+}
+
+
+// Liste des empreintes de competences du rÃ©fÃ©rentiel
+function referentiel_get_liste_empreintes_competence($id){
+// retourne la liste des empreintes de competences pour la table referentiel
+global $DB;
+	if (!empty($id)){
+	    $params = array("id" => "$id");
+	    $sql="SELECT * FROM {referentiel_referentiel} WHERE id=:id";
+		$record_r=$DB->get_record_sql($sql, $params);
+		if ($record_r){
+    		// afficher
+			// DEBUG
+			// echo "<br/>DEBUG ::<br />\n";
+			// print_r($record_r);
+			return ($record_r->liste_empreintes_competence);
+		}
+	}
+	return 0;
+}
+
+
+// Liste des empreintes de competences du referentiel
+function referentiel_new_liste_empreintes_competence($id){
+// regenere la liste des empreintes de competences pour la table referentiel
+global $DB;
+$liste_empreintes_competence="";
+	if (!empty($id)){
+	    $params = array("id" => "$id");
+	    $sql="SELECT * FROM {referentiel_referentiel} WHERE id=:id";
+		$record_r=$DB->get_record_sql($sql, $params);
+		if ($record_r){
+    		// afficher
+			// DEBUG
+			// echo "<br/>DEBUG ::<br />\n";
+			// print_r($record_r);
+			$old_liste_empreintes_competence=$record_r->liste_empreintes_competence;
+			$liste_empreintes_competence="";
+			// charger les domaines associes au referentiel courant
+
+			// LISTE DES DOMAINES
+			$params2= array("refid" => "$id");
+            $sql2="SELECT * FROM {referentiel_domaine} WHERE ref_referentiel=:refid ORDER BY num_domaine ASC";
+			$records_domaine = $DB->get_records_sql($sql2, $params2);
+			if ($records_domaine){
+    			// afficher
+				// DEBUG
+				// echo "<br/>DEBUG ::<br />\n";
+				// print_r($records_domaine);
+				foreach ($records_domaine as $record_d){
+        			$params3 = array("id" => "$record_d->id");
+                    $sql3="SELECT * FROM {referentiel_competence} WHERE ref_domaine=:id ORDER BY num_competence ASC";
+					$records_competences = $DB->get_records_sql($sql3, $params3);
+			   		if ($records_competences){
+						// DEBUG
+						// echo "<br/>DEBUG :: COMPETENCES <br />\n";
+						// print_r($records_competences);
+						foreach ($records_competences as $record_c){
+                  			$params4 = array("id" => "$record_c->id");
+                            $sql4="SELECT * FROM {referentiel_item_competence} WHERE ref_competence=:id ORDER BY num_item ASC";
+							// ITEM
+							$compteur_item=0;
+							$records_items = $DB->get_records_sql($sql4, $params4);
+					    	if ($records_items){
+								// DEBUG
+								// echo "<br/>DEBUG :: ITEMS <br />\n";
+								// print_r($records_items);
+								foreach ($records_items as $record_i){
+									$liste_empreintes_competence.=$record_i->empreinte_item."/";
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return $liste_empreintes_competence;
+}
+
+/**
+ * Given an id referentiel_referentiel and a list of empreintes
+ * this function will update liste_empreintes_competence.
+ *
+ * @param id, list
+ * @return boolean Success/Fail
+ **/
+function referentiel_set_liste_empreintes_competence($id, $liste_empreintes_competence){
+global $DB;
+	if (isset($id) && ($id>0)){
+        $ok=$DB->set_field('referentiel_referentiel','liste_empreintes_competence', "$liste_empreintes_competence", array("id" => "$id"));
+        if ($ok) return 1;
+	}
+	return 0;
+}
+
+
+// CERTIFICATS
+
+/**
+ * Given an certificat id,
+ * this function will permanently delete the certificat instance
+ *
+ * @param object $id
+ * @return boolean Success/Failure
+ **/
+
+function referentiel_delete_certificat_record($id) {
+// suppression certificat
+global $DB;
+$ok_certificat=false;
+	if (!empty($id)){
+		if ($certificat = $DB->get_record("referentiel_certificat", array("id" => "$id"))) {
+			// suppression
+			$ok_certificat = $DB->delete_records("referentiel_certificat", array("id" => "$id"));
+		}
+	}
+    return $ok_certificat;
+}
+
+
+/**
+ * This function returns records of certificat from table referentiel_certificat
+ *
+ * @param id reference referentiel (no instance)
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_certificats($referentiel_referentiel_id, $select="", $order=""){
+global $DB;
+	if (!empty($referentiel_referentiel_id)){
+		if (empty($order)){
+			$order= 'userid ASC ';
+		}
+		$params= array("refid" => "$referentiel_referentiel_id");
+        $sql="SELECT * FROM {referentiel_certificat} WHERE ref_referentiel=:refid  $select ORDER BY $order ";
+        return $DB->get_records_sql($sql, $params);
+	}
+	else
+		return 0;
+}
+
+
+/**
+ * This function returns records list of users from table referentiel_certificat
+ *
+ * @param userid reference user id
+ * @param referentiel_id reference referentiel
+ * @return object
+ * @todo Finish documenting this function
+ **/
+function referentiel_certificat_user_exists($userid, $referentiel_id){
+global $DB;
+	if (isset($userid) && ($userid>0) && isset($referentiel_id) && ($referentiel_id>0)){
+		$r=$DB->get_record_sql("SELECT * FROM {referentiel_certificat} WHERE ref_referentiel=$referentiel_id AND userid=$userid ");
+		if ($r){
+			// echo "<br />\n";
+			// print_r($r);
+			// MODIF JF 2009/11/28
+			// controler la completude du certificat post version 4.1.1
+			if (($r->competences_certificat!='') || ($r->competences_activite=='')){
+				return 0;
+			}
+			else{
+				return ($r->id);
+			}
+		}
+	}
+	return 0;
+}
+
+/**
+ * This function  create / update with valid competencies a certificat for the userid
+ *
+ * @param userid reference user id
+ * @param $ref_referentiel reference a referentiel id (not an instance of it !)
+ * @return bolean
+ * @todo Finish documenting this function
+ **/
+function referentiel_genere_certificat($userid, $ref_referentiel){
+global $DB;
+	$certificat_id=0; // id du certificat cree / modifie
+	if (isset($userid) && ($userid>0) && isset($ref_referentiel) && ($ref_referentiel>0)){
+		// MODIF JF 28/11/2009
+		$competences_activite=referentiel_genere_certificat_liste_competences_declarees($userid, $ref_referentiel);
+		$competences_certificat=referentiel_genere_certificat_liste_competences($userid, $ref_referentiel);
+		// DEBUG
+		// echo "<br />DEBUG :: lib.php :: LIGNE 4194 :: $competences_activite\n";
+		// echo "<br />DEBUG :: lib.php :: LIGNE 4195 :: $competences_certificat\n";
+
+		if (
+			($competences_certificat!="")
+			||
+			($competences_activite!="")
+			){
+			// si existe update
+			if ($certificat=referentiel_get_certificat_user($userid, $ref_referentiel)){
+                $certificat_id=$certificat->id;
+
+				// update ?
+				if ($certificat->verrou==0
+                    && $certificat->valide==0){        // MODIF JF 2012/10/07
+					$certificat->commentaire_certificat=($certificat->commentaire_certificat);
+	                $certificat->synthese_certificat=($certificat->synthese_certificat);
+					$certificat->decision_jury=($certificat->decision_jury);
+					$certificat->evaluation=($certificat->evaluation);
+					$certificat->competences_certificat=$competences_certificat;
+					$certificat->competences_activite=$competences_activite;
+					$certificat->evaluation=referentiel_evaluation($competences_certificat, $ref_referentiel);
+                    $noerror=$DB->update_record("referentiel_certificat", $certificat);
+					if(!$noerror){
+						// DEBUG
+						// echo "<br /> ERREUR UPDATE CERTIFICAT\n";
+					}
+				}
+			}
+			else {
+				// sinon creer
+				$certificat = new object();
+				$certificat->competences_certificat=$competences_certificat;
+				$certificat->competences_activite=$competences_activite;
+				$certificat->commentaire_certificat="";
+                $certificat->synthese_certificat="";
+				$certificat->decision_jury="";
+				$certificat->date_decision=0;
+				$certificat->ref_referentiel=$ref_referentiel;
+				$certificat->userid=$userid;
+				$certificat->teacherid=0;
+				$certificat->verrou=0;
+// Modif JF 2012/10/07
+				$certificat->valide=0;
+				$certificat->evaluation=referentiel_evaluation($competences_certificat, $ref_referentiel);
+    			// DEBUG
+    			//echo "<br />DEBUG :: lib.php :: 4116<br />\n";
+				// print_object($certificat);
+    			//echo "<br />";
+    			//exit;
+				$certificat_id= $DB->insert_record("referentiel_certificat", $certificat);
+			}
+		}
+	}
+	return $certificat_id;
+}
+
+
+/**
+ * This function modify referentiel_certificat list of competencies
+ *
+ * @param liste_competences 'A.1.1/A.1.3/A.2.3/'
+ * @param userid reference user id
+ * @param referentiel_id reference referentiel
+ * @return string certificat_jauge
+ * A.1.1:0/A.1.2:1/A.1.3:2/A.1.4:0/A.1.5:0/A.2.1:1/A.2.2:1/A.2.3:1/A.3.1:0/A.3.2:0/A.3.3:0/A.3.4:0/B.1.1:0/B.1.2:0/B.1.3:0/B.2.1:0/B.2.2:0/B.2.3:1/B.2.4:0/B.3.1:0/B.3.2:0/B.3.3:0/B.3.4:0/B.3.5:0/B.4.1:1/B.4.2:1/B.4.3:0/
+ * @todo Finish documenting this function
+ **/
+function referentiel_mise_a_jour_competences_certificat_user($liste_competences_moins, $liste_competences_plus, $userid, $referentiel_id, $approved, $modif_declaration=true, $modif_validation=false ){
+global $DB;
+// 	la liste sous forme de string
+//  IN#1  : 'A.1.1/A.1.3/A.2.3/'
+//  IN#2  : '      A.1.3/A.2.3/A.3.1'
+
+// 	la jauge sous forme CODE_COMP_0:n0/CODE_COMP_1:n1/...
+//  avec 0 si competence valide 0 fois, n>0 sinon
+//  GET  : 'A.1.1:1/A.1.2:1/A.1.3:2/A.1.4:0/A.1.5:0/A.2.1:1/A.2.2:1/A.2.3:1/A.3.1:0/A.3.2:0/A.3.3:0/A.3.4:0/B.1.1:0/B.1.2:0/B.1.3:0/B.2.1:0/B.2.2:0/B.2.3:1/B.2.4:0/B.3.1:0/B.3.2:0/B.3.3:0/B.3.4:0/B.3.5:0/B.4.1:1/B.4.2:1/B.4.3:0/'
+//  la jauge sous forme CODE_COMP_0:n0/CODE_COMP_1:n1/...
+//  PUT  : 'A.1.1:0/A.1.2:1/A.1.3:2/A.1.4:0/A.1.5:0/A.2.1:1/A.2.2:1/A.2.3:1/A.3.1:1/A.3.2:0/A.3.3:0/A.3.4:0/B.1.1:0/B.1.2:0/B.1.3:0/B.2.1:0/B.2.2:0/B.2.3:1/B.2.4:0/B.3.1:0/B.3.2:0/B.3.3:0/B.3.4:0/B.3.5:0/B.4.1:1/B.4.2:1/B.4.3:0/'
+//                -               =                                       =       +
+	$debug=false;
+	$certificat_id=0;
+
+	// Competences validees
+	$liste_competences_valides='';
+	$jauge_competences='';
+
+	$t_competences_jauge=array();
+	$t_competences_supprimees=array(); // les competences Ã  supprimer de la liste
+	$t_competences_valides=array(); // les competences du certificat validees
+
+	// Competences declarees
+	$liste_jauge_declarees=''; // competences declarees dans les activites
+	$t_competences_jauge_declarees=array();
+	$t_competences_declarees=array(); // les competences du certificat declarees
+	$jauge_competences_declarees='';
+
+	// outils
+	$t_jauge= array();
+	$tcomp= array();
+
+	// preparation
+	// competences a supprimer
+	if ($liste_competences_moins!=''){
+		// DEBUG
+		if ($debug) echo "<br />COMPETENCES MOINS<br />\n";
+		$liste_competences_moins=referentiel_purge_dernier_separateur($liste_competences_moins, "/");
+	}
+	// competences a ajouter
+	if ($liste_competences_plus!=''){
+		if ($debug) echo "<br />COMPETENCES PLUS<br />\n";
+		$liste_competences_plus=referentiel_purge_dernier_separateur($liste_competences_plus, "/");
+	}
+
+	// DEBUG
+	if ($debug) echo "<br />DEBUG :: lib.php :: Ligne 4346 :: USERID : $userid :: REFERENTIEL : $referentiel_id<br />LISTE MOINS : $liste_competences_moins <br />LISTE PLUS : $liste_competences_plus<br />\n";
+
+	if (!referentiel_certificat_user_exists($userid, $referentiel_id)){
+		// CREER ce certificat
+		referentiel_genere_certificat($userid, $referentiel_id);
+	}
+
+	$certificat=referentiel_get_certificat_user($userid, $referentiel_id);
+
+	if ($certificat){
+		$certificat_id=$certificat->id;
+		// DEBUG
+		if ($debug) {
+			echo "<br />DEBUG : lib.php :: Ligne 4315 :: CERTIFICAT<br /> ";
+			print_object($certificat);
+    		echo "<br />";
+		}
+
+		// Competences declarees
+		if (!$modif_declaration){ // une validation ou une devalidation d'activite sans ajout ni suppression des competences
+			$jauge_competences_declarees=$certificat->competences_activite; // Pas de changement
+		}
+		else{
+			// mise Ã  jour des competences declarees
+			$liste_competences_declarees=$certificat->competences_activite;
+			if ($liste_competences_declarees!=''){
+				$liste_competences_declarees=referentiel_purge_dernier_separateur($liste_competences_declarees, "/");
+				// DEBUG
+				//echo "<br />DEBUG :: lib.pho :: 4326 :: JAUGE GET : $liste_competences_declarees<br />\n";
+				$t_competences_jauge_declarees=explode("/", $liste_competences_declarees); // [A.1.1:0]  [A.1.2:1] [A.1.3:2] [A.1.4:0] ...
+				//echo "<br />TABLEAU JAUGE GET :<br />\n";
+				//print_r($t_competences_jauge_activite);
+				//echo "<br />\n";
+
+				// creer et initialise un tableau dont les indices sont les codes de competence
+				// echo "<br />JAUGE GET<br />\n";
+				while (list($key, $val) = each($t_competences_jauge_declarees)) {
+					//echo "$key => $val\n";
+					$t_jauge=explode(':',$val);
+					$t_competences_declarees[$t_jauge[0]]=$t_jauge[1]; // // [A.1.1]=0  [A.1.2]=1 [A.1.3]=2 [A.1.4]=0
+				}
+				if ($debug) {
+					echo "<br />TABLEAU COMPETENCES DECLAREEES AVANT SUPPRESSION :<br />\n";
+					print_r($t_competences_declarees);
+					echo "<br />\n";
+				}
+
+				// supprimer des competences
+				if ($liste_competences_moins!=''){
+					$tcomp0=explode("/", $liste_competences_moins);
+					while (list($key0, $val0) = each($tcomp0)) {
+						// echo "<br />$key0 => $val0\n";
+						if ($t_competences_declarees[$val0]>0){
+							$t_competences_declarees[$val0]--;
+						}
+					}
+				}
+				if ($debug) {
+					echo "<br />TABLEAU COMPETENCES DECLAREEES APRES SUPPRESSION :<br />\n";
+					print_r($t_competences_declarees);
+				}
+				// Ajouter des competences
+				if ($liste_competences_plus!=''){
+					$tcomp1=explode("/", $liste_competences_plus);
+					while (list($key1, $val1) = each($tcomp1)) {
+						//echo "<br />$key1 => $val1\n";
+						$t_competences_declarees[$val1]++;
+					}
+				}
+				if ($debug) {
+					echo "<br />TABLEAU COMPETENCES DECLAREEES APRES AJOUT :<br />\n";
+					print_r($t_competences_declarees);
+				}
+				// reconstitution de la jauge des competences declarees
+
+				while (list($key2, $val2) = each($t_competences_declarees)) {
+					// echo "<br />$key2 => $val2\n";
+					if ((!is_numeric($key2) && ($key2!=""))  && ($val2!="") && ($val2>0)){
+						$liste_jauge_declarees.=$key2."/";
+					}
+					$jauge_competences_declarees.=$key2.":".trim($val2)."/";
+				}
+			}
+		}
+
+		if ($debug) {
+			echo "<br /><br />COMPETENCES DECLAREEES :<br />$jauge_competences_declarees<br />\n";
+		}
+
+		// Competences validees
+		if (($certificat->verrou!=0) || (!$modif_validation)) { // une mise a jour des competences sans validation ou devalidation
+			$jauge_competences=$certificat->competences_certificat; // Pas de changement
+		}
+		else{
+			// sinon modification de la liste des competences validees
+			$liste_jauge_competences=$certificat->competences_certificat;
+			$liste_jauge_competences=referentiel_purge_dernier_separateur($liste_jauge_competences, "/");
+			//
+			$t_competences_jauge=explode("/", $liste_jauge_competences); // [A.1.1:0]  [A.1.2:1] [A.1.3:2] [A.1.4:0] ...
+			if ($debug) {
+				echo "<br />JAUGE CERTIFICAT : $liste_jauge_competences<br />\n";
+				echo "<br />TABLEAU COMPETENCES CERTIFICAT :<br />\n";
+				print_r($t_competences_jauge);
+				echo "<br />\n";
+			}
+			// creer et initialise un tableau dont les indices sont les codes de competence
+			// echo "<br />JAUGE GET<br />\n";
+			while (list($key, $val) = each($t_competences_jauge)) {
+				// echo "$key => $val\n";
+				$t_jauge=explode(':',$val);
+				$t_competences_valides[$t_jauge[0]]=$t_jauge[1]; // // [A.1.1]=0  [A.1.2]=1 [A.1.3]=2 [A.1.4]=0
+			}
+			if ($debug) {
+				echo "<br />TABLEAU COMPETENCES VALIDES AVANT SUPPRESSION :<br />\n";
+				print_r($t_competences_valides);
+				// echo "<br />lib.php :: EXIT ligne 4457\n";
+				// exit;
+			}
+
+			// competences a supprimer
+			if ($liste_competences_moins!=''){
+				$tcomp=explode("/", $liste_competences_moins);
+				while (list($key1, $val1) = each($tcomp)) {
+					// echo "<br />$key1 => $val1\n";
+					if ($t_competences_valides[$val1]>0){
+						$t_competences_valides[$val1]--;
+					}
+				}
+			}
+
+			if ($debug) {
+				echo "<br />TABLEAU COMPETENCES VALIDES APRES SUPPRESSION :<br />\n";
+				print_r($t_competences_valides);
+			}
+
+			// competences a ajouter
+			if ($approved){ // on ajoute si l'activite est validee
+				if ($liste_competences_plus!=''){
+					$tcomp=explode("/", $liste_competences_plus);
+					while (list($key1, $val1) = each($tcomp)) {
+						//echo "<br />$key1 => $val1\n";
+						$t_competences_valides[$val1]++;
+					}
+				}
+
+				if ($debug) {
+					echo "<br />TABLEAU COMPETENCES VALIDES APRES AJOUT :<br />\n";
+					print_r($t_competences_valides);
+				}
+			}
+
+			// reconstitution de la jauge
+			while (list($key2, $val2) = each($t_competences_valides)) {
+				// echo "<br />$key2 => $val2\n";
+				if ((!is_numeric($key2) && ($key2!=""))  && ($val2!="") && ($val2>0)){
+					$liste_competences_valides.=$key2."/";
+				}
+				$jauge_competences.=$key2.":".trim($val2)."/";
+			}
+		}
+
+		// DEBUG
+		if ($debug) {
+			echo "<br />DEBUG :: lib.php :: Ligne 4499 :: USERID : $userid :: REFERENTIEL : $referentiel_id<br />LISTE COMPETENCES : $liste_competences_valides<br />JAUGE : $jauge_competences\n";
+		}
+
+		// mise a jour
+		$certificat->commentaire_certificat=($certificat->commentaire_certificat);
+        $certificat->synthese_certificat=($certificat->synthese_certificat);
+		$certificat->decision_jury=($certificat->decision_jury);
+		$certificat->evaluation=($certificat->evaluation);
+		$certificat->competences_certificat=$jauge_competences;
+		$certificat->competences_activite=$jauge_competences_declarees;
+		$certificat->evaluation=referentiel_evaluation($certificat->competences_certificat, $referentiel_id);
+		// DEBUG
+		if ($debug) {
+			echo "<br />DEBUG : lib.php :: Ligne 4519 <br /> ";
+			print_object($certificat);
+    		// echo "<br />lib.php :: EXIT LIGNE 4524";
+			// exit;
+		}
+
+		if (!$DB->update_record("referentiel_certificat", $certificat)){
+			// DEBUG
+			// echo "<br />DEBUG : lib_certificat :: Ligne 162  :: ERREUR UPDATE CERTIFICAT\n";
+		}
+	}
+	return $certificat_id;
+}
+
+function referentiel_genere_competences_declarees_vide($liste_competences){
+//
+// retourne une liste de la forme
+// input :: A.1.1:0/A.1.2:0/A.1.3:0/A.1.4:0/A.1.5:0/A.2.1:0 ...
+// output A.1.1:0/A.1.2:0/A.1.3:0/A.1.4:0/A.1.5:0/A.2.1:0 ...
+	// collecter les competences
+	$jauge_competences_declarees='';
+	$tcomp=explode("/", $liste_competences);
+	while (list($key, $val) = each($tcomp)) {
+		// echo "$key => $val\n";
+		if ($val!=""){
+			$jauge_competences_declarees.=$val.":0/";
+		}
+	}
+	return $jauge_competences_declarees;
+}
+
+/**
+ * This function get all competencies declared in activities and return a competencies list
+ *
+ * @param userid reference user id
+ * @param $ref_referentiel reference a referentiel id (not an instance of it !)
+ * @return bolean
+ * @todo Finish documenting this function
+ * algorithme : cumule pour chaque competences le nombre d'activitÃ©s oÃ¹ celle ci est validee
+ **/
+function referentiel_genere_certificat_liste_competences_declarees($userid, $ref_referentiel){
+	$t_liste_competences_declarees=array();
+	$t_competences_declarees=array();
+	$t_competences_referentiel=array(); // les competences du referentiel
+
+	$liste_competences_declarees=""; // la liste sous forme de string
+	$jauge_competences_declarees=""; // la juge sous forme CODE_COMP_0:n0/CODE_COMP_1:n1/...
+	// avec 0 si competence declaree 0 fois, n>0 sinon
+
+	if (isset($userid) && ($userid>0) && isset($ref_referentiel) && ($ref_referentiel>0)){
+		// liste des competences definies dans le referentiel
+		$liste_competences_referentiel=referentiel_purge_dernier_separateur(referentiel_get_liste_codes_competence($ref_referentiel), "/");
+		// DEBUG
+		// echo "<br />DEBUG :: Ligne 2706 :: USERID : $userid :: REFERENTIEL : $ref_referentiel\n";
+
+		$t_competences_referentiel=explode("/", $liste_competences_referentiel);
+		// creer un tableau dont les indices sont les codes de competence
+		while (list($key, $val) = each($t_competences_referentiel)) {
+			$t_competences_declarees[$val]=0;
+		}
+		// collecter les activites validees
+		$select=" AND userid=".$userid." ";
+		$order= ' id ASC ';
+		$records_activite = referentiel_get_activites($ref_referentiel, $select, $order);
+		if (!$records_activite){
+			return referentiel_genere_competences_declarees_vide($liste_competences_referentiel);
+		}
+		// DEBUG
+		// echo "<br />Debug :: lib.php :: Ligne 2721 \n";
+		// print_r($records_activite);
+
+		// collecter les competences
+		foreach ($records_activite  as $activite){
+			$t_liste_competences_declarees[]=referentiel_purge_dernier_separateur($activite->competences_activite, "/");
+		}
+ 		for ($i=0; $i<count($t_liste_competences_declarees); $i++){
+			$tcomp=explode("/", $t_liste_competences_declarees[$i]);
+			while (list($key, $val) = each($tcomp)) {
+				// echo "$key => $val\n";
+				if (isset($t_competences_declarees[$val])) $t_competences_declarees[$val]++;
+			}
+		}
+		$i=0;
+		while (list($key, $val) = each($t_competences_declarees)) {
+			// echo "$key => $val\n";
+			if ((!is_numeric($key) && ($key!=""))  && ($val!="") && ($val>0)){
+				$liste_competences_declarees.=$key."/";
+			}
+			$jauge_competences_declarees.=$key.":".trim($val)."/";
+		}
+	}
+	// DEBUG
+	// echo "<br />DEBUG :: Ligne lib.php :: 4055 :: $jauge_competences_declarees\n";
+
+	return $jauge_competences_declarees;
+}
+
+
+
+/**
+ * This function get all valid competencies in activite and return a competencies list
+ *
+ * @param userid reference user id
+ * @param $ref_referentiel reference a referentiel id (not an instance of it !)
+ * @return bolean
+ * @todo Finish documenting this function
+ * algorithme : cumule pour chaque competences le nombre d'activitÃ©s oÃ¹ celle ci est validee
+ **/
+function referentiel_genere_certificat_liste_competences($userid, $ref_referentiel){
+	$t_liste_competences_valides=array();
+	$t_competences_valides=array();
+	$t_competences_referentiel=array(); // les competences du referentiel
+
+	$liste_competences_valides=""; // la liste sous forme de string
+	$jauge_competences=""; // la juge sous forme CODE_COMP_0:n0/CODE_COMP_1:n1/...
+	// avec 0 si competence valide 0 fois, n>0 sinon
+
+	if (isset($userid) && ($userid>0) && isset($ref_referentiel) && ($ref_referentiel>0)){
+		// liste des competences definies dans le referentiel
+		$liste_competences_referentiel=referentiel_purge_dernier_separateur(referentiel_get_liste_codes_competence($ref_referentiel), "/");
+		// DEBUG
+		// echo "<br />DEBUG :: lib.php :: Ligne 7275 ::<br />USERID : $userid :: REFERENTIEL : $ref_referentiel<br />$liste_competences_referentiel\n";
+
+		$t_competences_referentiel=explode("/", $liste_competences_referentiel);
+		// creer un tableau dont les indices sont les codes de competence
+		while (list($key, $val) = each($t_competences_referentiel)) {
+			$t_competences_valides[$val]=0;
+		}
+		// collecter les activites validees
+		$select=" AND approved!=0 AND userid=".$userid." ";
+		$order= ' id ASC ';
+		$records_activite = referentiel_get_activites($ref_referentiel, $select, $order);
+		if ($records_activite){
+			// DEBUG
+			// echo "<br />Debug :: lib.php :: Ligne 7288<br />COMPETENCES REFERENTIEL VALIDES AVANT :<br />\n";
+			// print_r($t_competences_valides);
+
+      // echo "<br />Debug :: lib.php :: Ligne 7291 :<br />ACTIVIE<br />\n";
+			// print_r($records_activite);
+
+			// collecter les competences
+			foreach ($records_activite  as $activite){
+				$t_liste_competences_valides[]=referentiel_purge_dernier_separateur($activite->competences_activite, "/");
+  			// DEBUG
+	   		// echo "<br />Debug :: lib.php :: Ligne 7298<br />COMPETENCES ACTIVITE :<br />".$activite->competences_activite."\n";
+			}
+
+			// print_r($t_liste_competences_valides);
+			// exit;
+
+      for ($i=0; $i<count($t_liste_competences_valides); $i++){
+				if ($t_liste_competences_valides[$i]){
+          $tcomp=explode("/", $t_liste_competences_valides[$i]);
+				  while (list($key, $val) = each($tcomp)) {
+					 // echo "$key => $val\n";
+					 // if (isset($t_competences_valides[$val]))
+            $t_competences_valides[$val]++;
+				  }
+				}
+			}
+		}
+
+		$i=0;
+		while (list($key, $val) = each($t_competences_valides)) {
+			// echo "$key => $val\n";
+			if ((!is_numeric($key) && ($key!=""))  && ($val!="") && ($val>0)){
+				$liste_competences_valides.=$key."/";
+			}
+			$jauge_competences.=$key.":".trim($val)."/";
+		}
+	}
+
+	// DEBUG
+	// echo "<br />DEBUG :: Ligne 4123 :: $jauge_competences\n";
+
+	return $jauge_competences;
+}
+
+
+/**
+ * This function returns record certificat from table referentiel_certificat
+ *
+ * @param userid reference user id of certificat
+ * @param ref_referentiel reference referentiel id of certificat
+ * @return object
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_certificat_user($userid, $ref_referentiel){
+global $DB;
+	if (isset($userid) && ($userid>0) && isset($ref_referentiel) && ($ref_referentiel>0)){
+		return $DB->get_record_sql("SELECT * FROM {referentiel_certificat} WHERE ref_referentiel=$ref_referentiel AND userid=$userid ");
+	}
+	else {
+		return false;
+	}
+}
+
+
+
+
+/**
+ * This function returns record certificate from table referentiel_certificat
+ *
+ * @param userid reference user id
+ * @param referentiel_id reference referentiel
+ * @return object
+ * @todo Finish documenting this function
+ **/
+function referentiel_certificat_user($userid, $referentiel_id){
+// Si certificat n'existe pas, cree le certificat et le retourne
+
+	if (isset($userid) && ($userid>0) && isset($referentiel_id) && ($referentiel_id>0)){
+		if (!referentiel_certificat_user_exists($userid, $referentiel_id)){
+			if (referentiel_genere_certificat($userid, $referentiel_id)){
+				return referentiel_get_certificat_user($userid, $referentiel_id);
+			}
+			else{
+				return false;
+			}
+		}
+		else{
+			return referentiel_get_certificat_user($userid, $referentiel_id);
+		}
+	}
+	else {
+		return false;
+	}
+}
+
+
+
+
+/**
+ * This function returns records list of users from table referentiel_certificat
+ *
+ * @param id reference certificat
+ * @param select clause : ' AND champ=valeur,  ... '
+ * @param order clause : ' champ ASC|DESC, ... '
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_users_certificats($referentiel_id, $select="", $order=""){
+global $DB;
+	if (isset($referentiel_id) && ($referentiel_id>0)){
+		if (empty($order)){
+			$order= 'userid ASC ';
+		}
+		return $DB->get_records_sql("SELECT DISTINCT userid FROM {referentiel_certificat} WHERE ref_referentiel=$referentiel_id  $select ORDER BY $order ");
+	}
+	else
+		return 0;
+}
+
+
+/**
+ * This function returns records list of users from table referentiel_activite
+ *
+ * @param id reference certificat
+ * @param select clause : ' AND champ=valeur,  ... '
+ * @param order clause : ' champ ASC|DESC, ... '
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_users_referentiel_cours($referentiel_id, $course_id, $select="", $order=""){
+global $DB;
+	if (isset($referentiel_id) && ($referentiel_id>0)){
+		if (empty($order)){
+			$order= 'userid ASC ';
+		}
+		return $DB->get_records_sql("SELECT DISTINCT userid FROM {referentiel_activite} WHERE ref_referentiel=$referentiel_id AND ref_course=$course_id $select ORDER BY $order ");
+	}
+	else
+		return 0;
+}
+
+/**
+ * This function returns records list of teachers from table referentiel_certificat
+ *
+ * @param id reference certificat
+ * @return objects
+ * @todo Finish documenting this function
+ **/
+function referentiel_get_teachers_certificats($referentiel_id){
+global $DB;
+	if (isset($referentiel_id) && ($referentiel_id>0)){
+		return $DB->get_records_sql("SELECT DISTINCT teacherid FROM {referentiel_certificat} WHERE ref_referentiel=$referentiel_id ORDER BY teacherid ASC ");
+	}
+	else
+		return 0;
+}
+
+
+/**
+ * This function get a competencies list and return a float
+ *
+ * @param userid reference user id
+ * @param $ref_referentiel reference a referentiel id (not an instance of it !)
+ * @return bolean
+ * @todo Finish documenting this function
+ **/
+function referentiel_evaluation($listecompetences, $referentiel_id){
+//A.1.1:4/A.1.2:1/A.1.3:0/A.1.4:3/A.1.5:0/A.2.1:0/A.2.2:0/A.2.3:0/A.3.1:0/A.3.2:0/A.3.3:0/A.3.4:0/B.1.1:0/B.1.2:0/B.1.3:0/B.2.1:0/B.2.2:0/B.2.3:0/B.2.4:0/B.3.1:0/B.3.2:0/B.3.3:0/B.3.4:0/B.3.5:0/B.4.1:1/B.4.2:1/B.4.3:0/
+	// DEBUG
+	// echo "<br />LISTE ".$listecompetences."\n";
+	$evaluation=0.0;
+	$tcode=array();
+	$tcode=explode("/",$listecompetences);
+	for ($i=0; $i<count($tcode); $i++){
+		/*
+        $tvaleur=explode(":",$tcode[$i]);
+		$code="";
+		$svaleur="";
+		if (isset($tvaleur[0])){ // le code
+			$code=trim($tvaleur[0]);
+		}
+		if (isset($tvaleur[1])){ // la valeur
+			$svaleur=trim($tvaleur[1]);
+		}
+        */
+        if ($tcode[$i]){
+            list($code, $svaleur)=explode(":",$tcode[$i]);
+
+            // DEBUG
+		    // echo "<br />DEBUG :: locallib.php : 3138 :: CODE : ".$code." VALEUR : ".$svaleur."\n";
+		    if (!empty($code) && !empty($svaleur)){
+                $poids=referentiel_get_poids_item($code, $referentiel_id);
+                $empreinte=referentiel_get_empreinte_item($code, $referentiel_id);
+                // echo "<br />POIDS : $poids ; EMPREINTE : $empreinte\n";
+                if ($empreinte) {
+                    if ($svaleur >= $empreinte){
+    				    $evaluation+=$poids;
+                    }
+                }
+            }
+	    }
+    }
+    // DEBUG
+    // echo "<br />DEBUG : lib.php : 7716 :: EVALUATION : ".$evaluation."\n";
+	return $evaluation;
+}
+
+
+
+/**
+ * This function set all certificates
+ *
+ * @param $referentiel_instance reference an instance of referentiel !)
+ * @return bolean
+ * @todo Finish documenting this function
+ **/
+function referentiel_regenere_certificats($referentiel_instance){
+	if ($referentiel_instance){
+		$records_users=referentiel_get_course_users($referentiel_instance);
+		// echo "<br /> lib.php :: referentiel_get_course_users() :: 2018<br />\n";
+		if ($records_users){
+			foreach ($records_users as $record_u){
+				// echo "<br />DEBUG :: lib.php :: LIGNE 2948 \n";
+				// print_r($record_u);
+				referentiel_regenere_certificat_user($record_u->id, $referentiel_instance->ref_referentiel);
+			}
+		}
+	}
+}
+
+/**
+ * This function set all certificates
+ *
+ * @param $referentiel_instance reference an instance of referentiel !)
+ * @return bolean
+ * @todo Finish documenting this function
+ **/
+function referentiel_regenere_certificat_user($userid, $ref_referentiel){
+	if ($ref_referentiel && $userid){
+		if (!referentiel_certificat_user_exists($userid, $ref_referentiel)){
+			// CREER ce certificat
+			referentiel_genere_certificat($userid, $ref_referentiel);
+		}
+
+// Modif JF 2012/10/07
+/*
+		if (!referentiel_certificat_user_valide($userid, $ref_referentiel)){
+		// drapeau positionne par l'ancienne version <= 3 quand une activite est validee ou devalidee
+		// n'est plus utilise car desormais on modifie directement la jauge du certificat dans la partie activite
+			// METTRE A JOUR ce certificat
+			referentiel_genere_certificat($userid, $ref_referentiel);
+		}
+*/
+	}
+}
+
+/**
+ * This function reset all certificates
+ *
+ * @param $certificat record !)
+ * @return nothing
+ * @todo Finish documenting this function
+ **/
+function referentiel_recalcule_certificat($certificat){
+	if (!empty($certificat->userid) && !empty($certificat->ref_referentiel)){
+		referentiel_regenere_certificat_user($certificat->userid, $certificat->ref_referentiel);
+	}
+}
+
+
+
+/**
+ * Given an object containing all the necessary referentiel,
+ * (defined by the form in mod.html) this function
+ * will create a new instance and return the id number
+ * of the new instance.
+ *
+ * @param object $instance An object from the form in mod.html
+ * @return int The id of the newly inserted referentiel record
+ **/
+function referentiel_add_certificat($form) {
+// creation certificat
+global $USER;
+global $DB;
+    // DEBUG
+    //echo "DEBUG : ADD CERTIFICAT CALLED";
+	//print_object($form);
+    //echo "<br />";
+	// referentiel
+	$certificat = new object();
+	$certificat->competences_certificat=$form->competences_certificat;
+	$certificat->commentaire_certificat=$form->commentaire_certificat;
+	$certificat->synthese_certificat=$form->synthese_certificat;
+	if (!empty($form->decision_jury)){
+        $certificat->date_decision=time();
+    }
+    else{
+        $certificat->date_decision='';
+    }
+    $certificat->decision_jury=($form->decision_jury);
+	$certificat->date_decision='';
+	$certificat->ref_referentiel=$form->ref_referentiel;
+	$certificat->userid=$USER->id;
+	$certificat->teacherid=$USER->id;
+	$certificat->verrou=0;
+	$certificat->valide=$form->valide;
+	$certificat->evaluation=referentiel_evaluation($form->competences_certificat, $form->ref_referentiel);
+
+
+	$certificat->mailed=1; // MODIF JF 2010/10/05
+	if (isset($form->mailnow)){
+        $certificat->mailnow=$form->mailnow;
+        if ($form->mailnow=='1'){ // renvoyer
+            $certificat->mailed=0;   // annuler envoi precedent
+        }
+    }
+    else{
+        $certificat->mailnow=0;
+    }
+
+
+    // DEBUG
+	//print_object($certificat);
+    //echo "<br />";
+
+	$certificat_id= $DB->insert_record("referentiel_certificat", $certificat);
+    // echo "certificat ID / $certificat_id<br />";
+    // DEBUG
+    return $certificat_id;
+}
+
+/**
+ * Given an object containing all the necessary referentiel,
+ * (defined by the form in mod.html) this function
+ * will create a new instance and return the id number
+ * of the new instance.
+ *
+ * @param object $instance An object from the form in mod.html
+ * @return int The id of the newly inserted referentiel record
+ **/
+function referentiel_update_certificat($form) {
+global $DB;
+global $DB;
+// MAJ certificat
+$ok=true;
+    // DEBUG
+    /*
+    echo "\nDEBUG : localib.php :: UPDATE CERTIFICAT CALLED:: 2998\n";
+	print_object($form);
+    echo "<br />\n";
+    exit;
+    */
+    // certificat
+	if (isset($form->action) && ($form->action=="modifier_certificat")){
+		$certificat = new object();
+		$certificat->id=$form->certificat_id;
+		$certificat->commentaire_certificat=$form->commentaire_certificat;
+        $certificat->synthese_certificat=$form->synthese_certificat;
+		$certificat->competences_certificat=$form->competences_certificat;
+
+        if (!empty($form->decision_jury_sel) && empty($form->decision_jury)){
+            $form->decision_jury=$form->decision_jury_sel;
+        }
+		if (isset($form->decision_jury_old) && ($form->decision_jury_old!=$form->decision_jury)){
+	       	$certificat->date_decision=time();
+        }
+        else{
+            $certificat->date_decision=$form->date_decision;
+        }
+        $certificat->decision_jury=$form->decision_jury;
+
+		$certificat->ref_referentiel=$form->ref_referentiel;
+		$certificat->userid=$form->userid;
+		$certificat->teacherid=$form->teacherid;
+
+		$certificat->valide=$form->valide;
+        // MODIF JF 2012/10/07
+	    if ($certificat->valide){
+            $certificat->verrou=1;
+        }
+        else{
+            $certificat->verrou=$form->verrou;
+        }
+
+		$certificat->evaluation=referentiel_evaluation($form->competences_certificat, $form->ref_referentiel);
+
+		// MODIF JF 2010/02/11
+		if (isset($form->mailnow)){
+            $certificat->mailnow=$form->mailnow;
+            if ($form->mailnow=='1'){ // renvoyer
+                $certificat->mailed=0;   // annuler envoi precedent
+            }
+        }
+        else{
+            $certificat->mailnow=0;
+        }
+
+	    // DEBUG
+	    // echo "<br />DEBUG :: LOCALLIB.PHP :: 3046\n";
+		// print_object($certificat);
+	    // echo "<br />EXIT\n";
+	    // exit;
+
+		$noerror=$DB->update_record("referentiel_certificat", $certificat);
+		if (!$noerror){	//echo "<br /> ERREUR UPDATE CERTIFICAT\n";
+			$ok=false;
+		}
+		else {
+			// echo "<br /> UPDATE CERTIFICAT $certificat->id\n";
+			$ok=true;
+		}
+		// exit;
+		return $ok;
+	}
+}
+
+function referentiel_user_can_add_certificat($referentiel, $currentgroup, $groupmode) {
+    global $USER;
+    global $CFG;
+    if (!$cm = get_coursemodule_from_instance('referentiel', $referentiel->id, $referentiel->course)) {
+        print_error('Course Module ID was incorrect');
+    }
+    // $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    // Valable pour Moodle 2.1 et Moodle 2.2
+    //if ($CFG->version < 2011120100) {
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    //} else {
+        // $context = context_module::instance($cm);
+    //}
+
+    if (!has_capability('mod/referentiel:writecertificat', $context)) {
+        return false;
+    }
+
+    if (!$groupmode or has_capability('moodle/site:accessallgroups', $context)) {
+        return true;
+    }
+
+    if ($currentgroup) {
+        return ismember($currentgroup);
+    }
+    else {
+        //else it might be group 0 in visible mode
+        if ($groupmode == VISIBLEGROUPS){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+}
+
+
+function referentiel_certificat_isowner($id){
+global $USER;
+global $DB;
+	if (isset($id) && ($id>0)){
+		$record=$DB->get_record("referentiel_certificat", array("id" => "$id"));
+		// DEBUG
+		// echo "<br >USERID : $USER->id ; OWNER : $record->userid\n";
+		if ($record){
+            return ($USER->id == $record->userid);
+        }
+	}
+	return false;
+}
+
+
+
+// -------------------------------
+function referentiel_pourcentage($a, $b){
+	if ($b!=0) return round(($a * 100.0) / (float)$b,1);
+	else return NULL;
+}
+
+
+
+// -------------------
+function referentiel_affiche_certificat_consolide($separateur1, $separateur2, $liste_code, $ref_referentiel, $bgcolor, $params=NULL){
+// cet affichage du certificat fournit des pourcentages par domaine et competence
+    echo referentiel_retourne_certificat_consolide($separateur1, $separateur2, $liste_code, $ref_referentiel, $bgcolor, $params);
+}
+
+
+
+// -------------------
+function referentiel_retourne_certificat_consolide($separateur1, $separateur2, $liste_code, $ref_referentiel, $bgcolor, $params=NULL){
+// ce certificat comporte des pourcentages par domaine et competence
+// affichage sous forme de tableau et span pour les items
+// input liste_code
+// A.1-1:0/A.1-2:0/A.1-3:1/A.1-4:0/A.1-5:0/A.2-1:0/A.2-2:0/A.2-3:0/A.3-1:0/A.3-2:1/A.3-3:1/A.3-4:1/B.1-1:0/B.1-2:0/B.1-3:0/B.2-1:0/B.2-2:0/B.2-3:0/B.2-4:0/B.2-5:0/B.3-1:0/B.3-2:0/B.3-3:0/B.3-4:0/B.3-5:0/B.4-1:0/B.4-2:0/B.4-3:0/
+global $OK_REFERENTIEL_DATA;
+global $t_domaine;
+global $t_domaine_coeff;
+
+// COMPETENCES
+global $t_competence;
+global $t_competence_coeff;
+
+// ITEMS
+global $t_item_code;
+global $t_item_coeff; // coefficient poids determine par le modele de calcul (soit poids soit poids / empreinte)
+global $t_item_domaine; // index du domaine associe a un item
+global $t_item_competence; // index de la competence associee a un item
+global $t_item_poids; // poids
+global $t_item_empreinte;
+global $t_nb_item_domaine;
+global $t_nb_item_competence;
+
+
+	$s='';
+
+	// nom des domaines, competences, items
+	$label_d="";
+	$label_c="";
+	$label_i="";
+	if (isset($params) && !empty($params)){
+		if (isset($params->label_domaine)){
+					$label_d=$params->label_domaine;
+		}
+		if (isset($params->label_competence)){
+					$label_c=$params->label_competence;
+		}
+		if (isset($params->label_item)){
+					$label_i=$params->label_item;
+		}
+	}
+	$t_certif_item_valeur=array();	// table des nombres d'items valides
+	$t_certif_item_coeff=array(); // somme des poids du domaine
+	$t_certif_competence_poids=array(); // somme des poids de la competence
+	$t_certif_domaine_poids=array(); // poids certifies
+	// affichage
+
+
+	// donnees globales du referentiel
+	if ($ref_referentiel){
+
+		if (!isset($OK_REFERENTIEL_DATA) || ($OK_REFERENTIEL_DATA==false) ){
+			$OK_REFERENTIEL_DATA=referentiel_initialise_data_referentiel($ref_referentiel);
+		}
+
+		if (isset($OK_REFERENTIEL_DATA) && ($OK_REFERENTIEL_DATA==true)){
+            for ($i=0; $i<count($t_item_code); $i++){
+                $t_certif_item_valeur[$i]=0.0;
+                $t_certif_item_coeff[$i]=0.0;
+            }
+            for ($i=0; $i<count($t_competence); $i++){
+                $t_certif_competence_poids[$i]=0.0;
+            }
+            for ($i=0; $i<count($t_domaine); $i++){
+                $t_certif_domaine_poids[$i]=0.0;
+            }
+
+		    // DEBUG
+		    // echo "<br />CODE <br />\n";
+		    // referentiel_affiche_data_referentiel($ref_referentiel, $params);
+
+		    // recuperer les items valides
+            $tc=array();
+            $liste_code=referentiel_purge_dernier_separateur($liste_code, $separateur1);
+
+		    // DEBUG
+		    // echo "<br />DEBUG :: print_lib_certificat.php :: 917 :: LISTE : $liste_code<br />\n";
+
+            if (!empty($liste_code) && ($separateur1!="") && ($separateur2!="")){
+                $tc = explode ($separateur1, $liste_code);
+
+			    // DEBUG
+
+
+    			for ($i=0; $i<count($t_item_domaine); $i++){
+	       			$t_certif_domaine_poids[$i]=0.0;
+		      	}
+    			for ($i=0; $i<count($t_item_competence); $i++){
+	       			$t_certif_competence_poids[$i]=0.0;
+		      	}
+
+    			$i=0;
+	       		while ($i<count($tc)){
+		      		// CODE1:N1
+			     	// DEBUG
+    				// echo "<br />".$tc[$i]." <br />\n";
+	       			// exit;
+		      		$t_cc=explode($separateur2, $tc[$i]); // tableau des items valides
+
+			     	// print_r($t_cc);
+				    // echo "<br />\n";
+    				// exit;
+	       			if (isset($t_cc[1])){
+		      			if (isset($t_item_poids[$i]) && isset($t_item_empreinte[$i])){
+			     			if (($t_item_poids[$i]>0) && ($t_item_empreinte[$i]>0)){
+				        			// echo "<br />".min($t_cc[1],$t_item_empreinte[$i]);
+						      	$t_certif_item_valeur[$i]=min($t_cc[1],$t_item_empreinte[$i]);
+    							// calculer le taux
+	       						$coeff=(float)$t_certif_item_valeur[$i] * (float)$t_item_coeff[$i];
+		      					// stocker la valeur pour l'item
+			     				$t_certif_item_coeff[$i]=$coeff;
+				       			// stocker le taux pour la competence
+					       		$t_certif_domaine_poids[$t_item_domaine[$i]]+=$coeff;
+    							// stocker le taux pour le domaine
+	       						$t_certif_competence_poids[$t_item_competence[$i]]+=$coeff;
+		      				}
+			     			else{
+				        			// echo "<br />".min($t_cc[1],$t_item_empreinte[$i]);
+						      	$t_certif_item_valeur[$i]=0.0;
+    							$t_certif_item_coeff[$i]=0.0;
+	       						// $t_certif_domaine_poids[$t_item_domaine[$i]]+=0.0;
+		      					// $t_certif_competence_poids[$t_item_competence[$i]]+=0.0;
+			     			}
+				       	}
+    				}
+
+			     	$i++;
+			     }
+
+    			// DEBUG
+                $nlen=strlen($liste_code);
+                if ($nlen<=MAXLENCODE){  // sous forme de tableau
+	       		// DOMAINES
+		      	$s.= '<table width="100%" cellspacing="0" cellpadding="2"><tr valign="top" >'."\n";
+    			// if (!empty($label_d)){
+	       		//	$s.='<td  width="5%">'.$label_d.'</td>';
+		      	//}
+    			//  else {
+	       		//	$s.='<td $t_certif_item_coeff width="5%">'.get_string('domaine','referentiel').'</td>';
+		      	//}
+    			for ($i=0; $i<count($t_domaine_coeff); $i++){
+	       			if ($t_domaine_coeff[$i]){
+		      			$s.='<td  align="center" colspan="'.$t_nb_item_domaine[$i].'"><b>'.$t_domaine[$i].'</b> ('.referentiel_pourcentage($t_certif_domaine_poids[$i], $t_domaine_coeff[$i]).'%)</td>';
+			     	}
+				    else{
+    					$s.='<td  align="center" colspan="'.$t_nb_item_domaine[$i].'"><b>'.$t_domaine[$i].'</b> (0%)</td>';
+	       			}
+		      	}
+    			$s.='</tr>'."\n";
+
+	       		$s.=  '<tr valign="top"  >'."\n";
+		      	for ($i=0; $i<count($t_competence); $i++){
+			     	if ($t_competence_coeff[$i]){
+				    	$s.='<td align="center" colspan="'.$t_nb_item_competence[$i].'"><b>'.$t_competence[$i].'</b> ('.referentiel_pourcentage($t_certif_competence_poids[$i], $t_competence_coeff[$i]).'%)</td>'."\n";
+    				}
+	       			else{
+		      			$s.='<td align="center" colspan="'.$t_nb_item_competence[$i].'"><b>'.$t_competence[$i].'</b> (0%)</td>'."\n";
+			     	}
+    			}
+	       		$s.='</tr>'."\n";
+
+                // ITEMS
+
+                // DEBUG
+                // echo "<br />$nlen\n";
+
+                $s.= '<tr valign="top" >'."\n";
+    			for ($i=0; $i<count($t_item_code); $i++){
+	       			if ($t_item_empreinte[$i]){
+		      			   if (isset($t_certif_item_valeur[$i])){
+                                if ($t_certif_item_valeur[$i]>=$t_item_empreinte[$i]){
+    			     			   // $s.='<td'.$bgcolor.'><span  class="valide">'.$t_item_code[$i].'</span></td>'."\n";
+    			     			   $s.='<td class="valide"><span  class="valide">'.$t_item_code[$i].'</span></td>'."\n";
+
+                                }
+        				        else{
+                                    //$s.='<td'.$bgcolor.'><span class="invalide">'.$t_item_code[$i].'</span></td>'."\n";
+                                    $s.='<td class="invalide"><span class="invalide">'.$t_item_code[$i].'</span></td>'."\n";
+                                }
+                            }
+			     	}
+				    else{
+                        $s.='<td class="nondefini"><span class="nondefini"><i>'.$t_item_code[$i].'</i></span></td>'."\n";
+    				}
+                }
+		      	$s.='</tr>'."\n";
+                $s.='<tr valign="top" >'."\n";
+    			// <td  width="5%">'.get_string('coeff','referentiel').'</td>'."\n";
+	       		// for ($i=0; $i<count($t_item_coeff); $i++){
+		      	for ($i=0; $i<count($t_item_code); $i++){
+			     	    if ($t_item_empreinte[$i]){
+                           if (isset($t_certif_item_valeur[$i])){
+					           if ($t_certif_item_valeur[$i]>=$t_item_empreinte[$i]){
+					       	      // $s.='<td'.$bgcolor.'><span class="valide">100%</span></td>'."\n";
+					       	      $s.='<td class="valide"><span class="valide">100%</span></td>'."\n";
+					           }
+    					       else{
+	       					      $s.='<td class="invalide"><span class="invalide">'.referentiel_pourcentage($t_certif_item_valeur[$i], $t_item_empreinte[$i]).'%</span></td>'."\n";
+		      			       }
+                            }
+    				    }
+	       			    else {
+		      			   $s.='<td class="nondefini"><span class="nondefini">&nbsp;</span></td>'."\n";
+			     	    }
+			    }
+			    $s.='</tr></table>'."\n";
+                }
+                else{
+	       		// DOMAINES
+		      	$s.= '<table width="100%" cellspacing="0" cellpadding="2">
+    <tr valign="top"><td>'."\n";
+    			// if (!empty($label_d)){
+	       		//	$s.='<td  width="5%">'.$label_d.'</td>';
+		      	//}
+    			//  else {
+	       		//	$s.='<td $t_certif_item_coeff width="5%">'.get_string('domaine','referentiel').'</td>';
+		      	//}
+    			for ($i=0; $i<count($t_domaine_coeff); $i++){
+	       			if ($t_domaine_coeff[$i]){
+		      			$s.=' <b>'.$t_domaine[$i].'</b> ('.referentiel_pourcentage($t_certif_domaine_poids[$i], $t_domaine_coeff[$i]).'%)';
+			     	}
+				    else{
+    					$s.=' <b>'.$t_domaine[$i].'</b> (0%)</span>';
+	       			}
+		      	}
+    			$s.='</td></tr>'."\n";
+
+	       		$s.=  '<tr valign="top"><td>'."\n";
+		      	for ($i=0; $i<count($t_competence); $i++){
+			     	if ($t_competence_coeff[$i]){
+				    	$s.=' <b>'.$t_competence[$i].'</b> ('.referentiel_pourcentage($t_certif_competence_poids[$i], $t_competence_coeff[$i]).'%)'."\n";
+    				}
+	       			else{
+		      			$s.=' <b>'.$t_competence[$i].'</b> (0%)'."\n";
+			     	}
+    			}
+	       		$s.='</td></tr>'."\n";
+
+                $s.= '<tr valign="top" ><td>'."\n";
+                for ($i=0; $i<count($t_item_code); $i++){
+                        if ($t_item_empreinte[$i]){
+                            if (isset($t_certif_item_valeur[$i])){
+                                if ($t_certif_item_valeur[$i]>=$t_item_empreinte[$i]){
+                                    $s.='<span class="deverrouille"><span  class="valide">'.$t_item_code[$i].' (100%)</span></span>'."\n";
+                                }
+                                else {
+                                    $s.='<span class="verrouille"><span class="invalide">'.$t_item_code[$i].' ('.referentiel_pourcentage($t_certif_item_valeur[$i], $t_item_empreinte[$i]).'%)</span></span>'."\n";
+                                }
+                            }
+                        }
+    				    else{
+                            $s.='<span class="nondefini"><i>'.$t_item_code[$i].'</i></span>'."\n";
+                        }
+                }
+                $s.='</td></tr></table>'."\n";
+                }
+                }
+            }
+
+	}
+	return $s;
+}
+
+
+
 /// URL
 
 
@@ -124,8 +2077,7 @@ define('MAXLIGNEGRAPH', 15);  // Nombre de lignes par graphique
 
 /**
  * This function is used by the reset_course_userdata function in moodlelib.
- * This function will remove all instance of referentiel
- * and clean up any related data.
+ * This function will remove clean up any related data.
  *
  * @global object
  * @global object
@@ -134,22 +2086,46 @@ define('MAXLIGNEGRAPH', 15);  // Nombre de lignes par graphique
  */
 function referentiel_reset_userdata($data) {
     global $CFG, $DB;
+	// DEBUG
+	// echo "<br />DEBUG :: lib.php :: 2076<br />\n";
+	// print_object($data);
+	// exit;
     $componentstr = get_string('modulenameplural', 'referentiel');
     $status = array();
 
     $strstatus='';
-    if ($instances=$DB->get_records('referentiel', array('course' => $data->courseid ))){
-        foreach ($instances as $instance){
-            referentiel_delete_instance($instance->id);
-            $strstatus.=$instance->name.", ";
-        }
-        $status[] = array('component'=>$componentstr, 'item'=>$strstatus, 'error'=>false);
-
+	if ($data->reset_referentiel_declaration){
+    	if ($instances=$DB->get_records('referentiel', array('course' => $data->courseid ))){
+            foreach ($instances as $instance){
+            	referentiel_delete_instance($instance->id, false);
+            	$strstatus.=$instance->name.", ";
+        	}
+        	$status[] = array('component'=>$componentstr, 'item'=>$strstatus, 'error'=>false);
+		}
     }
 
     return $status;
 }
 
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the assignment.
+ * @param $mform form passed by reference
+ */
+function referentiel_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'referentielheader', get_string('modulenameplural', 'referentiel'));
+    $mform->addElement('advcheckbox', 'reset_referentiel_declaration', get_string('deletealldeclarations','referentiel'));
+}
+
+/**
+ * Course reset form defaults.
+ * @param  object $course
+ * @return array
+ */
+function referentiel_reset_course_form_defaults($course) {
+    return array('reset_referentiel_declaration'=>1);
+}
 
 /**
  * Must return an array of users who are participants for a given instance
@@ -284,21 +2260,23 @@ global $DB;
 
 /// OTHER STANDARD FUNCTIONS ////////////////////////////////////////////////////////
 
+require_once ("lib_backup.php");
+
 /**
  * Deletes an referentiel instance
  *
  * This is done by calling the delete_instance() method of the referentiel type class
  * Given an ID of an instance of this module,
- * this function will permanently delete the instance
- * and any activity and certificate and task ank accompagnement
+ * this function will permanently delete any activity and certificate and task ank accompagnement
  * that depends on it.
  *
  * @param int $id Id of the module instance
+ * @param boolean $purge : if true module instance is deleted too
  * @return boolean Success/Failure
  */
 
 
-function referentiel_delete_instance($id){
+function referentiel_delete_instance($id, $purge=true){
     global $CFG, $DB;
 
     if (! $referentiel = $DB->get_record('referentiel', array('id'=>$id))) {
@@ -306,7 +2284,7 @@ function referentiel_delete_instance($id){
     }
 
     $ref = new referentiel();
-    return $ref->delete_instance($referentiel);
+    return $ref->delete_instance($referentiel, $purge);
 }
 
 
@@ -315,10 +2293,10 @@ function referentiel_delete_instance($id){
  *
  * This is done by calling the update_instance() method of the referentiel type class
  */
-function referentiel_update_instance($referentiel){
+function referentiel_update_instance($referentiel, $form=NULL){
     global $CFG;
     $ref = new referentiel();
-    return $ref->update_instance($referentiel);
+    return $ref->update_instance($referentiel, $form);
 }
 
 /**
@@ -887,21 +2865,6 @@ function referentiel_get_logo($occurrence){
     }
 
 
-    /**
-     * display an url accorging to moodle file mangement
-     * clone of referentiel_affiche_url()
-     * @return string active link
-	 * @ input $url : an uri
-	 * @ input $etiquette : a label
-	 * @ input $cible :
-     */
-    function referentiel_get_url($url, $etiquette="", $cible="") {
-    // clone de referentiel_affiche_url()
-         return referentiel_affiche_url($url, $etiquette, $cible);
-    }
-
-
-
 // ############################ MOODLE 1.9 FILE API #########################
     /**
      * get directory into which export is going
@@ -1037,6 +3000,221 @@ function referentiel_deplace_fichier($dest_path, $source, $dest, $sep, $deplace)
 			return $currdir.'/'.$filename;
 		}
  	}
+
+
+// ############################ CONVERSION DES URL MOODLE 1.9 en MOODLE 2.0 #########################
+// Il faut que le dossier moodledata/ de la version moodle 1.9 n'ait pas été supprimé
+
+	// ------------------
+	function referentiel_m19_to_m2_file($data, $context, $verbose=false, $delete=false) {
+	// convertit une url M1.9 en url M2.x
+	// effectue la sauvegarde du fichier cible dans l'espace de fichier de l'utilisateur
+	// Input $data->url
+	// 2/moddata/referentiel/1/7/Module_Referentiel_de_Moodle_Nouveautes_2013.pdf
+	// data : an object
+	// $context : context
+	// data->filearea = 'document' | 'consigne'
+	// Output
+	// /28/mod_referentiel/document/1/Module_Referentiel_de_Moodle_Nouveautes_2013.pdf
+	global $CFG;
+	global $DB;
+		$ok=false;
+		$msg='';
+	    $retour_url=$data->url;
+		if (!empty($data->id) && !empty($data->url) && !empty($data->filearea)){
+			$oldpath = $CFG->dataroot.'/'.$data->url;
+			if (file_exists($oldpath)){
+				$content=file_get_contents($oldpath);
+				if (!empty($content)) {
+					if (preg_match('/moddata\/referentiel/',$data->url)){
+						$parts=explode('/',$data->url);
+		    			$old_course_id=$parts[0]; // not used here
+		    			$old_ref_id=$parts[3];   // not used here
+			    		$old_user_id=$parts[4];  // not used here
+			    		$filename=$parts[5];
+						//echo "<br />FILENAME : $filename<br />\n";
+						if (!empty($filename)){
+				    		if ($context->contextlevel == CONTEXT_MODULE) {
+								// verifier les fileareas acceptables
+								$fileareas = array('document', 'consigne');
+                                // $fileareas = array('referentiel', 'document', 'consigne', 'activite', 'task', 'certificat', 'scolarite', 'pedagogie', 'outcomes', 'archive');
+
+    	    					if (in_array($data->filearea, $fileareas)) {
+        							$fullnewpath = '/'.$context->id.'/mod_referentiel/'.$data->filearea.'/'.$data->id.'/'.$filename;
+
+									$file_record=new object();
+	                				$file_record->contextid = $context->id;
+    	            				$file_record->component='mod_referentiel';
+        	        				$file_record->filearea=$data->filearea;
+	        	        			$file_record->itemid=$data->id;
+	        	        			$file_record->userid=$data->userid;
+                                    if (isset($data->author)){
+										$file_record->author=$data->author;
+									}
+									$file_record->filepath='/';
+									$file_record->filename=$filename;
+
+        							$fs = get_file_storage();
+	        						if ($fs->create_file_from_string($file_record, $content)) {
+
+										if ($data->filearea=='document'){
+				             				$ok=$DB->set_field('referentiel_document','url_document',$fullnewpath, array('id'=>$data->id));
+	        							}
+        								else if ($data->filearea=='consigne'){
+            								$ok=$DB->set_field('referentiel_consigne','url_consigne',$fullnewpath, array('id'=>$data->id));
+										}
+                   						$retour_url=$fullnewpath;
+
+										$newlink = new moodle_url($CFG->wwwroot.'/pluginfile.php'.$fullnewpath);
+                                        $oldlink = new moodle_url($oldpath);
+                						if ($verbose){
+											$msg.="<br />New link : <a href=\"$newlink\" target=\"blank\">$newlink</a>\n";
+										}
+										if ($delete){
+											// le fichier original est supprime
+											if (unlink($oldpath)){
+												if ($verbose){
+													$msg.=" :: Old link $oldlink deleted\n";
+												}
+											}
+											else{
+            									if ($verbose){
+                                                	$msg.=" :: Old link $oldlink <i>NOT</i> deleted\n";
+												}
+											}
+										}
+	       							}
+									else{
+            							if ($verbose){
+                                    		$msg.="<br />New file creation error \n";
+										}
+									}
+								}
+								else{
+									// que doit-on faire ?
+            						if ($verbose){
+                                    	$msg.="<br />The filearea $data->filearea <i>does't match</i> a link to referentiel_document nor referentiel_consigne\n";
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			else{
+				if ($verbose){
+					$msg .= "<br />File $oldpath not found\n";
+				}
+
+			 	if ($delete){
+        			if ($data->filearea=='document'){
+						if ($DB->delete_records('referentiel_document', array('id'=>$data->id))){
+                    		if ($verbose){
+								$msg .= " :: Failed link deleted from table 'referentiel_document'\n";
+							}
+						}
+						else{
+                    		if ($verbose){
+								$msg .= " :: Failed link <i>NOT</i> deleted from table 'referentiel_document'\n";
+							}
+						}
+	        		}
+        			else if ($data->filearea=='consigne'){
+						if ($DB->delete_records('referentiel_consigne', array('id'=>$data->id))){
+                    		if ($verbose){
+								$msg .= " :: Failed link deleted from table 'referentiel_consigne'\n";
+							}
+						}
+						else{
+                    		if ($verbose){
+								$msg .= " :: Failed link <i>NOT</i> deleted from table 'referentiel_consigne'\n";
+							}
+						}
+					}
+				}
+			}
+		}
+		if ($verbose && !empty($msg)){
+			echo $msg;
+		}
+
+		return $retour_url;
+	}
+
+
+// ----------------------
+function referentiel_recherche_url_m19(){
+// return number of m19 links
+	global $DB;
+	$n=0;
+	$params=array('urlm19'=>'%/moddata/referentiel/%');
+	$sql="SELECT id, ref_activite, url_document FROM {referentiel_document} WHERE url_document LIKE :urlm19 ORDER BY ref_activite ";
+	$recs_documents=$DB->get_records_sql($sql, $params);
+	if (!empty($recs_documents)){
+		$n=count($recs_documents);
+	} 
+	$params=array('urlm19'=>'%/moddata/referentiel/%');
+	$sql="SELECT id, ref_task, url_consigne FROM {referentiel_consigne} WHERE url_consigne LIKE :urlm19 ORDER BY ref_task ";
+	$recs_consignes=$DB->get_records_sql($sql, $params);
+	if (!empty($recs_consignes)){
+		$n+=count($recs_consignes);
+	}
+	return $n; 
+}
+
+// ---------------------
+function referentiel_conversion_url_m19($delete=false, $verbose=false){
+// move all m19 links and data to m2.x links and files
+global $CFG;
+global $DB;
+		// documents
+		$params=array('urlm19'=>'%/moddata/referentiel/%');
+		$sql="SELECT id, ref_activite, url_document FROM {referentiel_document} WHERE url_document LIKE :urlm19 ORDER BY ref_activite ";
+		$recs_documents=$DB->get_records_sql($sql, $params);
+		if (!empty($recs_documents)){
+			$activiteid=0;
+			foreach($recs_documents as $doc){
+				if ($doc->ref_activite!=$activiteid){
+					$activiteid=$doc->ref_activite;
+					$activite=$DB->get_record('referentiel_activite', array('id'=>$doc->ref_activite));
+					$cm = get_coursemodule_from_instance('referentiel', $activite->ref_instance, $activite->ref_course);
+					$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+				}
+	            $data_r=new Object();
+				$data_r->id = $doc->id;
+				$data_r->userid = $activite->userid;
+				$data_r->author = referentiel_get_user_info($activite->userid);
+				$data_r->url = $doc->url_document;
+				$data_r->filearea = 'document';
+        		$url_document = referentiel_m19_to_m2_file($data_r, $context, $verbose, $delete);
+			}
+		}
+
+		// consignes
+		$params=array('urlm19'=>'%/moddata/referentiel/%');
+		$sql="SELECT id, ref_task, url_consigne FROM {referentiel_consigne} WHERE url_consigne LIKE :urlm19 ORDER BY ref_task ";
+		$recs_consignes=$DB->get_records_sql($sql, $params);
+		if (!empty($recs_consignes)){
+			$taskid=0;
+			foreach($recs_consignes as $doc){
+				if ($doc->ref_task!=$taskid){
+					$taskid=$doc->ref_task;
+					$task=$DB->get_record('referentiel_task', array('id'=>$doc->ref_task));
+					$cm = get_coursemodule_from_instance('referentiel', $task->ref_instance, $task->ref_course);
+					$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+				}
+	            $data_r=new Object();
+				$data_r->id = $doc->id;
+				$data_r->userid = $task->auteurid;
+				$data_r->author = referentiel_get_user_info($task->auteurid);
+				$data_r->url = $doc->url_consigne;
+				$data_r->filearea = 'consigne';
+        		$url_consigne = referentiel_m19_to_m2_file($data_r, $context, $verbose, $delete);
+			}
+		}
+		//$CFG->referentiel_migration_19_2x=0;
+		// pas de nouvelle conversion en principe...
+}
 
 
 // ############################ MOODLE 2.0 FILE API #########################

@@ -507,8 +507,13 @@ if ($auteur_info!=$new_auteur_info) {
 	<b><?php  print_string('aide_saisie_competences','referentiel') ?>:</b></td>
     <td align="left" colspan="3">	
 <?php
-    // referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competence, $competences_task);
-	referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_task, false);
+    	// MODIF JF 2012/02/24
+    	if (referentiel_hierarchical_display($referentiel->id)){
+            referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competence, $competences_task);
+		}
+		else{
+         referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_task, false);
+		}
 ?>
     </td>
 </tr>

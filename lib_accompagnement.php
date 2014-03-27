@@ -39,24 +39,6 @@
 
  $REFERENTIEL_ACCOMPAGEMENT="REF";
 
-/**
- * This function returns records of accompagnement from table referentiel_accompagnement
- *
- * @param id reference instance
- * @return objects
- * @todo Finish documenting this function
- **/
-// -----------------------
-function referentiel_get_accompagnements($referentiel_id){
-global $DB;
-	if (isset($referentiel_id) && ($referentiel_id>0)){
-        $params=array("refid" => "$referentiel_id");
-        $sql="SELECT * FROM {referentiel_accompagnement} WHERE ref_instance=:refid";
-		return $DB->get_records_sql($sql, $params);
-	}
-	else
-		return NULL;
-}
 
 /**
  * Given an task id,
@@ -71,17 +53,6 @@ function referentiel_reset_accompagnement($instanceid){
 // reset de la table accompagnement
 global $DB;
     $DB->delete_records("referentiel_accompagnement", array("ref_instance" => $instanceid));
-}
-
-// -----------------------
-function referentiel_delete_accompagnement_record($id) {
-// suppression de l'accompagnement associe
-global $DB;
-    $ok=false;
-    if (!empty($id)){
-		$ok = $DB->delete_records("referentiel_accompagnement", array("id" => "$id"));
-	}
-    return $ok;
 }
 
 // -----------------------

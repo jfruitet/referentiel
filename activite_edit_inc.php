@@ -126,11 +126,12 @@ if (!empty($record) && !empty($course)){
         }
 
 		// AFFICHER ACTIVITE
+		/*
 		$link_documents=referentiel_get_liens_documents($activite_id);
         if ($link_documents){
             echo '<div>'."\n".$link_documents."</div>\n";
         }
-
+		*/
 
 ?>
 
@@ -150,7 +151,7 @@ if (!empty($record) && !empty($course)){
 <br />
 <span class="bold"><?php  print_string('description','referentiel') ?></span>
 <?php
-    echo '<br /><textarea cols="100" rows="10" name="description_activite">'.s($description_activite).'</textarea>'."\n";
+    echo '<br /><textarea cols="80" rows="10" name="description_activite">'.s($description_activite).'</textarea>'."\n";
     if (($ref_task!=0) && ($USER->id==$userid)) { // activite issue d'une tache et affichee par son auteur
     	echo '<br />
 <span class="bold">'.get_string('competences_bloquees','referentiel').'</span>'."\n";
@@ -160,7 +161,12 @@ if (!empty($record) && !empty($course)){
         else{
             echo '<div class="invalide">'."\n";
         }
-        referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_activite, true);
+    	if (referentiel_hierarchical_display($referentiel->id)){
+			referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_tache, $competences_activite, $activite_id);
+		}
+		else{
+        	referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_activite, true);
+		}
         echo '</div>'."\n";
     }
     else{ // activite normale
@@ -171,7 +177,12 @@ if (!empty($record) && !empty($course)){
         else{
             echo '<div class="invalide">'."\n";
         }
-	    referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_activite, false);
+		if (referentiel_hierarchical_display($referentiel->id)){
+			referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_tache, $competences_activite, $activite_id);
+		}
+		else{
+        	referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_activite, false);
+		}
         echo '</div>'."\n";
     }
 
@@ -179,7 +190,7 @@ if (!empty($record) && !empty($course)){
 ?>
 <span class="bold"><?php  print_string('commentaire','referentiel') ?></span>
 <br />
-<textarea cols="100" rows="10" name="commentaire_activite"><?php  p($commentaire_activite) ?></textarea>
+<textarea cols="80" rows="10" name="commentaire_activite"><?php  p($commentaire_activite) ?></textarea>
 <?php
 	}
 	else {
@@ -254,8 +265,8 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
 <input type="submit" name="delete" value="<?php  print_string("delete") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("quit","referentiel") ?>" />
+</form>
 
-</form>	
 </div>
 
 <!-- NOUVEAU DOCUMENT -->
@@ -314,14 +325,14 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
                 $s.='<br /><span class="bold">'.get_string('etiquette_document','referentiel').'</span>
 <input type="text" name="etiquette_document" size="40" maxlength="255" value="'.$etiquette_document.'" />
 <br /><span class="bold">'. get_string('cible_link','referentiel').'</span>'."\n";
-	if ($cible_document){
-		$s.=' <input type="radio" name="cible_document" value="1" checked="checked" />'.get_string('yes').' &nbsp; <input type="radio" name="cible_document" value="0" />'.get_string('no')."\n";
-	}
-	else{
-		$s.=' <input type="radio" name="cible_document" value="1" />'.get_string('yes').'
+				if ($cible_document){
+					$s.=' <input type="radio" name="cible_document" value="1" checked="checked" />'.get_string('yes').' &nbsp; <input type="radio" name="cible_document" value="0" />'.get_string('no')."\n";
+				}
+				else{
+					$s.=' <input type="radio" name="cible_document" value="1" />'.get_string('yes').'
 <input type="radio" name="cible_document" value="0" checked="checked" />'.get_string('no')."\n";
-	}
-    $s.='
+				}
+    			$s.='
 <br />
 
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
@@ -353,7 +364,7 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 <input type="submit" name="delete" value="'.get_string("delete").'" />
 <!-- input type="submit" name="cancel" value='.get_string("quit","referentiel").' / -->
 
-</form>	
+</form>
 </div>
 ';
 			}
@@ -381,8 +392,8 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 		if (isset($activite_id) && ($activite_id>0)){
 			//notice_yesno
             echo $OUTPUT->confirm(get_string('confirmvalidateactivity','referentiel'),
-			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approve='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=1&amp;mode='.$old_mode.'&amp;sesskey='.sesskey(),
-			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approve='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=0&amp;mode='.$old_mode.'&amp;sesskey='.sesskey());
+			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approved='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=1&amp;mode='.$old_mode.'&amp;sesskey='.sesskey(),
+			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approved='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=0&amp;mode='.$old_mode.'&amp;sesskey='.sesskey());
 		}
 		else{
 			print_print_error(get_string('noactivite','referentiel'), "activite.php?d=$referentiel->id.'&amp;userid='.$userid.'&amp;mode='.$old_mode.'");
@@ -393,8 +404,8 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 		if (isset($activite_id) && ($activite_id>0)){
 			//notice_yesno
             echo $OUTPUT->confirm(get_string('confirmdevalidateactivity','referentiel'),
-			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approve='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=0&amp;mode='.$old_mode.'&amp;sesskey='.sesskey(),
-			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approve='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=1&amp;mode='.$old_mode.'&amp;sesskey='.sesskey());
+			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approved='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=0&amp;mode='.$old_mode.'&amp;sesskey='.sesskey(),
+			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approved='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=1&amp;mode='.$old_mode.'&amp;sesskey='.sesskey());
 		}
 		else{
 			print_print_error(get_string('noactivite','referentiel'), "activite.php?d=$referentiel->id.'&amp;userid='.$userid.'&amp;mode='.$old_mode.'");
@@ -407,7 +418,7 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 		$activite_id=$record->id;
 		$type_activite = stripslashes($record->type_activite);
 		$description_activite = stripslashes($record->description_activite);
-		$competences_activite = stripslashes($record->competences_activite);
+		$competences_activite = $record->competences_activite;
 		$commentaire_activite = stripslashes($record->commentaire_activite);
 		$ref_instance = $record->ref_instance;
 		$ref_referentiel = $record->ref_referentiel;
@@ -441,58 +452,47 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
         if ($link_documents){
             echo '<br />'."\n";
         }
-?>
-<form name="form" method="post" action="<?php p("activite.php?d=$referentiel->id") ?>">
+ 		// preparer les variables globales pour Overlib
+		referentiel_initialise_data_referentiel($ref_referentiel);
+		$jauge_activite_declarees=referentiel_print_jauge_activite($userid, $ref_referentiel);
+		if ($jauge_activite_declarees){
+			print_string('competences_declarees','referentiel', referentiel_get_user_info($userid));
+			//echo '<br />DEBUT DEBUG'."\n";
+			echo $jauge_activite_declarees."\n";
+			//echo '<br />FIN DEBUG'."\n";
+		}
 
-	<span class="bold"><?php  print_string('id','referentiel'); ?> </span>
-
-	<?php  p($activite_id) ?>
-
-	<span class="bold"><?php  print_string('type_activite','referentiel') ?></span>
-
-            <?php  p($type_activite) ?>
-
-     <span class="bold"><?php print_string('auteur','referentiel')?> </span>
-
-    		<?php p($user_info) ?>
-
-	<span class="bold"><?php  print_string('date_creation','referentiel') ?> </span>
-
-		<?php  p($date_creation_info);; ?>
-<br />
-	<span class="bold"><?php  print_string('description','referentiel') ?></span>
-<br />
-        <?php  echo (nl2br($description_activite)); ?>
-
-	<span class="bold"><?php  print_string('liste_codes_competence','referentiel') ?> </span>
-		<?php  echo referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel); ?>
-<br />
-
-	<span class="bold"><?php  print_string('commentaire','referentiel') ?></span>
-<br />
-<textarea cols="100" rows="10" name="commentaire_activite"><?php  echo $commentaire_activite; ?></textarea>
-<br />
-     <span class="bold"><?php   print_string('referent','referentiel') ?> </span>
-      <br />
-	<?php p($teacher_info); ?> 
-
-     <span class="bold"><?php   print_string('modification','referentiel') ?></span>
-<br />
-	<?php  print_string('date_modif_by','referentiel'); ?>
-<i>
-    <?php p($date_modif_info); ?>
-</i>
-<br />
-
-		<?php  print_string('date_modif_student_by','referentiel'); ?>
-<i>
-    <?php p($date_modif_student_info); ?>
-</i>
-
-     <span class="bold"><?php   print_string('validation','referentiel') ?> </span>
-      <br />
-<?php
+		echo '<div class="ref_saisie1">
+<form name="form" method="post" action="'.s("activite.php?d=$referentiel->id").'">
+<span class="bold">'.get_string('id','referentiel').'</span>';
+		echo $activite_id;
+		echo '<span class="bold">'.get_string('type_activite','referentiel').'</span>'.s($type_activite).'
+<br /><span class="bold">'.get_string('auteur','referentiel').'</span>'.s($user_info);
+		echo ' <span class="bold">'.get_string('date_creation','referentiel').'</span>'.s($date_creation_info);
+		echo '<br />'."\n";
 		if (isset($approved) && ($approved)){
+			echo ' <span class="valide">'."\n";
+		}
+		else{
+			echo ' <span class="invalide">'."\n";
+		}
+		echo '<span class="bold">'.get_string('liste_codes_competence','referentiel').'</span>'."\n";
+		echo referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel)."\n";
+        echo '</span>'."\n";
+		echo '<br /><br /><span class="bold">'.get_string('description','referentiel').'</span><br /><span class="white">'.nl2br($description_activite).'</span>
+';
+		
+		echo '<br /><span class="bold">'.get_string('commentaire','referentiel').'</span>';
+		echo '<br /><textarea cols="80" rows="10" name="commentaire_activite">'.s($commentaire_activite).'</textarea>
+<br /><span class="bold">'.get_string('referent','referentiel').'</span>'.s($teacher_info).'
+<br />'."\n";
+		echo '<span class="bold">'.get_string('modification','referentiel').'</span>'."\n";
+		if (!empty($date_modif_info)){
+	 		echo get_string('date_modif_by','referentiel').'<i>'.$date_modif_info.'</i>';
+		}
+		echo ' '.get_string('date_modif_student_by','referentiel').'<i>'.$date_modif_student_info.'</i>'."\n";
+		echo '<br /><span class="bold">'.get_string('validation','referentiel').'</span>'."\n";
+		if (!empty($approved)){
 			// print_string('approved','referentiel');
 			echo '<input type="radio" name="approved" value="1" checked="checked" />'.get_string('yes').' &nbsp; <input type="radio" name="approved" value="0" />'.get_string('no').' &nbsp; &nbsp; '."\n";
 		}
@@ -500,13 +500,8 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 			// print_string('not_approved','referentiel');
 			echo '<input type="radio" name="approved" value="1" />'.get_string('yes').' &nbsp; <input type="radio" name="approved" value="0" checked="checked" />'.get_string('no').' &nbsp; &nbsp; '."\n";
 		}
-
-?>
-
-     <span class="bold"><?php  print_string('notification_commentaire','referentiel') ?> </span>
-     <br />
-<?php
-		echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp; <input type="radio" name="mailnow" value="0" checked="checked" />'.get_string('no').' &nbsp; &nbsp; '."\n";
+		echo '<br /><span class="bold">'.get_string('notification_commentaire','referentiel').'</span>'."\n";
+		echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp; <input type="radio" name="mailnow" value="0" checked="checked" />'.get_string('no').' <br /><br />'."\n";
 ?>
 <input type="hidden" name="select_acc" value="<?php echo $select_acc; ?>" />
 <input type="hidden" name="userid" value="<?php echo $userid; ?>" />
@@ -535,12 +530,13 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("quit","referentiel") ?>" />
 </form>
-
+</div>
 <?php
+/*
         if ($link_documents){
             echo '<span class="vert">'."\n".$link_documents."\n".'</span><br />'."\n";
         }
-
+*/
 	}
 }
 ?>

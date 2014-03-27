@@ -89,7 +89,7 @@
     }
     $returnlink_ref = new moodle_url('/mod/referentiel/view.php', array('id'=>$cm->id, 'non_redirection'=>'1'));
     $returnlink_course = new moodle_url('/course/view.php', array('id'=>$course->id));
-    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('d'=>$referentiel->id, 'sesskey'=>sesskey()));
+    $returnlink_add = new moodle_url('/mod/referentiel/add.php', array('id'=>$cm->id, 'sesskey'=>sesskey()));
 
     require_login($course->id, false, $cm);
     if (!isloggedin() || isguestuser()) {
@@ -134,15 +134,10 @@
 
 
 	if (!empty($course) && !empty($cm) && !empty($referentiel)  && !empty($referentiel_referentiel) && isset($form)) {
-
-	// DEBUG
-	// echo "<br />DEBUG : edit.php :: Ligne 122<br />\n";
-	// print_r($form);
-
 		// add, delete or update form submitted	
 		
 		// le mot de passe est-il actif ?
-		// cette fonction est due au param�trage
+		// cette fonction est due au parametrage
 		if ((!$pass) && ($checkpass=='checkpass')){
             if (!empty($form->pass_referentiel) && $referentiel_referentiel){
                 if (!empty($form->force_pass)){  // forcer la sauvegarde sans verification
@@ -185,18 +180,17 @@
 			if ($form->delete == get_string("delete")){
 				// Suppression instances
 				if ($form->action=="supprimerinstances"){
+					$msg='';
 					// enregistre les modifications
 					if (isset($form->t_ref_instance) && ($form->t_ref_instance) && is_array($form->t_ref_instance)){
 						while (list($key, $val)=each($form->t_ref_instance)){
 							if ($val){
 								// suppression sans confirmation 
-								/*
 								// REPRIS DE course/mod.php
-								*/
-								// DEBUG
-								// echo '<br />'. $key.' : '.$val."\n";
+								$params=array("module" => "$cm->module", "refid" => "$val");
 								$sql = "SELECT * FROM {course_modules} WHERE module = :module AND instance=:refid ";
-								$courses_modules = $DB->get_records_sql($sql, array("module" => "$cm->module", "refid" => "$val"));
+								$courses_modules = $DB->get_records_sql($sql, $params);
+								
 								if ($courses_modules){
   									foreach($courses_modules as $course_module){
 										if (!empty($course_module)) {
@@ -205,18 +199,13 @@
 	       		        						$context_course = get_context_instance(CONTEXT_COURSE, $course_module->course);
                									require_capability('moodle/course:manageactivities', $context_course);
 											
-			     								$that_instance = $DB->get_record("referentiel", array("id" => "$course_module->instance"));
-				    							// echo '<br />INSTANCE :<br />'."\n";
-					       						// print_r($that_instance );
-						      					// exit;
-											
+			     								$that_instance = $DB->get_record("referentiel", array("id" => "$course_module->instance"));							
 							     				if 	($that_instance){
                                                     if (function_exists('course_delete_module')){  // Moodle v 2.5 et suivantes
                                                         if (course_delete_module($course_module->id)) {
                                                             if (delete_mod_from_section($course_module->id, "$course_module->section")) {
                                                                 rebuild_course_cache($course_record->id);
-		          				      						    $msg=get_string('instance_deleted', 'referentiel').' '.$that_instance->name;
-				              		      					    add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
+		          				      						    $msg.=get_string('instance_deleted', 'referentiel').' '.$that_instance->name;
                                                             }
                                                         }
 									                }
@@ -224,21 +213,30 @@
                                                         if (delete_course_module($course_module->id)) {
                                                             if (delete_mod_from_section($course_module->id, "$course_module->section")) {
                                                                 rebuild_course_cache($course_record->id);
-		          				      						    $msg=get_string('instance_deleted', 'referentiel').' '.$that_instance->name;
-				              		      					    add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
-										                    }
+		          				      						    $msg.=get_string('instance_deleted', 'referentiel').' '.$that_instance->name;
+				              			                    }
 									                    }
                                                     }
+                                	      			
 								                }
-								                else{ // cette 'instance' n'existe dans aucun module, c'est juste un fant�me, on peut la d�truire
-								                    if (!referentiel_delete_instance($instanceid)) {
-                                                        ;//print_error("Could not delete that referentiel instance", "$CFG->wwwroot/course/view.php?id=$course->id");
-            			    		                }
-                                                }
-							                 }
-						                  }
-					                   }
+								                // Supprimer l'instance
+								                if (!referentiel_delete_instance($that_instance->id)) {
+                                					$record_course = $DB->get_record('course', array('id'=> $that_instance->course));
+                                					$msg.= "<br />".get_string('instance','referentiel')." $that_instance->name (#$that_instance->id) ".get_string('course')." $record_course->fullname ($record_course->shortname) ".get_string('not_deleted', 'referentiel')."\n";
+            			    		            } 
+							            	}
+						            	}
+					            	}					                   
+								}
+								else{ 
+									// cette 'instance' n'existe dans aucun module, c'est juste un fantome, on peut la detruire
+								    if (!referentiel_delete_instance($val)) {
+		                                $record_instance = referentiel_get_referentiel($val);
+                                		$record_course = $DB->get_record('course', array('id'=> $record_instance->course));
+                                		$msg.= "<br />".get_string('instance','referentiel')." $record_instance->name (#$record_instance->id) ".get_string('course')." $record_course->fullname ($record_course->shortname) ".get_string('not_deleted', 'referentiel')."\n";
+            			    		}
                                 }
+                                add_to_log($course->id, "referentiel", "delete", "delete.php?id=".$cm->id, $msg, $cm->module);													                                                 
                             }
                         }
                     }
@@ -246,7 +244,6 @@
 					if (isset($form->referentiel_id) && ($form->referentiel_id>0)){
 						$records_instance=referentiel_referentiel_list_of_instance($form->referentiel_id);
 						if ($records_instance){
-                            $msg='';
                             foreach($records_instance as $r_instance){
                                 $record_instance = referentiel_get_referentiel($r_instance->id);
                                 $record_course = $DB->get_record('course', array('id'=> $record_instance->course));
@@ -262,7 +259,7 @@
                                 // suppression des certificats
                                 referentiel_delete_referentiel_certificats($form->referentiel_id);
                                 $msg=get_string('deletereferentiel', 'referentiel').' '.$form->referentiel_id;
-		    				    add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
+		    				    add_to_log($course->id, "referentiel", "delete", "delete.php?id=".$cm->id, $msg, $cm->module);
                                 redirect($returnlink_course);
                             }
                             else{
@@ -297,7 +294,7 @@
 							}
 							
 							$msg=get_string('deletereferentiel', 'referentiel').' '.$form->referentiel_id;
-		    				add_to_log($course->id, "referentiel", "delete", "delete.php?d=".$referentiel->id, $msg, $cm->module);
+		    				add_to_log($course->id, "referentiel", "delete", "delete.php?id=".$cm->id, $msg, $cm->module);
                             redirect($returnlink_course,$msg);
 							exit;	
 						}
@@ -323,7 +320,7 @@
         }
 	}
 	else {
-        notice("ERREUR : No file found at : $modform)", "view.php?id=$course->id&d=$referentiel->id&amp;non_redirection=1");
+        notice("ERREUR : No file found at : $modform)", "view.php?id=$course->id&id=$cm->id&amp;non_redirection=1");
     }
 	
     /// Mark as viewed  ??????????? A COMMENTER

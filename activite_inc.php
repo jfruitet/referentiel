@@ -98,21 +98,24 @@ echo '<br /><input type="text" name="type_activite" size="80" maxlength="80" val
 echo '<br />'."\n";
 echo '<span class="bold">'.get_string('description','referentiel').'</span>
 <br />
-<textarea cols="100" rows="10" name="description_activite">'.s($form->description_activite).'</textarea>';
-echo '<br /><br />'."\n";
+<textarea cols="80" rows="10" name="description_activite">'.s($form->description_activite).'</textarea>';
+echo '<br />'."\n";
+echo '<span class="bold">'.get_string('aide_saisie_competences','referentiel').'</span>'."\n";
+echo '<br />'."\n";
+// MODIF JF 2013/10/03
+if (referentiel_hierarchical_display($referentiel->id)){
+	referentiel_selection_liste_codes_item_competence('/',$form->competences_activite);
+}
+else{
+	referentiel_selection_liste_codes_item_hierarchique($referentiel_referentiel->id);
+}
+
+echo '<br />'."\n";
 echo '	<span class="bold">'.get_string('depot_document','referentiel').'</span>'."\n";
 echo '&nbsp; &nbsp; <input type="radio" name="depot_document" value="'.get_string('yes').'"/>'.get_string('yes')."\n";
 echo '&nbsp; &nbsp; <input type="radio" name="depot_document" value="'.get_string('no').'" checked="checked" />'.get_string('no');
 echo '<br />  <span class="bold">'.get_string('notification_activite','referentiel').'</span>';
 echo '&nbsp; &nbsp; <input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp; &nbsp; <input type="radio" name="mailnow" value="0" checked="checked" />'.get_string('no').' &nbsp; &nbsp; '."\n";
-echo '<br />'."\n";
-echo '<br />'."\n";
-echo '<span class="bold">'.get_string('aide_saisie_competences','referentiel').'</span>'."\n";
-
-// MODIF JF 2012/02/24
-// referentiel_selection_liste_codes_item_competence('/',$form->competences_activite);
-echo '<br />'."\n";
-referentiel_selection_liste_codes_item_hierarchique($referentiel_referentiel->id);
 echo '<br />'."\n";
 ?>
 

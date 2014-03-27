@@ -3663,7 +3663,8 @@ class pformat_csv extends pformat_default {
 	global $DB;
 	
 	// initialiser les variables	
-	$date_creation="";
+	$error_message='';
+    $date_creation='';
 	$in_pedago=false;		// drapeau
 		
     // get some error strings
@@ -3854,7 +3855,13 @@ class pformat_csv extends pformat_default {
                                 }
                             }
                         }
-                        
+                        else{
+                             // MODIF JF 2013/05/23
+                             // il faut probablement ajouter cet utilisateur à Moodle, mais comment faire ?
+                             // A tout le moins signaler la difficulté
+                             $error_message.='<br/>'.get_string('user_unknown','referentiel',$login.' '.$firstname.' '.$lastname);                      
+                        }
+
                         
         				if (!$trouve_pedago){  // verifier si une pedagogie identique existe
                             $rec_pedago=referentiel_get_id_pedago_from_data($num_groupe, $date_cloture, $promotion, $formation, $pedagogie, $composante);
@@ -3894,6 +3901,13 @@ class pformat_csv extends pformat_default {
 			$line++;
 		}
     }
+    if (!empty($error_message)){
+       echo '<div class="error">';
+       echo get_string('import_pedagogie_error','referentiel')."\n";
+       echo $error_message."\n";
+       echo '</div>'."\n";
+    }
+
     return true;
     }
 

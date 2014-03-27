@@ -179,13 +179,12 @@ function referentiel_recode_nom($nom){
     $nom=html_entity_decode(trim($nom),ENT_QUOTES,'UTF-8');
 
 	//$s = strtr(trim($nom), " -%£&/'àéèêïîöôùüûç", "_______aeeeiioouuuc");
-	$search =array('"'," ","'","%","£","&","/","à","é","è","ê","ï","î","ö","ô","ù","ü","û","ç");
+	$search =array('\\','"'," ","'","%","£","&","/","à","é","è","ê","ï","î","ö","ô","ù","ü","û","ç");
     $replace=array('_','_','_','_','_',"_","_","a","e","e","e","i","i","o","o","u","u","u","c");
     //$s = urlencode(str_replace($search, $replace,trim($nom)));
     $s = str_replace($search, $replace,$nom);
 	return $s;
 }
-
 
 // -----------------------
 function referentiel_enregistrer_fichier($contenu, $nom_fichier, $dossier, $ext){

@@ -172,7 +172,7 @@ global $DB;
 	if (!empty($occurrence_id)){
 		$record_a = referentiel_get_referentiel_referentiel($occurrence_id);
         $referentiel_id=$record_a->id;
-		$name = $record_a->name;
+		$name = stripslashes($record_a->name);
 		$code_referentiel = stripslashes($record_a->code_referentiel);
 		$description_referentiel = stripslashes($record_a->description_referentiel);
 		$url_referentiel = referentiel_affiche_url($record_a->url_referentiel,"");
@@ -495,7 +495,7 @@ global $DB;
 	if (!empty($occurrence_id)){
 		$record_a = referentiel_get_referentiel_referentiel($occurrence_id);
         $referentiel_id=$record_a->id;
-		$name = $record_a->name;
+		$name = stripslashes($record_a->name);
 		$code_referentiel = stripslashes($record_a->code_referentiel);
 		$description_referentiel = stripslashes($record_a->description_referentiel);
 		$url_referentiel = referentiel_affiche_url($record_a->url_referentiel,"");
@@ -574,10 +574,10 @@ echo ' <i>'.s($num_domaine).'</i>';
 </b>
     </td>
     <td class="domaine" align="left">
-        <?php  p($code_domaine) ?>
+        <?php  s($code_domaine) ?>
     </td>
     <td class="domaine" align="left" colspan="4">
-		<?php  echo (nl2br($record->description_domaine)); ?>
+		<?php  echo (nl2br(stripslashes($record->description_domaine))); ?>
     </td>
 </tr>
 
@@ -617,7 +617,7 @@ else {
 <?php  p($code_competence) ?>
     </td>
     <td class="competence" align="left" colspan="4">
-<?php  echo (nl2br($description_competence)); ?>
+<?php  echo (nl2br(stripslashes($description_competence))); ?>
     </td>
 </tr>
 <?php

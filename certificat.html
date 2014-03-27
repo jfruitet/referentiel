@@ -215,7 +215,7 @@ else{
 </tr>
 <tr valign="top">
     <td align="right">
-        <b><?php  print_string('f_valide','referentiel') ?>:</b></td>
+        <b><?php  print_string('filtre_valide','referentiel') ?>:</b></td>
     <td align="left">
 <?php
         if (!isset($dossier_ferme) or ($dossier_ferme=="") or ($dossier_ferme==0)){
@@ -447,6 +447,29 @@ else if (isset($mode) && ($mode=="deverrouiller")){
 		print_error(get_string('nocertificat','referentiel'), "certificat.php?d=$referentiel_instance->id&amp;mode=listactivity");
 	}
 }
+else if (isset($mode) && ($mode=="clorecertificat")){
+	if (isset($certificat_id) && ($certificat_id>0)){
+        // echo "<br />DEBUG :: certificat.html :: 404 :: test<br />\n";
+        echo "\n".$OUTPUT->confirm(get_string('confirmclore','referentiel'),
+        $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel->id.'&clore='.$certificat_id.'&amp;userid='.$userid.'&confirm=1&amp;mode=listcertif&amp;sesskey='.sesskey(),
+        $CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel->id.'&clore='.$certificat_id.'&amp;userid='.$userid.'&confirm=0&amp;mode=listcertif&amp;sesskey='.sesskey());
+	}
+	else{
+		print_error(get_string('nocertificat','referentiel'), "certificat.php?d=$referentiel_instance->id&amp;mode=listactivity");
+	}
+}
+else if (isset($mode) && ($mode=="ouvrircertificat")){
+	if (isset($certificat_id) && ($certificat_id>0)){
+        echo "\n".$OUTPUT->confirm(get_string('confirmouvrir','referentiel'),
+		$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel->id.'&clore='.$certificat_id.'&amp;userid='.$userid.'&confirm=0&amp;mode=listcertif&amp;sesskey='.sesskey(),
+		$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel->id.'&clore='.$certificat_id.'&amp;userid='.$userid.'&confirm=1&amp;mode=listcertif&amp;sesskey='.sesskey());
+
+	}
+	else{
+		print_error(get_string('nocertificat','referentiel'), "certificat.php?d=$referentiel_instance->id&amp;mode=listactivity");
+	}
+}
+
 else if (isset($mode) && ($mode=="commentcertif")){
 
 if (!empty($referentiel) && !empty($referentiel_referentiel) && !empty($course)){

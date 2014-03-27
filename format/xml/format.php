@@ -3590,12 +3590,9 @@ class pformat_xml extends pformat_default {
 	// recupere le tableau de lignes
 	   // selon les parametres soit cree une nouvelle instance
 	    // soit modifie une instance courante de la table referentiel_a_user_scol
-        // get some error strings
-        $error_no_username = get_string( 'xmlimport_no_username', 'referentiel' );
-        $error_nopedago = get_string( 'xmlimport_no_pedago', 'referentiel' );
         // importer les pedagos
 		$index=0;
-
+        $error_message='';
 		$nbpedagos=0;        // compteur
         foreach ($xmlpedagos as $pedago) {
 			// PEDAGOS
@@ -3672,6 +3669,12 @@ class pformat_xml extends pformat_default {
                                 }
                             }
                         }
+                        else{
+                             // MODIF JF 2013/05/23
+                             // il faut probablement ajouter cet utilisateur à Moodle, mais comment faire ?
+                             // A tout le moins signaler la difficulté
+                             $error_message.='<br/>'.get_string('user_unknown','referentiel',$login.' '.$firstname.' '.$lastname);                      
+                        }                        
 
 
         				if (!$trouve_pedago){  // verifier si une pedagogie identique existe
@@ -3708,6 +3711,13 @@ class pformat_xml extends pformat_default {
                         }
 			}
 		}
+        if (!empty($error_message)){
+           echo '<div class="error">';
+           echo get_string('import_pedagogie_error','referentiel')."\n";
+           echo $error_message."\n";
+           echo '</div>'."\n";
+        }
+    
         return true;
     }
 

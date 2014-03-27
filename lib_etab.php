@@ -24,7 +24,7 @@
 
 /**
  * Library of functions and constants for module referentiel
- * 
+ *
  * @author jfruitet
  * @version $Id: lib.php,v 1.4 2006/08/28 16:41:20 mark-nielsen Exp $
  * @version $Id: lib.php,v 1.0 2008/04/29 00:00:00 jfruitet Exp $
@@ -52,11 +52,21 @@ function referentiel_update_students_numbers($record_id_users) {
 // ----------------------------------------------------------------
 function referentiel_update_profile_student($userid){
 global $DB;
+$ok=false;
     if (!empty($userid)){
         $record=$DB->get_record("referentiel_etudiant", array("userid" => $userid));
         if ($record){
             $record->num_etudiant=referentiel_get_student_number($userid, true);
-            if ($DB->set_field('referentiel_etudiant','num_etudiant', $record->num_etudiant, array("userid" => $userid))){
+            $ok=$DB->set_field('referentiel_etudiant','num_etudiant', $record->num_etudiant, array("userid" => $userid));
+            $record->num_etudiant=referentiel_get_student_ddn($userid, true);
+            $ok=$ok & $DB->set_field('referentiel_etudiant','ddn_etudiant', $record->ddn_etudiant, array("userid" => $userid));
+            $record->lieu_naissance=referentiel_get_student_ldn($userid, true);
+            $ok=$ok & $DB->set_field('referentiel_etudiant','lieu_naissance', $record->lieu_naissance, array("userid" => $userid));
+            $record->departement_naissance=referentiel_get_student_dpt($userid, true);
+            $ok=$ok & $DB->set_field('referentiel_etudiant','departement_naissance', $record->departement_naissance, array("userid" => $userid));
+            $record->adresse_etudiant=referentiel_get_student_adr($userid, true);
+            $ok=$DB->set_field('referentiel_etudiant','adresse_etudiant', $record->adresse_etudiant, array("userid" => $userid));
+			if ($ok){
                 return $record;
             }
         }
@@ -96,6 +106,168 @@ function referentiel_get_student_number($userid, $updateprofil=0){
 }
 
 // ----------------------------------------------------------------
+function referentiel_get_student_ddn($userid, $updateprofil=0){
+    global $CFG, $DB;
+    $ddn_etudiant='';
+    if (!empty($userid)){
+        if ($student=$DB->get_record("referentiel_etudiant", array("userid" => $userid))){
+            $ddn_etudiant=$student->ddn_etudiant;
+        }
+        if (empty($ddn_etudiant) || $updateprofil){
+            if ($user=$DB->get_record("user", array("id" => $userid))){
+                // profile table used ?
+                if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_ddnfield)){
+                    $ddn_etudiant=referentiel_get_profile($CFG->ref_profilecategory, $CFG->ref_ddnfield, $user->id);
+                }
+            }
+        }
+    }
+    if (!empty($ddn_etudiant)){
+    	return $ddn_etudiant;
+    }
+    else{
+    	return 'l_inconnu';
+    }
+}
+
+// ----------------------------------------------------------------
+function referentiel_get_student_ldn($userid, $updateprofil=0){
+    global $CFG, $DB;
+    $ldn_etudiant='';
+    if (!empty($userid)){
+        if ($student=$DB->get_record("referentiel_etudiant", array("userid" => $userid))){
+            $ldn_etudiant=$student->lieu_naissance;
+        }
+        if (empty($ldn_etudiant) || $updateprofil){
+            if ($user=$DB->get_record("user", array("id" => $userid))){
+                // profile table used ?
+                if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_ldnfield)){
+                    $ldn_etudiant=referentiel_get_profile($CFG->ref_profilecategory, $CFG->ref_ldnfield, $user->id);
+                }
+            }
+        }
+    }
+    if (!empty($ldn_etudiant)){
+    	return $ldn_etudiant;
+    }
+    else{
+    	return 'l_inconnu';
+    }
+}
+
+// ----------------------------------------------------------------
+function referentiel_get_student_adr($userid, $updateprofil=0){
+    global $CFG, $DB;
+    $adr_etudiant='';
+    if (!empty($userid)){
+        if ($student=$DB->get_record("referentiel_etudiant", array("userid" => $userid))){
+            $adr_etudiant=$student->adresse_etudiant;
+        }
+        if (empty($adr_etudiant) || $updateprofil){
+            if ($user=$DB->get_record("user", array("id" => $userid))){
+                // profile table used ?
+                if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_adrfield)){
+                    $adr_etudiant=referentiel_get_profile($CFG->ref_profilecategory, $CFG->ref_adrfield, $user->id);
+                }
+            }
+        }
+    }
+    if (!empty($adr_etudiant)){
+    	return $adr_etudiant;
+    }
+    else{
+    	return 'l_inconnu';
+    }
+}
+// ----------------------------------------------------------------
+function referentiel_get_student_dpt($userid, $updateprofil=0){
+    global $CFG, $DB;
+    $dpt_etudiant='';
+    if (!empty($userid)){
+        if ($student=$DB->get_record("referentiel_etudiant", array("userid" => $userid))){
+            $dpt_etudiant=$student->departement_naissance;
+        }
+        if (empty($dpt_etudiant) || $updateprofil){
+            if ($user=$DB->get_record("user", array("id" => $userid))){
+                // profile table used ?
+                if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_dptfield)){
+                    $dpt_etudiant=referentiel_get_profile($CFG->ref_profilecategory, $CFG->ref_dptfield, $user->id);
+                }
+            }
+        }
+    }
+    if (!empty($dpt_etudiant)){
+    	return $dpt_etudiant;
+    }
+    else{
+    	return 'l_inconnu';
+    }
+}
+
+// ----------------------------------------------------------------
+function referentiel_get_ref_etablissement($userid, $updateprofil=0){
+    global $CFG, $DB;
+    $ref_etablissement=0;
+    $name_etablissement='';
+    $num_etablissement='';
+    if (!empty($userid)){
+        if ($student=$DB->get_record("referentiel_etudiant", array("userid" => $userid))){
+            $ref_etablissement=$student->ref_etablissement;
+        }
+        if (empty($ref_etablissement) || $updateprofil){
+            if ($user=$DB->get_record("user", array("id" => $userid))){
+                // profile table used ?
+                if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_etabfield)){
+                    $name_etablissement=referentiel_get_profile($CFG->ref_profilecategory, $CFG->ref_etabfield, $user->id);
+                }
+                if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_numetabfield)){
+                    $num_etablissement=referentiel_get_profile($CFG->ref_profilecategory, $CFG->ref_numetabfield, $user->id);
+                }
+
+                if (!empty($name_etablissement)){
+					if ($etablissement= $DB->get_record("referentiel_etablissement", array("nom_etablissement" => $name_etablissement))){
+                        $ref_etablissement=$etablissement->id;
+					}
+					else{ // creer l'etablissement
+						$etablissement = new object();
+                        $etablissement->nom_etablissement= $name_etablissement;
+						if (!empty($num_etablissement)){
+                            $etablissement->num_etablissement= $num_etablissement;
+						}
+						else{
+                            $etablissement->num_etablissement= '';
+						}
+                        $etablissement->adresse_etablissement= '';
+                        $etablissement->logo_etablissement= '';
+      					$ref_etablissement=$DB->insert_record("referentiel_etablissement", $etablissement);
+					}
+                }
+                elseif (!empty($num_etablissement)){
+					if ($etablissement= $DB->get_record("referentiel_etablissement", array("num_etablissement" => $num_etablissement))){
+                        $ref_etablissement=$etablissement->id;
+					}
+					else{ // creer l'etablissement
+						$etablissement = new object();
+                        if (!empty($name_etablissement)){
+							$etablissement->nom_etablissement= $name_etablissement;
+						}
+                        $etablissement->num_etablissement= $num_etablissement;
+                        $etablissement->adresse_etablissement= '';
+                        $etablissement->logo_etablissement= '';
+     					$ref_etablissement=$DB->insert_record("referentiel_etablissement", $etablissement);
+					}
+                }
+				else{
+                     $ref_etablissement=referentiel_get_min_etablissement();
+				}
+            }
+        }
+    }
+    return $ref_etablissement;
+}
+
+
+// ----------------------------------------------------------------
 function referentiel_get_profile($fieldcategory, $fieldname, $userid) {
     global $CFG, $USER, $DB;
 
@@ -113,18 +285,23 @@ function referentiel_get_profile($fieldcategory, $fieldname, $userid) {
 }
 
 
- // ---------------------------------------------
+// ---------------------------------------------
 function referentiel_add_etudiant_user($userid){
 // retourne l'id cree
 global $DB;
 	if ($userid){
     	$record=new object();
         $record->userid=$userid;
-        $record->ddn_etudiant = 'l_inconnu';
-        $record->lieu_naissance = 'l_inconnu';
-        $record->departement_naissance = 'l_inconnu';
-        $record->adresse_etudiant = 'l_inconnu';
-        $record->ref_etablissement = referentiel_get_min_etablissement();
+        // $record->ddn_etudiant = 'l_inconnu';
+        $record->ddn_etudiant = referentiel_get_student_ddn($userid);
+        // $record->lieu_naissance = 'l_inconnu';
+        $record->lieu_naissance = referentiel_get_student_ldn($userid);
+        // $record->departement_naissance = 'l_inconnu';
+        $record->departement_naissance = referentiel_get_student_dpt($userid);
+        //$record->adresse_etudiant = 'l_inconnu';
+        $record->adresse_etudiant = referentiel_get_student_adr($userid);
+        // $record->ref_etablissement = referentiel_get_min_etablissement();
+        $record->ref_etablissement = referentiel_get_ref_etablissement($userid);
         $record->num_etudiant=referentiel_get_student_number($userid);
 	    // DEBUG
 	    // echo "<br />DEBUG :: lib_etab.php :: 145\n";
@@ -144,9 +321,9 @@ global $USER;
 		// echo "<br >USERID : $USER->id ; OWNER : $record->userid\n";
 		return ($USER->id == $record->userid);
 	}
-	else 
-		return false; 
-} 
+	else
+		return false;
+}
 
 // ---------------------------------------------
 function referentiel_get_etudiant_id_by_userid($userid){
@@ -173,8 +350,8 @@ global $DB;
  if (!empty($userid)){
 		return $DB->get_record_sql("SELECT * FROM {referentiel_etudiant} WHERE userid=:userid", array("userid" => "$userid"));
 	}
-	else 
-		return 0; 
+	else
+		return 0;
 }
 
 /**
@@ -189,8 +366,8 @@ global $CFG;
 	if (!empty($id)){
 		return $DB->get_record_sql("SELECT * FROM {referentiel_etudiant} WHERE id=:id" , array("id" => "$id"));
 	}
-	else 
-		return 0; 
+	else
+		return 0;
 }
 
 /**
@@ -207,9 +384,9 @@ global $DB;
 
 
 /**
- * Given an object containing all the necessary referentiel, 
- * (defined by the form in mod.html) this function 
- * will create a new instance and return the id number 
+ * Given an object containing all the necessary referentiel,
+ * (defined by the form in mod.html) this function
+ * will create a new instance and return the id number
  * of the new instance.
  *
  * @param object $instance An object from the form in mod.html
@@ -233,7 +410,7 @@ $id=0;
 		$record->ref_etablissement = referentiel_get_min_etablissement();
 	}
 	$record->userid = $form->userid;
-	
+
 	// controle
 	if (($record->userid>0) && (($record->num_etudiant=='') || ($record->num_etudiant=='l_inconnu'))){
         $record->num_etudiant = referentiel_get_student_number($record->userid);
@@ -245,9 +422,9 @@ $id=0;
 
 
 /**
- * Given an object containing all the necessary referentiel, 
- * (defined by the form in mod.html) this function 
- * will create a new instance and return the id number 
+ * Given an object containing all the necessary referentiel,
+ * (defined by the form in mod.html) this function
+ * will create a new instance and return the id number
  * of the new instance.
  *
  * @param object $instance An object from the form in eturdiant.html
@@ -300,9 +477,9 @@ global $DB;
 		$record->ref_etablissement = $etablissement_id;
 		if ($DB->update_record("referentiel_etudiant", $record)){
 			return true;
-		} 
+		}
 	}
-	return false;	
+	return false;
 }
 
 
@@ -320,7 +497,7 @@ global $DB;
 $ok_delete=false;
 	if (!empty($id)){
 		if ($etudiant = $DB->get_record("referentiel_etudiant", array("id" => "$id"))) {
-			// suppression 
+			// suppression
 			$ok_delete = $DB->delete_records("referentiel_etudiant", array("id" => "$id"));
 		}
 	}
@@ -330,10 +507,10 @@ $ok_delete=false;
 function referentiel_delete_etudiant_user($userid) {
 // suppression etudiant
 global $DB;
-$ok_delete=false;	
+$ok_delete=false;
 	if (!empty($userid)){
 		if ($etudiant = $DB->get_record("referentiel_etudiant", array("userid" => "$userid"))) {
-			// suppression 
+			// suppression
 			$ok_delete = $DB->delete_records("referentiel_etudiant", array("id" => "$etudiant->id"));
 		}
 	}
@@ -372,7 +549,7 @@ $id=0;
 function referentiel_update_etablissement($form){
 global $DB;
 
-	$ok=false;	
+	$ok=false;
 	// DEBUG
 	//print_object($form);
 	//echo "<br /> 344 ";
@@ -391,7 +568,7 @@ $ok=true;
         else{
 
         }
-        
+
 		if(!$DB->update_record("referentiel_etablissement", $record)){
 			// echo "<br /> ERREUR UPDATE etablissement\n";
 			$ok=false;
@@ -399,7 +576,7 @@ $ok=true;
 		else {
 			$ok=true;
 		}
-		return $ok; 
+		return $ok;
 	}
 }
 
@@ -408,7 +585,7 @@ $s='';
 	$records=referentiel_get_etablissements();
 	if ($records){
 		$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab'.$userid.'" class="popupform">'."\n";
-		$s.='<div><select id="selectetab'.$userid.'_jump" name="jump" size="1" 
+		$s.='<div><select id="selectetab'.$userid.'_jump" name="jump" size="1"
 onchange="self.location=document.getElementById(\'selectetab'.$userid.'\').jump.options[document.getElementById(\'selectetab'.$userid.'\').jump.selectedIndex].value;">'."\n";
 		foreach ($records as $record){
             $str_nom_etablissement=referentiel_nom_connu($record->nom_etablissement);
@@ -459,8 +636,8 @@ global $DB;
 	if (!empty($id)){
 		return $DB->get_record("referentiel_etablissement", array("id" => "$id"));
 	}
-	else 
-		return 0; 
+	else
+		return 0;
 }
 
 

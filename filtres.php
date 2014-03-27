@@ -8,7 +8,7 @@
     $f_auteur = optional_param('f_auteur', 0, PARAM_INT);
 
     $f_valide = optional_param('f_valide', 0, PARAM_INT);
-    $f_verrou = optional_param('filtre_verrou', 0, PARAM_INT);
+    $f_verrou = optional_param('f_verrou', 0, PARAM_INT);
     $f_date_decision = optional_param('f_date_decision', 0, PARAM_INT);
     
     $sql_f_where=optional_param('sql_f_where','', PARAM_ALPHA);
@@ -51,7 +51,7 @@
 	
 // Certificat
     if (isset($f_valide)){
-			$data_f->f_valide=$f_valide;
+		$data_f->f_valide=$f_valide;
 	}
 	else {
 		$data_f->f_valide=0;
@@ -71,34 +71,68 @@
 
 
 //-----------------
-function set_filtres_sql(){
+function set_filtres_sql($type=''){
     global $data_f;
 	global $sql_f_where;
 	global $sql_f_order;
+	//echo "<br />DEBUG :: filtres.php :: Ligne 78 :: TYPE=$type\n";
+	//print_object( $data_f);
 
-		if (isset($data_f->f_validation) && ($data_f->f_validation=='1')){
-			if ($sql_f_where!='')
-				$sql_f_where.=' AND (approved=1) ';
+	if ($type=='certificat'){
+		if (isset($data_f->f_valide) && ($data_f->f_valide=='1')){
+			$sql_f_where.=' AND (valide=1) ';
+		}
+		else if (isset($data_f->f_valide) && ($data_f->f_valide=='-1')){
+			$sql_f_where.=' AND (valide=0) ';
+		}
+
+		if (isset($data_f->f_verrou) && ($data_f->f_verrou=='1')){
+			$sql_f_where.=' AND (verrou=1) ';
+		}
+		else if (isset($data_f->f_verrou) && ($data_f->f_verrou=='-1')){
+			$sql_f_where.=' AND (verrou=0) ';
+		}
+
+		if (isset($data_f->f_date_decision) && ($data_f->f_date_decision=='1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', date_decision ASC ';
 			else
-				$sql_f_where.=' AND (approved=1) ';
+				$sql_f_order.=' date_decision ASC ';
+		}
+		else if (isset($data_f->f_date_decision) && ($data_f->f_date_decision=='-1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', date_decision DESC ';
+			else
+				$sql_f_order.=' date_decision DESC ';
+		}
+
+		if (isset($data_f->f_auteur) && ($data_f->f_auteur=='1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', userid ASC ';
+			else
+				$sql_f_order.=' userid ASC ';
+		}
+		else if (isset($data_f->f_auteur) && ($data_f->f_auteur=='-1')){
+			if ($sql_f_order!='')
+				$sql_f_order.=', userid DESC ';
+			else
+				$sql_f_order.=' userid DESC ';
+		}
+
+	}
+	else{
+		if (isset($data_f->f_validation) && ($data_f->f_validation=='1')){
+			$sql_f_where.=' AND (approved=1) ';
 		}
 		else if (isset($data_f->f_validation) && ($data_f->f_validation=='-1')){
-			if ($sql_f_where!='')
-				$sql_f_where.=' AND (approved=0) ';
-			else
-				$sql_f_where.=' AND (approved=0) ';
+			$sql_f_where.=' AND (approved=0) ';
 		}
+
 		if (isset($data_f->f_referent) && ($data_f->f_referent=='1')){
-			if ($sql_f_where!='')
-				$sql_f_where.=' AND ((date_modif<date_modif_student)  AND (approved=0)) ';
-			else
-				$sql_f_where.=' AND ((date_modif<date_modif_student) AND (approved=0))  ';
+			$sql_f_where.=' AND ((date_modif_student>date_modif) AND (approved=0))  ';
 		}
 		else if (isset($data_f->f_referent) && ($data_f->f_referent=='-1')){
-			if ($sql_f_where!='')
-				$sql_f_where.=' AND (date_modif>=date_modif_student) ';
-			else
-				$sql_f_where.=' AND (date_modif>=date_modif_student)  ';
+			$sql_f_where.=' AND (date_modif>=date_modif_student)  ';
 		}
 
 		if (isset($data_f->f_date_modif) && ($data_f->f_date_modif=='1')){
@@ -139,8 +173,8 @@ function set_filtres_sql(){
 			else
 				$sql_f_order.=' userid DESC ';
 		}
-		
-		// echo "<br />DEBUG :: filtres.php :: Ligne 113 :: FILTRES : ".htmlentities($sql_f_where)." ".htmlentities($sql_f_order)."\n";
-    }
+	}
+	//echo "<br />DEBUG :: filtres.php :: Ligne 198 :: FILTRES : WHERE=".htmlentities($sql_f_where)."<br />ORDER=".htmlentities($sql_f_order)."\n";
+}
 
 ?>

@@ -1,4 +1,4 @@
-﻿Moodle module referentiel 
+Moodle module referentiel 
 Module Moodle - Référentiel / Skills repository - Documentation
 jean.fruitet@univ-nantes.fr
 2007/2013
@@ -12,8 +12,46 @@ Maintainer(s): jean.fruitet@univ-nantes.fr
 Historique des versions 
 ---------------------------------------------------------
 
-Référentiel pour Moodle 2.2, 2.3, 2.4, 2.5
-------------------------------------------
+Référentiel pour Moodle 2.4, 2.5 SANS SUPPORT DES BAREMES
+---------------------------------------------------------
+Version 8.08 (2013062405) for Moodle 2.4 et 2.5 without scales support
+Release 2014-03-27
+Affichage paginé
+Release 2014-03-24
+Correction bug dans la modifcation globale des activités
+Release 2014-02-27
+Lancaster assign mahara plugin support
+Release 2014-02-26
+Portland assign mahara plugin support
+Release 2014-02-05
+Cron fait remonter les soumissions des étudiants dans les devoirs ainsi que le feedback
+Release 2013-12-11
+Correction d'un bug dans la mise à jour des activités (locallib.php)
+Release 2013-11-24
+Possibilité de désactiver l'affichage des certificats
+
+Version 8.07 (2013062404) for Moodle 2.4 et 2.5 without scales support
+Release 2013-11-21
+Cron corrigé pour remonter correctement les évaluations par objectifs modifiées
+Release 2013-10-09
+Correction d'un bug empêchant le configuration au niveau de l'instance
+Affichage des activités plus compact
+Possibilité de simplifier l'affichage de la saisie des compétences associées à une déclaration d'activité
+L'enseignant peut désormais fermer un dossier de certification depuis l'interface Certificat
+Correction d'un bug empêchant la suppression d'un document attaché
+Version 8.07 (2013062402) for Moodle 2.4 et 2.5 without scales support
+Release 2013-09-19
+Correction d'un bug empêchant la suppression d'items, de compétences
+Suppression du protocole associé à une occurrence lors de la supression de celle-ci
+Correction d'un bug empêchant la suppression d'enseignants d'un cours lors de sa réinitialisation
+
+Version 8.07 for Moodle 2.4 et 2.5 - 2013051800 - Update 2013-06-18 without scales support
+Correction d'un bug qui empêchait la suppression d'une occurrence de référentiel
+
+Version 8.07 (2013051400) Release for Moodle 2.4 an 25 without scales
+Les URL de type Moodle 1.9 sont chassées des documents et consignes du module référentiel
+Cela est utile lors d'une migration "in situ" depuis Moodle 1.9 vers Moodle 2.2 et suivants.
+Le plugin report_referentiel est aussi actualisé.
 
 Version 8.07 for Moodle 2.4, 2.5 - 2013-05-07
 Un nouveau paramétrage permet de désigner un champ du profil utilisateur pour récupérer le numéro d'étudiant.

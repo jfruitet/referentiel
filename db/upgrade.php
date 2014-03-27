@@ -222,90 +222,25 @@ function xmldb_referentiel_upgrade($oldversion) {
         $table = new xmldb_table('referentiel_task');
 
     /// Adding fields to table referentiel_task
-        $field = new xmldb_field('id');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('type_task');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '80', null, XMLDB_NOTNULL, null, null,  'id');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('description_task');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'type_task');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('competences_task');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'description_task');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('criteres_evaluation');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'competences_task');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('ref_instance');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'criteres_evaluation');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('ref_referentiel');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_instance');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('ref_course');
-        $field->set_attributes( XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_referentiel');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('auteurid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_course');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('date_creation');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'auteurid');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('date_modif');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'date_creation');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('date_debut');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'date_modif');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('date_fin');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'date_debut');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('type_task', XMLDB_TYPE_CHAR, '80', null, XMLDB_NOTNULL, null, null,  'id');
+        $table->add_field('description_task', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'type_task');
+        $table->add_field('competences_task', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'description_task');
+        $table->add_field('criteres_evaluation', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'competences_task');
+        $table->add_field('ref_instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'criteres_evaluation');
+        $table->add_field('ref_referentiel', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_instance');
+        $table->add_field('ref_course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_referentiel');
+        $table->add_field('auteurid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_course');
+        $table->add_field('date_creation', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'auteurid');
+        $table->add_field('date_modif', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'date_creation');
+        $table->add_field('date_debut', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'date_modif');
+        $table->add_field('date_fin', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'date_debut');
 
     /// Adding keys to table referentiel_task
-        // $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $key = new xmldb_key('primary');
-        $key->set_attributes(XMLDB_KEY_PRIMARY, array('id'));
-        if (!$dbman->key_exists($table, $key)) {
-            $dbman->add_key($table, $key);
-        }
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
     /// Adding index to table referentiel_notification_queue
-        $index = new xmldb_index('user');
-        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('userid'));
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
+        $table->add_index('user',XMLDB_INDEX_NOTUNIQUE, array('userid'));
 
     /// Launch create table for referentiel_task
         if (!$dbman->table_exists($table)){
@@ -316,40 +251,13 @@ function xmldb_referentiel_upgrade($oldversion) {
         $table = new xmldb_table('referentiel_consigne');
 
     /// Adding fields to table referentiel_consigne
-        $field = new xmldb_field('id');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('type_consigne');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'id');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('description_consigne');
-        $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'type_consigne');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('url_consigne');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'description_consigne');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('ref_task');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'url_consigne');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('type_consigne', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, 'id');
+        $table->add_field('description_consigne', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, 'type_consigne');
+        $table->add_field('url_consigne', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'description_consigne');
+        $table->add_field('ref_task', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, 'url_consigne');
     /// Adding keys to table referentiel_consigne
-        //$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $key = new xmldb_key('primary');
-        $key->set_attributes(XMLDB_KEY_PRIMARY, array('id'));
-        if (!$dbman->key_exists($table, $key)) {
-            $dbman->add_key($table, $key);
-        }
-
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     /// Launch create table for referentiel_consigne
         if (!$dbman->table_exists($table)){
             $dbman->create_table($table, true, true);
@@ -360,31 +268,11 @@ function xmldb_referentiel_upgrade($oldversion) {
         $table = new xmldb_table('referentiel_a_user_task');
 
     /// Adding fields to table referentiel_a_user_task
-        $field = new xmldb_field('id');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('ref_user');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('ref_task');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_user');
-        if(!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('ref_user', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
+        $table->add_field('ref_task', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_user');
     /// Adding keys to table referentiel_a_user_task
-        //$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $key = new xmldb_key('primary');
-        $key->set_attributes(XMLDB_KEY_PRIMARY, array('id'));
-        if (!$dbman->key_exists($table, $key)) {
-            $dbman->add_key($table, $key);
-        }
-
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     /// Launch create table for referentiel_a_user_task
         if (!$dbman->table_exists($table)){
             $dbman->create_table($table, true, true);
@@ -442,7 +330,6 @@ function xmldb_referentiel_upgrade($oldversion) {
             $dbman->change_field_type($table, $field);
 		}
 
-        
         upgrade_mod_savepoint(true, 2009083100, 'referentiel');
     }
 	
@@ -457,7 +344,6 @@ function xmldb_referentiel_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-		
 		// Nouveau champ date_modif_student dans referentiel_activite
 		/// Define new  field liste_poids_competence to be added to referentiel_referentiel
         $table = new xmldb_table('referentiel_activite');
@@ -558,64 +444,22 @@ function xmldb_referentiel_upgrade($oldversion) {
         $table = new xmldb_table('referentiel_notification_queue');
 
     /// Adding fields to table referentiel_notification_queue
-        $field = new xmldb_field('id');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('userid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('activiteid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field = new xmldb_field('timemodified');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'activiteid');
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('type');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
+        $table->add_field('activiteid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'activiteid');
+        $table->add_field('activiteid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
     /// Adding keys to table referentiel_notification_queue
-
-        // $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $key = new xmldb_key('primary');
-        $key->set_attributes(XMLDB_KEY_PRIMARY, array('id'));
-        if (!$dbman->key_exists($table, $key)) {
-            $dbman->add_key($table, $key);
-        }
-        // $table->add_key('activiteid', XMLDB_KEY_FOREIGN, array('activiteid'), 'referentiel_activite', array('id') );
-        $key2 = new xmldb_key('primary');
-        $key2->set_attributes(XMLDB_KEY_FOREIGN, array('activiteid'), 'referentiel_activite', array('id') );
-        if (!$dbman->key_exists($table, $key2)) {
-            $dbman->add_key($table, $key2);
-        }
-
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('activiteid', XMLDB_KEY_FOREIGN, array('activiteid'), 'referentiel_activite', array('id') );
     /// Adding index to table referentiel_notification_queue
-        $index = new xmldb_index('user');
-        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('userid'));
-        if (!$dbman->index_exists($table, $index)) {
-            $dbman->add_index($table, $index);
-        }
-
-
-    /// Launch create table for referentiel_notification_queue
+        $table->add_index('user', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+     /// Create table for referentiel_notification_queue
         if (!$dbman->table_exists($table)){
             $dbman->create_table($table, true, true);
         }
 
-	        
 	   	/// Define new  fields for referentiel_activite table
         $table = new xmldb_table('referentiel_activite');       
 		$field = new xmldb_field('mailed');
@@ -624,14 +468,12 @@ function xmldb_referentiel_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-		
 		$field = new xmldb_field('mailnow');
         $field->set_attributes(XMLDB_TYPE_INTEGER, 10, XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'mailed');
     	/// Launch add field referentiel
         if(!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-
 
 	   	/// Define new  fields for referentiel_task table
         $table = new xmldb_table('referentiel_task');       
@@ -673,62 +515,17 @@ function xmldb_referentiel_upgrade($oldversion) {
         $table = new xmldb_table('referentiel_activite_modules');
 
     /// Adding fields to table referentiel_activite_modules
-        $field = new xmldb_field('id');
-        $field->set_attributes( XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('type', XMLDB_TYPE_CHAR, '80', null, XMLDB_NOTNULL, null, null, 'id');
+        $table->add_field('moduleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'type');
+        $table->add_field('ref_instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'moduleid');
+        $table->add_field('ref_referentiel', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_instance');
+        $table->add_field('ref_course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_referentiel');
     	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('type');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '80', null, XMLDB_NOTNULL, null, null, 'id');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('moduleid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'type');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('ref_instance');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'moduleid');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('ref_referentiel');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_instance');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('ref_course');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_referentiel');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('userid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_course');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('activiteid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_course');
+        $table->add_field('activiteid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
     /// Adding keys to table referentiel_activite_modules
-        $key = new xmldb_key('primary');
-        $key->set_attributes(XMLDB_KEY_PRIMARY, array('id'));
-        if (!$dbman->key_exists($table, $key)) {
-            $dbman->add_key($table, $key);
-        }
-
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
     /// Launch create table for referentiel_activite_modules
         if (!$dbman->table_exists($table)){
             $dbman->create_table($table, true, true);
@@ -737,7 +534,7 @@ function xmldb_referentiel_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2010022800, 'referentiel');
     }
 
-	  if ($oldversion < 2010031600) { // VERSION 5.2.0	
+    if ($oldversion < 2010031600) { // VERSION 5.2.0
 	   	/// Define new  fields for referentiel_task table
         $table = new xmldb_table('referentiel_task');       
 		$field = new xmldb_field('tache_masquee');
@@ -755,50 +552,14 @@ function xmldb_referentiel_upgrade($oldversion) {
         $table = new xmldb_table('referentiel_accompagnement');
 
     /// Adding fields to table referentiel_accompagnement
-        $field = new xmldb_field('id');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('accompagnement');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, 'REF', 'id');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('ref_instance');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'accompagnement');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('courseid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_instance');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('userid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'courseid');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('teacherid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('accompagnement', XMLDB_TYPE_CHAR, '3', null, XMLDB_NOTNULL, null, 'REF', 'id');
+        $table->add_field('ref_instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'accompagnement');
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'ref_instance');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'courseid');
+        $table->add_field('teacherid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
     /// Adding keys to table referentiel_accompagnement
-        //$table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $key = new xmldb_key('primary');
-        $key->set_attributes(XMLDB_KEY_PRIMARY, array('id'));
-        if (!$dbman->key_exists($table, $key)) {
-            $dbman->add_key($table, $key);
-        }
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
     /// Launch create table for referentiel_accompagnement
         if (!$dbman->table_exists($table)){
@@ -817,62 +578,17 @@ function xmldb_referentiel_upgrade($oldversion) {
         $table = new xmldb_table('referentiel_notification');
 
     /// Adding fields to table referentiel_notification
-        $field = new xmldb_field('id');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('userid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('activiteid');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('timemodified');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'activiteid');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-        $field = new xmldb_field('type');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
-    	/// Launch add field referentiel
-        if(!$dbman->field_exists($table,$field)) {
-            $dbman->add_field($table, $field);
-        }
-
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'id');
+        $table->add_field('activiteid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'userid');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'activiteid');
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'timemodified');
     /// Adding keys to table referentiel_notification
-        // $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $key = new xmldb_key('primary');
-        $key->set_attributes(XMLDB_KEY_PRIMARY, array('id'));
-        if (!$dbman->key_exists($table, $key)) {
-            $dbman->add_key($table, $key);
-        }
-
-
-        //$table->add_key('activiteid', XMLDB_KEY_FOREIGN, array('activiteid'), 'referentiel_activite', array('id') );
-        $key = new xmldb_key('activiteid');
-        $key->set_attributes(XMLDB_KEY_FOREIGN, array('activiteid'), 'referentiel_activite', array('id') );
-        if (!$dbman->key_exists($table, $key)) {
-            $dbman->add_key($table, $key);
-        }
-
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('activiteid', XMLDB_KEY_FOREIGN, array('activiteid'), 'referentiel_activite', array('id') );
 
     /// Adding index to table referentiel_notification
-        // $table->add_index('user', XMLDB_INDEX_NOTUNIQUE, array ('userid') );
-        $index = new xmldb_index('user');
-        $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array ('userid') );
-        /// Launch add index
-        if(!$dbman->index_exists($table,$index)) {
-            $dbman->add_index($table, $index);
-        }
+        $table->add_index('user', XMLDB_INDEX_NOTUNIQUE, array ('userid') );
 
     /// Launch create table for referentiel_notification
         if (!$dbman->table_exists($table)){
@@ -929,7 +645,7 @@ function xmldb_referentiel_upgrade($oldversion) {
     }
 
   	if ($oldversion < 2010111100) { // VERSION 5.4.4
-    /// Define table referentiel_activite_modules to be created
+    /// Add new field to table referentiel_activite_modules
         $table = new xmldb_table('referentiel_activite_modules');
     /// Adding fields
         $field = new xmldb_field('ref_activite');
@@ -1822,6 +1538,7 @@ function xmldb_referentiel_upgrade($oldversion) {
 
         upgrade_mod_savepoint(true, 2012101000, 'referentiel');
     }
+    
     if ($oldversion < 2013020200){
         /// Modify referentiel_document
         /// <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="etiquette_consigne" />
@@ -1852,6 +1569,88 @@ function xmldb_referentiel_upgrade($oldversion) {
         // $dbman->change_field_default($table, $field, true, true);
         $dbman->change_field_type($table, $field);
         upgrade_mod_savepoint(true, 2013021700, 'referentiel');
+    }
+
+    if ($oldversion < 2013062404) { // VERSION Moodle 2.4
+	   /// Modify field default config table referentiel
+        $table = new xmldb_table('referentiel');
+        $field = new xmldb_field('config');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;hierarchy:0;', 'visible');
+        /// Launch change of type for field type_activite
+        $dbman->change_field_default($table, $field);
+
+	   /// Modify field default config table referentiel_referentiel
+        $table1 = new xmldb_table('referentiel_referentiel');
+        $field1 = new xmldb_field('config');
+        $field1->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;hierarchy:0;', 'logo_referentiel');
+        /// Launch change of type for field type_activite
+        $dbman->change_field_default($table1, $field1);
+
+        /// mise a jour des champs existants
+        $table2 = new xmldb_table('referentiel');
+          /// Silenty update
+        if ($dbman->table_exists($table2)){
+            $rs = $DB->get_recordset_sql("SELECT * FROM {referentiel}", null);
+            foreach ($rs as $res){
+                $res->config=$res->config."hierarchy:0;";
+                $DB->update_record('referentiel', $res);
+            }
+            $rs->close();
+        }
+
+        $table3 = new xmldb_table('referentiel_referentiel');
+        /// Silently update
+        if ($dbman->table_exists($table3)){
+            $rs = $DB->get_recordset_sql("SELECT * FROM {referentiel_referentiel}", null);
+            foreach ($rs as $res){
+                $res->config=$res->config."hierarchy:0;";
+                $DB->update_record('referentiel_referentiel', $res);
+            }
+            $rs->close();
+        }
+
+        upgrade_mod_savepoint(true, 2013062404, 'referentiel');
+    }
+
+    if ($oldversion < 2013062405) { // VERSION Moodle 2.4
+	   /// Modify field default config table referentiel
+        $table = new xmldb_table('referentiel');
+        $field = new xmldb_field('config');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;hierarchy:0;cfcertif:0;certif:1;', 'visible');
+        /// Launch change of type for field type_activite
+        $dbman->change_field_default($table, $field);
+
+	   /// Modify field default config table referentiel_referentiel
+        $table1 = new xmldb_table('referentiel_referentiel');
+        $field1 = new xmldb_field('config');
+        $field1->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, 'scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;hierarchy:0;cfcertif:0;certif:1;', 'logo_referentiel');
+        /// Launch change of type for field type_activite
+        $dbman->change_field_default($table1, $field1);
+
+        /// mise a jour des champs existants
+        $table2 = new xmldb_table('referentiel');
+          /// Silenty update
+        if ($dbman->table_exists($table2)){
+            $rs = $DB->get_recordset_sql("SELECT * FROM {referentiel}", null);
+            foreach ($rs as $res){
+                $res->config=$res->config."cfcertif:0;certif:1;";
+                $DB->update_record('referentiel', $res);
+            }
+            $rs->close();
+        }
+
+        $table3 = new xmldb_table('referentiel_referentiel');
+        /// Silently update
+        if ($dbman->table_exists($table3)){
+            $rs = $DB->get_recordset_sql("SELECT * FROM {referentiel_referentiel}", null);
+            foreach ($rs as $res){
+                $res->config=$res->config."cfcertif:0;certif:1;";
+                $DB->update_record('referentiel_referentiel', $res);
+            }
+            $rs->close();
+        }
+
+        upgrade_mod_savepoint(true, 2013062405, 'referentiel');
     }
 
 	return true;

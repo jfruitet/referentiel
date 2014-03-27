@@ -324,7 +324,8 @@ static $referentiel_id = NULL;
         else if ($isadmin && $select_all){  //
             //tous les certificats
             // $record_id_users  = referentiel_get_all_users_with_certificate($referentiel_instance->ref_referentiel);
-            $records = $records = referentiel_get_certificats_users($referentiel_instance->ref_referentiel);
+            //$records =
+			$records = referentiel_get_certificats_users($referentiel_instance->ref_referentiel);
         }
         else {  // recuperer les utilisateurs filtres
             if (!empty($userid_filtre)){      // un seul certificat
@@ -909,7 +910,11 @@ static $referentiel_id = NULL;
         }
         else if ($isadmin && $select_all){
             // tous les utilisateurs ayant un certificat
-            $records = referentiel_get_certificats_id_users($referentiel_instance->ref_referentiel);
+			if ($record_id_users = referentiel_get_certificats_id_users($referentiel_instance->ref_referentiel)){
+                foreach ($record_id_users as $record_id){
+					$records[]=$record_id->userid;
+				}
+			}
         }
         else {  // recuperer les utilisateurs filtres
             if (!empty($userid_filtre)){      // un seul certificat

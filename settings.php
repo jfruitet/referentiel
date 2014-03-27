@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -30,33 +30,73 @@ if ($ADMIN->fulltree) {
                        get_string('configshortpost', 'forum'), 300, PARAM_INT));
 
 */
-// student profile to get student number id
-$settings->add(new admin_setting_configtext('ref_profilecategory', get_string('ref_profilecategory', 'referentiel'),
-        get_string('config_ref_profilecategory', 'referentiel'), get_string('profiledefaultcategory', 'admin'), PARAM_TEXT));
-
-$settings->add(new admin_setting_configtext('ref_profilefield', get_string('ref_profilefield', 'referentiel'),
-        get_string('config_ref_profilefield', 'referentiel'), '', PARAM_ALPHANUMEXT));
-
-// desherence
-$settings->add(new admin_setting_configtext('delaidesherence', get_string('delaidesherence', 'referentiel'),
-        get_string('config_delaidesherence', 'referentiel'), 28, PARAM_INT));
-
-
 $options = array();
 
-// affichage light du referentiel
-$options[0] = 1;
-$options[1] = 0;
-if (isset($CFG->referentiel_purge_archives)){
-    $settings->add(new admin_setting_configselect('referentiel_purge_archives', get_string('purge_archives', 'referentiel'),
-                   get_string('config_archives', 'referentiel'), $CFG->referentiel_purge_archives, $options));
+/*
+// use scale
+$settings->add(new admin_setting_heading('scale_setting', '', get_string('scale_setting', 'referentiel')));
+unset($options);
+$options[0] = 0;
+$options[1] = 1;
+if (isset($CFG->referentiel_use_scale)){
+    $settings->add(new admin_setting_configselect('referentiel_use_scale', get_string('use_scale', 'referentiel'),
+                   get_string('config_scale', 'referentiel'), $CFG->referentiel_use_scale, $options));
 }
 else{
-    $settings->add(new admin_setting_configselect('referentiel_purge_archives', get_string('purge_archives', 'referentiel'),
-                   get_string('config_archives', 'referentiel'), 0, $options));
+    $settings->add(new admin_setting_configselect('referentiel_use_scale', get_string('use_scale', 'referentiel'),
+                   get_string('config_scale', 'referentiel'), 0, $options));
+}
+*/
+
+// parametrage affichage certification
+$settings->add(new admin_setting_heading('certif_setting', '', get_string('certif_setting', 'referentiel')));
+
+// config la certification
+unset($options);
+$options[0] = 0;
+$options[1] = 1;
+$options[2] = 2;
+if (isset($CFG->referentiel_certif_config)){
+    $settings->add(new admin_setting_configselect('referentiel_certif_config', get_string('certif_config', 'referentiel'),
+                   get_string('config_certif_config', 'referentiel'), $CFG->referentiel_certif_config, $options));
+}
+else{
+    $settings->add(new admin_setting_configselect('referentiel_certif_config', get_string('certif_config', 'referentiel'),
+                   get_string('config_certif_config', 'referentiel'), 0, $options));
 }
 
-// affichage light du referentiel
+// etat de la certification
+unset($options);
+$options[0] = 0;
+$options[1] = 1;
+if (isset($CFG->referentiel_certif_state)){
+    $settings->add(new admin_setting_configselect('referentiel_certif_state', get_string('certif_state', 'referentiel'),
+                   get_string('config_certif_state', 'referentiel'), $CFG->referentiel_certif_state, $options));
+}
+else{
+    $settings->add(new admin_setting_configselect('referentiel_certif_state', get_string('certif_state', 'referentiel'),
+                   get_string('config_certif_state', 'referentiel'), 1, $options));
+}
+
+
+// affichage hierarchique des compétences
+$settings->add(new admin_setting_heading('input_setting', '', get_string('input_setting', 'referentiel')));
+
+unset($options);
+$options[0] = 0;
+$options[1] = 1;
+$options[2] = 2;
+
+if (isset($CFG->referentiel_hierarchy)){
+    $settings->add(new admin_setting_configselect('referentiel_hierarchy', get_string('input_hierarchy', 'referentiel'),
+                   get_string('config_input', 'referentiel'), $CFG->referentiel_hierarchy, $options));
+}
+else{
+    $settings->add(new admin_setting_configselect('referentiel_hierarchy', get_string('input_hierarchy', 'referentiel'),
+                   get_string('config_input', 'referentiel'), 0, $options));
+}
+
+unset($options);
 $options[0] = 0;
 $options[1] = 1;
 $options[2] = 2;
@@ -68,7 +108,28 @@ else{
     $settings->add(new admin_setting_configselect('referentiel_light_display', get_string('light_display', 'referentiel'),
                    get_string('config_light', 'referentiel'), 0, $options));
 }
+
+// desherence
+$settings->add(new admin_setting_heading('delai_setting', '', get_string('delai_setting', 'referentiel')));
+$settings->add(new admin_setting_configtext('delaidesherence', get_string('delaidesherence', 'referentiel'),
+        get_string('config_delaidesherence', 'referentiel'), 28, PARAM_INT));
+
+// archives
+$settings->add(new admin_setting_heading('archive_setting', '', get_string('archive_setting', 'referentiel')));
+unset($options);
+$options[0] = 1;
+$options[1] = 0;
+if (isset($CFG->referentiel_purge_archives)){
+    $settings->add(new admin_setting_configselect('referentiel_purge_archives', get_string('purge_archives', 'referentiel'),
+                   get_string('config_archives', 'referentiel'), $CFG->referentiel_purge_archives, $options));
+}
+else{
+    $settings->add(new admin_setting_configselect('referentiel_purge_archives', get_string('purge_archives', 'referentiel'),
+                   get_string('config_archives', 'referentiel'), 0, $options));
+}
+
 // scolarite
+$settings->add(new admin_setting_heading('scol_setting', '', get_string('scol_setting', 'referentiel')));
 unset($options);
 $options[0] = 0;
 $options[1] = 1;
@@ -81,7 +142,28 @@ else{
     $settings->add(new admin_setting_configselect('referentiel_scolarite_masquee', get_string('scolarite_user', 'referentiel'),
                    get_string('config_scolarite', 'referentiel'), 0, $options));
 }
+
+// student profile to get student number id
+$settings->add(new admin_setting_heading('profil_setting', '', get_string('profil_setting', 'referentiel')));
+$settings->add(new admin_setting_configtext('ref_profilecategory', get_string('ref_profilecategory', 'referentiel'),
+        get_string('config_ref_profilecategory', 'referentiel'), get_string('profiledefaultcategory', 'admin'), PARAM_TEXT));
+$settings->add(new admin_setting_configtext('ref_profilefield', get_string('ref_profilefield', 'referentiel'),
+        get_string('config_ref_profilefield', 'referentiel'), '', PARAM_ALPHANUMEXT));
+$settings->add(new admin_setting_configtext('ref_ddnfield', get_string('ref_ddnfield', 'referentiel'),
+        get_string('config_ref_ddnfield', 'referentiel'), '', PARAM_ALPHANUMEXT));
+$settings->add(new admin_setting_configtext('ref_ldnfield', get_string('ref_ldnfield', 'referentiel'),
+        get_string('config_ref_ldnfield', 'referentiel'), '', PARAM_ALPHANUMEXT));
+$settings->add(new admin_setting_configtext('ref_dptfield', get_string('ref_dptfield', 'referentiel'),
+        get_string('config_ref_dptfield', 'referentiel'), '', PARAM_ALPHANUMEXT));
+$settings->add(new admin_setting_configtext('ref_adrfield', get_string('ref_adrfield', 'referentiel'),
+        get_string('config_ref_adrfield', 'referentiel'), '', PARAM_ALPHANUMEXT));
+$settings->add(new admin_setting_configtext('ref_etabfield', get_string('ref_etabfield', 'referentiel'),
+        get_string('config_ref_etabfield', 'referentiel'), '', PARAM_ALPHANUMEXT));
+$settings->add(new admin_setting_configtext('ref_numetabfield', get_string('ref_numetabfield', 'referentiel'),
+        get_string('config_ref_numetabfield', 'referentiel'), '', PARAM_ALPHANUMEXT));
+
 // creation de referentiels
+$settings->add(new admin_setting_heading('ref_setting', '', get_string('ref_setting', 'referentiel')));
 unset($options);
 $options[0] = 0;
 $options[1] = 1;
@@ -94,6 +176,7 @@ else{
     $settings->add(new admin_setting_configselect('referentiel_creation_limitee', get_string('create_referentiel', 'referentiel'),
                    get_string('config_creer_referentiel', 'referentiel'), 0, $options));
 }
+
 // selection de referentiels
 unset($options);
 $options[0] = 0;
@@ -109,6 +192,7 @@ else{
 }
 
 // affichage graphique des competences validées
+$settings->add(new admin_setting_heading('stat_setting', '', get_string('stat_setting', 'referentiel')));
 unset($options);
 $options[0] = 0;
 $options[1] = 1;
@@ -122,7 +206,9 @@ else{
                    get_string('config_aff_graph', 'referentiel'), 0, $options));
 }
 
+
 // impression des certificats
+$settings->add(new admin_setting_heading('cert_setting', '', get_string('cert_setting', 'referentiel')));
 unset($options);
 $options[0] = 0;
 $options[1] = 1;
@@ -171,7 +257,7 @@ else{
     $settings->add(new admin_setting_configselect('certificat_sel_etudiant_numero', get_string('certificat_sel_etudiant_numero', 'referentiel'),
                    get_string('config_certificat_sel_etudiant_numero', 'referentiel'), 0, $options));
 }
-				 
+
 unset($options);
 $options[0] = 1;
 $options[1] = 0;

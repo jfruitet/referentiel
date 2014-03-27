@@ -122,7 +122,7 @@ echo '</select>
 <?php
     if (referentiel_site_can_config_referentiel($form->instance)){
         echo get_string('aide_referentiel_config_local','referentiel');
-        echo '<br /><br />'.referentiel_selection_configuration($form->config, 'config');
+        echo '<br /><br />'.referentiel_selection_configuration($form->config, 'config', $referentiel_instance->id);
     }
     else{
         // niveau supérieur de configuration
@@ -280,7 +280,7 @@ echo '</select>
 <tr valign="top">
     <td align="right"><b><?php  print_string('referentiel_config_local','referentiel') ?>:</b></td>
     <td align="left">
-        <?php echo referentiel_selection_configuration($form->config); ?>
+        <?php echo referentiel_selection_configuration($form->config, 'config'); ?>
     </td>
 </tr>
 </table>

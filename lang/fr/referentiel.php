@@ -2,6 +2,77 @@
 // ----------------
 // UTF-8 French
 //
+$string['updateactivitespaginees'] = 'Modif Paginée';
+$string['activitespaginees'] = 'Paginer';
+$string['click_to_load'] = 'Cliquer ici pour charger la page';
+
+$string['assignementdoc'] = 'Document du devoir';
+$string['commentby'] = 'Commentaire par ';
+$string['submission'] = 'Soumission : ';
+$string['certif_setting'] = 'Paramétrage de l\'affichage de l\'onglet "Certificat"';
+$string['ok_config_certif_occ']='autorisée au niveau de l\'occurrence';
+$string['no_config_certif_occ']='interdite au niveau de l\'occurrence';
+$string['ok_config_certif']='autorisée au niveau de l\'instance';
+$string['no_config_certif']='interdite au niveau de l\'instance';
+$string['yes_config_certif_locale']='Autoriser au niveau de l\'instance ?';
+$string['no_config_certif_locale']='Interdire au niveau de l\'instance ?';
+$string['cfcertif']='Interdire la configuration de l\'affichage de l\'onglet "Certificat"';
+$string['certif']=' &nbsp; &nbsp; &nbsp; Afficher l\'onglet "Certificat"';
+
+$string['nocertif']=' &nbsp; &nbsp; &nbsp; Désactiver l\'affichage de l\'onglet "Certificat"';
+$string['certif_config']='Configuration de l\'affichage de l\'onglet "Certificat"';
+$string['config_certif_config']='Ce paramètre commande l\'accès des enseignants au paramétrage de l\'onglet "Certificat"...
+<ul>
+<li>Si <i>referentiel_certif_config</i> vaut <b><i>0</i></b> les enseignants avec droit d\'édition peuvent activer ou désactiver librement l\'affichage de l\'onglet "Certificat", que ce soit au niveau de l\'occurrence ou des instances d\'un référentiel ;</li>
+<li>Si <i>referentiel_certif_config</i> vaut <b><i>1</i></b> les enseignants ne peuvent pas modifier l\'état de l\'affichage de l\'onglet "Certificat" pour l\'occurrence de référentiel, mais ils peuvent le faire pour l\'instance du cours ;</li>
+<li>Si <i>referentiel_certif_config</i> vaut <b><i>2</i></b> cet état est verrouillé au niveau du site et donc n\'est pas modifiable par les enseignants.
+</li>
+</ul>';
+
+$string['certif_state']='Etat de l\'onglet "Certificat"';
+$string['config_certif_state']='En désactivant de l\'affichage de l\'onglet "Certificat" vous masquez aux étudiants et aux enseignants toutes les données de certification et de protocole...
+<ul>
+<li>Si <i>referentiel_certif_state</i> vaut <b><i>0</i></b> l\'affichage de l\'onglet "Certificat" est <b><i>désactivé</i></b> ;</li>
+<li>Si <i>referentiel_certif_state</i> vaut <b><i>1</i></b>  l\'affichage de l\'onglet "Certificat" est <b><i>activé</i></b> ;</li>
+</ul>
+La valeur <i>0</i> n\'est légitime au niveau du site que si le module référentiel ne participe d\'aucune certification pour l\'ensemble du site.
+Dans le cas contraire il vaut mieux laisser le choix de paramétrage au niveau de l\'occurrence ou de l\'instance';
+
+$string['certif_activee']='Affichage de l\'onglet "Certificat" activé';
+$string['certif_desactivee']='Affichage de l\'onglet "Certificat" désactivé';
+
+$string['configuration_impression'] = 'Configuration impression';
+$string['hierarchy'] = 'Affichage non hiérarchique dans la saisie des compétences';
+$string['input_setting'] = 'Mode d\'affichage';
+$string['input_hierarchy'] = 'Affichage hiérarchique des compétences';
+$string['config_input'] =  'En fonction de la valeur de <i>referentiel_hierarchy</i>
+les enseignants avec droit d\'édition peuvent sélectionner un mode d\'affichage pour la saisie des compétences.
+
+* Si <i>referentiel_hierarchy</i> vaut 0 ils peuvent sélectionner ce mode au niveau de l\'instance ;
+
+* Si <i>referentiel_hierarchy</i> vaut 1 seul un gestionnaire ou le créateur du référentiel peuvent imposer ce mode au niveau de l\'occurrence du référentiel ;
+
+* Si <i>referentiel_hierarchy</i> vaut 2, le choix du mode d\'affichage est verrouillé au niveau du site.';
+
+
+$string['confirmclore'] = 'Confirmer la fermeture du dossier de certification';
+$string['confirmouvrir'] = 'Confirmer la réouverture du dossier de certification';
+
+$string['c_ouvrir'] = 'Ouvrir le dossier';
+$string['c_clore'] = 'Fermer le dossier';
+
+$string['deletealldeclarations'] = 'Suppression de toutes les déclarations d\'activités et des tâches';
+$string['scale_setting'] ='Utilisation des barèmes';
+$string['delai_setting'] ='Deshérence';
+$string['archive_setting'] ='Gestion des archives';
+$string['light_setting'] ='Affichage léger du référentiel';
+$string['light_setting'] ='Affichage léger du référentiel';
+$string['ref_setting'] = 'Référentiel';
+$string['scol_setting'] = 'Données de scolarité';
+$string['profil_setting'] = 'Utilisation des profils pour les données étudiants';
+$string['stat_setting'] = 'Statistiques';
+$string['cert_setting'] = 'Certificats';
+
 
 $string['consignes_associees']= 'Consignes associées';
 $string['consigne_associee']= 'Consigne associée';
@@ -18,6 +89,8 @@ $string['areaoutcomes']='objectifs';
 $string['areaarchive']='archives';
 $string['areascolarite']='scolarite';
 
+$string['import_pedagogie_error']='ERREUR A L\'IMPORTATION<br />Certains utilisateurs semblent ne pas être inscrits sur votre serveur Moodle';  
+$string['user_unknown']='Utilisateur inconnu : {$a}';
 $string['no_data'] = 'Aucune donnée pour {$a}';
 $string['regenere_profil'] = 'Actualiser les numéros d\'étudiants';
 $string['deleted_student'] = 'Enregistrement étudiant supprimé';
@@ -29,8 +102,27 @@ $string['cocher_enregistrer_students'] = 'Seuls les enregistrements cochés sero
 $string['profil_non_modifiable'] = ' &nbsp; &nbsp; &nbsp; &nbsp; (Passer par le profil pour modifier le numéro d\'étudiant...)';
 $string['ref_profilecategory'] = 'Catégorie du Profil utilisateur';
 $string['config_ref_profilecategory'] = 'Si le Profil utilisateur est utilisé pour enregistrer le <b>numéro d\'étudiant</b>, indiquez la <i>catégorie</i> de celui-ci.';
-$string['ref_profilefield'] = 'Nom abrégé dans Profil utilisateur';
-$string['config_ref_profilefield'] = 'Si le Profil utilisateur est utilisé pour enregistrer <b>le numéro d\'étudiant</b>, indiquez le <i>nom abrégé (\'shortname\')</i> de celui-ci.';
+$string['ref_profilefield'] = 'Nom abrégé du champ utilisé pour le numéro d\'étudiant';
+$string['config_ref_profilefield'] = 'Si le Profil utilisateur est utilisé pour enregistrer <b>le numéro d\'étudiant</b>, indiquez le <i>nom abrégé (\'shortname\')</i> du champ utilisé.';
+
+$string['ref_ddnfield'] = 'Nom abrégé du champ utilisé pour la date de naissance';
+$string['config_ref_ddnfield'] = 'Si le Profil utilisateur est utilisé pour enregistrer <b>la date de naissance de l\'étudiant</b>, indiquez le <i>nom abrégé (\'shortname\')</i> du champ utilisé.';
+
+$string['ref_ldnfield'] = 'Nom abrégé du champ utilisé pour le lieu de naissance';
+$string['config_ref_ldnfield'] = 'Si le Profil utilisateur est utilisé pour enregistrer <b>le lieu de naissance de l\'étudiant</b>, indiquez le <i>nom abrégé (\'shortname\')</i> du champ utilisé.';
+
+$string['ref_adrfield'] = 'Nom abrégé du champ utilisé pour l\'adresse de l\'étudiant';
+$string['config_ref_adrfield'] = 'Si le Profil utilisateur est utilisé pour enregistrer <b>l\'adresse de l\'étudiant</b>, indiquez le <i>nom abrégé (\'shortname\')</i> du champ utilisé.';
+
+$string['ref_dptfield'] = 'Nom abrégé du champ utilisé pour le département de naissance';
+$string['config_ref_dptfield'] = 'Si le Profil utilisateur est utilisé pour enregistrer <b>le département de naissance de l\'étudiant</b>, indiquez le <i>nom abrégé (\'shortname\')</i> du champ utilisé.';
+
+$string['ref_etabfield'] = 'Nom abrégé du champ utilisé pour le nom d\'établissement';
+$string['config_ref_etabfield'] = 'Si le Profil utilisateur est utilisé pour enregistrer <b>le nom d\'établissement</b>, indiquez le <i>nom abrégé (\'shortname\')</i> du champ utilisé.';
+
+$string['ref_numetabfield'] = 'Nom abrégé du champ utilisé pour le numéro d\'établissement';
+$string['config_ref_numetabfield'] = 'Si le Profil utilisateur est utilisé pour enregistrer <b>le numéro d\'établissement</b>, indiquez le <i>nom abrégé (\'shortname\')</i> du champ utilisé.';
+
 $string['etudianth'] = 'Etudiants';
 $string['etudianth_help'] = 'Informations d\'état civil destinées aux certificats
 
@@ -76,7 +168,7 @@ $string['delaidesherence']='Délai de déshérence';
 $string['config_delaidesherence']='Nombre de jours au delà duquel les déclarations d\'activité non évaluées sont signalées...';
 $string['jours']='jours';
 $string['joursdedelai']='Delai';
-$string['avertissementjoursdedelai']='Le délai de déshérence pour les déclarations d\'activité en jours ';
+$string['avertissementjoursdedelai']='Délai de déshérence pour les déclarations d\'activité (en jours) ';
 $string['activitesdesherance']='Liste des déclarations d\'activité non évaluées depuis plus de {$a} jours...';
 $string['pasdereferent']='Aucun référent';
 $string['pasdesuivi']='Aucun suivi';
@@ -159,7 +251,7 @@ Il est recommandé de fermer les dossiers de certification après la saisie des 
 $string['non_modifiable'] = 'Ce dossier de certification n\'est pas modifiable.';
 $string['debloquer_dossier'] = 'Rouvrez le dossier de certification pour modifier ce champ.';
 $string['valider_certificat'] = 'Dossier de certification';
-$string['filtre_valide'] = 'Dossier';
+$string['filtre_valide'] = 'Dossier de certification';
 $string['dossier_ouvert'] = 'Ouvert';
 $string['dossier_ferme'] = 'Fermé';
 
@@ -1117,6 +1209,7 @@ puis au niveau du référentiel par le créateur de celui-ci.
 Un paramétrage incohérent peut vous interdire de compléter la création d\'un nouveau référentiel ou de télécharger un référentiel existant.</i>';
 $string['not_verrou'] = 'Non verrouillé';
 $string['f_auteur'] = 'Auteur';
+$string['f_valide'] = 'Valide';
 $string['f_verrou'] = 'Verrouillé';
 $string['f_date_decision'] = 'Date de proposition';
 
@@ -1477,7 +1570,7 @@ $string['confirm_association_task'] = 'Confirmer la sélection de cette Tâche';
 
 // A traduire ou retraduire
 // scolarite
-$string['referentiel_config_local'] = 'Configuration';
+$string['referentiel_config_local'] = 'Configuration au niveau de l\'instance';
 $string['masquee'] = 'Masquée';
 // $string['visible'] = 'Visible';
 

@@ -41,7 +41,7 @@
     $add        = optional_param('add','', PARAM_ALPHA);
     $update     = optional_param('update', 0, PARAM_INT);
     $delete     = optional_param('delete', 0, PARAM_INT);
-    $approve    = optional_param('approve', 0, PARAM_INT);
+    $approved   = optional_param('approved', 0, PARAM_INT);
     $comment    = optional_param('comment', 0, PARAM_INT);
     $courseid   = optional_param('courseid', 0, PARAM_INT);
     $groupmode  = optional_param('groupmode', -1, PARAM_INT);
@@ -232,30 +232,30 @@
     }
 
 	/// Approve any requested records
-    if (isset($approve) && ($approve>0) && confirm_sesskey() 
+    if (isset($approved) && ($approved>0) && confirm_sesskey() 
 		&& has_capability('mod/referentiel:approve', $context)) {
-        if ($approverecord = $DB->get_record("referentiel_activite", array("id" => "$approve"))) {
+        if ($approvedrecord = $DB->get_record("referentiel_activite", array("id" => "$approved"))) {
 	        $confirm = optional_param('confirm',0,PARAM_INT);
 			if ($confirm) {
-                $approverecord->approved = 1;
+                $approvedrecord->approved = 1;
 			}
 			else{
-				$approverecord->approved = 0;
+				$approvedrecord->approved = 0;
 			}
-			$approverecord->teacherid=$USER->id;
-			$approverecord->date_modif=time();
-			$approverecord->type_activite=addslashes($approverecord->type_activite);			
-			$approverecord->description_activite=addslashes($approverecord->description_activite);
-			$approverecord->commentaire_activite=addslashes($approverecord->commentaire_activite);
+			$approvedrecord->teacherid=$USER->id;
+			$approvedrecord->date_modif=time();
+			$approvedrecord->type_activite=($approvedrecord->type_activite);			
+			$approvedrecord->description_activite=($approvedrecord->description_activite);
+			$approvedrecord->commentaire_activite=($approvedrecord->commentaire_activite);
 
-            if ($DB->update_record("referentiel_activite", $approverecord)) {
-				if (($approverecord->userid>0) && ($approverecord->competences_activite!='')){
+            if ($DB->update_record("referentiel_activite", $approvedrecord)) {
+				if (($approvedrecord->userid>0) && ($approvedrecord->competences_activite!='')){
 					// mise a jour du certificat 
-					if ($approverecord->approved){
-						referentiel_mise_a_jour_competences_certificat_user('', $approverecord->competences_activite, $approverecord->userid, $approverecord->ref_referentiel,$approverecord->approved, false, true);
+					if ($approvedrecord->approved){
+						referentiel_mise_a_jour_competences_certificat_user('', $approvedrecord->competences_activite, $approvedrecord->userid, $approvedrecord->ref_referentiel,$approvedrecord->approved, false, true);
 					}
 					else{
-						referentiel_mise_a_jour_competences_certificat_user($approverecord->competences_activite, '', $approverecord->userid, $approverecord->ref_referentiel,$approverecord->approved, false, true);
+						referentiel_mise_a_jour_competences_certificat_user($approvedrecord->competences_activite, '', $approvedrecord->userid, $approvedrecord->ref_referentiel,$approvedrecord->approved, false, true);
 					}
 				}
             }
@@ -274,36 +274,36 @@
 		&& has_capability('mod/referentiel:comment', $context)) 
     {
         if (!empty($activite_id)){
-			if ($approverecord = $DB->get_record("referentiel_activite", array("id" => "$comment"))) {
-				$approverecord->teacherid=$USER->id;
-				$approverecord->date_modif=time();
-				$approverecord->type_activite=addslashes($approverecord->type_activite);
-				$approverecord->description_activite=addslashes($approverecord->description_activite);
-				$approverecord->commentaire_activite=addslashes($form->commentaire_activite);
+			if ($approvedrecord = $DB->get_record("referentiel_activite", array("id" => "$comment"))) {
+				$approvedrecord->teacherid=$USER->id;
+				$approvedrecord->date_modif=time();
+				$approvedrecord->type_activite=($approvedrecord->type_activite);
+				$approvedrecord->description_activite=($approvedrecord->description_activite);
+				$approvedrecord->commentaire_activite=($form->commentaire_activite);
 				if (isset($approved)) {
-					$approverecord->approved=$approved;
+					$approvedrecord->approved=$approved;
 				}
 				if (isset($userid) && ($userid>0)){
 					$userid_filtre=$userid;
 				} 
                 if (isset($mailnow)){
-                    $approverecord->mailnow=$mailnow;
+                    $approvedrecord->mailnow=$mailnow;
                     if ($mailnow=='1'){ // renvoyer
-                        $approverecord->mailed=0;   // annuler envoi precedent
+                        $approvedrecord->mailed=0;   // annuler envoi precedent
                     }
                 }
                 else{
-                    $approverecord->mailnow=0;
+                    $approvedrecord->mailnow=0;
                 }
 				
-                if ($DB->update_record('referentiel_activite', $approverecord)) {
-					if (($approverecord->userid>0) && ($approverecord->competences_activite!='')){
+                if ($DB->update_record('referentiel_activite', $approvedrecord)) {
+					if (($approvedrecord->userid>0) && ($approvedrecord->competences_activite!='')){
 						// mise a jour du certificat 
-						if ($approverecord->approved){
-							referentiel_mise_a_jour_competences_certificat_user('', $approverecord->competences_activite, $approverecord->userid, $approverecord->ref_referentiel,$approverecord->approved, false, true);
+						if ($approvedrecord->approved){
+							referentiel_mise_a_jour_competences_certificat_user('', $approvedrecord->competences_activite, $approvedrecord->userid, $approvedrecord->ref_referentiel,$approvedrecord->approved, false, true);
 						}
 						else{
-							referentiel_mise_a_jour_competences_certificat_user($approverecord->competences_activite, '', $approverecord->userid, $approverecord->ref_referentiel,$approverecord->approved, false, true);
+							referentiel_mise_a_jour_competences_certificat_user($approvedrecord->competences_activite, '', $approvedrecord->userid, $approvedrecord->ref_referentiel,$approvedrecord->approved, false, true);
 						}
 					}
 				}
@@ -327,11 +327,14 @@
         if (isset($_POST['action']) && ($_POST['action']=='modifier_activite_global')){
 		    // echo "<br />DEBUG :: activite.php :: 274 :: ACTION : $action \n";
 		    $form=$_POST;
+			//echo "<br />activite.php :: 329 :: FORM<br />\n";
+			//print_object($form);
+			//exit;
 
 		    if (isset($form['tactivite_id']) && ($form['tactivite_id'])){
                 //
                 foreach ($form['tactivite_id'] as $id_activite){
-                    // echo "<br />ID :: ".$id_activite."\n";
+                    echo "<br />ID :: ".$id_activite."\n";
                     //
                     $form2= new Object();
                     $form2->action='modifier_activite';
@@ -349,11 +352,11 @@
                         $form2->competences_activite='';
                     }
 		      
-                    $form2->description_activite=($form['description_activite_'.$id_activite]);
-                    $form2->commentaire_activite=($form['commentaire_activite_'.$id_activite]);
+                    $form2->description_activite=stripslashes($form['description_activite_'.$id_activite]);
+                    $form2->commentaire_activite=stripslashes($form['commentaire_activite_'.$id_activite]);
                     $form2->instance=$form['ref_instance_'.$id_activite];
                     $form2->ref_referentiel=$form['ref_referentiel_'.$id_activite];
-                    $form2->courseidid=$form['ref_course_'.$id_activite];
+                    $form2->courseid=$form['ref_course_'.$id_activite];
                     $form2->date_creation=$form['date_creation_'.$id_activite];
                     $form2->date_modif_student=$form['date_modif_student_'.$id_activite];
                     $form2->date_modif=$form['date_modif_'.$id_activite];
@@ -385,7 +388,7 @@
             exit;
         }
    
-        elseif (!empty($action) && (($action=='ajouter_activite') || ($action=='modifier_activite'))
+        elseif (!empty($action) && (($action=='ajouter_activite') || ($action=='modifier_activite')  || ($action=='modifier_document'))
             && !empty($mode) &&
                 (($mode=='updateactivity') or ($mode=='addactivity') or ($mode=='deleteactivity'))){
             // add, delete or update form submitted
@@ -421,7 +424,11 @@
                           "$form->instance", "");
                     }
                     else {
-
+                    //DEBUG
+					//echo "<br />activite.php :: 425 \n";
+					//print_object($form);
+					//
+					//exit;
                         $return = $updatefunction($form);
                         if (!$return) {
                             print_error("Could not update activity $form->id of the referentiel", 'error', "activite.php?d=$referentiel->id");

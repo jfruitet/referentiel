@@ -36,6 +36,7 @@
     $add          = optional_param('add','', PARAM_ALPHA);
     $update       = optional_param('update', 0, PARAM_INT);
     $delete       = optional_param('delete', 0, PARAM_INT);
+	$clore        = optional_param('clore', 0, PARAM_INT);
     $approve      = optional_param('approve', 0, PARAM_INT);
     $comment      = optional_param('comment', 0, PARAM_INT);
     $courseid = optional_param('courseid', 0, PARAM_INT);
@@ -154,7 +155,7 @@
 	/// selection filtre
     if (empty($userid_filtre) || ($userid_filtre==$USER->id)
         || (isset($mode_select) && ($mode_select=='selectetab'))){
-        set_filtres_sql();
+        set_filtres_sql('certificat');
     }
 
 
@@ -222,6 +223,29 @@
         unset($form);
     }
 
+	/// Clore dossier
+    if (!empty($clore) && confirm_sesskey() && has_capability('mod/referentiel:rate', $context))
+	{
+        if ($approverecord = $DB->get_record("referentiel_certificat", array("id" => "$clore"))) {
+            $confirm = optional_param('confirm',0,PARAM_INT);
+            if ($confirm) {
+                    $dclos = 1;
+            }
+            else{
+                    $dclos = 0;
+            }
+            if ($dclos){
+				$DB->set_field('referentiel_certificat','verrou',1,array("id" => "$clore"));
+			}
+            $DB->set_field('referentiel_certificat','valide',$dclos,array("id" => "$clore"));
+            $DB->set_field('referentiel_certificat','teacherid',$USER->id,array("id" => "$clore"));
+            //if (isset($userid) && ($userid>0)){
+            //    $userid_filtre=$userid;
+            $userid_filtre=0; // pour reafficher toutes les certificats
+        }
+	    unset($form);
+	}
+
 
 	/// Approve any requested records
     if (!empty($approve) && confirm_sesskey()
@@ -239,9 +263,10 @@
             }
             $DB->set_field('referentiel_certificat','verrou',$verrou,array("id" => "$approve"));
             $DB->set_field('referentiel_certificat','teacherid',$USER->id,array("id" => "$approve"));
-            if (isset($userid) && ($userid>0)){
-                $userid_filtre=$userid;
-            }
+            //if (isset($userid) && ($userid>0)){
+            //    $userid_filtre=$userid;
+            //}
+            $userid_filtre=0; // pour reafficher toutes les certificats
         }
         unset($form);
     }
@@ -452,11 +477,6 @@
 	   }
     }
 
-	/// selection filtre
-    if (empty($userid_filtre) || ($userid_filtre==$USER->id)
-        || (isset($mode_select) && ($mode_select=='selectetab'))){
-        set_filtres_sql();
-    }
 
 	// afficher les formulaires
 
@@ -490,6 +510,8 @@
 	}
 
     if (isset($mode) && (($mode=="deletecertif")
+        || ($mode == "ouvrircertificat")
+        || ($mode == "clorecertificat")
 		|| ($mode=="updatecertif")
 		|| ($mode=="approvecertif")
 		|| ($mode=="deverrouiller")

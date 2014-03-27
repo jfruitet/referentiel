@@ -30,7 +30,7 @@ if (isset($mode) && ($mode=="addetudiant")){
 	}
 	if (!isset($form->ref_etablissement)){
 		$form->ref_etablissement = 0;
-	} 
+	}
 
 ?>
 <h3><?php  print_string('creer_etudiant','referentiel') ?></h3>
@@ -59,7 +59,16 @@ if (isset($mode) && ($mode=="addetudiant")){
 	<b><?php  print_string('ddn_etudiant','referentiel') ?>:</b>
 	</td>
     <td align="left">
-<input type="text" name="ddn_etudiant" size="14" maxlength="14" value="<?php  p($form->ddn_etudiant) ?>" />
+<?php
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_ddnfield)){  // Profil
+        // profil non modifiable ici
+        echo s($form->ddn_etudiant).' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="ddn_etudiant" value="'.s($form->ddn_etudiant).'" />'."\n";
+    }
+    else {
+		echo '<input type="text" name="ddn_etudiant" size="14" maxlength="14" value="'.s($form->ddn_etudiant).'" />'."\n";
+    }
+?>
     </td>
 </tr>
 <tr valign="top">
@@ -67,7 +76,16 @@ if (isset($mode) && ($mode=="addetudiant")){
 	<b><?php  print_string('lieu_naissance','referentiel') ?>:</b>
 	</td>
     <td align="left">
-<input type="text" name="lieu_naissance" size="40" maxlength="255" value="<?php  p($form->lieu_naissance) ?>" />
+<?php
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_ldnfield)){  // Profil
+        // profil non modifiable ici
+        echo s($form->lieu_naissance).' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="lieu_naissance" value="'.s($form->lieu_naissance).'" />'."\n";
+    }
+    else {
+		echo '<input type="text" name="lieu_naissance" size="40" maxlength="255" value="'.s($form->lieu_naissance).'" />'."\n";
+    }
+?>
     </td>
 </tr>
 <tr valign="top">
@@ -75,9 +93,36 @@ if (isset($mode) && ($mode=="addetudiant")){
 	<b><?php  print_string('departement_naissance','referentiel') ?>:</b>
 	</td>
     <td align="left">
-<input type="text" name="departement_naissance" size="40" maxlength="255" value="<?php  p($form->departement_naissancee) ?>" />
+<?php
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_dptfield)){  // Profil
+        // profil non modifiable ici
+        echo s($form->departement_naissance).' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="departement_naissance" value="'.s($form->departement_naissance).'" />'."\n";
+    }
+    else {
+		echo '<input type="text" name="departement_naissance" size="40" maxlength="255" value="'.s($form->departement_naissance).'" />'."\n";
+    }
+?>
     </td>
 </tr>
+<tr valign="top">
+    <td align="right">
+	<b><?php  print_string('adresse_etudiant','referentiel') ?>:</b>
+	</td>
+    <td align="left">
+<?php
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_adrfield)){  // Profil
+        // profil non modifiable ici
+        echo s($form->adresse_etudiant).' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="adresse_etudiant" value="'.s($form->adresse_etudiant).'" />'."\n";
+    }
+    else {
+        echo '<input type="text" name="adresse_etudiant" size="60" maxlength="255" value="'.s($form->adress_etudiant).'" />'."\n";
+    }
+?>
+    </td>
+</tr>
+
 </table>
 
 <input type="hidden" name="ref_etablissement" value="<?php  p($form->ref_etablissement) ?>" />
@@ -106,17 +151,17 @@ else if (isset($mode) && ($mode=="updateetudiant")){
 	if (!isset($form->sesskey)) {
     	$form->sesskey=sesskey();
 	}
-	
+
 
 	// Charger les etudiants
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 	$isteacher = has_capability('mod/referentiel:approve', $context);
 	$isauthor = has_capability('mod/referentiel:write', $context) && !$isteacher;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);	
-	
+	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
+
 	if ((!$isteacher) && (!$iseditor)){
-			$userid=$USER->id; 
+			$userid=$USER->id;
 			$records_etudiant=referentiel_get_etudiant($userid);
 	}
 	else{
@@ -131,7 +176,7 @@ else if (isset($mode) && ($mode=="updateetudiant")){
                 else{
     				$re = $DB->get_record("referentiel_etudiant", array("userid" => "$un_user_id->userid"));
         		}
-        		
+
         		if (!$re) {
                     if (referentiel_add_etudiant_user($un_user_id->userid)){
 			     	   $re = $DB->get_record("referentiel_etudiant", array("userid" => $un_user_id->userid));
@@ -180,7 +225,7 @@ else if (isset($mode) && ($mode=="updateetudiant")){
 			$adresse_etudiant=$record->adresse_etudiant;
 			$ref_etablissement=$record->ref_etablissement;
 			$userid=$record->userid;
-		
+
             $user_info=referentiel_get_user_info($record->userid);
 			// DEBUG
 			// echo "<br/>DEBUG ::<br />\n";
@@ -223,24 +268,65 @@ else if (isset($mode) && ($mode=="updateetudiant")){
 	<b>'.get_string('ddn_etudiant','referentiel').':</b>
 	</td>
     <td align="left">
-<input type="text" name="ddn_etudiant_'.$etudiant_id.'" size="14" maxlength="14" value="'.$ddn_etudiant.'" onchange="return validerCheckBox(\'tetudiant_id_'.$etudiant_id.'\')" />
-    </td>
+';
+
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_ddnfield)){  // Profil
+        // profil non modifiable ici
+        echo $ddn_etudiant.' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="ddn_etudiant_'.$etudiant_id.'" value="'.$ddn_etudiant.'" />'."\n";
+    }
+    else {
+		echo '<input type="text" name="ddn_etudiant_'.$etudiant_id.'" size="14" maxlength="14" value="'.$ddn_etudiant.'" onchange="return validerCheckBox(\'tetudiant_id_'.$etudiant_id.'\')" />'."\n";
+    }
+	echo '</td>
 </tr>
 <tr valign="top">
     <td align="right">
 	<b>'.get_string('lieu_naissance','referentiel').':</b>
 	</td>
     <td align="left">
-<input type="text" name="lieu_naissance_'.$etudiant_id.'" size="40" maxlength="255" value="'.s($lieu_naissance).'" onchange="return validerCheckBox(\'tetudiant_id_'.$etudiant_id.'\')" />
-    </td>
+';
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_ldnfield)){  // Profil
+        // profil non modifiable ici
+        echo $lieu_naissance.' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="lieu_naissance_'.$etudiant_id.'" value="'.$lieu_naissance.'" />'."\n";
+    }
+    else {
+		echo '<input type="text" name="lieu_naissance_'.$etudiant_id.'" size="40" maxlength="255" value="'.$lieu_naissance.'" onchange="return validerCheckBox(\'tetudiant_id_'.$etudiant_id.'\')" />'."\n";
+    }
+	echo '</td>
 </tr>
 <tr valign="top">
     <td align="right">
 	<b>'.get_string('departement_naissance','referentiel').':</b>
 	</td>
     <td align="left">
-<input type="text" name="departement_naissance_'.$etudiant_id.'" size="40" maxlength="255" value="'.s($departement_naissance).'" onchange="return validerCheckBox(\'tetudiant_id_'.$etudiant_id.'\')" />
-    </td>
+';
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_dptfield)){  // Profil
+        // profil non modifiable ici
+        echo $departement_naissance.' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="departement_naissance_'.$etudiant_id.'" value="'.$departement_naissance.'" />'."\n";
+    }
+    else {
+		echo '<input type="text" name="departement_naissance_'.$etudiant_id.'" size="40" maxlength="255" value="'.$departement_naissance.'" onchange="return validerCheckBox(\'tetudiant_id_'.$etudiant_id.'\')" />'."\n";
+    }
+	echo '</td>
+</tr>
+<tr valign="top">
+    <td align="right">
+	<b>'.get_string('adresse_etudiant','referentiel').':</b>
+	</td>
+    <td align="left">
+';
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_adrfield)){  // Profil
+        // profil non modifiable ici
+        echo $adresse_etudiant.' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="adresse_etudiant_'.$etudiant_id.'" value="'.$adresse_etudiant.'" />'."\n";
+    }
+    else {
+        echo '<input type="text" name="adresse_etudiant_'.$etudiant_id.'" size="60" maxlength="255" value="'.$adresse_etudiant.'" onchange="return validerCheckBox(\'tetudiant_id_'.$etudiant_id.'\')" />'."\n";
+    }
+	echo '</td>
 </tr>
 </table>
 ';

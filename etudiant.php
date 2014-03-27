@@ -234,7 +234,8 @@
         		    $record->num_etudiant=$form['num_etudiant_'.$id_etudiant];
         		    $record->ddn_etudiant=$form['ddn_etudiant_'.$id_etudiant];
         		    $record->lieu_naissance=$form['lieu_naissance_'.$id_etudiant];
-        		    $record->departement_naissance=$form['departement_naissance_'.$id_etudiant];                    //echo "<br />DEBUG :: edit.php :: 262<br />\n";
+        		    $record->departement_naissance=$form['departement_naissance_'.$id_etudiant];
+					$record->adresse_etudiant=$form['adresse_etudiant_'.$id_etudiant];
         		    $record->ref_etablissement=$form['ref_etablissement_'.$id_etudiant];
                     $record->userid=$form['userid_'.$id_etudiant];
                     //print_object($record);

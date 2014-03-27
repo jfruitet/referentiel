@@ -15,9 +15,9 @@
 
 	$isteacher = has_capability('mod/referentiel:approve', $context);
 	$isauthor = has_capability('mod/referentiel:write', $context) && !$isteacher;
-	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);	
+	$iseditor = has_capability('mod/referentiel:writereferentiel', $context);
 	if ((!$isteacher) && (!$iseditor)){
-		$userid=$USER->id; 
+		$userid=$USER->id;
 	}
 
 	if ($record){ // initialise dans etudiant.php
@@ -33,7 +33,7 @@
 			$adresse_etudiant=$record->adresse_etudiant;
 			$ref_etablissement=$record->ref_etablissement;
 			$userid=$record->userid;
-		
+
 			// DEBUG
 			// echo "<br/>DEBUG ::<br />\n";
 			// print_object($record);
@@ -76,7 +76,16 @@
 	<b><?php  print_string('ddn_etudiant','referentiel') ?>:</b>
 	</td>
     <td align="left">
-<input type="text" name="ddn_etudiant" size="14" maxlength="14" value="<?php  p($ddn_etudiant) ?>" />
+<?php
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_ddnfield)){  // Profil
+        // profil non modifiable ici
+        echo s($form->ddn_etudiant).' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="ddn_etudiant" value="'.s($form->ddn_etudiant).'" />'."\n";
+    }
+    else {
+		echo '<input type="text" name="ddn_etudiant" size="14" maxlength="14" value="'.s($form->ddn_etudiant).'" />'."\n";
+    }
+?>
     </td>
 </tr>
 <tr valign="top">
@@ -84,7 +93,16 @@
 	<b><?php  print_string('lieu_naissance','referentiel') ?>:</b>
 	</td>
     <td align="left">
-<input type="text" name="lieu_naissance" size="40" maxlength="255" value="<?php  p($lieu_naissance) ?>" />
+<?php
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_ldnfield)){  // Profil
+        // profil non modifiable ici
+        echo s($form->lieu_naissance).' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="lieu_naissance" value="'.s($form->lieu_naissance).'" />'."\n";
+    }
+    else {
+		echo '<input type="text" name="lieu_naissance" size="40" maxlength="255" value="'.s($form->lieu_naissance).'" />'."\n";
+    }
+?>
     </td>
 </tr>
 <tr valign="top">
@@ -92,7 +110,16 @@
 	<b><?php  print_string('departement_naissance','referentiel') ?>:</b>
 	</td>
     <td align="left">
-<input type="text" name="departement_naissance" size="40" maxlength="255" value="<?php  p($departement_naissance) ?>" />
+<?php
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_dptfield)){  // Profil
+        // profil non modifiable ici
+        echo s($form->departement_naissance).' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="departement_naissance" value="'.s($form->departement_naissance).'" />'."\n";
+    }
+    else {
+		echo '<input type="text" name="departement_naissance" size="40" maxlength="255" value="'.s($form->departement_naissance).'" />'."\n";
+    }
+?>
     </td>
 </tr>
 <tr valign="top">
@@ -100,7 +127,16 @@
 	<b><?php  print_string('adresse_etudiant','referentiel') ?>:</b>
 	</td>
     <td align="left">
-<input type="text" name="adresse_etudiant" size="60" maxlength="255" value="<?php  p($adresse_etudiant) ?>" />
+<?php
+    if (!empty($CFG->ref_profilecategory) && !empty($CFG->ref_adrfield)){  // Profil
+        // profil non modifiable ici
+        echo s($form->adresse_etudiant).' <i>'.get_string('profil_non_modifiable','referentiel').'</i>'."\n";
+        echo '<input type="hidden" name="adresse_etudiant" value="'.s($form->adresse_etudiant).'" />'."\n";
+    }
+    else {
+        echo '<input type="text" name="adresse_etudiant" size="60" maxlength="255" value="'.s($form->adress_etudiant).'" />'."\n";
+    }
+?>
     </td>
 </tr>
 </table>
@@ -120,9 +156,9 @@
 
 </center>
 
-</form>	
+</form>
 <?php
-		
+
 	}
 }
 else if (isset($mode) && ($mode=="deleteetudiant")){

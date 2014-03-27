@@ -38,7 +38,7 @@ require_once("overlib_item.php");
 
 
 
-// Affiche une entete activite
+// Affiche une entete certificat
 // *****************************************************************
 // *
 // output string                                                    *
@@ -47,6 +47,11 @@ function referentiel_entete_filtre($appli, $data, $oklistesimple=false){
 // Affiche une entete  complete
 $s="";
 $appli=$appli.'&amp;mode_select=selectetab';
+
+// DEBUG
+//echo "<br />DEBUG :: print_lib_certificat :: 52 <br />\n";
+//print_object($data);
+//echo "<br />\n";
 
 	if ($oklistesimple){
 		$width="10%";
@@ -62,7 +67,7 @@ $appli=$appli.'&amp;mode_select=selectetab';
 onchange="self.location=document.getElementById(\'selectetab_f_auteur\').f_auteur.options[document.getElementById(\'selectetab_f_auteur\').f_auteur.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
 		if ($data->f_auteur=='1'){
-			$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_date_modif='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_modif='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
 			$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('croissant','referentiel').'</option>'."\n";
 			$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_verrou='.$data->f_verrou.'&amp;f_valide='.$data->f_valide.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('decroissant','referentiel').'</option>'."\n";
 		}
@@ -78,7 +83,7 @@ onchange="self.location=document.getElementById(\'selectetab_f_auteur\').f_auteu
 		}
 	}
 	else{
-		$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_verrou=0&amp;f_date_decision=0&amp;f_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+		$s.='	<option value="'.$appli.'&amp;f_auteur=0&amp;f_referent=0&amp;f_verrou=0&amp;f_valide=0&amp;f_date_decision=0&amp;f_date_decision=0" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
 		$s.='	<option value="'.$appli.'&amp;f_auteur=1&amp;f_referent=0&amp;f_verrou=0&amp;f_valide=0&amp;f_date_decision=0&amp;f_date_decision=0">'.get_string('croissant','referentiel').'</option>'."\n";
 		$s.='	<option value="'.$appli.'&amp;f_auteur=-1&amp;f_referent=0&amp;f_verrou=0&amp;f_valide=0&amp;f_date_decision=0&amp;f_date_decision=0">'.get_string('decroissant','referentiel').'</option>'."\n";
 	}
@@ -92,19 +97,19 @@ onchange="self.location=document.getElementById(\'selectetab_f_auteur\').f_auteu
 onchange="self.location=document.getElementById(\'selectetab_f_verrou\').f_verrou.options[document.getElementById(\'selectetab_f_verrou\').f_verrou.selectedIndex].value;">'."\n";
 	if (isset($data) && !empty($data)){
 		if ($data->f_verrou=='1'){
-			$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide=0&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('verrou','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('not_verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide='.$data->f_valide.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_valide='.$data->f_valide.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_valide='.$data->f_valide.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('not_verrou','referentiel').'</option>'."\n";
 		}
 		else if ($data->f_verrou=='-1'){
-			$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide=0&amp;f_auteur='.$data->f_auteur.'&amp;f_verrou=0&amp;f_valide=0&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('verrou','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('not_verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide='.$data->f_valide.'&amp;f_auteur='.$data->f_auteur.'&amp;f_verrou=0&amp;f_valide=0&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_valide='.$data->f_valide.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_valide='.$data->f_valide.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('not_verrou','referentiel').'</option>'."\n";
 		}
 		else{
-			$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide=0&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('verrou','referentiel').'</option>'."\n";
-			$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('not_verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=0&amp;f_valide='.$data->f_valide.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'" selected="selected">'.get_string('choisir','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=1&amp;f_valide='.$data->f_valide.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('verrou','referentiel').'</option>'."\n";
+			$s.='	<option value="'.$appli.'&amp;f_verrou=-1&amp;f_valide='.$data->f_valide.'&amp;f_auteur='.$data->f_auteur.'&amp;f_referent='.$data->f_referent.'&amp;f_date_decision='.$data->f_date_decision.'">'.get_string('not_verrou','referentiel').'</option>'."\n";
 		}
 	}
 	else{
@@ -116,7 +121,7 @@ onchange="self.location=document.getElementById(\'selectetab_f_verrou\').f_verro
 	$s.='</select>'."\n";
 	$s.='</form>'."\n";
 	$s.='</th>';
-	
+
 // VALIDE
 	$s.='<th width="'.$width.'">'.get_string('f_valide','referentiel');
 	$s.="\n".'<form action="'.$appli.'" method="get" id="selectetab_f_valide" class="popupform">'."\n";
@@ -225,6 +230,7 @@ onchange="self.location=document.getElementById(\'selectetab_f_date_decision\').
 
 	return $s;
 }
+
 
 
 function referentiel_enqueue_certificat(){
@@ -782,7 +788,7 @@ $CFG->wwwroot.'/mod/referentiel/certificat.php',$initiale,$mode, $userid_filtre,
                     if (!empty($record)){
                         // Afficher
                         echo referentiel_affiche_un_certificat($roles, $data_f,$mode, $cm, $course, $referentiel_instance, $record, $context, $actif, $liste_empreintes, $select_acc, $seuil_certification, $protocole_link, $nb_items, $rang);
-                        echo referentiel_menu_certificat($context, $record->id, $referentiel_instance->id, $record->verrou, $record->userid, $select_acc, $rang, ($record->valide && $isstudent));
+                        echo referentiel_menu_certificat($context, $record->id, $referentiel_instance->id, $record->verrou, $record->userid, $select_acc, $rang, $record->valide); //   ($record->valide && $isstudent
                         $rang++;
                     }
                 }
@@ -2253,7 +2259,7 @@ function referentiel_liste_tous_certificats($id_referentiel, $procole_link=''){
 }
 
 // Affiche les certificats de ce referentiel
-function referentiel_menu_certificat_detail($context, $certificat_id, $referentiel_instance_id, $verrou, $userid, $select_acc=0, $dossier_ferme=false){
+function referentiel_menu_certificat_detail($context, $certificat_id, $referentiel_instance_id, $verrou, $userid, $select_acc=0, $dossier_ferme){
 	global $CFG;
 	global $OUTPUT;
 	
@@ -2274,7 +2280,11 @@ function referentiel_menu_certificat_detail($context, $certificat_id, $referenti
 		    else{
 			    echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=verrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/stop').'" alt="'.get_string('verrouiller', 'referentiel').'" title="'.get_string('verrouiller', 'referentiel').'" /></a>'."\n";
 		    }
+            echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=clorecertificat&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('cadenas_f','referentiel').'" alt="'.get_string('c_clore', 'referentiel').'" title="'.get_string('c_clore', 'referentiel').'" /></a>'."\n";
         }
+		else{
+                echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=ouvrircertificat&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('cadenas_o','referentiel').'" alt="'.get_string('c_ouvrir', 'referentiel').'" title="'.get_string('c_ouvrir', 'referentiel').'" /></a>'."\n";
+		}
         if (referentiel_site_can_print_referentiel($referentiel_instance_id)) {
 			echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/print_certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=printcertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('printer','referentiel').'" alt="'.get_string('print', 'referentiel').'" title="'.get_string('print', 'referentiel').'" /></a>'."\n";
 		}
@@ -2317,7 +2327,7 @@ function referentiel_menu_certificat_detail($context, $certificat_id, $referenti
 
 
 // Affiche le boutons
-function referentiel_menu_certificat($context, $certificat_id, $referentiel_instance_id, $verrou, $userid=0, $select_acc=0, $rang=0, $dossier_ferme=false){
+function referentiel_menu_certificat($context, $certificat_id, $referentiel_instance_id, $verrou, $userid=0, $select_acc=0, $rang=0, $dossier_ferme){
 	global $CFG;
 	global $OUTPUT;
 	global $USER;
@@ -2344,7 +2354,12 @@ function referentiel_menu_certificat($context, $certificat_id, $referentiel_inst
 		    else{
 			    $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=verrouiller&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('/t/stop').'" alt="'.get_string('verrouiller', 'referentiel').'" title="'.get_string('verrouiller', 'referentiel').'" /></a>'."\n";
 		    }
+            $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=clorecertificat&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('cadenas_f','referentiel').'" alt="'.get_string('c_clore', 'referentiel').'" title="'.get_string('c_clore', 'referentiel').'" /></a>'."\n";
         }
+		else{
+                $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=ouvrircertificat&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('cadenas_o','referentiel').'" alt="'.get_string('c_ouvrir', 'referentiel').'" title="'.get_string('c_ouvrir', 'referentiel').'" /></a>'."\n";
+		}
+
 		if (referentiel_site_can_print_referentiel($referentiel_instance_id)) {
             $s.='&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/print_certificat.php?d='.$referentiel_instance_id.'&amp;select_acc='.$select_acc.'&amp;certificat_id='.$certificat_id.'&amp;userid='.$userid.'&amp;mode=printcertif&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('printer','referentiel').'" alt="'.get_string('print', 'referentiel').'" title="'.get_string('print', 'referentiel').'" /></a>'."\n";
 		}
@@ -2589,11 +2604,11 @@ $protocole_link='';      //MODIF JF 2012/02/18
 		      			if ($isauthor  || $iseditor || $istutor || $isteacher || $isadmin) {
 			     			if (isset($mode) && ($mode=='listcertifsingle')){
 				    			referentiel_print_certificat_detail($record, $seuil_certification, $protocole_link);
-					       		referentiel_menu_certificat_detail($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $record_id->userid, $select_acc, ($record->valide && $isstudent));
+					       		referentiel_menu_certificat_detail($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $record_id->userid, $select_acc, $record->valide);
 						    }
 						    else{
 							    referentiel_print_certificat($record, $nb_items, $liste_empreintes, $seuil_certification, $protocole_link);
-							    echo referentiel_menu_certificat($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $record_id->userid, $select_acc, ($record->valide && $isstudent));
+							    echo referentiel_menu_certificat($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $record_id->userid, $select_acc, 0, $record->valide);
 						    }
                         }
 					}
@@ -2685,7 +2700,7 @@ global $USER;
 		$isauthor = referentiel_certificat_isowner($record->id);		
 		if ($isauthor || $isteacher || $isadmin) {
 			referentiel_print_certificat_detail_une_page($record, $nb_items, $liste_empreintes, $liste_poids, $seuil_certification, $protocole_link);
-			referentiel_menu_certificat_detail($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $userid, $select_acc, ($record->valide && $isstudent));
+			referentiel_menu_certificat_detail($context, $record->id, $referentiel_instance->id, ($record->verrou && $isstudent), $userid, $select_acc, $record->valide);
 		}
 	}
 }

@@ -77,24 +77,13 @@
 
 
     // check role capability
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    //} else {
-        // $context = context_module::instance($cm);
-    //}
-
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/referentiel:export', $context);
 
     if (empty($CFG->enableoutcomes)) {
         redirect($CFG->wwwroot.'/mod/referentiel/view.php?id='.$cm->id.'&amp;non_redirection=1');
     }
 
-  /*
-  if (!confirm_sesskey()) {
-      break;
-  }
-  */
   // ensure the files area exists for this course
   // Inutile car pas de sauvegarde dans les donn�es du cours.
   // make_upload_directory( "$course->id/$CFG->moddata/referentiel" );
@@ -103,13 +92,7 @@
       $exportfilename = "outcomes_".referentiel_default_export_filename($course, $referentiel).'.csv';
     }
   
-
-    // Valable pour Moodle 2.1 et Moodle 2.2
-    //if ($CFG->version < 2011120100) {
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
-    //} else {
-    //    $systemcontext = context_system::instance();
-    //}
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
     header("Content-Type: text/csv; charset=utf-8");
     header("Content-Disposition: attachment; filename=$exportfilename");
@@ -128,16 +111,14 @@ C2i2e A.1.2 	A.1.2 	A.1.2 S'approprier les différentes composantes informatique
   */
   
     foreach($outcomes as $outcome) {
-
         $line = array();
-
-        $line[] = $outcome->name;
-        $line[] = $outcome->shortname;
-        $line[] = $outcome->description;
+  		// purger les caracteres separateurs
+        $line[] = str_replace(';',',',$outcome->name);
+        $line[] = str_replace(';',',',$outcome->shortname);
+        $line[] = str_replace(';',',',$outcome->description);
         $line[] = get_string('nom_bareme','referentiel');
         $line[] = get_string('bareme','referentiel');
         $line[] = get_string('description_bareme','referentiel');
-    
         echo format_csv($line, ';', '"');
     }
 

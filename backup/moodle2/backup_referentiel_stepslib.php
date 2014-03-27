@@ -82,7 +82,6 @@
  */
 class backup_referentiel_activity_structure_step extends backup_activity_structure_step {
 
-
     
     protected function define_structure() {
         global $DB;

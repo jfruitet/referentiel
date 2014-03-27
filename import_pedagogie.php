@@ -151,7 +151,7 @@
     $icon = $OUTPUT->pix_url('icon','referentiel');
 
     $PAGE->set_url($url);
-
+    $PAGE->requires->css('/mod/referentiel/referentiel.css');
     $PAGE->set_title($pagetitle);
     $PAGE->navbar->add($strpagename);
     $PAGE->set_heading($course->fullname);

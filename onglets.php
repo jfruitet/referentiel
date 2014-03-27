@@ -144,11 +144,21 @@ function display(){
             }
 
         	// gestion des certificats
-            if (has_capability('mod/referentiel:write', $this->context)) {
-                $url_param['mode']='listcertif';
-                $row[] = new tabobject('certificat', new moodle_url('/mod/referentiel/certificat.php', $url_param), get_string('certificat','referentiel'));
-            }
-	
+			$certification_active=referentiel_get_certification_active($this->instance->id);
+			if ($certification_active){
+				if (has_capability('mod/referentiel:write', $this->context)) {
+	                $url_param['mode']='listcertif';
+    	            $row[] = new tabobject('certificat', new moodle_url('/mod/referentiel/certificat.php', $url_param), get_string('certificat','referentiel'));
+ 				}
+			}
+
+			// archivage du dossier numerique
+			if (has_capability('mod/referentiel:write', $this->context)) {
+                $url_param['mode']='archive';
+    			$row[] = new tabobject('archive', new moodle_url('/mod/referentiel/archive.php', $url_param), get_string('archive','referentiel'));
+ 			}
+
+
             // scolarite
             $scolarite_locale_visible=referentiel_get_item_configuration('scol', $this->instance->id)==0;
         	if (($scolarite_locale_visible	&&  has_capability('mod/referentiel:viewscolarite', $this->context))
@@ -184,11 +194,14 @@ function display(){
                 $tabs[] = $row;
                 $activetwo = array('menuacc');
             }
+
         	// ACTIVITE
             if (isset($this->currenttab) && (($this->currenttab == 'list')
         		|| ($this->currenttab == 'listactivity')
 		        || ($this->currenttab == 'listactivitysingle')
         		|| ($this->currenttab == 'listactivityall')
+        || ($this->currenttab == 'activitespaginees')
+        || ($this->currenttab == 'updateactivitespaginees')
 		        || ($this->currenttab == 'addactivity')
         		|| ($this->currenttab == 'updateactivity')
         		|| ($this->currenttab == 'exportactivity')
@@ -200,6 +213,8 @@ function display(){
         		$row[] = new tabobject('listactivity', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('listactivity','referentiel'));
                 $url_param['mode']='listactivityall';
                 $row[] = new tabobject('listactivityall', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('listactivityall','referentiel'));
+        $url_param['mode']='activitespaginees';
+		$row[] = new tabobject('activitespaginees', new moodle_url('/mod/referentiel/activite_paginee.php', $url_param),  get_string('activitespaginees','referentiel'));
 
                 if (has_capability('mod/referentiel:addactivity', $this->context)) {
                     if ($edition_autorisee){
@@ -216,6 +231,9 @@ function display(){
                 else {
                     $url_param['mode']='updateactivity';
                     $row[] = new tabobject('updateactivity', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('updateactivity','referentiel'));
+        $url_param['mode']='updateactivitespaginees';
+		$row[] = new tabobject('updateactivitespaginees', new moodle_url('/mod/referentiel/activite_paginee.php', $url_param),  get_string('updateactivitespaginees','referentiel'));
+
                 }
                 if (has_capability('mod/referentiel:export', $this->context)) {
                     $url_param['mode']='exportactivity';
@@ -377,7 +395,7 @@ function display(){
                 || ($this->currenttab == 'managecertif')
                 || ($this->currenttab == 'importcertif')
                 || ($this->currenttab == 'manageobjectif')
-                || ($this->currenttab == 'archive') ))
+                 ))
             {
                 $row  = array();
                 $inactive[] = 'certificat';
@@ -418,15 +436,25 @@ function display(){
                         $row[] = new tabobject('manageobjectif', new moodle_url('/mod/referentiel/outcomes.php', $url_param), get_string('outcomes', 'referentiel'));
                     }
                 }
+
+                $tabs[] = $row;
+                $activetwo = array('certificat');
+            }
+
+			// ARCHIVES
+			if (isset($this->currenttab) && ($this->currenttab == 'archive') ) {
+				$row  = array();
+        		$inactive[] = 'archive';
                 // archiver les activites et le certificat
                 if (has_capability('mod/referentiel:archive', $this->context)) {
                     $url_param['mode']='archive';
                     $row[] = new tabobject('archive', new moodle_url('/mod/referentiel/archive.php', $url_param), get_string('archive','referentiel'));
                 }
 
-                $tabs[] = $row;
-                $activetwo = array('certificat');
-            }
+        		$tabs[] = $row;
+        		$activetwo = array('archive');
+    		}
+
 
             // REFERENTIELS
             if (isset($this->currenttab) && (($this->currenttab == 'configref')

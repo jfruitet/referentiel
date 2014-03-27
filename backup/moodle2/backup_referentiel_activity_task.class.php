@@ -16,14 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package  mod_referentiel
+ * @category    backup
+ * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/referentiel/backup/moodle2/backup_referentiel_stepslib.php'); // Because it exists (must)
-require_once($CFG->dirroot . '/mod/referentiel/backup/moodle2/backup_referentiel_settingslib.php'); // Because it exists (optional)
+require_once($CFG->dirroot.'/mod/referentiel/backup/moodle2/backup_referentiel_stepslib.php');
+require_once($CFG->dirroot.'/mod/referentiel/backup/moodle2/backup_referentiel_settingslib.php'); // Because it exists (optional)
 
 /**
  * choice backup task that provides all the settings and steps to perform one
@@ -42,7 +43,7 @@ class backup_referentiel_activity_task extends backup_activity_task {
      * Define (add) particular steps this activity can have
      */
     protected function define_my_steps() {
-        // Choice only has one structure step
+        // referentiel only has one structure step
         $this->add_step(new backup_referentiel_activity_structure_step('referentiel_structure', 'referentiel.xml'));
     }
 

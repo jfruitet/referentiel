@@ -908,7 +908,7 @@ echo '</td>
 echo '
 <!-- SUPPRESSION ITEM -->
 <div align="right">
-<span class="surligne"><a href="'.$CFG->wwwroot.'/mod/referentiel/edit.php?id='.$cm->id.'&am;deleteid='.$item_id.'&amp;action=modifieritem&amp;delete='.get_string('delete').'&amp;pass='.$pass.'&amp;sesskey='.sesskey().'">'.get_string('delete_item','referentiel').'</a></span>
+<span class="surligne"><a href="'.$CFG->wwwroot.'/mod/referentiel/edit.php?id='.$cm->id.'&amp;deleteid='.$item_id.'&amp;action=modifieritem&amp;delete='.get_string('delete').'&amp;pass='.$pass.'&amp;sesskey='.sesskey().'">'.get_string('delete_item','referentiel').'</a></span>
 <span class="small"><i>'.get_string('deleteitemhelp','referentiel').'</i></span>
 </div>'."\n";
 

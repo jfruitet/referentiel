@@ -333,39 +333,6 @@ print_object($t_item_code);
 
 
 
-//
-/************** A FINIR ********
-function referentiel_upload_ressources($referentiel, $activite, $userid, $select_acc){
-
-$s='';
-
-    $s.='
-<form name="form" method="post" action="upload.php?d='.$referentiel->id.'">
-
-<input type="hidden" name="select_acc" value="'.$select_acc.'" />
-<!-- input type="hidden" name="old_liste_competences" value="'.$activite->old_liste_competences.'" / -->
-<input type="hidden" name="ref_activite" value="'.$activite->id.'" />
-<input type="hidden" name="approved" value="'.$activite->approved.'" />
-<input type="hidden" name="userid" value="'.$activite->userid.'" />
-<input type="hidden" name="teacherid" value="'.$activiteteacherid.'" />
-<input type="hidden" name="activite_id" value="'.$activite->id.'" />
-<input type="hidden" name="ref_referentiel" value="'.$activite->ref_referentiel.'" />
-<input type="hidden" name="ref_course" value="'.$activite->ref_course.'" />
-<input type="hidden" name="ref_instance" value="'.$activite->ref_instance.'" />
-<input type="hidden" name="action" value="creer_document" />
-<!-- These hidden variables are always the same -->
-<input type="hidden" name="courseid"        value="'.$form->courseid.'" />
-<input type="hidden" name="sesskey"     value="'.sesskey().'" />
-<input type="hidden" name="modulename"    value="'.$form->modulename.'" />
-<input type="hidden" name="instance"      value="'.$form->instance.'" />
-<input type="hidden" name="mode"          value="'.$mode.'" />
-<input type="submit" value="'.get_string('document_ajout', 'referentiel').'" />
-<!-- input type="submit" name="cancel" value="'.get_string("quit","referentiel").'" / -->
-
-}
-*/
-
-
 
 // ----------------------------------------------------
 function referentiel_activite_prioritaire($activite){
@@ -711,11 +678,11 @@ global $t_item_description_competence;
 			$s2='" name="code_item_'.$id_activite.'[]" value="';
 			$s3='"';
 			if (!empty($comportement)){
-			$s4=' '.$comportement.' /><label for="code_item_'.$id_activite.'_';
-      }
-      else{
-        $s4=' /><label for="code_item_'.$id_activite.'_';
-      }
+				$s4=' '.$comportement.' /><label for="code_item_'.$id_activite.'_';
+      		}
+      		else{
+        		$s4=' /><label for="code_item_'.$id_activite.'_';
+      		}
 			$s5='">';
 			$s6='</label> '."\n";	
 	}
@@ -1749,6 +1716,307 @@ function referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
 			$date_modif_student_info='';
 		}
 		$ref_task = $record_a->ref_task;
+        $stask='';
+		if ($ref_task){
+            // consignes associées à une tâche
+            $titre_task=referentiel_get_theme_task($ref_task);
+            $info_task=referentiel_get_content_task($ref_task);
+            // $stask.=' <span class="light">'.get_string('task','referentiel').'</span>'."\n";
+            if ($info_task!=''){
+                // lien vers la tâche
+                $stask.=' '.referentiel_affiche_overlib_texte($titre_task, $info_task)."\n";
+            }
+            // documents associés à une tâche
+            $stask.=referentiel_print_liste_documents_task($ref_task)."\n";
+        }
+
+		$url_course=referentiel_get_course_link($ref_course);
+		$url_instance=referentiel_get_instance_link($ref_instance);
+        // preparation pour overlay
+        if (empty($t_item_code) || empty($t_item_description_competence)){
+            referentiel_initialise_descriptions_items_referentiel($ref_referentiel);
+        }
+        $prioritaire=referentiel_activite_prioritaire($record_a);
+
+		// Affichage
+		$s0.='
+<a name="activite_'.$activite_id.'"></a>'."\n";
+        if (!empty($prioritaire)){
+            $s0.= '<div class="ref_affprioritaire">'."\n";
+        }
+        else if (isset($approved) && ($approved)){
+			$s0.= '<div class="ref_affvalide">'."\n";
+		}
+		else{
+			$s0.= '<div class="ref_affinvalide">'."\n";
+		}
+        // entetete
+        $s0.='<span class="bold">'.get_string('id_activite','referentiel', $activite_id).'</span>';
+        $s0.='<span class="light">'.get_string('type_activite','referentiel').'</span> '.$type_activite."\n";
+        $s0.=$stask;
+		$s0.='<span class="light">'.get_string('course').'</span> '.$url_course."\n";
+        $s0.='<span class="light">'.get_string('instance','referentiel').'</span> '.'<i>'.$url_instance.'</i>'."\n";
+        $s0.='</div>'."\n";
+        // details
+        if ($detail){
+        	if ($numero%2==0){
+            	$s1.= '<div class="ref_affact1">';
+        	}
+        	else{
+            	$s1.= '<div class="ref_affact2">';
+        	}
+        	$s1.='<span class="light">'.get_string('auteur','referentiel').'</span> '.$user_info;
+
+        	$liste_groupes= referentiel_liste_groupes_user($ref_course, $userid);
+        	if (!empty($liste_groupes)){
+            	$s1.=' &nbsp; <i>'.$liste_groupes.'</i>'."\n";
+        	}
+        	$s1.=' <span class="light">'.get_string('date_creation','referentiel').'</span>
+<span class="ital">'.$date_creation_info.'</span>'."\n";
+        	if (!empty($date_modif_student_info) && ($date_modif_student-$date_creation>1000)){
+            	$s1.='<span class="light">'.get_string('date_modif_student','referentiel').'</span>
+<span class="ital">'.$date_modif_student_info.'</span>'."\n";
+        	}
+        	if (!empty($date_modif_info)){
+            	$s1.='<span class="light">'.get_string('date_modif','referentiel').'</span>
+<span class="ital">'.$date_modif_info.'</span>'."\n";
+        	}
+        	$s1.='<br /><span class="light">'.get_string('referent','referentiel').'</span> '.$teacher_info.'
+<span class="light">'.get_string('validation','referentiel').'</span>'."\n";
+			if (isset($approved) && ($approved)){
+				$s1.=get_string('approved','referentiel');
+			}
+			else{
+				$s1.=get_string('not_approved','referentiel');
+			}
+        	$s1.='<br />'."\n";
+			if (isset($approved) && ($approved)){
+				$s1.=' <span class="valide">'."\n";
+			}
+			else{
+				$s1.=' <span class="invalide">'."\n";
+			}
+			$s1.='<span class="light">'.get_string('liste_codes_competence','referentiel').'</span>'."\n";
+			$s1.='<span class="bold">'.referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel)."\n";
+        	$s1.='</span></span>';
+			// $s1.=$stask;
+        	$s1.='<br /><span class="light">'.get_string('description','referentiel').'</span>'."\n";
+            $s1.='<div class="ref_aff0">'.nl2br($description_activite).'</div>'."\n";
+            $s1.='<span class="light">'.get_string('commentaire','referentiel').'</span>'."\n";
+			$s1.='<div class="ref_aff1">'.nl2br($commentaire_activite).'</div>'."\n";
+        	$s1.= '</div>'."\n";
+		}
+		else{
+        	if ($numero%2==0){
+            	$s1.= '<div class="ref_affact1">';
+        	}
+        	else{
+            	$s1.= '<div class="ref_affact2">';
+        	}
+        	$s1.=$user_info;
+
+        	$liste_groupes= referentiel_liste_groupes_user($ref_course, $userid);
+        	if (!empty($liste_groupes)){
+            	$s1.=' &nbsp; <i>'.$liste_groupes.'</i>'."\n";
+        	}
+
+        	if (!empty($date_modif_student_info) && ($date_modif_student-$date_creation>1000)){
+            	$s1.=' &nbsp; <span class="ital">'.$date_modif_student_info.'</span>'."\n";
+        	}
+			else{
+				$s1.=' &nbsp; <span class="ital">'.$date_creation_info.'</span>'."\n";
+			}
+        	$s1.=' &nbsp; <span class="light">'.get_string('referent','referentiel').'</span> '.$teacher_info;
+        	if (!empty($date_modif_info)){
+            	$s1.=' &nbsp; <span class="ital">'.$date_modif_info.'</span>'."\n";
+        	}
+
+			if (isset($approved) && ($approved)){
+				$s1.=' &nbsp; '.get_string('approved','referentiel');
+			}
+			else{
+				$s1.=' &nbsp; '.get_string('not_approved','referentiel');
+			}
+        	// $s1.='<br />'."\n";
+			if (isset($approved) && ($approved)){
+				$s1.=' <span class="valide">'."\n";
+			}
+			else{
+				$s1.=' <span class="invalide">'."\n";
+			}
+			$s1.='<br /><span class="bold">'.referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel)."\n";
+        	$s1.='</span></span>';
+			// $s1.=$stask;
+            $s1.='<div class="ref_aff0">'.nl2br($description_activite).'</div>'."\n";
+			if (!empty($commentaire_activite)){
+				$s1.='<div class="ref_aff1">'.nl2br($commentaire_activite).'</div>'."\n";
+			}
+        	$s1.= '</div>'."\n";
+		}
+
+        // charger les documents associes à l'activite courante
+    	if (isset($activite_id) && ($activite_id>0)){
+            $ref_activite=$activite_id; // plus pratique
+            // AFFICHER LA LISTE DES DOCUMENTS
+            $compteur_document=0;
+            $records_document = referentiel_get_documents($ref_activite);
+	        if ($records_document){
+                // afficher
+                $nbressource=count($records_document);
+                $s2.='<!-- DOCUMENTS -->
+<div class="ref_affdoc">'."\n";
+                if ($detail){
+					if ($nbressource>1){
+                    	$s2.='<span class="bold">'.get_string('ressources_associees','referentiel',$nbressource).'</span>'."\n";
+                	}
+                	else{
+                    	$s2.='<span class="bold">'.get_string('ressource_associee','referentiel',$nbressource).'</span>'."\n";
+                	}
+                	$s2.="\n";
+				}
+				foreach ($records_document as $record_d){
+    				$compteur_document++;
+             		$document_id=$record_d->id;
+	   		      	$type_document = stripslashes($record_d->type_document);
+				    $description_document = stripslashes($record_d->description_document);
+    				$url_document = $record_d->url_document;
+	       			$ref_activite = $record_d->ref_activite;
+		      		if (isset($record_d->cible_document) && ($record_d->cible_document==1)){
+			     		$cible_document='_blank'; // fenêtre cible
+				    }
+					else{
+					   $cible_document='';
+    				}
+	       			if (isset($record_d->etiquette_document)){
+		      			$etiquette_document=$record_d->etiquette_document; // fenêtre cible
+			     	}
+				    else{
+					   	$etiquette_document='';
+    				}
+	       			if ($record_d->timestamp==0){
+                    	$date_creation='';
+                    }
+					else{
+                    	$date_creation=userdate($record_d->timestamp);
+					}
+					if ($detail){
+						if ($date_modif<$record_d->timestamp){
+                        	$s.='<span class="prioritaire">';
+                            $s.='<br /><span class="light">'.get_string('num','referentiel').'</span> <span class="ital">'.$document_id.'</i></span>
+&nbsp;
+<span class="light">'.get_string('date_creation','referentiel').'</span> : <span class="ital">'.$date_creation.'</span>
+&nbsp;
+<span class="light">'.get_string('type','referentiel').'</span> : '.$type_document.'
+&nbsp;
+<span class="light">'.get_string('url','referentiel').'</span>  :
+';
+                            $s.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
+                            $s.='&nbsp; <span class="light">'.get_string('description','referentiel').'</span> : '.nl2br($description_document);
+                            $s.='</span>'."\n";
+                        }
+                        else{
+                           	$s.='<br /><span class="light">'.get_string('num','referentiel').'</span> <span class="ital">'.$document_id.'</i></span>
+&nbsp;
+<span class="light">'.get_string('date_creation','referentiel').'</span> : '.$date_creation.'
+&nbsp;
+<span class="light">'.get_string('type','referentiel').'</span> : '.$type_document.'
+&nbsp;
+<span class="light">'.get_string('url','referentiel').'</span>  :
+';
+                           	$s.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
+                           	$s.='&nbsp; <span class="light">'.get_string('description','referentiel').'</span> : '.nl2br($description_document)."\n";
+						}
+					}
+					else{
+						if ($date_modif<$record_d->timestamp){
+                            $s.='<span class="prioritaire">';
+                        }
+						$s.=' &nbsp; '.referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
+                        if ($date_modif<$record_d->timestamp){
+							$s.='</span>'."\n";
+						}
+					}
+	       		}
+            }
+        }
+        echo $s0.$s1;
+		if ($s2){
+            echo $s2;
+    	   	if ($s){
+                echo $s."\n";
+            }
+            echo '</div>'."\n";
+        }
+	}
+}
+
+
+/** Affiche une activite et les documents associés
+ *
+ *  input @param record_a  an object  activite
+ *  detail true / false
+ *  numero integer
+ *  output null                                                     *
+**/
+function old_referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
+    $s='';
+    $s0='';
+    $s1='';
+    $s2='';
+    $nblignes=4; // hauteur du tableau
+    $nbressource=0;
+
+	if ($record_a){
+		$activite_id=$record_a->id;
+		$type_activite = stripslashes($record_a->type_activite);
+		$description_activite = stripslashes($record_a->description_activite);
+		$competences_activite = $record_a->competences_activite;
+		$commentaire_activite = stripslashes($record_a->commentaire_activite);
+		$ref_instance = $record_a->ref_instance;
+		$ref_referentiel = $record_a->ref_referentiel;
+		$ref_course = $record_a->ref_course;
+		$userid = $record_a->userid;
+		$teacherid = $record_a->teacherid;
+		$date_creation = $record_a->date_creation;
+		$date_modif = $record_a->date_modif;
+		$date_modif_student = $record_a->date_modif_student;
+		$approved = $record_a->approved;
+
+		$user_info=referentiel_get_user_info($userid);
+		$teacher_info=referentiel_get_user_info($teacherid);
+		if (empty($teacher_info)){
+            $teacher_info=get_string('inconnu', 'referentiel');
+        }
+		// dates
+		$date_creation_info=userdate($date_creation);
+    	if ($date_modif!=0){
+    	   $date_modif_info=userdate($date_modif);
+        }
+        else{
+            $date_modif_info='';
+        }
+
+		if ($date_modif_student!=0){
+			$date_modif_student_info=userdate($date_modif_student);
+		}
+		else{
+			$date_modif_student_info='';
+		}
+		$ref_task = $record_a->ref_task;
+        $stask='';
+		if ($ref_task){
+            // consignes associées à une tâche
+            $titre_task=referentiel_get_theme_task($ref_task);
+            $info_task=referentiel_get_content_task($ref_task);
+            $stask.='<br /><span class="bold">'.get_string('task','referentiel').'</span>'."\n";
+            if ($info_task!=''){
+                // lien vers la tâche
+                $stask.=' '.referentiel_affiche_overlib_texte($titre_task, $info_task)."\n";
+            }
+            // documents associés à une tâche
+            $stask.=referentiel_print_liste_documents_task($ref_task)."\n";
+        }
+
 		$url_course=referentiel_get_course_link($ref_course);
 		$url_instance=referentiel_get_instance_link($ref_instance);
         // preparation pour overlay
@@ -1780,18 +2048,8 @@ function referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
         else{
             $s1.= '<div class="ref_affact2">';
         }
-		if ($ref_task){
-            // consignes associées à une tâche
-            $titre_task=referentiel_get_theme_task($ref_task);
-            $info_task=referentiel_get_content_task($ref_task);
-            if ($info_task!=''){
-                // lien vers la tâche
-                $s1.=' '.referentiel_affiche_overlib_texte($titre_task, $info_task)."\n";
-            }
-            // documents associés à une tâche
-            $s1.=referentiel_print_liste_documents_task($ref_task)."\n";
-        }
         $s1.='<span class="bold">'.get_string('auteur','referentiel').'</span> '.$user_info;
+
         $liste_groupes= referentiel_liste_groupes_user($ref_course, $userid);
         if (!empty($liste_groupes)){
             $s1.=' &nbsp; <i>'.$liste_groupes.'</i>'."\n";
@@ -1806,8 +2064,7 @@ function referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
             $s1.='<span class="bold">'.get_string('date_modif','referentiel').'</span>
 <span class="small">'.$date_modif_info.'</span>'."\n";
         }
-        $s1.='<br />'."\n";
-        $s1.='<span class="bold">'.get_string('referent','referentiel').'</span> '.$teacher_info.'
+        $s1.='<br /><span class="bold">'.get_string('referent','referentiel').'</span> '.$teacher_info.'
 <span class="bold">'.get_string('validation','referentiel').'</span>'."\n";
 		if (isset($approved) && ($approved)){
 			$s1.=get_string('approved','referentiel');
@@ -1815,7 +2072,7 @@ function referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
 		else{
 			$s1.=get_string('not_approved','referentiel');
 		}
-
+        $s1.='<br />'."\n";
 		if (isset($approved) && ($approved)){
 			$s1.=' <span class="valide">'."\n";
 		}
@@ -1824,8 +2081,9 @@ function referentiel_print_activite_detail($record_a, $detail=true, $numero=0){
 		}
 		$s1.='<span class="bold">'.get_string('liste_codes_competence','referentiel').'</span>'."\n";
 		$s1.=referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel)."\n";
-        $s1.='</span><br />
-<span class="bold">'.get_string('description','referentiel').'</span><br /><span class="white">'.nl2br($description_activite).'</span>
+        $s1.='</span>';
+		$s1.=$stask;
+        $s1.='<br /><span class="bold">'.get_string('description','referentiel').'</span><br /><span class="white">'.nl2br($description_activite).'</span>
 <br />
 <span class="bold">'.get_string('commentaire','referentiel').'</span><br /><span class="white">'.nl2br($commentaire_activite).'</span>
 <br />

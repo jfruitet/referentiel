@@ -80,10 +80,11 @@ CREATE TABLE IF NOT EXISTS `mdl_referentiel_a_user_task` (
  * @package referentiel
  **/
 
- 
 require_once('locallib.php');
-require_once("lib_task.php");
+require_once('lib_task.php');
 
+define ('SUPER_DEBUG', 0);
+// define ('SUPER_DEBUG', 1);    // activer le debug local
 
 // Affiche une task et les consignes associés
 // *****************************************************************
@@ -210,7 +211,7 @@ function referentiel_get_content_task($taskid, $all=false){
                             $s_consigne.='</li>'."\n";
                         }
                         else{
-                            $s_consigne.='<br />'.nl2br($description_consigne).'<br />'.referentiel_get_url($url_consigne, $etiquette_consigne, $cible_consigne);
+                            $s_consigne.='<br />'.nl2br($description_consigne).'<br />'.referentiel_affiche_url($url_consigne, $etiquette_consigne, $cible_consigne);
                         }
                     }
                     if ($all){
@@ -886,10 +887,10 @@ if (!empty($referentiel_instance)){
 		$referentiel_referentiel=referentiel_get_referentiel_referentiel($referentiel_instance->ref_referentiel);
 		if (!$referentiel_referentiel){
 			if ($iseditor){
-			                print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
+			    print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/mod/referentiel/edit.php?d=$referentiel_instance->id&amp;mode=editreferentiel&amp;sesskey=".sesskey());
 			}
 			else {
-			                print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
+			    print_error(get_string('creer_referentiel','referentiel'), "$CFG->wwwroot/course/view.php?id=$course->id&amp;sesskey=".sesskey());
 			}
 		}
 		
@@ -898,6 +899,12 @@ if (!empty($referentiel_instance)){
 
             $records_activity = referentiel_get_activites_task($taskid); // liste des activites associes a cette tache
             if ($records_activity){
+                if (SUPER_DEBUG){
+					echo "<br />DEBUG :: print_lib_task.php :: 910 :: RECORDS_ACTIVITY<br />\n";;
+                	print_object($records_activity);
+                    echo "<br />\n";
+				}
+
                 // boite pour selectionner les utilisateurs ?
 				$record_id_users=array();
 
@@ -906,38 +913,51 @@ if (!empty($referentiel_instance)){
                     $record_id_users[$record_a->userid]->userid=$record_a->userid;
                     $record_id_users[$record_a->userid]->afficher=true;
                 }
-                //echo "<br />DEBUG :: 956<br />";
-                //print_r($record_id_users);
-                //exit;
+                if (SUPER_DEBUG){
+					echo "<br />DEBUG :: print_lib_task.php :: 910 :: RECORD_ID_USERS<br />\n";;
+                	print_object($record_id_users);
+                    echo "<br />\n";
+				}
                 if ($isteacher || $iseditor || $istutor || $isadmin){
                     // tous les users possibles (pour la boite de selection)
                     // Get your userids the normal way
 
                     if ($gusers && $record_id_users){ // liste des utilisateurs du groupe courant
-				        // echo "<br />DEBUG :: print_lib_activite.php :: 740 :: GUSERS<br />\n";
-				        // print_object($gusers);
-				        // echo "<br />\n";
-				        // exit;
+						if (SUPER_DEBUG){
+							echo "<br />DEBUG :: print_lib_task.php :: 926 :: GUSERS<br />\n";
+				        	print_object($gusers);
+				        	echo "<br />\n";
+				        	// exit;
+						}
 				        $record_users  = array_intersect($gusers, array_keys($record_id_users));
-				        // echo "<br />DEBUG :: print_lib_activite.php :: 745 :: RECORD_USERS<br />\n";
-				        // print_r($record_users  );
-				        // echo "<br />\n";
 
-                        // RAZ
-                        for ($i=0; $i<count($record_id_users); $i++) {
-                            $record_id_users[$i]=new stdClass();
-                            $record_id_users[$i]->userid=0;
-                            $record_id_users[$i]->afficher=false;
-                        }
-                        // reinitialiser
-				        foreach ($record_users  as $record_id){
-                            $record_id_users[$record_id]->userid=$record_id;
-                            $record_id_users[$record_id]->afficher=true;
-				        }
+						if (!empty($record_users)){
+					        if (SUPER_DEBUG){
+								echo "<br />DEBUG :: print_lib_task.php :: 922 :: RECORD_USERS<br />\n";
+					        	print_r($record_users);
+					        	echo "<br />COUNT : ";
+                                echo count($record_id_users);
+                                echo "<br />\n";
+							}
+                        	// RAZ
+                        	for ($i=0; $i<count($record_id_users); $i++) {
+                            	$record_id_users[$i]=new stdClass();
+                            	$record_id_users[$i]->userid=0;
+                            	$record_id_users[$i]->afficher=false;
+                        	}
+                        	// reinitialiser
+				        	foreach ($record_users  as $record_id){
+                            	$record_id_users[$record_id]->userid=$record_id;
+                            	$record_id_users[$record_id]->afficher=true;
+				        	}
+						}
                     }
-                    //echo "<br />DEBUG :: 985<br />";
-                    //print_r($record_id_users);
-                    //exit;
+                    if (SUPER_DEBUG){
+						echo "<br />DEBUG :: print_lib_task.php :: 955<br />";
+                    	print_object($record_id_users);
+                        echo "<br />\n";
+                    	exit;
+					}
                 }
 
                 echo '<div align="center"><h4 align="center"></h4>';
@@ -984,7 +1004,6 @@ if (!empty($referentiel_instance)){
                         // Afficher l'activite
                         echo '</td><td width="95%">'."\n";
                         referentiel_print_activite_detail($record);
-                        referentiel_menu_activite_detail($context, $record->id, $referentiel_instance->id, $record->approved);
                         echo '</td></tr>'."\n";
                     }
                 }
@@ -1078,10 +1097,6 @@ global $course;
 
         $s.='<input type="button" name="select_tous" id="select_tous" value="'.get_string('select_all', 'referentiel').'"  onClick="return checkall()" />'."\n";
         $s.='&nbsp; &nbsp; &nbsp; <input type="button" name="select_aucun" id="select_aucun" value="'.get_string('select_not_any', 'referentiel').'"  onClick="return uncheckall()" />'."\n";
-        $s.='&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <input type="submit" value="'.get_string('select', 'referentiel').'" />'."\n";
-		$s.='<input type="reset" value="'.get_string('corriger', 'referentiel').'" />'."\n";
-		$s.='<input type="submit" value="'.get_string('cancel').'" />'."\n";
-
 
 		$s.='<table class="selection">'."\n";
 		$s.='<tr valign="top">';
@@ -1124,7 +1139,10 @@ global $course;
 </form>'."\n";
 		$s.='</td>';
 		
-  	$s.='</tr></table>'."\n";
+  		$s.='</tr></table>'."\n";
+        $s.='<input type="submit" value="'.get_string('select', 'referentiel').'" />'."\n";
+		$s.='<input type="reset" value="'.get_string('corriger', 'referentiel').'" />'."\n";
+		$s.='<input type="submit" value="'.get_string('cancel').'" />'."\n";  	
 		$s.='</div>'."\n";
 	}
 		

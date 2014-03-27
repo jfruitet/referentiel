@@ -3523,7 +3523,11 @@ class zformat_default {
         $temp_path = $this->get_temp_dir();
         // DEBUG
         // echo "<br />DEBUG :: format.php :: 3326 :: TEMPDIR : $temp_path\n";
-        
+        // suppression du contenu au prealable pour adresser le probleme de dossier temporaire non vide
+		if (file_exists($temp_path)) {
+            remove_dir($temp_path, true);
+		}
+
         // notify( get_string('exportingreferentiels', 'referentiel') );
         $count = 0;
 
@@ -3620,9 +3624,10 @@ class zformat_default {
                 // supprimer le dossier temporaire
                 // remove_dir($CFG->dataroot.'/'.$this->get_temp_dir(), true);
                 remove_dir($this->get_temp_dir(), true);
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
 

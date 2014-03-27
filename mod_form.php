@@ -13,6 +13,10 @@ class mod_referentiel_mod_form extends moodleform_mod {
         global $CFG, $DB;
 
         $mform =& $this->_form;
+        //print_object($mform);
+		//exit;
+        //print_object($this);
+		//exit;
         $maxbytes=1073741824; // default value 1073741824
         // this hack is needed for settings of ref_referentiel
         if (!empty($this->_instance)) {
@@ -32,13 +36,21 @@ class mod_referentiel_mod_form extends moodleform_mod {
         else {
             $ref_referentiel = 0;
         }
+		//print_object($ref);
+
+        if (empty($ref)){
+			$referentielinstance = new referentiel(); // objet referentiel
+		}
+		else{
+            $referentielinstance = new referentiel($this->_cm->id, $ref, $this->_cm, $course);
+		}
+		//print_object($referentielinstance);
+		//exit;
+//-------------------------------------------------------------------------------
         $mform->addElement('hidden', 'ref_referentiel', $ref_referentiel);
         $mform->setType('ref_referentiel', PARAM_INT);
         $mform->setDefault('ref_referentiel', $ref_referentiel);
 
-        $referentielinstance = new referentiel(); // objet referentiel
-
-//-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('creer_instance_referentiel', 'referentiel'));
         
         // name
@@ -78,24 +90,8 @@ class mod_referentiel_mod_form extends moodleform_mod {
         $mform->setType('maxbytes', PARAM_INT);
         $mform->setDefault('maxbytes', $maxbytes);
         $mform->addRule('maxbytes', null, 'required', null, 'client');
-/*
-        echo '<tr valign="top">
-    <td align="right"><b>'.get_string('maxsize', 'referentiel', display_size($maxbytes)).':</b></td>
-    <td align="left"><select name="maxbytes" id="id_maxbytes">'."\n";
-    foreach($choices as $akey => $avalue){
-        if ( $form->maxbytes==$akey){
-            echo '<option value="'.$akey.'" checked="checked">'.$avalue.'</option>'."\n" ;
-        }
-        else{
-            echo '<option value="'.$akey.'">'.$avalue.'</option>'."\n" ;
-        }
-    }
-echo '</select>
-    </td>
-</tr>
-';
-*/
 
+// configuration
         $referentielinstance->setup_elements($mform, $referentielinstance);
 
         $this->standard_coursemodule_elements();

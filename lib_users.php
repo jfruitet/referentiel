@@ -771,38 +771,6 @@ global $CFG;
 
 
 
-/**
- * This function get all user role in current course
- *
- * @param courseid reference course id
- * @return objects
- * @todo Finish documenting this function
- **/
-function referentiel_get_course_users($referentiel_instance){
-global $DB;
-    if ($cm = get_coursemodule_from_instance('referentiel', $referentiel_instance->id, $referentiel_instance->course)) {
-		// SQL
-		$params = array("$referentiel_instance->course", "$referentiel_instance->course", "guest");
-		
-	    $rq = "SELECT DISTINCT u.id FROM {user} u
-LEFT OUTER JOIN
-    {user_lastaccess} ul on (ul.courseid = ?)
-	WHERE u.deleted = 0
-        AND (ul.courseid = ? OR ul.courseid IS NULL)
-        AND u.username != ?";
-		// DEBUG
-		// echo "<br /> DEBUG <br />\n";
-		// echo "<br /> lib_users.php :: referentiel_get_course_users() :: 171<br />SQL&gt;$rq\n";
-
-        $ru=$DB->get_records_sql($rq, $params);
-		// print_r($ru);
-		// exit;
-		return $ru;
-	}
-	return NULL;
-}
-
-
 
 
 

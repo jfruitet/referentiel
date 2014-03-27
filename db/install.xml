@@ -17,7 +17,7 @@
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="date_instance" NEXT="ref_referentiel"/>
         <FIELD NAME="ref_referentiel" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="visible"/>
         <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="ref_referentiel" NEXT="config"/>
-        <FIELD NAME="config" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;" SEQUENCE="false" PREVIOUS="visible" NEXT="config_impression"/>
+        <FIELD NAME="config" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;hierarchy:0;cfcertif:0;certif:1;" SEQUENCE="false" PREVIOUS="visible" NEXT="config_impression"/>
         <FIELD NAME="config_impression" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="refcert:1;instcert:0;numetu:1;nometu:1;etabetu:0;ddnetu:0;lieuetu:0;adretu:0;detail:1;pourcent:0;compdec:0;compval:1;nomreferent:0;jurycert:1;comcert:0;" SEQUENCE="false" PREVIOUS="config" NEXT="intro"/>
         <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="config_impression" NEXT="introformat" />
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="intro" NEXT="maxbytes" />
@@ -47,7 +47,7 @@
         <FIELD NAME="liste_poids_competence" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="liste_empreintes_competence" NEXT="local"/>
         <FIELD NAME="local" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="liste_poids_competence" NEXT="logo_referentiel"/>
         <FIELD NAME="logo_referentiel" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="local" NEXT="config"/>
-        <FIELD NAME="config" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;" SEQUENCE="false" PREVIOUS="logo_referentiel" NEXT="config_impression"/>
+        <FIELD NAME="config" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="scol:0;creref:0;selref:0;impcert:0;graph:0;light:0;hierarchy:0;cfcertif:0;certif:1;" SEQUENCE="false" PREVIOUS="logo_referentiel" NEXT="config_impression"/>
         <FIELD NAME="config_impression" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="refcert:1;instcert:0;numetu:1;nometu:1;etabetu:0;ddnetu:0;lieuetu:0;adretu:0;detail:1;pourcent:0;compdec:0;compval:1;nomreferent:0;jurycert:1;comcert:0;" SEQUENCE="false" PREVIOUS="config" NEXT="label_domaine"/>
         <FIELD NAME="label_domaine" TYPE="char" LENGTH="80" NOTNULL="false" DEFAULT="" PREVIOUS="config_impression" NEXT="label_competence"/>
         <FIELD NAME="label_competence" TYPE="char" LENGTH="80" NOTNULL="false" DEFAULT="" PREVIOUS="label_domaine" NEXT="label_item"/>
@@ -408,7 +408,7 @@
     </TABLE>
 
 
-    <TABLE NAME="referentiel_course_users" COMMENT="A cache table for users students of a course" PREVIOUS="referentiel_a_user_pedagogie">
+ <TABLE NAME="referentiel_course_users" COMMENT="A cache table for users students of a course" PREVIOUS="referentiel_a_user_pedagogie">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="tab_users"/>
         <FIELD NAME="tab_users" TYPE="binary" LENGTH="big" NOTNULL="false" SEQUENCE="false" COMMENT="a serialized list aof users" PREVIOUS="id" NEXT="tab_initiales"/>
@@ -426,5 +426,7 @@
       </INDEXES>
     </TABLE>
   </TABLES>
+  
+
 
 </XMLDB>

@@ -1,6 +1,82 @@
 <?php
 // referentiel module
 //
+$string['updateactivitespaginees'] = 'Modif Pager';
+$string['activitespaginees'] = 'Pager';
+$string['click_to_load'] = 'Click here to load the page';
+
+$string['assignementdoc'] = 'Assignment document';
+$string['commentby'] = 'Comment by ';
+$string['submission'] = 'Submission: ';
+$string['certif_setting'] = 'Thumbnail "Certificate" configuration';
+$string['ok_config_certif_occ']='allowed at occurrence level';
+$string['no_config_certif_occ']='forbidden at occurrence level';
+$string['ok_config_certif']='allowed  at instance level';
+$string['no_config_certif']='forbidden at instance level';
+$string['yes_config_certif_locale']='Allow at instance level ?';
+$string['no_config_certif_locale']='Forbid at instance level ?';
+$string['cfcertif']='Forbid configuration of thumbnail "Certificate"';
+$string['certif']=' &nbsp; &nbsp; &nbsp; Display "Certificate" Thumb';
+
+$string['nocertif']=' &nbsp; &nbsp; &nbsp; Mask Thumbnail "Certificate" ';
+$string['certif_config']='Thumbnail "Certificate" configuration';
+$string['config_certif_config']='This setting governs teachers access to Thumbnail "Certificate" settings...
+<ul>
+<li>If <i>referentiel_certif_config</i> value is <b><i>0</i></b> editing teachers can activate or desactivate
+Thumbnail "Certificate" display, a occurrence level or instance level for a given referential;</li>
+<li>If <i>referentiel_certif_config</i> value is <b><i>1</i></b> editing teachers cannot
+modify the Thumbnail "Certificate" state for an occurrence of referential (skills repository),
+but they can do it for any instance of it in a course;</li>
+<li>If <i>referentiel_certif_config</i> value is <b><i>2</i></b> the Thumbnail "Certificate" state
+is choosen at site level for any referential (skills repository)and cannot be modified by teachers.
+</li>
+</ul>';
+
+$string['certif_state']='Thumbnail "Certificate" state';
+$string['config_certif_state']='Not allowing Thumbnail "Certificate" to display masks to students
+and teachers any data about certificate and protocol...
+<ul>
+<li>If <i>referentiel_certif_state</i> value is <b><i>0</i></b> Thumbnail "Certificate" <b><i>not displayed</i></b> ;</li>
+<li>If <i>referentiel_certif_state</i> value is <b><i>1</i></b> Thumbnail "Certificate" is <b><i>displayed</i></b> ;</li>
+</ul>
+The <i>0</i> value at site level may be chosen if and only if Referential module
+is not used for a certification process on that site.
+At he contrary you have to let the choice of that setting at occurrence level or at instance level';
+
+$string['certif_activee']='Thumbnail "Certificate"  Displayed';
+$string['certif_desactivee']='Thumbnail "Certificate" Masked';
+
+$string['configuration_impression'] = 'Printing Configuration';
+$string['hierarchy'] = 'Non hierarchical display mandatory in competencies input';
+$string['input_setting'] = 'Display mode';
+$string['input_hierarchy'] = 'Competencies\' Hierarchical Display';
+$string['config_input'] =  'En fonction de la valeur de <i>referentiel_hierarchy</i>
+les enseignants avec droit d\'édition peuvent sélectionner un mode d\'affichage pour la saisie des compétences.
+
+* Si <i>referentiel_hierarchy</i> vaut 0 ils peuvent sélectionner ce mode au niveau de l\'instance ;
+
+* Si <i>referentiel_hierarchy</i> vaut 1 seul un gestionnaire ou le créateur du référentiel peuvent imposer ce mode au niveau de l\'occurrence du référentiel ;
+
+* Si <i>referentiel_hierarchy</i> vaut 2, le choix du mode d\'affichage est verrouillé au niveau du site.';
+
+
+$string['filtre_valide'] = 'Certification';
+$string['confirmclore'] = 'Confirm Certification process close ';
+$string['confirmouvrir'] = 'Confirm Certification process reopening ';
+
+$string['c_ouvrir'] = 'Open certificate';
+$string['c_clore'] = 'Close certificate';
+
+$string['deletealldeclarations'] = 'Delete all declarations and tasks';
+$string['scale_setting'] ='Use of scales';
+$string['delai_setting'] ='Deshérence';
+$string['archive_setting'] ='Archive management';
+$string['light_setting'] ='Referential Light Display';
+$string['ref_setting'] = 'Referentiel';
+$string['scol_setting'] = 'Scholarship Data';
+$string['profil_setting'] = 'User profile used for student data (Student number, etc.)';
+$string['stat_setting'] = 'Stats';
+$string['cert_setting'] = 'Certificates';
 
 
 $string['consignes_associees']= 'Associated Consigns';
@@ -18,6 +94,8 @@ $string['areaoutcomes']='outcomes';
 $string['areaarchive']='archives';
 $string['areascolarite']='scolarship';
 
+$string['import_pedagogie_error']='IMPORTATION ERROR<br />Some Users seam not to be registered in your Moodle server';  
+$string['user_unknown']='User unknown: {$a}';
 
 $string['no_data'] = 'No data for {$a}';
 $string['regenere_profil'] = 'Update students\' numbers';
@@ -32,6 +110,25 @@ $string['ref_profilecategory'] = 'Profile category \'name\' for Student number i
 $string['config_ref_profilecategory'] = 'If the User Profile is used to set a <b>Student number</b>, give his <i>Category name</i>.';
 $string['ref_profilefield'] = 'Profile field \'shortname\' for Student number id';
 $string['config_ref_profilefield'] = 'If the User Profile is used to set a <b>Student number</b>, give the <i>\'shortname\' field</i> where to get this Student number.';
+
+$string['ref_ddnfield'] = 'Profile field \'shortname\' for Student birthdate';
+$string['config_ref_ddnfield'] = 'If the User Profile is used to set the <b>Student birthdate</b>, give the <i>\'shortname\' field</i> where to get this Student number.';
+
+$string['ref_ldnfield'] = 'Profile field \'shortname\' for Student birth place';
+$string['config_ref_ldnfield'] = 'If the User Profile is used to set the <b>Student birth place</b>, give the <i>\'shortname\' field</i> where to get this Student number.';
+
+$string['ref_dptfield'] = 'Profile field \'shortname\' for Student birth department or zip code';
+$string['config_ref_dptfield'] = 'If the User Profile is used to set the <b>Student birth department or zip code</b>, give the <i>\'shortname\' field</i> where to get this Student number.';
+
+$string['ref_adrfield'] = 'Profile field \'shortname\' for Student adress';
+$string['config_ref_adrfield'] = 'If the User Profile is used to set the the <b>Student adress</b>, indiquez le <i>nom abrégé (\'shortname\')</i>, give the <i>\'shortname\' field</i> where to get this Student adress.';
+
+$string['ref_etabfield'] = 'Profile field \'shortname\' for School or university name';
+$string['config_ref_etabfield'] = 'If the User Profile is used to set the <b>School or university name</b>, give the <i>\'shortname\' field</i> where to get this Student number.';
+
+$string['ref_numetabfield'] = 'Profile field \'shortname\' for School or university number';
+$string['config_ref_numetabfield'] =  'If the User Profile is used to set the <b>School or university number</b>, give the <i>\'shortname\' field</i> where to get this Student number.';
+
 $string['etudianth'] = 'Students';
 $string['etudianth_help'] = 'Personal data for certification
 
@@ -161,7 +258,7 @@ Il est recommandé de fermer les dossiers de certification après la saisie des 
 $string['non_modifiable'] = 'Ce dossier de certification n\'est pas modifable.';
 $string['debloquer_dossier'] = 'Rouvrez le dossier de certification pour modifier ce champ.';
 $string['valider_certificat'] = 'Certification process ';
-$string['f_valide'] = 'Certification';
+
 $string['dossier_ouvert'] = 'Open';
 $string['dossier_ferme'] = 'Closed';
 
@@ -946,6 +1043,7 @@ $string['aide_referentiel_config_local'] = 'The parameters of configuration and 
 on parameters defined at the level of the site by the administrator of Moodle. An inconsistent parameter setting can forbid you to complete
 the creation of a new Skills repository or to download an existing one.';
 $string['not_verrou'] = 'Not locked';
+$string['f_valide'] = 'Valid';
 $string['f_auteur'] = 'Order';
 $string['f_verrou'] = 'Locked';
 $string['f_date_decision'] = 'Decision date';
@@ -1303,7 +1401,7 @@ $string['updatetask'] = 'Modify';
 
 // Version  1.3 2009/03/25
 // A traduire ou retraduire
-$string['referentiel_config_local'] = 'Scholarship';
+$string['referentiel_config_local'] = 'Configuration at instance level';
 $string['masquee'] = 'Hidden';
 // $string['visible'] = 'Visible';
 
