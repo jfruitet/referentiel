@@ -31,7 +31,7 @@
  **/
 
 
-require_once("lib.php");
+require_once("locallib.php");
 require_once("overlib_item.php");
 
 
@@ -1012,12 +1012,11 @@ function referentiel_edit_activite_detail($context, $cmid, $courseid, $mode, $re
 // $actif : affichage menu
 global $USER;
 global $CFG;
-global $PAGE;
 global $OUTPUT;
 global $t_item_code;
 global $t_item_description_competence;
 
-$PAGE->set_context($context);
+
 /*
 echo "<br/>T_ITEM_CODE : ";
 print_object($t_item_code);
@@ -1404,6 +1403,186 @@ global $t_item_description_competence;
 	return $s;
 }
 
+// Retourne un tableau de competences declarees
+// *****************************************************************
+// input @param a user id and a referentiel_referentiel id         *
+// output string jauge competence declarees                        *
+// *****************************************************************
+
+function referentiel_print_jauge_activite($userid, $referentiel_referentiel_id ){
+// MODIF JF 2009/11/28
+// affiche la liste des competences declarees dans les activites par userid pour le referentiel $referentiel_referentiel_id
+	$s="";
+
+	if ($userid && $referentiel_referentiel_id){
+		if (!referentiel_certificat_user_exists($userid, $referentiel_referentiel_id)){
+			// CREER ce certificat
+			referentiel_genere_certificat($userid, $referentiel_referentiel_id);
+		}
+		$record_certificat=referentiel_get_certificat_user($userid, $referentiel_referentiel_id);
+		if ($record_certificat){
+			// empreintes
+			$liste_empreintes=referentiel_purge_dernier_separateur(referentiel_get_liste_empreintes_competence($referentiel_referentiel_id), '/');
+			$s.=referentiel_affiche_competences_declarees('/',':',$record_certificat->competences_certificat, $record_certificat->competences_activite, $liste_empreintes);
+            // MODIF JF 2012/10/10
+            if (($record_certificat->verrou) && ($record_certificat->valide)){
+                $s.='<span class="rouge">'.get_string('dossier_verrouille_ferme','referentiel').'</span>'."\n";
+            } elseif ($record_certificat->verrou) {
+                $s.='<span class="rouge">'.get_string('dossier_verrouille','referentiel').'</span>'."\n";
+            } elseif ($record_certificat->valide) {
+                $s.='<span class="rouge">'.get_string('dossier_non_verrouille_ferme','referentiel').'</span>'."\n";
+            }
+		}
+	}
+	return $s;
+}
+
+
+// ----------------------------------------------------
+function referentiel_affiche_competences_declarees($separateur1, $separateur2, $liste_certificat, $liste_activite, $liste_empreintes){
+// Affiche les codes competences declarees en tenant compte de l'empreinte et de la validite
+// Necessaire à l'affichage des overlib
+
+    $MAXCOL=30;
+    // Modif JF   2012/01/30
+    // Adapter le nombre de colonnes à la taille des codes à afficher
+
+    $lca=strlen($liste_activite);
+    // echo "<br />Longueur : $lca\n";
+    if  ($lca>600){
+        $MAXCOL=round($lca/20)+1 ;
+    }
+    else if ($lca>390){
+        $MAXCOL=round($lca/13)+1 ;
+    }
+    else if ($lca>300){
+        $MAXCOL=round($lca/10)+1 ;
+    }
+    else if ($lca>180){
+        $MAXCOL=round($lca/6)+1 ;
+    }
+    else if ($lca>150){
+        $MAXCOL=round($lca/5)+1 ;
+    }
+    else{
+        $MAXCOL=30;
+    }
+    // echo "<br />NB COLONNES : $MAXCOL<br /> \n";
+    // exit;
+
+	$t_empreinte=explode($separateur1, $liste_empreintes);
+	$okc=false;
+	$oka=false;
+	$s='';
+	$tc=array();
+	$liste_certificat=referentiel_purge_dernier_separateur($liste_certificat, $separateur1);
+	$liste_activite=referentiel_purge_dernier_separateur($liste_activite, $separateur1);
+	if ((!empty($liste_certificat) || !empty($liste_activite)) && ($separateur1!="") && ($separateur2!="")){
+		if (!empty($liste_certificat)){
+			$tc = explode ($separateur1, $liste_certificat);
+			$okc=true;
+		}
+		if (!empty($liste_activite)){
+			$ta = explode ($separateur1, $liste_activite);
+			$oka=true;
+		}
+		// DEBUG
+		// echo "<br />CODE <br />\n";
+		// print_r($tc);
+		if ($oka){
+			$i=0;
+
+			$s.="\n".'<p>'."\n";
+			while ($i<count($ta)){
+				// CODE1:N1
+				// DEBUG
+				// echo "<br />".$tc[$i]." <br />\n";
+				// exit;
+				$tca=explode($separateur2, $ta[$i]);
+				if ($okc){
+					$tcc=explode($separateur2, $tc[$i]);
+				}
+				// echo "<br />".$tc[$i]." <br />\n";
+				// print_r($tcc);
+				// exit;
+				if (($i!=0) && ($i%$MAXCOL==0)){
+					//$s.='</tr>'."\n".'<tr>';
+					$s.='<br />'."\n";
+				}
+
+
+				if ($okc && isset($tcc[1]) && ($tcc[1]>=$t_empreinte[$i])){
+					// Overlib
+					$code_s=referentiel_affiche_overlib_un_item($separateur2, $tca[0], "vert");
+					$s.='<span class="bold">'.$code_s.'</span> ';
+				}
+				else if ($okc && isset($tcc[1]) && ($tcc[1]>0)){
+					$code_s=referentiel_affiche_overlib_un_item($separateur2, $tca[0], "orange");
+					$s.='<span class="bold">'.$code_s.'</span> ';
+				}
+				else if (isset($tca[1]) && ($tca[1]>0)){
+					$code_s=referentiel_affiche_overlib_un_item($separateur2, $tca[0], "rouge");
+					$s.='<i>'.$code_s.'</i> ';
+				}
+				else {
+					$code_s=referentiel_affiche_overlib_un_item($separateur2, $tca[0], "nondefini");
+					$s.=$code_s.' ';
+				}
+				$i++;
+			}
+			if ($i>$MAXCOL){
+				$k=$MAXCOL-$i%$MAXCOL;
+				$j=0;
+				while ($j<$k){
+					$s.='<span class="nondefini">&nbsp;</span>';
+					$j++;
+				}
+			}
+			$s.='</p>'."\n";
+		}
+	}
+	return $s;
+}
+
+
+// Menu
+// ----------------------------------------------------------
+function referentiel_menu_activite($cm, $context, $activite_id, $referentiel_instance_id, $approved, $select_acc=0, $detail=true, $mode='updateactivity'){
+	global $CFG;
+	global $OUTPUT;
+			echo '<div align="center">';
+			if ($detail){
+                echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=listactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'#activite"><img src="'.$OUTPUT->pix_url('nosearch','referentiel').'" alt="'.get_string('moins', 'referentiel').'" title="'.get_string('moins', 'referentiel').'" /></a>';
+            }
+            else{
+                echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=listactivitysingle&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'#activite"><img src="'.$OUTPUT->pix_url('search','referentiel').'" alt="'.get_string('plus', 'referentiel').'" title="'.get_string('plus', 'referentiel').'" /></a>'."\n";
+            }
+			if (has_capability('mod/referentiel:approve', $context)){
+				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
+				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
+    	    }
+			else if (referentiel_activite_isowner($activite_id)) {
+            	if (!$approved){
+					echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=updateactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('edit','referentiel').'" alt="'.get_string('edit').'" title="'.get_string('edit').'" /></a>';
+	            }
+				echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=deleteactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('delete','referentiel').'" alt="'.get_string('delete').'" title="'.get_string('delete').'" /></a>';
+    	    }
+			// valider
+    	    if (has_capability('mod/referentiel:approve', $context)){
+				if (!$approved){
+            		echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=approveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('nonvalide','referentiel').'" alt="'.get_string('approve', 'referentiel').'" title="'.get_string('approve', 'referentiel').'" /></a>';
+				}
+	       		else{
+    	        	echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=desapproveactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('valide','referentiel').'" alt="'.get_string('desapprove', 'referentiel').'" title="'.get_string('desapprove', 'referentiel').'" /></a>';
+				}
+			}
+	        // commentaires
+    	    if (has_capability('mod/referentiel:comment', $context)){
+        		echo '&nbsp; <a href="'.$CFG->wwwroot.'/mod/referentiel/activite.php?id='.$cm->id.'&amp;select_acc='.$select_acc.'&amp;activite_id='.$activite_id.'&amp;mode=commentactivity&amp;old_mode='.$mode.'&amp;sesskey='.sesskey().'"><img src="'.$OUTPUT->pix_url('feedback','referentiel').'" alt="'.get_string('comment', 'referentiel').'" title="'.get_string('comment', 'referentiel').'" /></a>';
+			}
+			echo '</div><br />'."\n";
+
+}
 
 
 ?>

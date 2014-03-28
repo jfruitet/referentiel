@@ -22,6 +22,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+
 // referentiel : list_activites_users.php
 // récupère et affiche une liste d'activités en utilisant des appels Ajax
 
@@ -75,6 +76,7 @@ $modeaff      = optional_param('modeaff', 0, PARAM_INT);
 
     $contextcourse = get_context_instance(CONTEXT_COURSE, $course->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+	$PAGE->set_context($context);
 
     // Requête
     if (!empty($sql)){
@@ -106,17 +108,17 @@ $modeaff      = optional_param('modeaff', 0, PARAM_INT);
 		// DEBUG
 		//echo "<br />DEBUG :: list_activites_users.php :: 107 : RECORD<br />\n";
 		//print_object( $recs);
-
+		// affichage
+		// preparer les variables globales pour Overlib
+		referentiel_initialise_descriptions_items_referentiel($referentiel_referentiel->id);
+        $userid_old=0;  // pour la jauge
         if ($modeaff==0){
-			// affichage
-		 	// preparer les variables globales pour Overlib
-			referentiel_initialise_descriptions_items_referentiel($referentiel_referentiel->id);
 			// formulaire global
 			//echo "\n\n".'<form name="form" id="form" action="activite_paginee.php?id='.$cm->id.'&course='.$course->id.'&mode='.$mode.'&filtre_auteur='.$data_filtre->filtre_auteur.'&filtre_validation='.$data_filtre->filtre_validation.'&filtre_referent='.$data_filtre->filtre_referent.'&filtre_date_modif='.$data_filtre->filtre_date_modif.'&filtre_date_modif_student='.$data_filtre->filtre_date_modif_student.'&select_acc='.$select_acc.'&sesskey='.sesskey().'" method="post">'."\n";
             echo "\n\n".'<form name="form" id="form" action="activite_paginee.php?id='.$cm->id.'&course='.$course->id.'&mode='.$mode.'&sesskey='.sesskey().'" method="post">'."\n";
             echo '<table class="activite" width="100%">'."\n";
 			echo '<tr valign="top">
-<td class="ardoise" colspan="9">
+<td class="ardoise" colspan="8">
  <img class="selectallarrow" src="./pix/arrow_ltr_bas.png" width="38" height="22" alt="Pour la sélection :" />
  <i>'.get_string('cocher_enregistrer', 'referentiel').'</i>
 <input type="submit" value="'.get_string("savechanges").'" />
@@ -130,15 +132,22 @@ $modeaff      = optional_param('modeaff', 0, PARAM_INT);
 				//echo '<tr valign="top"><td class="ardoise" colspan="9">'."\n";
     			//echo '<input type="text" name="nom" value="" />'."\n";
 				//echo '</td></tr>'."\n";
-
+			    // Jauge d'activite
+				if ($userid_old!=$record_a->userid){
+                    $userid_old=$record_a->userid;
+					echo '<tr valign="top"><td colspan="8" align="center">'."\n";
+                    echo get_string('competences_declarees','referentiel', '<span class="bold">'.referentiel_get_user_info($record_a->userid).'</span>')."\n".referentiel_print_jauge_activite($record_a->userid, $referentiel_referentiel->id)."\n";
+					echo '</td></tr>'."\n";
+				}
     			echo referentiel_edit_activite_detail($context, $cm->id, $course->id, $mode, $record_a, true);
         	}
     		echo '<tr valign="top">
-<td class="ardoise" colspan="9">
+<td class="ardoise" colspan="8">
  <img class="selectallarrow" src="./pix/arrow_ltr.png"
     width="38" height="22" alt="Pour la sélection :" />
 <i>'.get_string('cocher_enregistrer', 'referentiel').'</i>
 <input type="hidden" name="action" value="modifier_activite_global" />
+<input type="hidden" name="pageNo" value="'.$pageNo.'" />
 <!-- accompagnement -->
 <input type="hidden" name="select_acc" value="'.$selacc.'" />
 <!-- These hidden variables are always the same -->
@@ -154,7 +163,16 @@ $modeaff      = optional_param('modeaff', 0, PARAM_INT);
 		}
 		else{
 			foreach($recs as $record_a){
+                // Jauge d'activite
+				if ($userid_old!=$record_a->userid){
+                    $userid_old=$record_a->userid;
+					echo '<div align="center">'.get_string('competences_declarees','referentiel', '<span class="bold">'.referentiel_get_user_info($record_a->userid).'</span>')."\n".referentiel_print_jauge_activite($record_a->userid, $referentiel_referentiel->id).'</div>'."\n";
+				}
+
                 referentiel_print_activite_detail($record_a);
+                if ($record_a->ref_course==$course->id){
+                	referentiel_menu_activite($cm, $context, $record_a->id, $referentiel->id, $record_a->approved, $selacc, true, $mode);
+                }
 			}
         }
 

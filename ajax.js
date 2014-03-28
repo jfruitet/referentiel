@@ -57,7 +57,10 @@
                 pagingstr = pagingstr + ' <span class="current">'+i+'</span>';
 			}
 		}
-        document.getElementById('loadin').innerHTML='';
+        var elem = document.getElementById('loadin');
+		if(typeof elem   !== 'undefined' && elem !== null) {
+			document.getElementById('loadin').innerHTML='';
+		}
         document.getElementById('pagin').innerHTML=pagingstr;
     }
 

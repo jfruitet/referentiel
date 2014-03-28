@@ -31,7 +31,7 @@
 
 //*********************************************************************
 // Pagination
-$pageNo=1;
+$pageNo = optional_param('pageNo', 1, PARAM_INT);    // Page en cours
 $extraParam='';
 $totalRecords=0;
 
@@ -354,11 +354,15 @@ $sql='';
 			//echo "<br />activite.php :: 329 :: FORM<br />\n";
 			//print_object($form);
 			//exit;
-
+            if (!empty($form['pageNo'])){
+                $pageNo=$form['pageNo'];
+				//echo "<br />DEBUG :: 359 :: PageNo:".$pageNo."\n";
+				//exit;
+			}
 		    if (isset($form['tactivite_id']) && ($form['tactivite_id'])){
                 //
                 foreach ($form['tactivite_id'] as $id_activite){
-                    echo "<br />ID :: ".$id_activite."\n";
+                    //echo "<br />ID :: ".$id_activite."\n";
                     //
                     $form2= new Object();
                     $form2->action='modifier_activite';
@@ -408,7 +412,7 @@ $sql='';
                 }
             }
             unset($form);
-            redirect("$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student");
+            redirect("$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student");
             exit;
         }
 
@@ -483,14 +487,14 @@ $sql='';
                     }
                     $mode ='listactivityall';
 					if (has_capability('mod/referentiel:managecertif', $context)){
-	    	        	$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
+	    	        	$SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 					}
 					else{
                         if ($mailnow){
-	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&activite_id=$activite_id&mailnow=$mailnow&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
+	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$form->userid&activite_id=$activite_id&mailnow=$mailnow&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
                         }
                         else{
-	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
+	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
                         }
 					}
                 break;
@@ -505,7 +509,7 @@ $sql='';
 					     print_error("Could not add a new activity to the referentiel", 'error', "activite_paginee.php?d=$referentiel->id");
 			     	}
                     if (is_string($return)) {
-                        print_error($return, 'error', "activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid");
+                        print_error($return, 'error', "activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$form->userid");
 				    }
 
 				    // depot de document ?
@@ -528,14 +532,14 @@ $sql='';
 
                     $mode ='listactivityall';
 					if (has_capability('mod/referentiel:managecertif', $context)){
-	    	                  $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&mailnow=$mailnow&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
+	    	                  $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$form->userid&mailnow=$mailnow&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 					}
 					else{
                         if ($mailnow){
-	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&activite_id=$return&mailnow=$mailnow&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
+	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$form->userid&activite_id=$return&mailnow=$mailnow&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
                         }
                         else{
-	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
+	            		     $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
                         }
 				    }
                 break;
@@ -552,10 +556,10 @@ $sql='';
 				    }
       		        $mode ='listactivityall';
 			   	    if (has_capability('mod/referentiel:managecertif', $context)){
-                        $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
+                        $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 				    }
 				    else{
-	            	    $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
+	            	    $SESSION->returnpage = "$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$form->userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student";
 				    }
                 break;
 
@@ -572,7 +576,7 @@ $sql='';
                 redirect($return);
             }
 		    else {
-                redirect("$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student");
+                redirect("$CFG->wwwroot/mod/referentiel/activite_paginee.php?d=$referentiel->id&amp;pageNo=$pageNo&amp;select_acc=$select_acc&amp;userid=$userid&amp;mode=$mode&amp;f_auteur=$data_f->f_auteur&amp;f_validation=$data_f->f_validation&amp;f_referent=$data_f->f_referent&amp;f_date_modif=$data_f->f_date_modif&amp;f_date_modif_student=$data_f->f_date_modif_student");
             }
 
             exit;
@@ -679,7 +683,12 @@ $sql='';
                 	$totalPage++;
                 	$perPage=ceil((float)$totalRecords / (float)$totalPage);       // nombre d'enregistrements par page
             	}
-
+                echo "<br />DEBUG :: 685 :: PageNo:".$pageNo."\n";
+				if ($pageNo>$totalPage){
+                    $pageNo=1;
+				}
+                echo "<br />DEBUG :: 689 :: PageNo:".$pageNo."\n";
+				//exit;
 				// params
 				$lparams=implode('|',$params);
 		    	//echo "<br />DEBUG :: 778 :: ".$lparams."\n";
@@ -696,8 +705,8 @@ $sql='';
     //$sql = str_replace('<','&lt;',$sql);    // hack
     //$onload= " onload=\"javascript:ajaxPaging(pagename='".$pageName."',pageNo='1',instanceid='".$referentiel->id."',sql='".$sql."',div='".$divid."',totalPage='".$totalPage."',perPage='".$perPage."',selacc='".$select_acc."',modeaff='".$modeaff."') \"";
 
-				$ajaxvalue = "'".$pageName."','1','".$referentiel->id."','".$sql."','".$lparams."','".$divid."','".$totalPage."','".$perPage."','".$select_acc."','".$modeaff."'";
-				//$ajaxvalue = "'".$pageName."',1,".$referentiel->id.",'".$sql."','".$lparams."','".$divid."',".$totalPage.",".$perPage.",".$select_acc.",".$modeaff."";
+$ajaxvalue = "'".$pageName."','".$pageNo."','".$referentiel->id."','".$sql."','".$lparams."','".$divid."','".$totalPage."','".$perPage."','".$select_acc."','".$modeaff."'";
+				//				//$ajaxvalue = "'".$pageName."',1,".$referentiel->id.",'".$sql."','".$lparams."','".$divid."',".$totalPage.",".$perPage.",".$select_acc.",".$modeaff."";
 		    			    	//echo $ajaxvalue;
 				$onclick="javascript:ajaxPaging(".$ajaxvalue.");";
     			//$onclick="javascript:affiche2($value);";
@@ -746,7 +755,7 @@ $sql='';
     echo $OUTPUT->header();
 
 
-	groups_print_activity_menu($cm,  $CFG->wwwroot . '/mod/referentiel/activite_paginee.php?d='.$referentiel->id.'&amp;mode='.$mode.'&amp;select_acc='.$select_acc);
+	groups_print_activity_menu($cm,  $CFG->wwwroot . '/mod/referentiel/activite_paginee.php?d='.$referentiel->id.'&amp;mode='.$mode.'&amp;pageNo='.$pageNo.'&amp;select_acc='.$select_acc);
 
     if (!empty($referentiel->name)){
         echo '<div align="center"><h1>'.$referentiel->name.'</h1></div>'."\n";
