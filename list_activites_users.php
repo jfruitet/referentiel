@@ -27,23 +27,28 @@
 // récupère et affiche une liste d'activités en utilisant des appels Ajax
 
 require_once('../../config.php');
-include('print_lib_activite_paginee.php');	// AFFICHAGES
+include('print_lib_activite.php');	// AFFICHAGES
 include('lib_task.php');
 include('print_lib_task.php');	// AFFICHAGES TACHES
 
 $instanceid   = optional_param('instanceid', 0, PARAM_INT);   // referentiel instance id
+$userid       = optional_param('userid', 0, PARAM_INT);   // userid if selected
 $sql          = optional_param('sql','', PARAM_TEXT);
 $lparams      = optional_param('lparams','', PARAM_TEXT);
 $pageNo       = optional_param('pageNo', 0, PARAM_INT);
 $perPage      = optional_param('perPage', 1, PARAM_INT);
 $selacc       = optional_param('selacc', 0, PARAM_INT);
 $modeaff      = optional_param('modeaff', 0, PARAM_INT);
+$order    	  = optional_param('order', 0, PARAM_INT);
 
 	if ($modeaff==1){
-		$mode='activitespaginees';
+		$mode='listactivityall';
+	}
+	else if ($modeaff==2){
+        $mode='listactivity';
 	}
 	else{
-        $mode='updateactivitespaginees';
+        $mode='updateactivity';
 	}
 
 // DEBUG
@@ -87,7 +92,7 @@ $modeaff      = optional_param('modeaff', 0, PARAM_INT);
 		$sql = str_replace('&gt;','>',$sql);    // hack
         $sql = str_replace('&lt;','<',$sql);    // hack
 
-    	//echo "<br />DEBUG :: 82 :: Length : ".strlen($sql)." : ".htmlspecialchars($sql)."\n";
+    	//echo "<br />DEBUG :: 95 :: Length : ".strlen($sql)." : ".htmlspecialchars($sql)."\n";
     }
 
     if (!empty($lparams)){
@@ -106,16 +111,26 @@ $modeaff      = optional_param('modeaff', 0, PARAM_INT);
 
     if ($recs=$DB->get_records_sql($sql, $params)){
 		// DEBUG
-		//echo "<br />DEBUG :: list_activites_users.php :: 107 : RECORD<br />\n";
+		//echo "<br />DEBUG :: list_activites_users.php :: 113 : RECORD<br />\n";
 		//print_object( $recs);
+
 		// affichage
 		// preparer les variables globales pour Overlib
+        // DEBUG
+		//echo "<br>DEBUG :: 696:: CROISSANT : $order<br>\n";
+		if (!empty($order)) {
+        	$recs=referentiel_order_users($recs, $order);
+ 			//echo "<br />DEBUG :: list_activites_users.php :: 122 : RECORD TRIES<br />\n";
+			//print_object( $recs);
+			//exit;
+		}
 		referentiel_initialise_descriptions_items_referentiel($referentiel_referentiel->id);
+
         $userid_old=0;  // pour la jauge
         if ($modeaff==0){
 			// formulaire global
-			//echo "\n\n".'<form name="form" id="form" action="activite_paginee.php?id='.$cm->id.'&course='.$course->id.'&mode='.$mode.'&filtre_auteur='.$data_filtre->filtre_auteur.'&filtre_validation='.$data_filtre->filtre_validation.'&filtre_referent='.$data_filtre->filtre_referent.'&filtre_date_modif='.$data_filtre->filtre_date_modif.'&filtre_date_modif_student='.$data_filtre->filtre_date_modif_student.'&select_acc='.$select_acc.'&sesskey='.sesskey().'" method="post">'."\n";
-            echo "\n\n".'<form name="form" id="form" action="activite_paginee.php?id='.$cm->id.'&course='.$course->id.'&mode='.$mode.'&sesskey='.sesskey().'" method="post">'."\n";
+			//echo "\n\n".'<form name="form" id="form" action="activite.php?id='.$cm->id.'&course='.$course->id.'&mode='.$mode.'&filtre_auteur='.$data_filtre->filtre_auteur.'&filtre_validation='.$data_filtre->filtre_validation.'&filtre_referent='.$data_filtre->filtre_referent.'&filtre_date_modif='.$data_filtre->filtre_date_modif.'&filtre_date_modif_student='.$data_filtre->filtre_date_modif_student.'&select_acc='.$select_acc.'&sesskey='.sesskey().'" method="post">'."\n";
+            echo "\n\n".'<form name="form" id="form" action="activite.php?id='.$cm->id.'&course='.$course->id.'&mode='.$mode.'&sesskey='.sesskey().'" method="post">'."\n";
             echo '<table class="activite" width="100%">'."\n";
 			echo '<tr valign="top">
 <td class="ardoise" colspan="8">
@@ -135,7 +150,7 @@ $modeaff      = optional_param('modeaff', 0, PARAM_INT);
 			    // Jauge d'activite
 				if ($userid_old!=$record_a->userid){
                     $userid_old=$record_a->userid;
-					echo '<tr valign="top"><td colspan="8" align="center">'."\n";
+					echo '<tr><td class="centree" colspan="8">'."\n";
                     echo get_string('competences_declarees','referentiel', '<span class="bold">'.referentiel_get_user_info($record_a->userid).'</span>')."\n".referentiel_print_jauge_activite($record_a->userid, $referentiel_referentiel->id)."\n";
 					echo '</td></tr>'."\n";
 				}
@@ -150,6 +165,11 @@ $modeaff      = optional_param('modeaff', 0, PARAM_INT);
 <input type="hidden" name="pageNo" value="'.$pageNo.'" />
 <!-- accompagnement -->
 <input type="hidden" name="select_acc" value="'.$selacc.'" />
+';
+			if (!empty($userid)){
+				echo '<input type="hidden" name="userid" value="'.$userid.'" />'."\n";
+			}
+			echo '
 <!-- These hidden variables are always the same -->
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="modulename"    value="referentiel" />
@@ -161,21 +181,27 @@ $modeaff      = optional_param('modeaff', 0, PARAM_INT);
 </table>
 </form>'."\n";
 		}
-		else{
+        else{
+			// affichage
 			foreach($recs as $record_a){
                 // Jauge d'activite
 				if ($userid_old!=$record_a->userid){
                     $userid_old=$record_a->userid;
 					echo '<div align="center">'.get_string('competences_declarees','referentiel', '<span class="bold">'.referentiel_get_user_info($record_a->userid).'</span>')."\n".referentiel_print_jauge_activite($record_a->userid, $referentiel_referentiel->id).'</div>'."\n";
 				}
-
-                referentiel_print_activite_detail($record_a);
+                referentiel_print_activite_detail($record_a, $context, ($modeaff==1));
                 if ($record_a->ref_course==$course->id){
-                	referentiel_menu_activite($cm, $context, $record_a->id, $referentiel->id, $record_a->approved, $selacc, true, $mode);
+                	referentiel_menu_activite($cm, $context, $record_a->id, $record_a->userid, $referentiel->id, $record_a->approved, $selacc, ($modeaff==1), $mode);
+	                if (!$record_a->approved){
+    	           		echo '<div align="center">'.referentiel_ajout_document($record_a, $mode, $selacc)."</div>\n";
+					}
                 }
+				else{
+                    echo '<div align="center">'.get_string('activite_exterieure','referentiel')."</div>\n";
+				}
+				echo '<br />'."\n";
 			}
         }
-
     }
     
 ?>

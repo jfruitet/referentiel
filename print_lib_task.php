@@ -1238,4 +1238,14 @@ if (!empty($referentiel_instance)){
 }
 
 
+function referentiel_get_auteur_task($taskid){
+    if ($taskid){
+        $record_t=referentiel_get_task($taskid);
+        if ($record_t){
+            return ($record_t->auteurid);
+        }
+    }
+    return 0;
+}
+
 ?>

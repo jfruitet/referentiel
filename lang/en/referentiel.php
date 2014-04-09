@@ -1,8 +1,7 @@
 <?php
 // referentiel module
 //
-$string['updateactivitespaginees'] = 'Modif Pager';
-$string['activitespaginees'] = 'Pager';
+$string['modifactivity'] = 'Modify';
 $string['click_to_load'] = 'Click here to load the page';
 
 $string['assignementdoc'] = 'Assignment document';
@@ -47,7 +46,7 @@ $string['certif_activee']='Thumbnail "Certificate"  Displayed';
 $string['certif_desactivee']='Thumbnail "Certificate" Masked';
 
 $string['configuration_impression'] = 'Printing Configuration';
-$string['hierarchy'] = 'Non hierarchical display mandatory in competencies input';
+$string['hierarchy'] = 'Hierarchical display mandatory in competencies input';
 $string['input_setting'] = 'Display mode';
 $string['input_hierarchy'] = 'Competencies\' Hierarchical Display';
 $string['config_input'] =  'En fonction de la valeur de <i>referentiel_hierarchy</i>

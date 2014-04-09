@@ -503,7 +503,7 @@ $t_users_lastname=array();
         // Should use this variable so that we don't break stuff every time a variable is added or changed.
         $baseurl = $CFG->wwwroot.'/mod/referentiel/activite_paginee.php?id='.$cm->id.'&amp;action=selectuser&amp;initiale=';
         $baseurl1 ='&amp;userids=';
-        $baseurl2 ='&amp;select_ac='.$select_acc.'&amp;mode='.$mode.'&amp;courseid='.$course->id.'&amp;sesskey='.sesskey();
+        $baseurl2 ='&amp;select_acc='.$select_acc.'&amp;mode='.$mode.'&amp;courseid='.$course->id.'&amp;sesskey='.sesskey();
 
         if (!empty($data_f)){
             $baseurl3='&amp;f_auteur='.$data_f->f_auteur.'&amp;f_referent='.$data_f->f_referent.'&amp;f_validation='.$data_f->f_validation.'&amp;f_date_modif='.$data_f->f_date_modif.'&amp;f_date_modif_student='.$data_f->f_date_modif_student;

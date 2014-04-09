@@ -27,7 +27,7 @@
  * 
  * @author jfruitet
  * @version $Id: lib.php,v 2.0 2011/04/20 00:00:00 jfruitet Exp $
-D:\xampp\htdocs\moodle24\mod\referentiel\lib_repartition.php * @package referentiel v 6.0.00 2011/20/01 00:00:00
+* @package referentiel v 6.0.00 2011/20/01 00:00:00
  **/
  
 // Version Moodle 2
@@ -44,11 +44,14 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 require_once ("class/referentiel.class.php");
 
 // CRON
+require_once ("lib_repartition.php"); // version 1.2 decembre 2011
 require_once ("lib_cron.php");
 
 // les constantes suivantes permettent de tuner le fonctionnement du module
 // a ne modifier qu'avec précaution
-define('MAXPARPAGE', 15);// Nombre d'items par page pour la pagination des affichages
+define('MAXPAGE', 15);// Nombre maximal de pages pour la pagination des affichages
+define('MAXPARPAGE', 20);// Nombre d'items par page pour la pagination des affichages
+
 
 // La bibliothèque Overlib n'est plus intégrée par défaut depuis Moodle 2.3
 // or je l'utilise pour afficher les compétences en survol...

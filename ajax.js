@@ -5,7 +5,7 @@
 // Architecture
 // Le script principal installe des appels Ajax à un script secondaire
 // qui fait des requêtes limitées sur la base de données
-// Utilise une classe ajax/ajax.js
+// Utilise une classe ajax.js
 // Attention de bien respecter l'id des différents balises <div>
 // $pagename     The secondary php file path called by Ajax call
 // $div          The div name where result will be displayed
@@ -15,7 +15,7 @@
 // $totalPage   The number of pages
 // $perPage      The number of records per page
 // selacc        accompagnement (0: no, 1: yes)
-// $modeaff      mode to display (activitespaginees==1)
+// $modeaff      mode to display (listactivityall==1)
 
     // ajoute '\' à l'expression
     function addslashes(str) {
@@ -35,8 +35,17 @@
         return str;
     }
 
+    function urldecode(str) {
+		if (typeof str != "string") {
+			return str;
+		}
+		return decodeURIComponent(str.replace(/\+/g, ' '));
+	}
+
+
+
     // dessine la barre de selection des pages
-	function redraw(pagename, pageNo, instanceid, sql, lparams, div, totalPage, perPage, selacc, modeaff)
+	function redraw(pagename, pageNo, instanceid, sql, lparams, div, totalPage, perPage, selacc, modeaff, userid, order)
 	{
         var i;
         var pagingstr;
@@ -48,8 +57,7 @@
 		{
             if (i != pageNo)
 			{
-                pagingstr = pagingstr + ' <a href="javascript:ajaxPaging(\''+pagename+'\',pageNo=\''+i+'\',instanceid=\''+instanceid+'\',sql=\''+sql+'\',lparams=\''+lparams+'\',div=\''+div+'\',totalPage=\''+totalPage+'\',perPage=\''+perPage+'\',selacc=\''+selacc+'\',modeaff=\''+modeaff+'\')">'+i+'</a> ';
-				//pagingstr = pagingstr + ' <a href="javascript:ajaxPaging(\''+pagename+',pageNo='+i+',instanceid='+instanceid+',sql=\''+sql+'\',lparams=\''+lparams+'\',div=\''+div+'\',totalPage='+totalPage+',perPage='+perPage+',selacc='+selacc+',modeaff='+modeaff+')">'+i+'</a> ';
+                pagingstr = pagingstr + ' <a href="javascript:ajaxPaging(\''+pagename+'\',pageNo=\''+i+'\',instanceid=\''+instanceid+'\',sql=\''+sql+'\',lparams=\''+lparams+'\',div=\''+div+'\',totalPage=\''+totalPage+'\',perPage=\''+perPage+'\',selacc=\''+selacc+'\',modeaff=\''+modeaff+'\',userid=\''+userid+'\',order=\''+order+'\')">'+i+'</a> ';
                 //alert(i);
 			}
 			else
@@ -67,7 +75,7 @@
     // Ajax call  ajax.js
     function createXHR()
     {
-        var request = false;
+		var request = false;
         try {
             request = new ActiveXObject('Msxml2.XMLHTTP');
         }
@@ -88,12 +96,14 @@
     }
 
     // lance l'appel au script des requetes par Ajax
-	function ajaxPaging(pagename, pageNo, instanceid, sql, lparams, div, totalPage, perPage, selacc, modeaff)
+	function ajaxPaging(pagename, pageNo, instanceid, sql, lparams, div, totalPage, perPage, selacc, modeaff, userid, order)
 	{
 	// alert(sql);
+        var url= urldecode(pagename);
+        //alert(url);
         var xhr=createXHR();
-        //xhr.open("GET",pagename+'?pageNo='+pageNo+'&perPage='+perPage+'&instanceid='+instanceid+'&sql='+sql+limit+'&selacc='+selacc+'&modeaff='+modeaff, true);
-        xhr.open("GET",pagename+'?pageNo='+pageNo+'&perPage='+perPage+'&instanceid='+instanceid+'&sql='+sql+'&lparams='+lparams+'&selacc='+selacc+'&modeaff='+modeaff, true);
+        //xhr.open("GET",pagename+'?pageNo='+pageNo+'&perPage='+perPage+'&instanceid='+instanceid+'&sql='+sql+'&lparams='+lparams+'&selacc='+selacc+'&modeaff='+modeaff, true);
+        xhr.open("GET",url+'?pageNo='+pageNo+'&perPage='+perPage+'&instanceid='+instanceid+'&sql='+sql+'&lparams='+lparams+'&selacc='+selacc+'&modeaff='+modeaff+'&userid='+userid+'&order='+order, true);
 
 		document.getElementById(div).innerHTML="Started...";
         //document.getElementById(div).innerHTML='<img src="ajax-loader.gif" id="loader">';
@@ -110,6 +120,6 @@
 
 		xhr.send(null);
 
-		redraw(pagename, pageNo, instanceid, sql, lparams, div, totalPage, perPage, selacc, modeaff);
+		redraw(pagename, pageNo, instanceid, sql, lparams, div, totalPage, perPage, selacc, modeaff, userid, order);
 
 	}

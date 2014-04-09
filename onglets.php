@@ -84,6 +84,7 @@ function onglets($context=NULL, $instance=NULL, $occurrence=NULL, $cm=NULL, $cou
 // --------------------
 function display(){
     global $USER;
+    global $CFG;
     
     if (!empty($this->instance) && !empty($this->course) && !empty($this->cm)) {
         // Rôles dans le cours
@@ -195,13 +196,11 @@ function display(){
                 $activetwo = array('menuacc');
             }
 
+
         	// ACTIVITE
             if (isset($this->currenttab) && (($this->currenttab == 'list')
         		|| ($this->currenttab == 'listactivity')
-		        || ($this->currenttab == 'listactivitysingle')
         		|| ($this->currenttab == 'listactivityall')
-        || ($this->currenttab == 'activitespaginees')
-        || ($this->currenttab == 'updateactivitespaginees')
 		        || ($this->currenttab == 'addactivity')
         		|| ($this->currenttab == 'updateactivity')
         		|| ($this->currenttab == 'exportactivity')
@@ -209,31 +208,28 @@ function display(){
             {
         		$row  = array();
                 $inactive[] = 'list';
-                $url_param['mode']='listactivity';
-        		$row[] = new tabobject('listactivity', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('listactivity','referentiel'));
-                $url_param['mode']='listactivityall';
-                $row[] = new tabobject('listactivityall', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('listactivityall','referentiel'));
-        $url_param['mode']='activitespaginees';
-		$row[] = new tabobject('activitespaginees', new moodle_url('/mod/referentiel/activite_paginee.php', $url_param),  get_string('activitespaginees','referentiel'));
+		        $url_param['mode']='listactivity';
+				$row[] = new tabobject('listactivity', new moodle_url('/mod/referentiel/activite.php', $url_param),  get_string('listactivity','referentiel'));
+
+		        $url_param['mode']='listactivityall';
+				$row[] = new tabobject('listactivityall', new moodle_url('/mod/referentiel/activite.php', $url_param),  get_string('listactivityall','referentiel'));
 
                 if (has_capability('mod/referentiel:addactivity', $this->context)) {
                     if ($edition_autorisee){
                         $url_param['mode']='addactivity';
-                        $row[] = new tabobject('addactivity', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('addactivity','referentiel'));
+	                    $row[] = new tabobject('addactivity', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('addactivity','referentiel'));
                     }
                 }
-                if (!has_capability('mod/referentiel:managecertif', $this->context)) {      // r?le etudiant : uniquement pour modifier une activite
-                    if ($this->mode=='updateactivity'){
-                        $url_param['mode']='updateactivity';
-                        $row[] = new tabobject('updateactivity', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('updateactivity','referentiel'));
+
+		        if (!has_capability('mod/referentiel:managecertif', $this->context)) {      // role etudiant : uniquement pour modifier une activite
+                    if ($this->mode=='modifactivity'){
+                        $url_param['mode']='modifactivity';
+                        $row[] = new tabobject('modifactivity', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('modifactivity','referentiel'));
                     }
                 }
                 else {
-                    $url_param['mode']='updateactivity';
-                    $row[] = new tabobject('updateactivity', new moodle_url('/mod/referentiel/activite.php', $url_param), get_string('updateactivity','referentiel'));
-        $url_param['mode']='updateactivitespaginees';
-		$row[] = new tabobject('updateactivitespaginees', new moodle_url('/mod/referentiel/activite_paginee.php', $url_param),  get_string('updateactivitespaginees','referentiel'));
-
+					$url_param['mode']='updateactivity';
+					$row[] = new tabobject('updateactivity', new moodle_url('/mod/referentiel/activite.php', $url_param),  get_string('updateactivity','referentiel'));
                 }
                 if (has_capability('mod/referentiel:export', $this->context)) {
                     $url_param['mode']='exportactivity';
@@ -451,18 +447,24 @@ function display(){
                     $row[] = new tabobject('archive', new moodle_url('/mod/referentiel/archive.php', $url_param), get_string('archive','referentiel'));
                 }
 
+        		if ($this->currenttab == '') {
+            		$this->currenttab = $mode = 'archive';
+        		}
         		$tabs[] = $row;
         		$activetwo = array('archive');
     		}
 
 
             // REFERENTIELS
-            if (isset($this->currenttab) && (($this->currenttab == 'configref')
-                || ($this->currenttab == 'protocole')
+            if (isset($this->currenttab) && 
+                (
+				($this->currenttab == 'protocole')
                 || ($this->currenttab == 'referentiel') || ($this->currenttab == 'listreferentiel')
+                || ($this->currenttab == 'configref')
                 || ($this->currenttab == 'editreferentiel') || ($this->currenttab == 'deletereferentiel')
                 || ($this->currenttab == 'import')  || ($this->currenttab == 'import_simple')
-                || ($this->currenttab == 'export')))
+                || ($this->currenttab == 'export')
+            ))
             {
 		        $row  = array();
                 $inactive[] = 'referentiel';
@@ -471,39 +473,32 @@ function display(){
 		          	$url_param['non_redirection']='1';
                     $row[] =new tabobject('listreferentiel', new moodle_url('/mod/referentiel/view.php', $url_param),  get_string('listreferentiel','referentiel'));
                     $url_param['non_redirection']=0;
+                    $url_param['mode']='protocole';
+                    $row[] =new tabobject('protocole', new moodle_url('/mod/referentiel/protocole.php', $url_param), get_string('protocole','referentiel'));
         		}
 
                 if (!empty($isadmin) || (isset($isreferentielauteur) && $isreferentielauteur)
-                    ||
-                    (referentiel_site_can_write_or_import_referentiel($this->instance->id) && empty($isstudent) && empty($isguest))
+                    	||
+                    	(referentiel_site_can_write_or_import_referentiel($this->instance->id) && empty($isstudent) && empty($isguest))
                 )
                 {
-                    $url_param['mode']='protocole';
-                    $row[] =new tabobject('protocole', new moodle_url('/mod/referentiel/edit_protocole.php', $url_param), get_string('protocole','referentiel'));
-
-                    if (has_capability('mod/referentiel:writereferentiel', $this->context)) {
-                        $url_param['mode']='configref';
-                        $row[] =new tabobject('configref', new moodle_url('/mod/referentiel/config_ref.php', $url_param), get_string('configref','referentiel'));
-            	    	$url_param['mode']='editreferentiel';
-                        $row[] =new tabobject('editreferentiel', new moodle_url('/mod/referentiel/edit.php', $url_param), get_string('editreferentiel','referentiel'));
-    	    	        $url_param['mode']='deleteferentiel';
-                        $row[] =new tabobject('deletereferentiel', new moodle_url('/mod/referentiel/delete.php', $url_param), get_string('deletereferentiel','referentiel'));
-		          	}
-        			if (has_capability('mod/referentiel:import', $this->context)) {
-                        $url_param['mode']='import';
-                        $row[] =new tabobject('import', new moodle_url('/mod/referentiel/import.php', $url_param), get_string('import','referentiel'));
-                    }
-                }
-                else{
-                    $url_param['mode']='protocole';
-                    $row[] =new tabobject('protocole', new moodle_url('/mod/referentiel/protocole.php', $url_param), get_string('protocole','referentiel'));
-                }
-
-                if (has_capability('mod/referentiel:export', $this->context)) {
-    	           	$url_param['mode']='export';
-                    $row[] =new tabobject('export', new moodle_url('/mod/referentiel/export.php', $url_param), get_string('export','referentiel'));
-                }
-
+				    if (has_capability('mod/referentiel:writereferentiel', $this->context)) {
+							$url_param['mode']='configref';
+    	                    $row[] =new tabobject('configref', new moodle_url('/mod/referentiel/config_ref.php', $url_param), get_string('configref','referentiel'));
+        	    	    	$url_param['mode']='editreferentiel';
+            	            $row[] =new tabobject('editreferentiel', new moodle_url('/mod/referentiel/edit.php', $url_param), get_string('editreferentiel','referentiel'));
+    	    		        $url_param['mode']='deleteferentiel';
+                    	    $row[] =new tabobject('deletereferentiel', new moodle_url('/mod/referentiel/delete.php', $url_param), get_string('deletereferentiel','referentiel'));
+			        }
+    	    		if (has_capability('mod/referentiel:import', $this->context)) {
+        	                $url_param['mode']='import';
+            	            $row[] =new tabobject('import', new moodle_url('/mod/referentiel/import.php', $url_param), get_string('import','referentiel'));
+					}
+                	if (has_capability('mod/referentiel:export', $this->context)) {
+    	           		$url_param['mode']='export';
+                    	$row[] =new tabobject('export', new moodle_url('/mod/referentiel/export.php', $url_param), get_string('export','referentiel'));
+                	}
+				}
         	    $tabs[] = $row;
 		        $activetwo = array('referentiel');
             }

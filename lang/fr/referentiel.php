@@ -2,8 +2,7 @@
 // ----------------
 // UTF-8 French
 //
-$string['updateactivitespaginees'] = 'Modif Paginée';
-$string['activitespaginees'] = 'Paginer';
+$string['modifactivity'] = 'Modifier';
 $string['click_to_load'] = 'Cliquer ici pour charger la page';
 
 $string['assignementdoc'] = 'Document du devoir';
@@ -42,7 +41,7 @@ $string['certif_activee']='Affichage de l\'onglet "Certificat" activé';
 $string['certif_desactivee']='Affichage de l\'onglet "Certificat" désactivé';
 
 $string['configuration_impression'] = 'Configuration impression';
-$string['hierarchy'] = 'Affichage non hiérarchique dans la saisie des compétences';
+$string['hierarchy'] = 'Affichage hiérarchique dans la saisie des compétences';
 $string['input_setting'] = 'Mode d\'affichage';
 $string['input_hierarchy'] = 'Affichage hiérarchique des compétences';
 $string['config_input'] =  'En fonction de la valeur de <i>referentiel_hierarchy</i>

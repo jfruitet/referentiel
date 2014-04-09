@@ -41,7 +41,7 @@ require_once ("lib_config.php");
 require_once ("lib_referentiel.php");     // MODIF JF 2012/03/08
 require_once ("lib_users.php");
 require_once ("lib_accompagnement.php");
-require_once ("lib_repartition.php"); // version 1.2 decembre 2011
+
 require_once ("lib_protocole.php"); // protocole de certification // A partir de la version 2.1.05
 require_once ("lib_backup.php");   // nouveauté Moodle 2.0
 

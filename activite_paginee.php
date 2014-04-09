@@ -683,11 +683,11 @@ $sql='';
                 	$totalPage++;
                 	$perPage=ceil((float)$totalRecords / (float)$totalPage);       // nombre d'enregistrements par page
             	}
-                echo "<br />DEBUG :: 685 :: PageNo:".$pageNo."\n";
+                //echo "<br />DEBUG :: 685 :: PageNo:".$pageNo."\n";
 				if ($pageNo>$totalPage){
                     $pageNo=1;
 				}
-                echo "<br />DEBUG :: 689 :: PageNo:".$pageNo."\n";
+                //echo "<br />DEBUG :: 689 :: PageNo:".$pageNo."\n";
 				//exit;
 				// params
 				$lparams=implode('|',$params);

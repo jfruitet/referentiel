@@ -12,7 +12,7 @@ if (!empty($record) && !empty($course)){
 	// une enregistrement activite est charge
 
 	/////////////////// MODIFIER ////////////////////////////////////////////
-	if (isset($mode) && ($mode=="updateactivity")){
+	if (isset($mode) && ($mode=="modifactivity")){
 
 		if (!isset($form->approved)) {
     		$form->approved=0;
@@ -93,10 +93,10 @@ if (!empty($record) && !empty($course)){
 		$approved = $record->approved;
 		$ref_task = $record->ref_task;
 		if ($ref_task>0){ // remplacer par la liste definie dans la tache
-			$liste_codes_competences_tache=referentiel_get_liste_codes_competence_tache($ref_task);
+			$liste_codes_competences_a_afficher=referentiel_get_liste_codes_competence_tache($ref_task);
 		}
 		else{
-			$liste_codes_competences_tache=$liste_codes_competence;
+			$liste_codes_competences_a_afficher=$liste_codes_competence;
 		}
 		$user_info=referentiel_get_user_info($userid);
 		$teacher_info=referentiel_get_user_info($teacherid);
@@ -126,12 +126,11 @@ if (!empty($record) && !empty($course)){
         }
 
 		// AFFICHER ACTIVITE
-		/*
-		$link_documents=referentiel_get_liens_documents($activite_id);
+		$link_documents=referentiel_get_liens_documents($activite_id, $userid, $context);
         if ($link_documents){
             echo '<div>'."\n".$link_documents."</div>\n";
         }
-		*/
+
 
 ?>
 
@@ -151,37 +150,52 @@ if (!empty($record) && !empty($course)){
 <br />
 <span class="bold"><?php  print_string('description','referentiel') ?></span>
 <?php
-    echo '<br /><textarea cols="80" rows="10" name="description_activite">'.s($description_activite).'</textarea>'."\n";
-    if (($ref_task!=0) && ($USER->id==$userid)) { // activite issue d'une tache et affichee par son auteur
-    	echo '<br />
+    echo '<br /><textarea cols="100" rows="10" name="description_activite">'.s($description_activite).'</textarea>'."\n";
+	// MODIF JF 2013/10/07
+
+	if (($ref_task!=0) && ($USER->id==$userid)) { // activite issue d'une tache et affichee par son auteur
+    		echo '<br />
 <span class="bold">'.get_string('competences_bloquees','referentiel').'</span>'."\n";
-        if (isset($approved) && ($approved)){
-            echo '<div class="valide">'."\n";
-        }
-        else{
-            echo '<div class="invalide">'."\n";
-        }
-    	if (referentiel_hierarchical_display($referentiel->id)){
-			referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_tache, $competences_activite, $activite_id);
-		}
-		else{
-        	referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_activite, true);
-		}
-        echo '</div>'."\n";
+        	if (isset($approved) && ($approved)){
+            	echo '<div class="valide">'."\n";
+        	}
+        	else{
+            	echo '<div class="invalide">'."\n";
+        	}
+    		if (!referentiel_hierarchical_display($referentiel->id)){
+				echo referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_a_afficher, $competences_activite, $activite_id);
+			}
+			else{
+        		echo referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_activite, true);
+			}
+			echo '</div>'."\n";
     }
     else{ // activite normale
-        echo '<br /><span class="bold">'.get_string('aide_saisie_competences','referentiel').'</span>'."\n";
+        echo '<br /><br /><span class="bold">'.get_string('aide_saisie_competences','referentiel').'</span>'."\n";
         if (isset($approved) && ($approved)){
             echo '<div class="valide">'."\n";
         }
         else{
             echo '<div class="invalide">'."\n";
         }
-		if (referentiel_hierarchical_display($referentiel->id)){
-			referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_tache, $competences_activite, $activite_id);
-		}
-		else{
-        	referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_activite, false);
+    	$roles=referentiel_roles_in_instance($referentiel->id);
+      
+        if (($USER->id==$userid) && ($roles->is_student || $roles->is_guest)){ // c'est l'auteur qui affiche 
+			if (!referentiel_hierarchical_display($referentiel->id)){
+				echo referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competences_a_afficher, $competences_activite, $activite_id);
+			}
+			else{
+        		echo referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_activite, true);
+			}
+	    }
+	    else{ // c'est un referent qui affiche
+       			if (!referentiel_hierarchical_display($referentiel->id)){
+					echo referentiel_modifier_selection_liste_codes_item_competence('/', $liste_codes_competence, $competences_activite, $activite_id);
+				}
+				else{
+		    		echo referentiel_modifier_selection_codes_item_hierarchique($referentiel_referentiel->id, $competences_activite, true);
+				}
+		
 		}
         echo '</div>'."\n";
     }
@@ -190,7 +204,7 @@ if (!empty($record) && !empty($course)){
 ?>
 <span class="bold"><?php  print_string('commentaire','referentiel') ?></span>
 <br />
-<textarea cols="80" rows="10" name="commentaire_activite"><?php  p($commentaire_activite) ?></textarea>
+<textarea cols="100" rows="10" name="commentaire_activite"><?php  p($commentaire_activite) ?></textarea>
 <?php
 	}
 	else {
@@ -261,15 +275,15 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 <input type="hidden" name="sesskey"     value="<?php  p(sesskey()) ?>" />
 <input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
-<input type="hidden" name="mode"          value="<?php  p($mode) ?>" />
+<input type="hidden" name="mode"      value="<?php p($mode) ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
 <input type="submit" name="delete" value="<?php  print_string("delete") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("quit","referentiel") ?>" />
-</form>
 
+</form>	
 </div>
 
-<!-- NOUVEAU DOCUMENT -->
+<!-- DOCUMENTS -->
 <?php
         $s='';
 		// Recuperer les documents associes a l'activite
@@ -292,6 +306,16 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 				$ref_activite = $record_d->ref_activite;
 				$cible_document = $record_d->cible_document; // fen�tre cible
 				$etiquette_document = $record_d->etiquette_document; // etiquette
+				if (preg_match('/moddata\/referentiel/',$url_document)){
+			    	// l'URL doit être transformée
+                    $data_r=new Object();
+					$data_r->id = $document_id;
+					$data_r->userid = $userid;
+					$data_r->author = $user_info;
+					$data_r->url = $url_document;
+					$data_r->filearea = 'document';
+        			$url_document = referentiel_m19_to_m2_file($data_r, $context, false, true);
+				}				
                 $link=referentiel_affiche_url($url_document, $etiquette_document, $cible_document);
                 $s.='<!-- DOCUMENT -->
 ';
@@ -325,14 +349,14 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
                 $s.='<br /><span class="bold">'.get_string('etiquette_document','referentiel').'</span>
 <input type="text" name="etiquette_document" size="40" maxlength="255" value="'.$etiquette_document.'" />
 <br /><span class="bold">'. get_string('cible_link','referentiel').'</span>'."\n";
-				if ($cible_document){
-					$s.=' <input type="radio" name="cible_document" value="1" checked="checked" />'.get_string('yes').' &nbsp; <input type="radio" name="cible_document" value="0" />'.get_string('no')."\n";
-				}
-				else{
-					$s.=' <input type="radio" name="cible_document" value="1" />'.get_string('yes').'
+	if ($cible_document){
+		$s.=' <input type="radio" name="cible_document" value="1" checked="checked" />'.get_string('yes').' &nbsp; <input type="radio" name="cible_document" value="0" />'.get_string('no')."\n";
+	}
+	else{
+		$s.=' <input type="radio" name="cible_document" value="1" />'.get_string('yes').'
 <input type="radio" name="cible_document" value="0" checked="checked" />'.get_string('no')."\n";
-				}
-    			$s.='
+	}
+    $s.='
 <br />
 
 <input type="hidden" name="select_acc" value="'.$select_acc.'" />
@@ -359,12 +383,12 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="modulename"    value="'.$form->modulename.'" />
 <input type="hidden" name="instance"      value="'.$form->instance.'" />
-<input type="hidden" name="mode"          value="'.$mode.'" />
+<input type="hidden" name="mode"          value="listactivityall" />
 <input type="submit" value="'.get_string("savedoc", "referentiel").'" />
 <input type="submit" name="delete" value="'.get_string("delete").'" />
 <!-- input type="submit" name="cancel" value='.get_string("quit","referentiel").' / -->
 
-</form>
+</form>	
 </div>
 ';
 			}
@@ -388,9 +412,14 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 		}
 	}
 	/////////////////// VALIDER ////////////////////////////////////////////
+	// http://localhost/moodle253/mod/referentiel/activite.php?id=3&select_acc=1&activite_id=2&mode=desapproveactivity&old_mode=listactivity&sesskey=DMAXwzwehY
 	else if (isset($mode) && ($mode=="approveactivity")){
 		if (isset($activite_id) && ($activite_id>0)){
 			//notice_yesno
+	        if (empty($old_mode)){
+    	        $old_mode="listactivityall";
+	        }
+
             echo $OUTPUT->confirm(get_string('confirmvalidateactivity','referentiel'),
 			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approved='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=1&amp;mode='.$old_mode.'&amp;sesskey='.sesskey(),
 			'activite.php?d='.$referentiel->id.'&amp;select_acc='.$select_acc.'&amp;approved='.$activite_id.'&amp;userid='.$userid.'&amp;confirm=0&amp;mode='.$old_mode.'&amp;sesskey='.sesskey());
@@ -412,7 +441,7 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 		}
 	}
 
-	/////////////////// COMMENTER //////////////////////////////////////////// 
+    	/////////////////// COMMENTER ////////////////////////////////////////////
 	else if (isset($mode) && ($mode=="commentactivity")){
 
 		$activite_id=$record->id;
@@ -428,11 +457,11 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 		$date_creation = $record->date_creation;
 		$date_modif = $record->date_modif;
 		$approved = $record->approved;
-		
+
 		$user_info=referentiel_get_user_info($userid);
 		$teacher_info=referentiel_get_user_info($teacherid);
 		// dates
-		$date_creation_info=userdate($date_creation);		
+		$date_creation_info=userdate($date_creation);
 		if ($date_modif!=0){
             $date_modif_info=userdate($date_modif);
 		}
@@ -447,11 +476,12 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 		else{
 			$date_modif_student_info='';
 		}
-		
-		$link_documents=referentiel_get_liens_documents($activite_id);
+
+		$link_documents=referentiel_get_liens_documents($activite_id, $userid, $context);
         if ($link_documents){
             echo '<br />'."\n";
         }
+
  		// preparer les variables globales pour Overlib
 		referentiel_initialise_data_referentiel($ref_referentiel);
 		$jauge_activite_declarees=referentiel_print_jauge_activite($userid, $ref_referentiel);
@@ -463,7 +493,7 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 		}
 
 		echo '<div class="ref_saisie1">
-<form name="form" method="post" action="'.s("activite.php?d=$referentiel->id").'">
+<form name="form" method="post" action="'.s("activite.php?id=$cm->id").'">
 <span class="bold">'.get_string('id','referentiel').'</span>';
 		echo $activite_id;
 		echo '<span class="bold">'.get_string('type_activite','referentiel').'</span>'.s($type_activite).'
@@ -479,9 +509,10 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 		echo '<span class="bold">'.get_string('liste_codes_competence','referentiel').'</span>'."\n";
 		echo referentiel_affiche_liste_codes_competence('/',$competences_activite, $ref_referentiel)."\n";
         echo '</span>'."\n";
-		echo '<br /><br /><span class="bold">'.get_string('description','referentiel').'</span><br /><span class="white">'.nl2br($description_activite).'</span>
+		echo '<br /><span class="bold">'.get_string('description','referentiel').'</span><br /><span class="white">'.nl2br($description_activite).'</span>
+<br />
 ';
-		
+
 		echo '<br /><span class="bold">'.get_string('commentaire','referentiel').'</span>';
 		echo '<br /><textarea cols="80" rows="10" name="commentaire_activite">'.s($commentaire_activite).'</textarea>
 <br /><span class="bold">'.get_string('referent','referentiel').'</span>'.s($teacher_info).'
@@ -532,11 +563,8 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 </form>
 </div>
 <?php
-/*
         if ($link_documents){
             echo '<span class="vert">'."\n".$link_documents."\n".'</span><br />'."\n";
         }
-*/
 	}
 }
-?>

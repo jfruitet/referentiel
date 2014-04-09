@@ -15,8 +15,9 @@ Historique des versions
 Référentiel pour Moodle 2.4, 2.5 SANS SUPPORT DES BAREMES
 ---------------------------------------------------------
 Version 8.08 (2013062405) for Moodle 2.4 et 2.5 without scales support
-Release 2014-03-27
-Affichage paginé
+Release 2014-04-09
+Corection bug Cron
+Affichage paginé des activités
 Release 2014-03-24
 Correction bug dans la modifcation globale des activités
 Release 2014-02-27

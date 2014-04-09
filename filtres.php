@@ -75,9 +75,7 @@ function set_filtres_sql($type=''){
     global $data_f;
 	global $sql_f_where;
 	global $sql_f_order;
-	//echo "<br />DEBUG :: filtres.php :: Ligne 78 :: TYPE=$type\n";
-	//print_object( $data_f);
-
+	global $order;
 	if ($type=='certificat'){
 		if (isset($data_f->f_valide) && ($data_f->f_valide=='1')){
 			$sql_f_where.=' AND (valide=1) ';
@@ -160,7 +158,7 @@ function set_filtres_sql($type=''){
 			else
 				$sql_f_order.=' date_modif_student DESC ';
 		}
-
+/*
 		if (isset($data_f->f_auteur) && ($data_f->f_auteur=='1')){
 			if ($sql_f_order!='')
 				$sql_f_order.=', userid ASC ';
@@ -172,6 +170,14 @@ function set_filtres_sql($type=''){
 				$sql_f_order.=', userid DESC ';
 			else
 				$sql_f_order.=' userid DESC ';
+		}
+ */
+ 		$order=1;
+        if (isset($data_f->f_auteur) && ($data_f->f_auteur=='1')){
+            $order=1;
+		}
+		else if (isset($data_f->f_auteur) && ($data_f->f_auteur=='-1')){
+            $order=-1;
 		}
 	}
 	//echo "<br />DEBUG :: filtres.php :: Ligne 198 :: FILTRES : WHERE=".htmlentities($sql_f_where)."<br />ORDER=".htmlentities($sql_f_order)."\n";
