@@ -44,7 +44,9 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 require_once ("class/referentiel.class.php");
 
 // CRON
-require_once ("lib_repartition.php"); // version 1.2 decembre 2011
+require_once ("lib_users.php");
+require_once ("lib_accompagnement.php");
+require_once ("lib_repartition.php");
 require_once ("lib_cron.php");
 
 // les constantes suivantes permettent de tuner le fonctionnement du module

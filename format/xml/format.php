@@ -3382,13 +3382,13 @@ class pformat_xml extends pformat_default {
             $commentaire =  $this->writetext(trim($record_pedago->commentaire));
             $prenom= $this->writetext(referentiel_get_user_prenom($record_asso->userid));
             $patronyme = $this->writetext(referentiel_get_user_nom($record_asso->userid));
-
+            $code_referentiel= $this->writetext($this->rreferentiel->code_referentiel);
             $expout .= "   <pedago>\n";
 			// $expout .= "    <id>$id</id>\n";
 			// $expout .= "    <userid>$userid</userid>\n";
 			// $expout .= "    <refrefid>$refrefid</refrefid>\n";
 			$expout .= "    <username>$username</username>\n";
-            $expout .= "    <firstname>$prenom</firtsname>\n";
+            $expout .= "    <firstname>$prenom</firstname>\n";
             $expout .= "    <lastname>$patronyme</lastname>\n";
             $expout .= "    <date_cloture>$date_cloture</date_cloture>\n";
             $expout .= "    <promotion>$promotion</promotion>\n";
@@ -3397,6 +3397,7 @@ class pformat_xml extends pformat_default {
             $expout .= "    <composante>$composante</composante>\n";
             $expout .= "    <num_groupe>$num_groupe</num_groupe>\n";
             $expout .= "    <commentaire>$commentaire</commentaire>\n";
+            $expout .= "    <code_referentiel>$code_referentiel</code_referentiel>\n";
             $expout .= "   </pedago>\n";
         }
         return $expout;
@@ -3594,7 +3595,12 @@ class pformat_xml extends pformat_default {
 		$index=0;
         $error_message='';
 		$nbpedagos=0;        // compteur
-        foreach ($xmlpedagos as $pedago) {
+        $xmlpedago = $xmlpedagos['#']['pedago'];
+		// DEBUG
+		//echo "<br />XML :: 36201<br />\n";
+		//print_object($xmlpedago);
+
+        foreach ($xmlpedago as $pedago) {
 			// PEDAGOS
             // echo "<br />\n";
             // print_r($pedago);

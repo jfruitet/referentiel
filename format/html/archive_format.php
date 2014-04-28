@@ -1109,7 +1109,8 @@ var $tab_users=array(array());  //liste des utilisateurs ayant un certificat aff
                         $this->tab_users[$u][0]=$userid; // id certificat
                         $lastname=referentiel_get_user_nom($userid);
                         $firstname=referentiel_get_user_prenom($userid);
-                        $this->tab_users[$u][1]=mb_strtoupper($lastname,'UTF-8').' '.mb_convert_case($firstname, MB_CASE_TITLE, 'UTF-8');
+                        // $this->tab_users[$u][1]=mb_strtoupper($lastname,'UTF-8').' '.mb_convert_case($firstname, MB_CASE_TITLE, 'UTF-8');
+                        $this->tab_users[$u][1]=$this->m_special_case($lastname, true).' '.$this->m_special_case($firstname, false);
                         $u++;
                         
                         $expout .= '<a name="'.$userid.'"></a>'."\n";

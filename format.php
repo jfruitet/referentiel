@@ -3264,10 +3264,10 @@ class zformat_default {
 
     var $user_creator=0;      // celui qui cree l'archive
     var $user_filtre=0;  // celui pour lequel est cree l'archive
-    var $records_users=NULL; // liste des utilisateurs �  archiver
+    var $records_users=NULL; // liste des utilisateurs Ã  archiver
 
     var $t_instances= array(); // liste des instances en relation avec l'occurrence referentiel
-    var $t_etablissements= array(); // liste des etablissements enregistrés
+    var $t_etablissements= array(); // liste des etablissements enregistrÃ©s
 
 // functions to indicate import/export functionality
 // override to return true if implemented
@@ -3438,6 +3438,25 @@ class zformat_default {
 /*******************
  * EXPORT FUNCTIONS
  *******************/
+ 	// ----------------------------------
+	function m_special_case($s, $cap=true, $encoding = 'utf-8'){
+		if ($s){
+			mb_internal_encoding($encoding);
+            mb_regex_encoding($encoding);
+            //echo "<br /> 2902 :: $s\n";
+			$pattern=    array('Ä', 'Â', 'à','â','ä', 'ç', 'É', 'Ê', 'Ë', 'Ê', 'é','è','ë','ê', 'Ï', 'Î', 'ï','î', 'Ö', 'Ô', 'ö','ô','ø', 'Ü', 'Û', 'ù','ü','û' ) ;
+			$replacement=array('A', 'A', 'a','a','a', 'c', 'E', 'E', 'E', 'E', 'e','e','e','e', 'I', 'I', 'i','i', 'O', 'O', 'o','o','o', 'U', 'U', 'u','u','u' ) ;
+            for ($i=0; $i<sizeof($pattern); $i++) {
+				$s= mb_ereg_replace($pattern[$i], $replacement[$i] , $s);
+			}
+			//echo "<br />  $s\n";
+			if ($cap) $s= mb_strtoupper($s);
+			else $s= mb_convert_case($s, MB_CASE_TITLE, $encoding);
+            //echo "<br />  $s\n";
+		}
+		return  $s;
+	}
+
 
     /**
      * Provide export functionality for plugin referentiel types
@@ -3542,7 +3561,7 @@ class zformat_default {
          // MODIF JF 2012/06/15
         // write index file
         // ici modification par rapport au traitement normal car
-        // les donn�es doivent �tre zipp�e et plac�es dans un dossier sp�cial
+        // les données doivent être zippée et placées dans un dossier spécial
         // moodledata/temp/archive/referentiel_id/
 
 
@@ -3647,7 +3666,7 @@ class zformat_default {
     function get_filename_by_userid($userid){
     global $DB;
         if ($user= $DB->get_record("user", array("id" => $userid))){
-            return $user->username.'_'.$user->lastname.'_'.$user->firstname;
+            return $user->username.'_'.$this->m_special_case($user->lastname,true).'_'.$this->m_special_case($user->firstname, false);
         }
         return '';
     }

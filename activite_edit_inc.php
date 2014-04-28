@@ -383,7 +383,7 @@ echo '<input type="radio" name="mailnow" value="1" />'.get_string('yes').' &nbsp
 <input type="hidden" name="sesskey"     value="'.sesskey().'" />
 <input type="hidden" name="modulename"    value="'.$form->modulename.'" />
 <input type="hidden" name="instance"      value="'.$form->instance.'" />
-<input type="hidden" name="mode"          value="listactivityall" />
+<input type="hidden" name="mode"          value="'.$mode.'" />
 <input type="submit" value="'.get_string("savedoc", "referentiel").'" />
 <input type="submit" name="delete" value="'.get_string("delete").'" />
 <!-- input type="submit" name="cancel" value='.get_string("quit","referentiel").' / -->
