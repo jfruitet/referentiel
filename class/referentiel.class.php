@@ -2015,7 +2015,7 @@ global $CFG;
 						if ($CFG->$str_conf==2){
 							// $s.= '<input type="hidden" name="'.$cle.'" value="2" /> <b>'.get_string('config_verrouillee','referentiel').'</b>'."\n";
                             $mform->addElement('hidden', $cle, 2);
-                            $mform->setType($cle, PARAM_NUM);
+                            $mform->setType($cle, PARAM_INT);
                             $mform->setDefault($cle, 2);
  						}
 						else{

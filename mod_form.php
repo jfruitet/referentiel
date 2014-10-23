@@ -125,7 +125,7 @@ class mod_referentiel_mod_form extends moodleform_mod {
             }
         }
         else {
-            $ref_referentiel = required_param('ref_referentiel', PARAM_NUM);
+            $ref_referentiel = required_param('ref_referentiel', PARAM_INT);
         }
 
         $this->referentielinstance = new referentiel();
