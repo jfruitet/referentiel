@@ -266,7 +266,7 @@
         }
 
         if (! $tformat->exportpostprocess()) {                    // In case anything needs to be done after
-            print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/export_task.php?d='.$cm->id);
+            print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/export_task.php?id='.$cm->id);
         }
         echo "<hr />";
 

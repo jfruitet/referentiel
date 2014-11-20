@@ -757,7 +757,7 @@
                         print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/print_certificat.php?id='.$cm->id);
             }
             if (! $pprint->exportpostprocess()) {                            // In case anything needs to be done after
-                        print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/print_certificat.php?d='.$cm->id);
+                        print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/print_certificat.php?id='.$cm->id);
             }
             echo "<hr />";
             // link to download the finished file

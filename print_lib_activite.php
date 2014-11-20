@@ -1222,9 +1222,34 @@ print_object($CFG);
 					else{
 						$etiquette_document='';
 					}
-					$s_document.=get_string('document', 'referentiel').' &nbsp; &nbsp; <i>'.$document_id.'</i> &nbsp; &nbsp; '.$type_document.' &nbsp; &nbsp; ';
-					$s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
-					$s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document).'<br />'."\n";
+        			// Modif JF 2013/02/02
+             		if ($record_d->timestamp==0){
+                        $date_creation_document_info='';
+                    }
+                    else{
+                        $date_creation_document_info=userdate($record_d->timestamp);
+                    }
+                    if ($date_modif<$record_d->timestamp){
+					   if (!empty($date_creation_document_info)){
+						$s_document.='<span class="prioritaire">'.get_string('document', 'referentiel').' <i>'.$document_id.'</i> :: <i>'.$date_creation_document_info.'</i> :: '.$type_document.' :: ';
+					   }
+					   else{
+						$s_document.='<span class="prioritaire">'.get_string('document', 'referentiel').' <i>'.$document_id.'</i> :: '.$type_document.' :: ';
+					   }
+					   $s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
+					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."'</span><br /> \n";
+
+                    }
+                    else{
+					   if (!empty($date_creation_document_info)){
+					   	$s_document.=get_string('document', 'referentiel').' <i>'.$document_id.'</i> :: <i>'.$date_creation_document_info.'</i> :: '.$type_document.' :: ';
+					   }
+					   else{
+					   	$s_document.=get_string('document', 'referentiel').' <i>'.$document_id.'</i> :: '.$type_document.' :: ';
+					   }
+					   $s_document.=nl2br($description_document).' &nbsp; &nbsp; ';
+					   $s_document.=referentiel_affiche_url($url_document, $etiquette_document, $cible_document)."<br /> \n";
+                    }
 				}
 			}
 		}

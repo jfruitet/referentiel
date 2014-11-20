@@ -502,7 +502,7 @@
         }
         // echo "<br /> OK 9\n";
         if (! $cformat->exportpostprocess()) {                    // In case anything needs to be done after
-            print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/export_certificat.php?d='.$cm->id);
+            print_error( $txt->exporterror, $CFG->wwwroot.'/mod/referentiel/export_certificat.php?id='.$cm->id);
         }
         echo "<hr />";
         // echo "<br /> OK 10\n";
