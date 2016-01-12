@@ -824,6 +824,7 @@ global $DB;
         // DEBUG : cron_lib.php :
         // mtrace('ACTIVITES...');
 
+		/*
         // Mark them all now as being mailed.  It's unlikely but possible there
         // might be an error later so that a post is NOT actually mailed out,
         // but since mail isn't crucial, we can accept this risk.  Doing it now
@@ -833,7 +834,7 @@ global $DB;
             mtrace('Errors occurred while trying to mark some referentiel activities as being mailed.');
             return false;  // Don't continue trying to mail them, in case we are in a cron loop
         }
-
+		*/
         // checking activity validity, and adding users to loop through later
         foreach ($activities as $aid => $activite) {
 /*
@@ -846,6 +847,10 @@ mtrace("\n");
 mtrace("\n");
 */
             $activiteid = $activite->id;
+
+			// Mark this activity as being mailed
+            $DB->set_field("referentiel_activite", "mailed", 1, array("id" => $activiteid));
+            $DB->set_field("referentiel_activite", "mailnow", 0, array("id" => $activiteid));
 
             // DEBUG : cron_lib.php :
             // mtrace("ACTIVITE ID: $activite->id\n");
@@ -2977,10 +2982,9 @@ global $DB;
 
 
 /**
- * Marks posts before a certain time as being mailed already
+ * Marks posts before $endtime are marked as being mailed already
  */
 function referentiel_mark_old_activities_as_mailed($endtime) {
-// detournement du module forum
 global $DB;
     $params = array("zero" => "0", "endtime" => "$endtime",
     "zero1" => "0", "endtime1" => "$endtime",
@@ -2988,16 +2992,26 @@ global $DB;
     "mailnow" => "1", "mailed" => "0" );
 
     $sql="SELECT * FROM {referentiel_activite}
- WHERE (((date_modif != :zero) AND (date_modif < :endtime))
- OR ((date_creation != :zero1) AND (date_creation < :endtime1))
- OR ((date_modif_student != :zero2) AND (date_modif_student < :endtime2)))
- OR ((mailnow = :mailnow) AND (mailed = :mailed)) ";
-        // mtrace("DEBUG : cron_lib.php : : cron_lib.php : 3549 : SQL : $sql");
+ 	WHERE
+	(
+ 		(
+			((date_modif != :zero) AND (date_modif < :endtime))
+	 		OR
+			((date_creation != :zero1) AND (date_creation < :endtime1))
+ 			OR
+			((date_modif_student != :zero2) AND (date_modif_student < :endtime2))
+			)
+ 			OR (mailnow = :mailnow)
+		)
+		AND (mailed = :mailed)
+	) ";
+    // mtrace("DEBUG : cron_lib.php : : cron_lib.php : 2974 : SQL : $sql");
     $records=$DB->get_records_sql($sql, $params);
     if ($records){
-            foreach ($records as $record){
-                $DB->set_field("referentiel_activite", "mailed", 1, array("id" => "$record->id"));
-            }
+        foreach ($records as $record){
+        	$DB->set_field("referentiel_activite", "mailed", 1, array("id" => "$record->id"));
+        	$DB->set_field("referentiel_activite", "mailnow", 0, array("id" => "$record->id"));
+        }
     }
     return true;
 }
@@ -3015,6 +3029,8 @@ global $DB;
     if ($records){
             foreach ($records as $record){
                 $DB->set_field("referentiel_task", "mailed", 1, array("id" => "$record->id"));
+                $DB->set_field("referentiel_task", "mailnow", 0, array("id" => "$record->id"));
+
             }
     }
     return true;
@@ -3034,6 +3050,7 @@ function referentiel_mark_old_certificates_as_mailed($endtime) {
     if ($records){
             foreach ($records as $record){
                 $DB->set_field("referentiel_certificat", "mailed", "1", array("id" => "$record->id"));
+                $DB->set_field("referentiel_certificat", "mailnow", 0, array("id" => "$record->id"));
             }
     }
     return true;
